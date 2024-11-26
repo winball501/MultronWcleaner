@@ -1,4 +1,4 @@
-Multron Windows Cleaner provides database-based disk cleanup.
+Multron Win Cleaner provides database-based disk cleanup.
 
 You can clean your pc with one click.
 
