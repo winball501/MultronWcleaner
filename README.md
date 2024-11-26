@@ -6,7 +6,7 @@ You can also add your specific folder to clean to database.txt
 
 You need to install .Net CORE 8 Runtime to use program
 
-Download it from DOWNLOAD below:
+Download it from DOWNLOADS below:
 
 [DOWNLOADS](https://github.com/winball501/MultronWcleaner/releases)
 
