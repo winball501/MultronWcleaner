@@ -22,7 +22,7 @@
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0">
                     <TextBlock Text="Multron Win Cleaner" FontSize="14" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="v1.4 beta" FontSize="8" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,0"/>
+                    <TextBlock Text="v1.5 beta" FontSize="8" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="3,0"/>
                 </StackPanel>
 
 

@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using static Multron_Win_Cleaner.MainWindow;
+using static System.Net.WebRequestMethods;
 
 namespace Multron_Win_Cleaner
 {
@@ -32,9 +33,9 @@ namespace Multron_Win_Cleaner
         public MainWindow()
         {
             InitializeComponent();
-            if(File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt"))
+            if(System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt"))
             {
-                string text = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt");
+                string text = System.IO.File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt");
                 if(text == "1")
                 {
                     themeselector.selector(new Uri("Themes/Dark.xaml", UriKind.Relative));
@@ -130,7 +131,7 @@ namespace Multron_Win_Cleaner
                 return (null);
             }
         }
-        List<string> database = new List<string>();
+        HashSet<string> database = new HashSet<string>();
         public int scanstatus = 0;
         public int cancelstatus = 0;
         byte created = 0;
@@ -161,21 +162,22 @@ namespace Multron_Win_Cleaner
                         main.ScrollViewerDirectories.Visibility = Visibility.Visible;
                         main.label1_Copy.Foreground = Brushes.Blue;
                     });
-                 
-                        foreach (var directory in main.database)
-                        {
 
+                    foreach (string directory in main.database)
+                    {
+
+                           
                             if (main.cancelstatus == 1)
                             {
-                                break;
+                                 break;
                             }
-                        
+
                             string name = main.stringtokenizer(directory, "=", 0);
                             string path = main.stringtokenizer(directory, "=", 1);
 
                             if (directory.EndsWith("logscan"))
                             {
-
+                             
                                 await main.Dispatcher.InvokeAsync(() =>
                                 {
                                     directorytextblock = new TextBlock
@@ -196,13 +198,13 @@ namespace Multron_Win_Cleaner
                                     main.wrapPanelDirectories.Children.Add(directorytextblock);
                                 });
 
-
+                          
                                 await ScanCDirectoryAsync(path, name, directorytextblock);
-                               
+
                             }
                             else
                             {
-                                if (File.Exists(directory))
+                                if (System.IO.File.Exists(directory))
                                 {
 
                                     directorytextblock = new TextBlock
@@ -212,21 +214,24 @@ namespace Multron_Win_Cleaner
                                         FontSize = 16,
                                         Margin = new Thickness(5),
                                         HorizontalAlignment = HorizontalAlignment.Stretch,
-                                        VerticalAlignment = VerticalAlignment.Top
+                                        VerticalAlignment = VerticalAlignment.Top,
+
+
                                     };
-                              
-                                await main.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        main.wrapPanelDirectories.Children.Add(directorytextblock);
-                                   
-                                    });
-                                  
+
+                                    await main.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            main.wrapPanelDirectories.Children.Add(directorytextblock);
+
+                                        });
+
                                     this.totalsize += new FileInfo(directory).Length;
-                                    
+
 
                                 }
                                 else
                                 {
+
                                     await main.Dispatcher.InvokeAsync(() =>
                                     {
                                         directorytextblock = new TextBlock
@@ -238,17 +243,19 @@ namespace Multron_Win_Cleaner
                                             HorizontalAlignment = HorizontalAlignment.Stretch,
                                             VerticalAlignment = VerticalAlignment.Top
                                         };
+                                    
+                                          
                                     });
 
-
-                                    
                                     await main.Dispatcher.InvokeAsync(() =>
                                     {
                                         main.wrapPanelDirectories.Children.Add(directorytextblock);
+
                                     });
 
+
                                     main.created = 0;
-                               
+
                                     await ScanDirectoryAsync(path, name, directorytextblock);
                                 }
                             }
@@ -256,44 +263,45 @@ namespace Multron_Win_Cleaner
                             double percentage = (double)nowscanning / size * 100;
                             await main.Dispatcher.InvokeAsync(() =>
                             {
-                               main.progressBar1.Value = percentage;
+                                main.progressBar1.Value = percentage;
                             });
 
 
 
-                        }
-                        if (main.cancelstatus == 1)
+                       
+                   
+                    }
+                    if (main.cancelstatus == 1)
+                    {
+                        await main.Dispatcher.InvokeAsync(() =>
                         {
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                main.label1_Copy.Content = "Scanning: " + "Canceled";
-                                main.buttonCancel.IsEnabled = false;
-                                main.ScrollViewerDirectories.Visibility = Visibility.Hidden;
-                                main.wrapPanelDirectories.Visibility = Visibility.Hidden;
-                                main.wrapPanelDirectories.Children.Clear();
-                                main.buttonStartScan.IsEnabled = true;
-                                main.ScrollViewer.Visibility = Visibility.Visible;
-                                main.wrapPanel1.Visibility = Visibility.Visible;
-                                main.cancelstatus = 0;
-                                main.progressBar1.Value = 0;
-                            });
+                            main.label1_Copy.Content = "Scanning: " + "Canceled";
+                            main.buttonCancel.IsEnabled = false;
+                            main.ScrollViewerDirectories.Visibility = Visibility.Hidden;
+                            main.wrapPanelDirectories.Visibility = Visibility.Hidden;
+                            main.wrapPanelDirectories.Children.Clear();
+                            main.buttonStartScan.IsEnabled = true;
+                            main.ScrollViewer.Visibility = Visibility.Visible;
+                            main.wrapPanel1.Visibility = Visibility.Visible;
+                            main.cancelstatus = 0;
+                            main.progressBar1.Value = 0;
+                        });
 
-                        }
-                        else
+                    }
+                    else
+                    {
+                        await main.Dispatcher.InvokeAsync(() =>
                         {
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                main.label1_Copy.Content = "Scanning: " + "Completed. + " + formatsize(totalsize) + "  Useless file found!";
+                            main.label1_Copy.Content = "Scanning: " + "Completed. + " + formatsize(totalsize) + "  Useless file found!";
 
-                                main.label1_Copy.Foreground = Brushes.Goldenrod;
-                                main.buttonStartScan.IsEnabled = true;
-                                main.buttonStartScan.Content = "Clean";
-                            });
+                            main.label1_Copy.Foreground = Brushes.Goldenrod;
+                            main.buttonStartScan.IsEnabled = true;
+                            main.buttonStartScan.Content = "Clean";
+                        });
 
-                        }
+                    }
 
-                        main.scanstatus = 1;
-                     
+                    main.scanstatus = 1;
                 } catch (Exception ex)
                 {
 
@@ -303,181 +311,193 @@ namespace Multron_Win_Cleaner
 
             public async Task ScanCDirectoryAsync(string directory, string name, TextBlock directorytextblock)
             {
-            
-              
-                long totalsize = await GetCDirectorySizeAsync(directory);
-                string sizeformatted = formatsize(totalsize);
-                this.totalsize += totalsize;
-
-                await main.Dispatcher.InvokeAsync(() =>
-                {
-                    directorytextblock.Text = $"Completed: {name} - {sizeformatted} found";
-                });
-            }
-            public async Task<long> GetCDirectorySizeAsync(string path)
-            {
                 try
                 {
-                    long size = 0;
-
-                    if (Directory.Exists(path))
+                    long totalsize = await GetCDirectorySizeAsync(directory);
+                    string sizeformatted = formatsize(totalsize);
+                    this.totalsize += totalsize;
+                    await main.Dispatcher.InvokeAsync(() =>
                     {
+                        directorytextblock.Text = "Completed: " + name + " " + formatsize(totalsize);
 
-                        string[] files = Directory.GetFiles(path);
-                        string[] dirs = Directory.GetDirectories(path);
-                        foreach(string dir in dirs)
-                        {
-                            if (main.cancelstatus == 1)
-                            {
-                                break;
-                            }
-                            try
-                            {
-                                size += await GetCDirectorySizeAsync(dir); 
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                          
-                               
-                            }
-
-                        }
-                        for (int i = 0; i < files.Length; i++)
-                        {
-                            if (main.cancelstatus == 1)
-                            {
-                                break;
-                            }
-                            var file = files[i];
-
-
-                            
-                            string[] logExtensions = { ".log", ".etl", ".dmp", ".trace", ".tmp", ".temp", ".bak", ".swp"};
-                            foreach (var extension in logExtensions)
-                            {
-                                if (file.EndsWith(extension))
-                                {
-                                    main.logfiles.Add(file);
-                                    long totalsize1 = new FileInfo(file).Length;
-                                    string sizeformatted1 = formatsize(totalsize1);
-                                    this.totalsize += totalsize1;
-                                    FileInfo fileInfo = new FileInfo(file);
-                                    size += fileInfo.Length;
-                                    await main.Dispatcher.InvokeAsync(async () =>
-                                    {
-                                        if (main.created == 0)
-                                        {
-                                            CheckBox newCheckBox = new CheckBox
-                                            {
-                                                Content = "File to delete=" + file + "=" + formatsize(size),
-                                                Margin = new Thickness(10),
-                                                IsChecked = false,
-                                                BorderThickness = new Thickness(0),
-                                                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                                                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
-                                                Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
-                                                FontSize = 12,
-                                                FontFamily = new FontFamily("Segoe UI"),
-                                                FontWeight = FontWeights.Regular,
-                                                FontStyle = FontStyles.Normal,
-                                            };
-
-                                            main.groupBoxContent = new StackPanel
-                                            {
-                                                Orientation = Orientation.Vertical,
-                                                VerticalAlignment = VerticalAlignment.Top,
-                                                HorizontalAlignment = HorizontalAlignment.Left
-
-                                            };
-
-                                            main.expander = new Expander
-                                            {
-                                                Header = "Select Files deep log scan's finded ",
-                                                Margin = new Thickness(5),
-                                                Background = new SolidColorBrush(Colors.Transparent),
-                                                Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
-                                                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                                                BorderThickness = new Thickness(2),
-                                                FontSize = 14,
-                                                FontWeight = FontWeights.Regular,
-                                                HorizontalAlignment = HorizontalAlignment.Left,
-                                                VerticalAlignment = VerticalAlignment.Top
-                                            };
-                                            await main.Dispatcher.InvokeAsync(() =>
-                                            {
-                                                newCheckBox.IsChecked = true;
-                                                main.checkboxes.Add(newCheckBox);
-                                                main.groupBoxContent.Children.Add(newCheckBox);
-                                                main.expander.Content = main.groupBoxContent;
-                                                main.wrapPanelDirectories.Children.Add(main.expander);
-
-                                            });
-                                            main.created = 1;
-                                            newCheckBox.Checked += main.CheckBox2_Checked;
-                                            newCheckBox.Unchecked += main.CheckBox2_Unchecked;
-                                        }
-                                        else
-                                        {
-                                            CheckBox newCheckBox = new CheckBox
-                                            {
-                                                Content = "File to delete=" + file + "=" + formatsize(size),
-                                                Margin = new Thickness(10),
-                                                IsChecked = false,
-                                                BorderThickness = new Thickness(0),
-                                                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                                                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
-                                                Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
-                                                FontSize = 12,
-                                                FontFamily = new FontFamily("Segoe UI"),
-                                                FontWeight = FontWeights.Regular,
-                                                FontStyle = FontStyles.Normal,
-
-                                            };
-
-                                            await main.Dispatcher.InvokeAsync(() =>
-                                            {
-                                                newCheckBox.IsChecked = true;
-                                                main.checkboxes.Add(newCheckBox);
-                                                main.groupBoxContent.Children.Add(newCheckBox);
-
-
-                                            });
-                                            newCheckBox.Checked += main.CheckBox2_Checked;
-                                            newCheckBox.Unchecked += main.CheckBox2_Unchecked;
-                                        }
-
-                                    });
-                                    break;
-                                }
-                            }
-
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                main.label1_Copy.Content = $"Scanning: {file}";
-                            });
-
-                            
-                        }
-                    }
-
-                    return size;
+                      
+                    });
                 }
                 catch (Exception ex)
                 {
-                     return 0;
+                     Console.WriteLine($"Error scanning directory {directory}: {ex.Message}");
+                }
+            }
+
+            public async Task<long> GetCDirectorySizeAsync(string path)
+            {
+                long size = 0;
+
+                try
+                {
+                    if (Directory.Exists(path))
+                    {
+                        HashSet<string> files = Directory.GetFiles(path).ToHashSet();
+                        HashSet<string> dirs = Directory.GetDirectories(path).ToHashSet();
+
+                     
+                        foreach (var dir in dirs)
+                        {
+                            if (main.cancelstatus == 1)
+                                return size;  
+
+                            size += await GetCDirectorySizeAsync(dir);  
+                        }
+
+                 
+                        foreach (var file in files)
+                        {
+                            if (main.cancelstatus == 1)
+                            {
+                                return size;
+                              
+                            }
+                            HashSet<string> logExtensions = new HashSet<string> { ".log", ".etl", ".dmp", ".trace", ".tmp", ".temp", ".bak", ".swp" };
+                            if (logExtensions.Any(extension => file.EndsWith(extension)))
+                            {
+                                main.logfiles.Add(file);
+                                long fileSize = new FileInfo(file).Length;
+                                size += fileSize;
+                                this.totalsize += fileSize;
+
+                                 
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    main.label1_Copy.Content = $"Scanning: {file}";
+                                });
+
+                                if (main.created == 0)
+                                {
+                                    main.created = 1;
+                             
+                                    await main.Dispatcher.InvokeAsync(async () =>
+                                    {
+                                        CheckBox newCheckBox = new CheckBox
+                                        {
+                                            Content = "File to delete=" + file + "=" + formatsize(size),
+                                            Margin = new Thickness(10),
+                                            IsChecked = false,
+                                            BorderThickness = new Thickness(0),
+                                            BorderBrush = new SolidColorBrush(Colors.Transparent),
+                                            Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                                            Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
+                                            FontSize = 12,
+                                            FontFamily = new FontFamily("Segoe UI"),
+                                            FontWeight = FontWeights.Regular,
+                                            FontStyle = FontStyles.Normal,
+                                        };
+
+                                        main.groupBoxContent = new StackPanel
+                                        {
+                                            Orientation = Orientation.Vertical,
+                                            VerticalAlignment = VerticalAlignment.Top,
+                                            HorizontalAlignment = HorizontalAlignment.Left
+
+                                        };
+
+                                        main.expander = new Expander
+                                        {
+                                            Header = "Select Files deep log scan's finded ",
+                                            Margin = new Thickness(5),
+                                            Background = new SolidColorBrush(Colors.Transparent),
+                                            Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
+                                            BorderBrush = new SolidColorBrush(Colors.Transparent),
+                                            BorderThickness = new Thickness(2),
+                                            FontSize = 14,
+                                            FontWeight = FontWeights.Regular,
+                                            HorizontalAlignment = HorizontalAlignment.Left,
+                                            VerticalAlignment = VerticalAlignment.Top
+                                        };
+                                        await main.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            newCheckBox.IsChecked = true;
+                                            main.checkboxes.Add(newCheckBox);
+                                            main.groupBoxContent.Children.Add(newCheckBox);
+                                            main.expander.Content = main.groupBoxContent;
+
+
+                                        });
+                                        await main.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            main.wrapPanelDirectories.Children.Add(main.expander);
+                                        });
+
+                                        newCheckBox.Checked += main.CheckBox2_Checked;
+                                        newCheckBox.Unchecked += main.CheckBox2_Unchecked;
+
+                                    });
+                           
+                              
+                               
+                                }
+                                else
+                                {
+                               
+                                    await main.Dispatcher.InvokeAsync(async () =>
+                                    {
+                                        CheckBox newCheckBox = new CheckBox
+                                        {
+                                            Content = "File to delete=" + file + "=" + formatsize(size),
+                                            Margin = new Thickness(10),
+                                            IsChecked = false,
+                                            BorderThickness = new Thickness(0),
+                                            BorderBrush = new SolidColorBrush(Colors.Transparent),
+                                            Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                                            Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 176, 176, 176)),
+                                            FontSize = 12,
+                                            FontFamily = new FontFamily("Segoe UI"),
+                                            FontWeight = FontWeights.Regular,
+                                            FontStyle = FontStyles.Normal,
+
+                                        };
+                                        await main.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            newCheckBox.IsChecked = true;
+                                            main.checkboxes.Add(newCheckBox);
+                                            main.groupBoxContent.Children.Add(newCheckBox);
+
+
+                                        });
+                                        newCheckBox.Checked += main.CheckBox2_Checked;
+                                        newCheckBox.Unchecked += main.CheckBox2_Unchecked;
+                                    });
+                      
+                             
+                                }
+
+                          
+
+                    
+                            }
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Console.WriteLine($"Access denied to directory {path}: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error scanning directory {path}: {ex.Message}");
                 }
 
+                return size;
             }
-        
-        public async Task ScanDirectoryAsync(string directory, string name, TextBlock directorytextblock)
+
+            public async Task ScanDirectoryAsync(string directory, string name, TextBlock directorytextbox)
             {
                 long totalsize = await GetDirectorySizeAsync(directory);
                 string sizeformatted = formatsize(totalsize);
                 this.totalsize += totalsize;
-          
+
                 await main.Dispatcher.InvokeAsync(() =>
                 {
-                    directorytextblock.Text = $"Completed: {name} - {sizeformatted} found";
+                    directorytextbox.Text = "Completed: " + name + " " + sizeformatted;
                 });
             }
 
@@ -503,15 +523,15 @@ namespace Multron_Win_Cleaner
                     if (Directory.Exists(path))
                     {
 
-                        string[] files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+                        HashSet<string> files = Directory.GetFiles(path, "*", SearchOption.AllDirectories).ToHashSet<string>();
 
-                        for (int i = 0; i < files.Length; i++)
+                        await Task.WhenAll(files.Select(async file =>
                         {
                             if (main.cancelstatus == 1)
                             {
-                                break;
+                                return;
                             }
-                            var file = files[i];
+                          
 
 
                             FileInfo fileInfo = new FileInfo(file);
@@ -522,12 +542,15 @@ namespace Multron_Win_Cleaner
                             {
                                 main.label1_Copy.Content = $"Scanning: {file}";
                             });
-                            if(File.Exists(file))
+                            if(System.IO.File.Exists(file))
                             {
                                 await main.Dispatcher.InvokeAsync(async () =>
                                 {
+
                                     if (main.created == 0)
                                     {
+
+                                        main.created = 1;
                                         CheckBox newCheckBox = new CheckBox
                                         {
                                             Content = "File to delete=" + file + "=" + formatsize(size),
@@ -570,10 +593,17 @@ namespace Multron_Win_Cleaner
                                             main.checkboxes.Add(newCheckBox);
                                             main.groupBoxContent.Children.Add(newCheckBox);
                                             main.expander.Content = main.groupBoxContent;
-                                            main.wrapPanelDirectories.Children.Add(main.expander);
+                             
 
                                         });
-                                        main.created = 1;
+                                        await main.Dispatcher.InvokeAsync(() =>
+                                        {
+                                            if (!main.wrapPanelDirectories.Children.Contains(main.expander))
+                                            {
+                                                main.wrapPanelDirectories.Children.Add(main.expander);
+                                            }
+                                        });
+                                     
                                         newCheckBox.Checked += main.CheckBox2_Checked;
                                         newCheckBox.Unchecked += main.CheckBox2_Unchecked;
                                     }
@@ -611,7 +641,7 @@ namespace Multron_Win_Cleaner
                             }
                           
                     
-                        }
+                        }));
                     }
 
                     return size;
@@ -634,9 +664,9 @@ namespace Multron_Win_Cleaner
                 try
                 {
                     string filePath = Environment.CurrentDirectory + "\\" + "database.txt";
-                    if (File.Exists(filePath))
+                    if (System.IO.File.Exists(filePath))
                     {
-                        int totalLines = File.ReadLines(filePath).Count();
+                        int totalLines = System.IO.File.ReadLines(filePath).Count();
                         int currentLine = 0;
 
 
@@ -796,7 +826,7 @@ namespace Multron_Win_Cleaner
                                 if (!line.Contains("#profile#"))
                                 {
 
-                                    if (Directory.Exists(path) || File.Exists(path))
+                                    if (Directory.Exists(path) || System.IO.File.Exists(path))
                                     {
 
                                         if (recommended)
@@ -873,6 +903,8 @@ namespace Multron_Win_Cleaner
                                                     {
                                                         newCheckBox.Content = name + "=" + path + "=warning(" + haswarning + ")";
                                                     }
+                                                    newCheckBox.Checked += main.CheckBox_Checked;
+                                                    newCheckBox.Unchecked += main.CheckBox_Unchecked;
                                                     groupBoxContent.Children.Add(newCheckBox);
 
                                                   
@@ -921,7 +953,8 @@ namespace Multron_Win_Cleaner
                                                
                                                   
                                                     main.wrapPanel1.Children.Add(newCheckBox);
-                                               
+                                                    newCheckBox.Checked += main.CheckBox_Checked;
+                                                    newCheckBox.Unchecked += main.CheckBox_Unchecked;
                                                 });
 
                                             }
@@ -985,14 +1018,14 @@ namespace Multron_Win_Cleaner
         }
         private void CheckBox1_Checked(object sender, RoutedEventArgs e)
         {
-           
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" +  "Settings.txt", "1");
+
+            System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" +  "Settings.txt", "1");
             themeselector.selector(new Uri("Themes/Dark.xaml", UriKind.Relative));
         }
         private void CheckBox1_Unchecked(object sender, RoutedEventArgs e)
         {
             themeselector.selector(new Uri("Themes/Light.xaml", UriKind.Relative));
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt", "0");
+            System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt", "0");
         }
     
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -1100,7 +1133,7 @@ namespace Multron_Win_Cleaner
             }
             public async void run()
             {
-                main.database.RemoveAll(file => file.EndsWith("=logscan"));
+                main.database.RemoveWhere(file => file.EndsWith("=logscan"));
                 long size = main.database.Count();
                 long nowcleaning = 0;
                 TextBlock directorytextblock = null;
@@ -1150,7 +1183,7 @@ namespace Multron_Win_Cleaner
                                 {
                                     fileinfo = new FileInfo(file);
                                     long filesize = fileinfo.Length;
-                                    File.Delete(file);
+                                    System.IO.File.Delete(file);
                                     totalsize += filesize;
                            
                                 } else
@@ -1186,15 +1219,15 @@ namespace Multron_Win_Cleaner
                         nowcleaning = 0;
                     });
                 }
-                foreach (string file in main.database)
+                await Task.WhenAll(main.database.Select(async file =>
                 {
                     if (main.cancelclean == 2)
                     {
-                        break;
+                        return;
                     }
                     string name = main.stringtokenizer(file, "=", 0);
                     string path = main.stringtokenizer(file, "=", 1);
-                  
+
                     await main.Dispatcher.InvokeAsync(() =>
                     {
                         directorytextblock = new TextBlock
@@ -1206,11 +1239,9 @@ namespace Multron_Win_Cleaner
                             HorizontalAlignment = HorizontalAlignment.Stretch,
                             VerticalAlignment = VerticalAlignment.Top
                         };
-                    });
-                    await main.Dispatcher.InvokeAsync(() =>
-                    {
                         main.wrapPanelDirectories.Children.Add(directorytextblock);
                     });
+             
 
                     try
                     {
@@ -1220,19 +1251,19 @@ namespace Multron_Win_Cleaner
                         {
                             main.progressBar1.Value = percentage;
                         });
-                        
-                        if (File.Exists(path))
+
+                        if (System.IO.File.Exists(path))
                         {
                             if (!main.excludedfiles.Contains(file))
                             {
-                              
+
                                 fileinfo = new FileInfo(path);
                                 long filesize = fileinfo.Length;
-                                File.Delete(path);
-                       
-                              
+                                System.IO.File.Delete(path);
+
+
                                 totalsize += filesize;
-                             
+
                             }
                             else
                             {
@@ -1245,25 +1276,26 @@ namespace Multron_Win_Cleaner
                         else if (Directory.Exists(path))
                         {
                             await cleandir(path);
-                        } else
+                        }
+                        else
                         {
                             await main.Dispatcher.InvokeAsync(() =>
                             {
                                 main.label1_Copy.Content = "File not found: " + path;
                             });
-                        
+
                         }
 
                     }
                     catch (Exception ex)
                     {
-               
+
                         await main.Dispatcher.InvokeAsync(() =>
                         {
                             main.label1_Copy.Content = "Cannot delete: " + path + " " + ex.Message;
                         });
                     }
-                }
+                }));
 
                 await main.Dispatcher.InvokeAsync(() =>
                 {
@@ -1296,7 +1328,7 @@ namespace Multron_Win_Cleaner
                         {
                             fileinfo = new FileInfo(file);
                             long filesize = fileinfo.Length;
-                            File.Delete(file);
+                            System.IO.File.Delete(file);
 
 
                             totalsize += filesize;
@@ -1351,6 +1383,7 @@ namespace Multron_Win_Cleaner
                 cancelstatus = 0;
                 scanstatus = 0;
                 cancelclean = 1;
+              
                 Clean clean = new Clean(this);
                 Thread t = new Thread(new ThreadStart(clean.run));
                 t.Start();
@@ -1364,6 +1397,7 @@ namespace Multron_Win_Cleaner
                 Scan scan = new Scan(this);
                 Thread t = new Thread(new ThreadStart(scan.run));
                 t.Start();
+             
                 cancelclean = 0;
                 cancelstatus = 0;
                 scanstatus = 0;
