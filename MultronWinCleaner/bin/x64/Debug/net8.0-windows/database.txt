@@ -1,0 +1,158 @@
+{=Windows
+Local Temp=C:\Users\{##}\AppData\Local\Temp=true
+Windows Temp=C:\Windows\Temp=true
+Prefetch=C:\Windows\Prefetch=true
+Recent=C:\Users\{##}\AppData\Roaming\Microsoft\Windows\Recent=true
+Downloads=C:\Users\{##}\Downloads=false
+Delivery Optimization=C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization=true
+Windows Update Download Folder=C:\WINDOWS\SoftwareDistribution\Download=true
+D3DSCache=C:\Users\{##}\AppData\Local\D3DSCache=false=this option can cause slowness at loading of games for a period, check that if cache so big.
+Windows Logs=C:\Windows\Logs=true
+$Windows.~BT=C:\$Windows.~BT=true=if you have updates which waiting to be done, uncheck that.
+Windows Font Cache=C:\Windows\ServiceProfiles\LocalService\AppData\Local\FontCache=true
+Windows WebCache=C:\Users\{##}\AppData\Local\Microsoft\Windows\WebCache=true
+Downloaded Program Files=C:\Windows\Downloaded Program Files=true
+Windows Error Reporting Files=C:\ProgramData\Microsoft\Windows\WER=true
+Old Driver Files=C:\Windows\System32\DriverStore\FileRepository=true
+Windows Event Logs=C:\Windows\System32\winevt\Logs=true
+Windows Restore Points=C:\System Volume Information=false
+Windows Memory Dump File=C:\Windows\MEMORY.DMP=true
+Windows Thumbnail Cache=C:\Users\{##}\AppData\Local\Microsoft\Windows\Explorer=true
+Windows Search Index Files=C:\ProgramData\Microsoft\Search\Data\Applications\Windows=true
+Crash Dumps (Mini Dumps)=C:\Windows\Minidump=true
+DirectX Shader Cache=C:\Users\{##}\AppData\Local\Microsoft\DirectX=false=this option can cause slowness at loading of games for a period, check that if cache so big.
+Windows File on Demand (FOD) Cache=C:\Windows\servicing\InboxFodMetadataCache=true
+Windows Cortana UI Cache=C:\Windows\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\Cortana.UI\cache=true
+Windows Client WebExperience Cache=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Cache=true
+Windows Client WebExperience Code Cache=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Code Cache=true
+Windows Client WebExperience Service Worker CacheStorage=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Service Worker\CacheStorage=true
+Windows Log Files=C:\Windows\System32\LogFiles=true
+}
+{=Spotify
+Spotify Cache=C:\Users\{##}\AppData\Local\Spotify\Data\=true
+}
+{=Steam
+Steam Cache=C:\Users\{##}\AppData\Local\Steam\htmlcache\Cache=true
+Steam Code Cache=C:\Users\{##}\AppData\Local\Steam\htmlcache\Code Cache=true
+Steam GPU Cache=C:\Users\{##}\AppData\Local\Steam\htmlcache\GPUCache=true
+Steam DawnCache=C:\Users\{##}\AppData\Local\Steam\htmlcache\DawnCache=true 
+Steam IndexedDB Folder=C:\Users\{##}\AppData\Local\Steam\htmlcache\IndexedDB=false
+}
+{=Element Desktop Client
+Element Cache=C:\Users\{##}\AppData\Roaming\Element\Cache=true
+Element Code Cache=C:\Users\{##}\AppData\Roaming\Element\Code Cache=true
+Element GPU Cache=C:\Users\{##}\AppData\Roaming\Element\GPUCache=true
+Element Dawn Graphite Cache=C:\Users\{##}\AppData\Roaming\Element\DawnGraphiteCache=true 
+Element Dawn Web GPU Cache=C:\Users\{##}\AppData\Roaming\Element\DawnWebGPUCache=true
+Element IndexedDB Folder=C:\Users\{##}\AppData\Roaming\Element\IndexedDB=false
+}
+{=Chromium
+#profile#=C:\Users\{##}\AppData\Roaming\Chromium\User Data\
+Chromium Cache=#profileget#=\Cache=true
+Chromium Code Cache=#profileget#=\Code Cache=true
+Chromium Visited Links=#profileget#=\Visited Links=false
+Chromium Top Sites=#profileget#=\Top Sites=false
+Chromium Network Action Predictor=#profileget#=\Network Action Predictor=false
+Chromium History=#profileget#=\History=false
+Chromium History=#profileget#=\Sessions=false
+Chromium IndexedDB=#profileget#=\IndexedDB=false
+Chromium Session Storage=#profileget#=\Session Storage=false
+Chromium Extension State=#profileget#=\Extension State=false
+}
+{=Firefox Local
+#profile#=C:\Users\{##}\AppData\Local\Mozilla\Firefox\Profiles\
+Firefox Cache=#profileget#=\cache2=true
+Firefox Jump List Cache=#profileget#=\jumpListCache=true
+Firefox Startup Cache=#profileget#=\startupCache=true
+}
+{=Firefox Roaming
+#profile#=C:\Users\{##}\AppData\Roaming\Mozilla\Firefox\Profiles\
+Firefox History=#profileget#=\places.sqlite=false
+Firefox History=#profileget#=\places.sqlite-shm=false
+Firefox History=#profileget#=\places.sqlite-wal=false
+Firefox Cookies=#profileget#=\cookies.sqlite=false
+Firefox Cookies=#profileget#=\cookies.sqlite-shm=false
+Firefox Cookies=#profileget#=\cookies.sqlite-wal=false
+Firefox Storage=#profileget#=\storage\default=false
+}
+{=Opera Browser
+#profile#=C:\Users\{##}\AppData\Roaming\Opera Software\Opera Stable\User Data\
+Opera Browser Cache=#profileget#=\Cache=true
+Opera Browser Code Cache=#profileget#=\Code Cache=true
+Opera Browser Visited Links=#profileget#=\Visited Links=false
+Opera Browser Top Sites=#profileget#=\Top Sites=false
+Opera Browser Network Action Predictor=#profileget#=\Network Action Predictor=false
+Opera Browser History=#profileget#=\History=false
+Opera Browser History=#profileget#=\Sessions=false
+Opera Browser IndexedDB=#profileget#=\IndexedDB=false
+Opera Browser Session Storage=#profileget#=\Session Storage=false
+Opera Browser Extension State=#profileget#=\Extension State=false
+}
+{=Opera GX Browser
+#profile#=C:\Users\{##}\AppData\Roaming\Opera Software\Opera GX\User Data\
+Opera GX Browser Cache=#profileget#=\Cache=true
+Opera GX Browser Code Cache=#profileget#=\Code Cache=true
+Opera GX Browser Visited Links=#profileget#=\Visited Links=false
+Opera GX Browser Top Sites=#profileget#=\Top Sites=false
+Opera GX Browser Network Action Predictor=#profileget#=\Network Action Predictor=false
+Opera GX Browser History=#profileget#=\History=false
+Opera GX Browser History=#profileget#=\Sessions=false
+Opera GX Browser IndexedDB=#profileget#=\IndexedDB=false
+Opera GX Browser Session Storage=#profileget#=\Session Storage=false
+Opera GX Browser Extension State=#profileget#=\Extension State=false
+}
+{=Brave Browser
+#profile#=C:\Users\{##}\AppData\Local\BraveSoftware\Brave-Browser\User Data\
+Brave Browser Cache=#profileget#=\Cache=true
+Brave Browser Code Cache=#profileget#=\Code Cache=true
+Brave Browser Visited Links=#profileget#=\Visited Links=false
+Brave Browser Top Sites=#profileget#=\Top Sites=false
+Brave Browser Network Action Predictor=#profileget#=\Network Action Predictor=false
+Brave Browser History=#profileget#=\History=false
+Brave Browser History=#profileget#=\Sessions=false
+Brave Browser IndexedDB=#profileget#=\IndexedDB=false
+Brave Browser Session Storage=#profileget#=\Session Storage=false
+Brave Browser Extension State=#profileget#=\Extension State=false
+}
+{=Google Chrome
+#profile#=C:\Users\{##}\AppData\Local\Google\Chrome\User Data\
+Google Chrome Cache=#profileget#=\Cache=true
+Google Chrome Code Cache=#profileget#=\Code Cache=true
+Google Chrome Visited Links=#profileget#=\Visited Links=false
+Google Chrome Top Sites=#profileget#=\Top Sites=false
+Google Chrome Network Action Predictor=#profileget#=\Network Action Predictor=false
+Google Chrome History=#profileget#=\History=false
+Google Chrome History=#profileget#=\Sessions=false
+Google Chrome IndexedDB=#profileget#=\IndexedDB=false
+Google Chrome Session Storage=#profileget#=\Session Storage=false
+Google Chrome Extension State=#profileget#=\Extension State=false
+}
+{=Microsoft Edge
+#profile#=C:\Users\{##}\AppData\Local\Microsoft\Edge\User Data\
+Microsoft Edge Cache=#profileget#=\Cache=true
+Microsoft Edge Code Cache=#profileget#=\Code Cache=true
+Microsoft Edge Visited Links=#profileget#=\Visited Links=false
+Microsoft Edge Top Sites=#profileget#=\Top Sites=false
+Microsoft Edge Network Action Predictor=#profileget#=\Network Action Predictor=false
+Microsoft Edge History=#profileget#=\History=false
+Microsoft Edge History=#profileget#=\Sessions=false
+Microsoft Edge IndexedDB=#profileget#=\IndexedDB=false
+Microsoft Edge Session Storage=#profileget#=\Session Storage=false
+Microsoft Edge Extension State=#profileget#=\Extension State=false
+}
+{=Discord
+Discord Cache=C:\Users\{##}\AppData\Roaming\discord\Cache=true
+Discord Code Cache=C:\Users\{##}\AppData\Roaming\discord\Code Cache=true
+Discord GPU Cache=C:\Users\{##}\AppData\Roaming\discord\GPUCache=true
+Discord DawnCache=C:\Users\{##}\AppData\Roaming\discord\DawnCache=true 
+Discord CrashPad Folder=C:\Users\{##}\AppData\Roaming\discord\Crashpad=true
+}
+{=Signal
+Signal Update Cache=C:\Users\{##}\AppData\Roaming\Signal\update-cache=true
+}
+{=NVIDIA
+Nvidia Downloaded Files=C:\ProgramData\NVIDIA Corporation\Downloader=true
+}
+{=WhatsApp
+WhatsApp Shared Folder=C:\Users\{##}\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalState\shared=false
+}
