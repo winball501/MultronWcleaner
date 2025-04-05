@@ -1,0 +1,123 @@
+﻿<Window x:Class="MultronWinCleaner.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Height="534" Width="800"
+        WindowStyle="None" ResizeMode="NoResize" Background="{DynamicResource WindowBackground}"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        WindowStartupLocation="CenterScreen"
+         Loaded="Window_Loaded">
+         
+    <Window.Resources>
+       
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Margin" Value="0,15,0,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#45a049"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+ 
+        <Style x:Key="CustomCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource Text}"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+ 
+        <ControlTemplate x:Key="CustomCheckBoxTemplate" TargetType="CheckBox">
+            <Grid>
+           
+                <Ellipse x:Name="OuterCircle" Width="30" Height="30" Stroke="#CCCCCC" StrokeThickness="2" Fill="Transparent" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+              
+                <Ellipse x:Name="InnerCircle" Width="20" Height="20" Fill="Transparent" Stroke="#CCCCCC" StrokeThickness="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+
+           
+                <Path x:Name="CheckMark" Visibility="Collapsed" Data="M0,0 L1,1 L2,0" Stroke="White" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" Margin="40,0,0,0"/>
+            </Grid>
+ 
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="InnerCircle" Property="Fill" Value="#4CAF50"/>
+                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+ 
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="0,0,0,10">
+
+        <Button Content="&#x2716;" FontSize="12" FontWeight="Bold" Foreground="white" Background="#B61423" BorderBrush="Transparent"
+    Width="25" Height="25" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Click="CloseButton_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="15">
+                     
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+    
+        <Border Background="{DynamicResource ButtonHoverBackground}" CornerRadius="15" Padding="20" Margin="40,40,40,34" BorderBrush="#DDDDDD" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="{DynamicResource Text}"/>
+
+                <TextBlock Text="Automatic Cleaning" FontSize="20" FontWeight="SemiBold" Margin="0,20,0,5" Foreground="{DynamicResource Text}"/>
+                <CheckBox Content="Enable Automatic Cleaning" Name="chkAutoClean" Foreground="{DynamicResource Text}" Margin="0,5" Style="{StaticResource CustomCheckBoxStyle}" Template="{StaticResource CustomCheckBoxTemplate}" Width="341" Checked="chkAutoClean_Checked"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,5">
+                    <TextBlock Text="Cleaning Interval (minutes):" VerticalAlignment="Center" Foreground="{DynamicResource Text}" Margin="0,0,10,0"/>
+                    <TextBox Name="txtCleaningInterval" Width="100" Margin="0,0,0,0" Text="15" Style="{StaticResource ModernTextBoxStyle}"
+                             PreviewTextInput="txtCleaningInterval_PreviewTextInput" TextChanged="txtCleaningInterval_TextChanged_1"/>
+                </StackPanel>
+
+                <TextBlock Text="Tray Icon" FontSize="20" FontWeight="SemiBold" Margin="0,20,0,5" Foreground="{DynamicResource Text}"/>
+                <CheckBox Content="Enable Tray Icon" Name="chkTrayIcon" Foreground="{DynamicResource Text}" Margin="0,5" Style="{StaticResource CustomCheckBoxStyle}" Template="{StaticResource CustomCheckBoxTemplate}" Width="338" Checked="chkTrayIcon_Checked"/>
+
+            
+                <Button Content="Save Settings" Style="{StaticResource ModernButtonStyle}" Click="SaveSettings_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

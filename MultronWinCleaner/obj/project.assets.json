@@ -1,0 +1,165 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0-windows7.0": {
+      "Hardcodet.NotifyIcon.Wpf/1.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/net451/Hardcodet.Wpf.TaskbarNotification.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net451/Hardcodet.Wpf.TaskbarNotification.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Hardcodet.Wpf.TaskbarNotification/1.0.5": {
+        "type": "package",
+        "dependencies": {
+          "Hardcodet.NotifyIcon.Wpf": "1.0.5"
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Hardcodet.NotifyIcon.Wpf/1.0.5": {
+      "sha512": "krb3mprxu3Ehp08L+8llo4NRi37MRboDJgFb9Xe+u7LVOIZYb0IdPyhPl7Rb1iV5xaKpMjFkMqu0aoheH8pMuQ==",
+      "type": "package",
+      "path": "hardcodet.notifyicon.wpf/1.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "hardcodet.notifyicon.wpf.1.0.5.nupkg.sha512",
+        "hardcodet.notifyicon.wpf.nuspec",
+        "lib/net35-client/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net35-client/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net35-client/Hardcodet.Wpf.TaskbarNotification.xml",
+        "lib/net35/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net35/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net35/Hardcodet.Wpf.TaskbarNotification.xml",
+        "lib/net40-client/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net40-client/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net40-client/Hardcodet.Wpf.TaskbarNotification.xml",
+        "lib/net40/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net40/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net40/Hardcodet.Wpf.TaskbarNotification.xml",
+        "lib/net45/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net45/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net45/Hardcodet.Wpf.TaskbarNotification.xml",
+        "lib/net451/Hardcodet.Wpf.TaskbarNotification.dll",
+        "lib/net451/Hardcodet.Wpf.TaskbarNotification.pdb",
+        "lib/net451/Hardcodet.Wpf.TaskbarNotification.xml",
+        "readme.txt"
+      ]
+    },
+    "Hardcodet.Wpf.TaskbarNotification/1.0.5": {
+      "sha512": "0UpQpF/vLXCLONVAp8Tc43qRWmf985TCV2MwzOgdwHJ5c7cSiNW4VtEuiZcdooW84kqdZnxnL4AM3/Xs9JI/mQ==",
+      "type": "package",
+      "path": "hardcodet.wpf.taskbarnotification/1.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "hardcodet.wpf.taskbarnotification.1.0.5.nupkg.sha512",
+        "hardcodet.wpf.taskbarnotification.nuspec",
+        "readme.txt"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0-windows7.0": [
+      "Hardcodet.Wpf.TaskbarNotification >= 1.0.5"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\winball501\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\winball501\\Desktop\\MultronWcleaner-mwc_1.8.1b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "projectName": "MultronWinCleaner",
+      "projectPath": "C:\\Users\\winball501\\Desktop\\MultronWcleaner-mwc_1.8.1b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "packagesPath": "C:\\Users\\winball501\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\winball501\\Desktop\\MultronWcleaner-mwc_1.8.1b\\MultronWinCleaner\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\winball501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0-windows"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.200"
+    },
+    "frameworks": {
+      "net8.0-windows7.0": {
+        "targetAlias": "net8.0-windows",
+        "dependencies": {
+          "Hardcodet.Wpf.TaskbarNotification": {
+            "target": "Package",
+            "version": "[1.0.5, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          },
+          "Microsoft.WindowsDesktop.App.WPF": {
+            "privateAssets": "none"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Hardcodet.NotifyIcon.Wpf 1.0.5' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Hardcodet.NotifyIcon.Wpf",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    }
+  ]
+}
