@@ -1,0 +1,90 @@
+﻿<Window x:Class="MultronWinCleaner.Utilities"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Utilities" Height="500" Width="800"
+        WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen" Background="{DynamicResource WindowBackground}">
+
+    <Grid>
+ 
+        <Border Height="40" Background="Transparent"
+                MouseLeftButtonDown="TopPanel_MouseLeftButtonDown"
+                VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+ 
+        <Grid Margin="0,40,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+ 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20">
+                <TextBlock Text="🛠 Extra Utilities" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Text}" />
+            </StackPanel>
+
+     
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+              
+                <Border Grid.Column="0" Margin="10" Padding="10" Background="{DynamicResource ButtonHoverBackground}" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Firewall Rule Cleaner" FontSize="14" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,10"/>
+                        <TextBlock Text="Removes broken or orphaned rules from Windows Firewall." 
+                   FontSize="12" Foreground="White" TextWrapping="Wrap"/>
+
+                  
+                        <ProgressBar x:Name="FirewallProgress" Height="18" Minimum="0" Maximum="100" Value="0"
+                     Margin="0,10,0,5" Foreground="LimeGreen" Background="#444"
+                     Visibility="Collapsed"/>
+
+                      
+                        <ListBox x:Name="FirewallInvalidRulesList" Height="120" Background="#222" Foreground="White" 
+                 BorderBrush="Transparent" Margin="0,0,0,5"
+                 Visibility="Collapsed">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                      
+                        <Label x:Name="FirewallScanResultLabel" FontWeight="Bold" FontSize="13" Margin="0,5,0,0" Visibility="Collapsed" HorizontalAlignment="Left"/>
+
+                        <Button x:Name="FirewallScan" Content="Start Scan" Margin="0,10,0,0" Width="150"
+                HorizontalAlignment="Left" Click="FirewallClean_Click"/>
+                    </StackPanel>
+                </Border>
+            
+                <Border Grid.Column="1" Margin="10" Padding="10" Background="{DynamicResource ButtonHoverBackground}" CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock Text="Large File Finder" FontSize="14" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,10"/>
+                        <TextBlock Text="Scans a selected folder for the largest files consuming disk space." 
+                                   FontSize="12" Foreground="White" TextWrapping="Wrap"/>
+                        <Button Content="Launch" Margin="0,15,0,0" Width="150"
+                                HorizontalAlignment="Left" Click="LargeFilesScan_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+   
+        <Button Content="✖" FontSize="12" FontWeight="Bold" Foreground="white" Background="#B61423" BorderBrush="Transparent"
+                Width="25" Height="24" HorizontalAlignment="Right" VerticalAlignment="Top" Click="CloseButton_Click" RenderTransformOrigin="-0.55,0.5" Margin="0,8,10,0">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+    </Grid>
+</Window>
