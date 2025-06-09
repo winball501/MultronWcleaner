@@ -1,0 +1,141 @@
+﻿<Window x:Class="MultronWinCleaner.LargeFileFinder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Large File Finder" Height="672" Width="900"
+        WindowStyle="None" ResizeMode="CanResizeWithGrip" AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackground}">
+
+    <Grid>
+        <Border Height="40" Background="{DynamicResource ButtonHoverBackground}"
+                MouseLeftButtonDown="TopPanel_MouseLeftButtonDown"
+                VerticalAlignment="Top" HorizontalAlignment="Stretch"/>
+
+        <Button Content="✖" FontSize="12" FontWeight="Bold" Foreground="White"
+                Background="#B61423"
+                BorderBrush="Transparent" Width="25" Height="24" HorizontalAlignment="Right"
+                VerticalAlignment="Top" Click="CloseButton_Click" Margin="0,8,10,0" Cursor="Hand">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <Grid Margin="0,40,0,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,20" Grid.Row="0">
+                <TextBlock Text="📁 Large File Finder" FontSize="20" FontWeight="Bold"
+                           Foreground="{DynamicResource Text}"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1" Margin="20" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <Border Padding="15" Background="{DynamicResource ControlBackground}" CornerRadius="10"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10" Grid.Row="0">
+                            <Button Content="＋ Add Folder" Width="120" Margin="0,0,10,0" Click="AddFolder_Click"
+                                    Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource Text}" BorderBrush="Transparent" Cursor="Hand"/>
+                            <Button Content="✖ Remove Selected" Width="140" Click="RemoveSelectedFolder_Click"
+                                    Background="{DynamicResource ButtonDangerBackground}" Foreground="{DynamicResource Text}" BorderBrush="Transparent" Cursor="Hand"/>
+                        </StackPanel>
+
+                        <ListBox x:Name="FolderListBox" Height="80" Background="{DynamicResource ListBoxBackground}" Foreground="{DynamicResource Text}"
+                                 BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,10" Grid.Row="1"/>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10" Grid.Row="2">
+                            <Button Name="StartScan" Content="▶ Start Scan" Width="150" Height="32" Click="StartScan_Click"
+                                    Background="{DynamicResource ButtonSuccessBackground}" Foreground="{DynamicResource Text}" FontWeight="Bold" BorderBrush="Transparent" Cursor="Hand" Margin="0,0,10,0"/>
+                            <Button Name="CancelScan" Content="⏹ Cancel" Width="100" IsEnabled="false" Height="32" Click="CancelScan_Click"
+            Background="{DynamicResource ButtonDangerBackground}" Foreground="{DynamicResource Text}"
+            FontWeight="Bold" BorderBrush="Transparent" Cursor="Hand" Margin="0,0,20,0"/>
+                            <TextBlock Text="Min Size:" VerticalAlignment="Center" Margin="0,0,5,0"
+                                       Foreground="{DynamicResource Text}" FontWeight="Bold"/>
+                            <TextBox x:Name="SizeThresholdTextBox" Width="60" Height="22"
+                                     Background="{DynamicResource ListBoxBackground}" Foreground="{DynamicResource Text}" 
+                                     BorderBrush="{DynamicResource BorderBrush}" Text="100" Margin="0,0,10,0"/>
+                            <ComboBox x:Name="SizeUnitComboBox" Width="80"
+                                      Background="Black" Foreground="Black"
+                                      BorderBrush="{DynamicResource BorderBrush}" SelectedIndex="0">
+                                <ComboBoxItem Content="MB"/>
+                                <ComboBoxItem Content="GB"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <DataGrid x:Name="LargeFilesDataGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  Background="{DynamicResource ListBoxBackground}"
+                                  Foreground="{DynamicResource Text}"
+                                  BorderBrush="Transparent"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  MinHeight="200"
+                                  Grid.Row="3"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  ScrollViewer.CanContentScroll="False"
+                                  Margin="0,10,0,45">
+                            <DataGrid.Resources>
+                               
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="Foreground" Value="{DynamicResource Text}"/>
+                                    <Setter Property="Background" Value="{DynamicResource ControlBackground}"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                </Style>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="Background" Value="{DynamicResource ListBoxBackground}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource Text}"/>
+                                    <Setter Property="Padding" Value="6,2"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource ButtonBackground}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource Text}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="📂 Open File Location" Click="OpenFileLocation_Click"/>
+                                 
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="200"/>
+                                <DataGridTextColumn Header="Size" Binding="{Binding SizeMB}" Width="100"/>
+                                <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="1000"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Vertical" Margin="0,10,0,0" Grid.Row="4">
+                            <Label x:Name="ScanResultLabel" Content="Ready!" FontSize="13" FontWeight="Bold"
+                                   Foreground="{DynamicResource ButtonSuccessBackground}"/>
+                            <ProgressBar x:Name="ScanProgressBar" Height="18" Minimum="0" Maximum="100"
+                                         Foreground="{DynamicResource ProgressBarForeground}" Background="{DynamicResource ProgressBarBackground}"
+                                         Visibility="Visible"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
