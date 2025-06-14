@@ -1,0 +1,167 @@
+﻿<Window x:Class="MultronWinCleaner.Duplicate_File_Finder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Duplicate File Finder"
+        Height="600" Width="900"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackground}">
+
+    <Grid>
+  
+        <Border Background="{DynamicResource ButtonHoverBackground}" Padding="2" VerticalAlignment="Top" MouseLeftButtonDown="TopPanel_MouseLeftButtonDown">
+            <Grid Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0">
+                    <TextBlock Text="Duplicate File Finder" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource Text}"/>
+                    <TextBlock Text=" | Multron Tools" FontSize="12" Foreground="{DynamicResource SecondaryText}" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <Button Content="-" Click="MinimizeButton_Click" FontSize="14" FontWeight="Bold" 
+                        Background="Transparent" Foreground="White" BorderBrush="Transparent" Width="40" Grid.Column="1" Height="30"/>
+
+                <Button Content="⛶" Click="MaximizeButton_Click" FontSize="14" FontWeight="Bold" 
+                        Background="Transparent" Foreground="White" BorderBrush="Transparent" Width="40" Grid.Column="2"/>
+
+                <Button Content="X" Click="CloseButton_Click" FontSize="14" FontWeight="Bold"
+                        Background="{DynamicResource ButtonDangerBackground}" Foreground="White" BorderBrush="Transparent" Width="40" Grid.Column="3"/>
+            </Grid>
+        </Border>
+
+      
+        <Grid Margin="20,50,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+   
+            <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Grid.Column="0" Margin="0,0,15,0">
+                <StackPanel Margin="15">
+                    <TextBlock Text="Scan Directory:" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{DynamicResource Text}"/>
+
+                    <ListBox x:Name="FolderListBox" Height="100" Background="{DynamicResource TextBoxBackground}" 
+                             BorderBrush="{DynamicResource BorderBrush}" Foreground="{DynamicResource Text}" Margin="0,0,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Button Content="Browse..." x:Name="BrowseButton" Click="BrowseButton_Click"
+                                Background="{DynamicResource ButtonHoverBackground}" Foreground="White" BorderBrush="Transparent" Width="100" Margin="0,0,5,0"/>
+                        <Button Content="Remove" x:Name="RemoveButton" Click="RemoveButton_Click"
+                                Background="{DynamicResource ButtonDangerBackground}" Foreground="White" BorderBrush="Transparent" Width="100"/>
+                    </StackPanel>
+
+                    <Button Content="Scan for Duplicates" x:Name="ScanButton" Click="ScanButton_Click"
+                            Background="{DynamicResource AccentColor}" Foreground="White" BorderBrush="Transparent" Height="35" Margin="0,0,0,10"/>
+
+                    <Separator Margin="0,20,0,10" Background="{DynamicResource SeparatorBrush}"/>
+
+                    <ProgressBar x:Name="ScanProgressBar" Height="20" Margin="0,0,0,10"
+                                 Foreground="{DynamicResource AccentColor}" Visibility="Collapsed"/>
+
+                    <TextBlock x:Name="StatusText" Text="Idle" FontStyle="Italic" Foreground="{DynamicResource  Text}"/>
+                </StackPanel>
+            </Border>
+
+      
+            <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Grid.Column="1">
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="Duplicate Files" FontSize="16" FontWeight="Bold" 
+                                   Foreground="{DynamicResource Text}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                        <Button Content="Clear List" Click="ClearListButton_Click"
+                                Background="{DynamicResource ButtonDangerBackground}" Foreground="White" BorderBrush="Transparent"
+                                Width="100" Height="30" DockPanel.Dock="Right"/>
+                    </DockPanel>
+
+                    <DataGrid x:Name="DuplicatesDataGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              Background="{DynamicResource DataGridBackground}"
+                              Foreground="{DynamicResource Text}"
+                              BorderBrush="{DynamicResource BorderBrush}"
+                              RowBackground="{DynamicResource DataGridRowBackground}"
+                              AlternatingRowBackground="{DynamicResource DataGridAlternatingRowBackground}"
+                              EnableRowVirtualization="True"
+                              EnableColumnVirtualization="True"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              MinColumnWidth="100"
+                              RowHeight="32"
+                              ColumnHeaderHeight="34"
+                              Grid.Row="1"
+                              IsReadOnly="True"
+                              ItemsSource="{Binding GroupedDuplicateFiles}">
+
+                        <DataGrid.Resources>
+                       
+                            <Style TargetType="GroupItem">
+                                <Setter Property="Margin" Value="0,0,0,10"/>
+                            </Style>
+
+                           
+
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#EEE"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#222"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                        </DataGrid.Resources>
+
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Delete" Click="DeleteSelected_Click"/>
+                                <MenuItem Header="Open File Location" Click="OpenFolder_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+
+                        <DataGrid.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource GroupHeaderBackground}" 
+                                                BorderBrush="{DynamicResource AccentColor}" BorderThickness="1"
+                                                CornerRadius="6" Padding="10" Margin="0,10,0,5">
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Name}" 
+                                                           FontWeight="Bold" 
+                                                           FontSize="14" 
+                                                           Foreground="{DynamicResource AccentColor}" />
+                                                <TextBlock Text="{Binding ItemCount, StringFormat='Files: {0}'}"
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource SecondaryText}" 
+                                                           Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </DataGrid.GroupStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="*" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding FilePath}" Width="2*" />
+                            <DataGridTextColumn Header="Size (KB)" Binding="{Binding FileSize}" Width="100" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
