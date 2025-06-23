@@ -1,0 +1,25 @@
+scheduletype:custom days
+postaction:do nothing
+minutes:3
+starttime:00:57
+endtime:00:58
+day1:1
+day2:1
+day3:1
+day4:1
+day5:1
+day6:1
+day7:1
+
+automemclean:1
+skipiflow:1
+sendnotify:1
+mon:1
+
+turboboost:0
+autoclean:0
+trayicon:0
+onlylowcpu:0
+runifactive:0
+batterylow:0
+themes:0

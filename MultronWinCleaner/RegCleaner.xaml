@@ -1,0 +1,138 @@
+﻿<Window x:Class="MultronWinCleaner.RegCleaner"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Registry Cleaner" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResizeWithGrip"
+        WindowStyle="None"
+        Background="{DynamicResource WindowBackground}"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        
+        <Style x:Key="RoundedTextBox" TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Background" Value="{DynamicResource TextBoxBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource WindowBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+          
+            <RowDefinition Height="*"/>
+         
+        </Grid.RowDefinitions>
+ 
+        <DockPanel Grid.Row="0" Background="{DynamicResource PanelBackground}" 
+                   MouseDown="TopPanel_MouseLeftButtonDown"
+                   LastChildFill="False">
+
+            <TextBlock Text="🧹 Multron Registry Cleaner" FontSize="18" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimary}"
+                       Margin="16,0" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,12,0">
+                <Button Content="🗕" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                        Foreground="{DynamicResource ButtonIconForeground}" Click="MinimizeButton_Click" Cursor="Hand"/>
+                <Button Content="🗖" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                        Foreground="{DynamicResource ButtonIconForeground}" Click="MaximizeButton_Click" Cursor="Hand"/>
+                <Button Content="✖" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                        Foreground="{DynamicResource DangerButtonBackground}" Click="CloseButton_Click" Cursor="Hand"/>
+            </StackPanel>
+        </DockPanel>
+
+      
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+           
+            <Grid Grid.Row="0" Margin="0,0,0,12" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="290"/>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="75"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Name="SearchBox"
+                         Background="#F0F0F0"
+                         Foreground="Black"
+                         BorderBrush="#CCC"
+                         BorderThickness="1"
+                         Height="36"
+                         FontSize="18" 
+                         Padding="10,4"
+                         Margin="0,0,8,0"
+                         TextChanged="SearchBox_TextChanged"
+                         Style="{StaticResource RoundedTextBox}"/>
+
+                <Button x:Name="ScanButton" Grid.Column="1" Content="Scan" 
+                        Style="{DynamicResource ModernButtonStyle}" 
+                        Height="36" Click="ScanButton_Click_1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65"/>
+
+                <Button x:Name="CleanButton" Grid.Column="2" Content="Clean" 
+                        Style="{DynamicResource ModernButtonStyle}" 
+                        Height="36" IsEnabled="False" Margin="0,0,10,0" Click="CleanButton_Click"/>
+
+                <Button x:Name="CancelScanButton" Grid.Column="3" Content="Cancel" 
+                        Style="{DynamicResource ModernButtonStyle}"
+                        Height="36" Visibility="Collapsed" Click="CancelScanButton_Click_1"/>
+
+                <Label x:Name="IssuesCountLabel" Grid.Column="4" 
+                       Content="Issues found: 0" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Right"
+                       Foreground="{DynamicResource TextPrimary}"/>
+            </Grid>
+
+        
+            <Border Grid.Row="1" Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="10">
+                <ListView x:Name="ResultsListView" Background="{DynamicResource ListViewBackground}" BorderThickness="0" FontSize="14"
+                          Foreground="{DynamicResource TextPrimary}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Registry Path" Width="520" DisplayMemberBinding="{Binding Path}"/>
+                            <GridViewColumn Header="Issue Type" Width="200" DisplayMemberBinding="{Binding IssueType}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+
+          
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0" >
+                <ProgressBar x:Name="ScanProgressBar" Width="180" Height="20" Minimum="0" Maximum="100"
+                             Visibility="Collapsed"
+                             Foreground="{DynamicResource ProgressBarForeground}"
+                             Background="{DynamicResource ProgressBarBackground}"/>
+                <Button x:Name="CleanSelectedButton" Content="Clean Selected" 
+                        Style="{DynamicResource ModernButtonStyle}"
+                        Width="140" IsEnabled="False" Click="CleanSelectedButton_Click"/>
+                <Button x:Name="ExportResultsButton" Content="Export Results" 
+                        Style="{DynamicResource ModernButtonStyle}"
+                        Width="140" IsEnabled="False" Click="ExportResultsButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
