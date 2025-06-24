@@ -1,0 +1,134 @@
+﻿<Window
+    x:Class="MultronWinCleaner.LargeFileFinder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Large File Finder"
+    Height="600" Width="900"
+    WindowStyle="None"
+    ResizeMode="CanResizeWithGrip"
+    AllowsTransparency="True"
+    WindowStartupLocation="CenterScreen"
+    Background="{DynamicResource WindowBackground}">
+
+    <Grid> 
+        <Border Background="{DynamicResource ButtonHoverBackground}" Padding="2" VerticalAlignment="Top" MouseLeftButtonDown="TopPanel_MouseLeftButtonDown">
+            <Grid Height="30">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0">
+                    <TextBlock Text="Large File Finder" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource Text}"/>
+                    <TextBlock Text=" | Multron Tools" FontSize="12" Foreground="{DynamicResource SecondaryText}" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <Button Content="-" Click="MinimizeButton_Click" Grid.Column="1"
+        FontSize="14" FontWeight="Bold" 
+        Background="Transparent" Foreground="White" BorderBrush="Transparent" 
+        Width="40" Height="30"/>
+
+                <Button Content="⛶" Click="MaximizeButton_Click" Grid.Column="2"
+        FontSize="14" FontWeight="Bold" 
+        Background="Transparent" Foreground="White" BorderBrush="Transparent" 
+        Width="40" Height="30"/>
+
+                <Button Content="X" Click="CloseButton_Click" Grid.Column="3"
+        FontSize="14" FontWeight="Bold"
+        Background="{DynamicResource ButtonDangerBackground}" Foreground="White" BorderBrush="Transparent" 
+        Width="40" Height="30"/>
+            </Grid>
+        </Border>
+
+     
+        <Grid Margin="20,50,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+ 
+            <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Grid.Column="0" Margin="0,0,15,0">
+                <StackPanel Margin="15">
+                    <TextBlock Text="Scan Directory:" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{DynamicResource Text}"/>
+                    <ListBox x:Name="FolderListBox" Height="100"
+                             Background="{DynamicResource TextBoxBackground}"
+                             Foreground="{DynamicResource Text}"
+                             BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                        <Button Content="Browse..." Click="AddFolder_Click" Width="100" Margin="0,0,5,0"
+                                Style="{DynamicResource RoundedButtonStyle}"/>
+                        <Button Content="Remove" Click="RemoveSelectedFolder_Click" Width="100"
+                                Style="{DynamicResource DangerButtonStyle}"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Min File Size:" FontWeight="SemiBold" Margin="0,10,0,5" Foreground="{DynamicResource Text}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBox x:Name="SizeThresholdTextBox" Text="100" Width="100"
+                                 Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource Text}" BorderBrush="{DynamicResource BorderBrush}"/>
+                        <ComboBox x:Name="SizeUnitComboBox" Width="80" Margin="10,0,0,0"
+                                  Background="{DynamicResource TextBoxBackground}" BorderBrush="{DynamicResource BorderBrush}" Foreground="Black">
+                            <ComboBoxItem Content="KB"/>
+                            <ComboBoxItem Content="MB"/>
+                            <ComboBoxItem Content="GB"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Button Name="StartScan" Content="Scan for Large Files" Click="StartScan_Click" Height="35" Margin="0,0,0,10"
+                            Style="{DynamicResource RoundedButtonStyle}"/>
+
+                    <Button Name="CancelScan" Content="Cancel Scan" Click="CancelScan_Click" Height="35" Margin="0,0,0,10" IsEnabled="False"
+                            Style="{DynamicResource DangerButtonStyle}"/>
+
+                    <Separator Margin="0,20,0,10" Background="{DynamicResource SeparatorBrush}"/>
+                    <ProgressBar x:Name="ScanProgressBar" Height="20" Margin="0,0,0,10"
+                                 Foreground="{DynamicResource AccentBrush}" Visibility="Collapsed"/>
+                    <TextBlock x:Name="ScanResultLabel" Text="Idle" FontStyle="Italic" Foreground="{DynamicResource Text}"/>
+                </StackPanel>
+            </Border>
+
+         
+            <Border Background="{DynamicResource PanelBackground}" CornerRadius="8" Grid.Column="1">
+                <Grid Margin="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="Large Files" FontSize="16" FontWeight="Bold"
+                                   Foreground="{DynamicResource Text}" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                        <Button Content="Clear List" Click="ClearListButton_Click" Width="100" Height="30" DockPanel.Dock="Right"
+                                Style="{DynamicResource DangerButtonStyle}"/>
+                    </DockPanel>
+
+                    <DataGrid x:Name="LargeFilesDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False"
+                              HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                              Background="{DynamicResource DataGridBackground}" Foreground="{DynamicResource Text}"
+                              BorderBrush="{DynamicResource BorderBrush}"
+                              RowBackground="{DynamicResource DataGridRowBackground}"
+                              AlternatingRowBackground="{DynamicResource DataGridAlternatingRowBackground}"
+                              EnableRowVirtualization="True" EnableColumnVirtualization="True"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              IsReadOnly="True">
+
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Open File Location" Click="OpenFileLocation_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="100"/>
+                            <DataGridTextColumn Header="Size (MB)" Binding="{Binding SizeMB}" Width="100"/>
+                            <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
