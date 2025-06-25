@@ -1,0 +1,20 @@
+﻿MultronWinCleaner
+1.0.0.0
+
+winexe
+C#
+.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\
+MultronWinCleaner
+none
+false
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\App.xaml
+16970888911
+11844305430
+22-1200828505
+225-1038061917
+AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;LargeFileFinder.xaml;MainWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;RegCleaner.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
+
+False
+
