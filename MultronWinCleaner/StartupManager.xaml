@@ -1,0 +1,185 @@
+﻿<Window x:Class="MultronWinCleaner.StartupManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Startup Manager" Height="624" Width="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackground}"
+        FontFamily="Segoe UI"
+        WindowStyle="None" ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+     
+        <Style x:Key="ToggleSwitchStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="70"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <Border x:Name="SwitchBackground"
+                                    CornerRadius="17.5"
+                                    Background="{DynamicResource ToggleSwitchOffBackground}"
+                                    BorderBrush="{DynamicResource ToggleSwitchBorder}"
+                                    BorderThickness="1"/>
+                            <Ellipse x:Name="SwitchKnob"
+                                     Width="29" Height="29"
+                                     Fill="{DynamicResource ToggleSwitchKnob}"
+                                     Margin="3,3,0,3"
+                                     HorizontalAlignment="Left"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="SwitchBackground" Property="Background" Value="{DynamicResource ToggleSwitchOnBackground}"/>
+                                <Setter TargetName="SwitchKnob" Property="HorizontalAlignment" Value="Right"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="SwitchBackground" Property="Opacity" Value="0.5"/>
+                                <Setter TargetName="SwitchKnob" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+ 
+        <SolidColorBrush x:Key="ToggleSwitchOffBackground" Color="#444" />
+        <SolidColorBrush x:Key="ToggleSwitchOnBackground" Color="#4CAF50" />
+        <SolidColorBrush x:Key="ToggleSwitchKnob" Color="#FFF" />
+        <SolidColorBrush x:Key="ToggleSwitchBorder" Color="#666" />
+ 
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#333"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#555"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+ 
+        <Border Background="{DynamicResource PanelBackground}" Height="40" VerticalAlignment="Top">
+            <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="🚀 Multron Startup Manager"
+                   FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" 
+                   VerticalAlignment="Center" Margin="12,0,0,0"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <Button Content="🗕" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                    Foreground="{DynamicResource ButtonIconForeground}" Click="MinimizeButton_Click" Cursor="Hand"/>
+                    <Button Content="🗖" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                    Foreground="{DynamicResource ButtonIconForeground}" Click="MaximizeButton_Click" Cursor="Hand"/>
+                    <Button Content="✖" Width="32" Height="32" Background="Transparent" BorderBrush="Transparent"
+                    Foreground="{DynamicResource DangerButtonBackground}" Click="CloseButton_Click" Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    
+        <Grid Margin="0,40,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+ 
+            <Grid Grid.Row="1" Margin="10,0,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="264*"/>
+                    <ColumnDefinition Width="13*"/>
+                    <ColumnDefinition Width="163*"/>
+                </Grid.ColumnDefinitions>
+ 
+                <Border Grid.Column="0" Background="{DynamicResource PanelBackground}" CornerRadius="10" Padding="10" Margin="0,0,10,0"
+                        Effect="{StaticResource DropShadowEffect}">
+                    <DockPanel LastChildFill="True">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+                            <Button Content="Add" Width="80" Height="30" Style="{StaticResource RoundedButtonStyle}" Cursor="Hand" Margin="0,0,8,0" Click="AddButton_Click"/>
+                            <Button Content="Remove" Width="80" Height="30" Style="{StaticResource RoundedButtonStyle}" Cursor="Hand" IsEnabled="False" Margin="0,0,8,0" x:Name="btnRemove" Click="RemoveButton_Click"/>
+                            <Button Content="Refresh" Width="80" Height="30" Style="{StaticResource RoundedButtonStyle}" Cursor="Hand" Margin="0,0,0,0" Click="RefreshButton_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="StartupAppsDataGrid" AutoGenerateColumns="False" SelectionMode="Single" CanUserAddRows="False" CanUserDeleteRows="False" CellEditEnding="StartupAppsDataGrid_CellEditEnding"
+                                  RowBackground="{DynamicResource RowBackground}" AlternatingRowBackground="{DynamicResource AlternateRowBackground}"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  Foreground="{DynamicResource TextPrimary}" Background="{DynamicResource PanelBackground}"
+                                  BorderBrush="Transparent" FontSize="14" IsReadOnly="False"
+                                  SelectionChanged="StartupAppsDataGrid_SelectionChanged">
+
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Enabled" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="Icon" Width="40">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding Icon}" Width="24" Height="24"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="2*"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                                <DataGridTextColumn Header="Startup Type" Binding="{Binding StartupType}" Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+ 
+                <Border Grid.Column="1" Background="{DynamicResource PanelBackground}" CornerRadius="10" Padding="10" Effect="{StaticResource DropShadowEffect}" Grid.ColumnSpan="2">
+                    <StackPanel>
+                        <TextBlock Text="Scheduled File Operations" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
+                        <TextBlock Text="Manage file delete, move or rename operations scheduled at next boot. Add your own operations below." 
+                                   FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,15"/>
+                        <ListBox x:Name="ScheduledFileOperationsList" Height="300" Background="{DynamicResource PanelBackground}" BorderBrush="Transparent"
+                                 Foreground="{DynamicResource TextPrimary}" />
+                        <Button Content="Add Operation" Margin="0,10,0,0" Width="140" Height="36" HorizontalAlignment="Left"
+                                Cursor="Hand" Style="{StaticResource RoundedButtonStyle}" Click="AddOperationButton_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            
+            <Border Grid.Row="2" Background="{DynamicResource PanelBackground}" CornerRadius="10" Padding="15" Margin="10,15,10,10"
+                    Effect="{StaticResource DropShadowEffect}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,40,0">
+                        <ToggleButton x:Name="tglShowNotifications" Style="{StaticResource ToggleSwitchStyle}" VerticalAlignment="Center" Checked="tglShowNotifications_Checked" Unchecked=" tglShowNotifications_Unchecked"/>
+                        <TextBlock Text="Show notification when a startup app is added in background" FontSize="14" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+    </Grid>
+</Window>
