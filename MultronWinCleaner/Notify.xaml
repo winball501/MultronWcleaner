@@ -1,0 +1,66 @@
+﻿<Window x:Class="MultronWinCleaner.Notify"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Notify" 
+        Height="160" Width="350"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        WindowStartupLocation="Manual">
+
+    <Border CornerRadius="14" 
+            Background="{DynamicResource PanelBackground}" 
+            Padding="20" 
+            BorderThickness="1" 
+            BorderBrush="{DynamicResource BorderBrush}" >
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+           
+            <Border Width="50" Height="50" 
+                    Background="{DynamicResource AccentColor}" 
+                    CornerRadius="25" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="✓" 
+                           FontSize="28" 
+                           Foreground="{DynamicResource Text}" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"/>
+            </Border>
+
+            <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                <Grid>
+                    <TextBlock Text="Memory Cleaned" 
+                               Foreground="{DynamicResource Text}" 
+                               FontSize="20" 
+                               FontWeight="SemiBold" />
+
+                    <Button Width="24" Content="✕" 
+                            HorizontalAlignment="Right" 
+                            Background="Transparent" BorderThickness="0" 
+                            Foreground="{DynamicResource SecondaryText}" 
+                            FontSize="14" FontWeight="Bold" 
+                            Cursor="Hand" Click="CloseButton_Click"
+                            ToolTip="Close" Margin="0,0,0,3"/>
+                </Grid>
+
+                <TextBlock x:Name="DetailsText" 
+                           Text="Your system memory has been optimized successfully." 
+                           Foreground="{DynamicResource SecondaryText}" 
+                           FontSize="13" Margin="0,6,0,0" TextWrapping="Wrap" />
+
+                <TextBlock x:Name="CleanedAmountText" 
+                           Text="Cleaned: 0 MB" 
+                           Foreground="{DynamicResource AccentColor}" 
+                           FontSize="14" FontWeight="Bold" Margin="0,12,0,0" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

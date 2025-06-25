@@ -1,0 +1,766 @@
+C:\Users\ardakc\source\repos\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\ardakc\source\repos\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\ardakc\source\repos\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\ardakc\source\repos\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\ardakc\source\repos\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.lref
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\ardakc\source\repos\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.lref
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\frknk\OneDrive\Masaüstü\mwc\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.lref
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\ardakc\Downloads\Compressed\MultronWcleaner-mwc_1.8b\MultronWcleaner-mwc_1.8b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.lref
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\PC\Desktop\MultronWcleaner-mwc_1.8.1b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.lref
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.9b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\OneDrive\Desktop\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\frknk\OneDrive\Masaüstü\MultronWcleaner-mwc_1.10b\MultronWcleaner-mwc_1.10b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc110_r\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc111_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.sourcelink.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_Content.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidLibrary.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidSharp.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\LibreHardwareMonitorLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\OpenHardwareMonitorLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.CodeDom.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Management.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\WindowsInput.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\native\libMonoPosixHelper.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\unix\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidLibrary.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidSharp.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\LibreHardwareMonitorLib.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\OpenHardwareMonitorLib.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.CodeDom.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.IO.Ports.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Management.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\WindowsInput.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\native\libMonoPosixHelper.dylib
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\unix\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_Content.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Bcl.Cryptography.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Configuration.ConfigurationManager.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Formats.Asn1.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Security.Cryptography.ProtectedData.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.IWshRuntimeLibrary.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.sourcelink.json
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Win32.TaskScheduler.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\de\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\es\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\fr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\it\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ja\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\pl\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ru\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\sv\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\tr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-CN\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-Hant\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.g.cs
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.baml
+C:\Users\winba\Downloads\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidLibrary.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidSharp.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\LibreHardwareMonitorLib.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\OpenHardwareMonitorLib.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Bcl.Cryptography.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.CodeDom.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Configuration.ConfigurationManager.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Formats.Asn1.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.IO.Ports.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Management.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Security.Cryptography.ProtectedData.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Win32.TaskScheduler.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\WindowsInput.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\de\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\es\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\fr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\it\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ja\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\pl\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ru\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\sv\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\tr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-CN\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-Hant\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\native\libMonoPosixHelper.dylib
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\unix\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.IWshRuntimeLibrary.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_Content.g.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\mwc test\MultronWcleaner-mwc112_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.exe
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.deps.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.runtimeconfig.json
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Hardcodet.Wpf.TaskbarNotification.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidLibrary.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\HidSharp.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\LibreHardwareMonitorLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\OpenHardwareMonitorLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Bcl.Cryptography.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Newtonsoft.Json.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Ookii.Dialogs.Wpf.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.CodeDom.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Configuration.ConfigurationManager.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Formats.Asn1.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Management.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.Security.Cryptography.ProtectedData.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\Microsoft.Win32.TaskScheduler.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\WindowsInput.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\de\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\es\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\fr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\it\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ja\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\pl\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\ru\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\sv\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\tr\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-CN\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\zh-Hant\Microsoft.Win32.TaskScheduler.resources.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-armel\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x86\native\libMonoPosixHelper.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\native\libMonoPosixHelper.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x64\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\lib\netstandard2.0\Mono.Posix.NETStandard.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\MonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win-x86\native\libMonoPosixHelper.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\android-x86\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-bionic-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-musl-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\maccatalyst-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\unix\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.IO.Ports.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\bin\x64\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.AssemblyReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Interop.IWshRuntimeLibrary.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.ResolveComReference.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Dark.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Themes\Light.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.baml
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddBootOperationWindow.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\AddStartup.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Configure.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Duplicate File Finder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\LargeFileFinder.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MainWindow.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemCleaner.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MemoryMon.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\NewStartupItemDetected.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Notify.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\RegCleaner.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Settings.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\StartupManager.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\Utilities.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\App.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_Content.g.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner_MarkupCompile.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.g.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.Properties.Resources.resources
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.GenerateResource.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfoInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.AssemblyInfo.cs
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.csproj.CoreCompileInputs.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronW.AEA2BA86.Up2Date
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\refint\MultronWinCleaner.dll
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.pdb
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
+C:\Users\winba\Downloads\Compressed\MultronWcleaner-mwc1143_b\MultronWinCleaner\obj\x64\Debug\net8.0-windows\ref\MultronWinCleaner.dll
