@@ -1,0 +1,736 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\startupmanager.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:startupmanager.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\startupmanager.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:startupmanager.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\configure.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:configure.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\newstartupitemdetected.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:newstartupitemdetected.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\newstartupitemdetected.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:newstartupitemdetected.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\memorymon.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:memorymon.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\largefilefinder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:largefilefinder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\largefilefinder.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:largefilefinder.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\addbootoperationwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:addbootoperationwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\addbootoperationwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:addbootoperationwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\utilities.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:utilities.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\settings.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:settings.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\memcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:memcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\themeselector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:themeselector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\addstartup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:addstartup.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2348c8e1a564dcdb30e3721b7bfaf9cb486c27b03cadf3d4c65fb3d82e012767\\SafeRegistryHandle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\SourceServer\\9deab46a30c9c3ae9a61ab0fd31c6af7e685142bdff10bb282d3c9e19a4ebc7b\\src\\libraries\\System.Private.CoreLib\\src\\Microsoft\\Win32\\SafeHandles\\SafeRegistryHandle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\addstartup.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:addstartup.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\regcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:regcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\regcleaner.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:regcleaner.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\utilities.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:utilities.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\memcleaner.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:memcleaner.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\memorymon.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:memorymon.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\notify.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:notify.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\whousef.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:whousef.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\configure.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:configure.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\duplicate file finder.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:duplicate file finder.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\notify.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:notify.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\settings.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:settings.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\98d40c5de90092867548ab9aeec8e8494056a13de770e26f3b23d25e9f9c0c4a\\Dispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\aad6be2495d0a786b94b3514a5b6903407fe2d6a75ad7e505df6a9d895927867\\XamlReader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\multronwincleaner.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:multronwincleaner.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2be6f58c7d199001219eee0ed4f8c60905fd331037c8600ebb281cdc5b6d96fa\\DependencyObject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\app.manifest||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:app.manifest||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\fb15084c48174bff3023217d1ad58e803e1e4322708722f333707ce4bd465108\\ItemCollection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\png\\image.png||{177559E0-D141-11D0-92DF-00A0C9138C45}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:png\\image.png||{177559E0-D141-11D0-92DF-00A0C9138C45}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\0a84cc53936b314ba955b54f50bf4796d8234943f3fd7b93873381b45d404026\\XamlReader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winba\\downloads\\multronwcleaner-mwc112_b\\multronwincleaner\\multronwincleaner.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:multronwincleaner.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LargeFileFinder.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\LargeFileFinder.xaml.cs",
+              "RelativeDocumentMoniker": "LargeFileFinder.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\LargeFileFinder.xaml.cs",
+              "RelativeToolTip": "LargeFileFinder.xaml.cs",
+              "ViewState": "AgIAAEoBAAAAAAAAAAA0wFYBAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-08T21:49:21.739Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "NewStartupItemDetected.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\NewStartupItemDetected.xaml",
+              "RelativeDocumentMoniker": "NewStartupItemDetected.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\NewStartupItemDetected.xaml",
+              "RelativeToolTip": "NewStartupItemDetected.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-24T12:41:37.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StartupManager.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\StartupManager.xaml.cs",
+              "RelativeDocumentMoniker": "StartupManager.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\StartupManager.xaml.cs",
+              "RelativeToolTip": "StartupManager.xaml.cs",
+              "ViewState": "AgIAANwBAAAAAAAAAAAAwPYBAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T08:49:41.45Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "NewStartupItemDetected.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\NewStartupItemDetected.xaml.cs",
+              "RelativeDocumentMoniker": "NewStartupItemDetected.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\NewStartupItemDetected.xaml.cs",
+              "RelativeToolTip": "NewStartupItemDetected.xaml.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAcwBwAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T12:46:46.911Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MemoryMon.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemoryMon.xaml.cs",
+              "RelativeDocumentMoniker": "MemoryMon.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemoryMon.xaml.cs",
+              "RelativeToolTip": "MemoryMon.xaml.cs",
+              "ViewState": "AgIAAFwAAAAAAAAAAAAcwEQAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T04:48:17.726Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Configure.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Configure.xaml.cs",
+              "RelativeDocumentMoniker": "Configure.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Configure.xaml.cs",
+              "RelativeToolTip": "Configure.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-23T12:08:59.816Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StartupManager.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\StartupManager.xaml",
+              "RelativeDocumentMoniker": "StartupManager.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\StartupManager.xaml",
+              "RelativeToolTip": "StartupManager.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-24T08:44:48.253Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-11-27T11:28:56.028Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LargeFileFinder.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\LargeFileFinder.xaml",
+              "RelativeDocumentMoniker": "LargeFileFinder.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\LargeFileFinder.xaml",
+              "RelativeToolTip": "LargeFileFinder.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-08T21:39:58.454Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Dark.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Themes\\Dark.xaml",
+              "RelativeDocumentMoniker": "Themes\\Dark.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Themes\\Dark.xaml",
+              "RelativeToolTip": "Themes\\Dark.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-29T17:39:16.865Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AddBootOperationWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddBootOperationWindow.xaml",
+              "RelativeDocumentMoniker": "AddBootOperationWindow.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddBootOperationWindow.xaml",
+              "RelativeToolTip": "AddBootOperationWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-24T15:21:35.362Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AddBootOperationWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddBootOperationWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AddBootOperationWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddBootOperationWindow.xaml.cs",
+              "RelativeToolTip": "AddBootOperationWindow.xaml.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAQwCMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T15:24:05.314Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Light.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Themes\\Light.xaml",
+              "RelativeDocumentMoniker": "Themes\\Light.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Themes\\Light.xaml",
+              "RelativeToolTip": "Themes\\Light.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-29T17:39:34.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Utilities.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Utilities.xaml.cs",
+              "RelativeDocumentMoniker": "Utilities.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Utilities.xaml.cs",
+              "RelativeToolTip": "Utilities.xaml.cs",
+              "ViewState": "AgIAAOUAAAAAAAAAAADgvykBAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-08T20:18:12.463Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Settings.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Settings.xaml.cs",
+              "RelativeDocumentMoniker": "Settings.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Settings.xaml.cs",
+              "RelativeToolTip": "Settings.xaml.cs",
+              "ViewState": "AgIAAMAAAAAAAAAAAAAMwBgBAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T16:57:24.178Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "themeselector.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\themeselector.cs",
+              "RelativeDocumentMoniker": "themeselector.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\themeselector.cs",
+              "RelativeToolTip": "themeselector.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-29T19:30:23.787Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "MemCleaner.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemCleaner.xaml.cs",
+              "RelativeDocumentMoniker": "MemCleaner.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemCleaner.xaml.cs",
+              "RelativeToolTip": "MemCleaner.xaml.cs",
+              "ViewState": "AgIAAAEBAAAAAAAAAAAAABcBAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T03:47:31.89Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MainWindow.xaml.cs",
+              "RelativeToolTip": "MainWindow.xaml.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAADcAAABkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-27T11:29:04.326Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "SafeRegistryHandle.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2348c8e1a564dcdb30e3721b7bfaf9cb486c27b03cadf3d4c65fb3d82e012767\\SafeRegistryHandle.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\2348c8e1a564dcdb30e3721b7bfaf9cb486c27b03cadf3d4c65fb3d82e012767\\SafeRegistryHandle.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2348c8e1a564dcdb30e3721b7bfaf9cb486c27b03cadf3d4c65fb3d82e012767\\SafeRegistryHandle.cs [Read Only]",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\2348c8e1a564dcdb30e3721b7bfaf9cb486c27b03cadf3d4c65fb3d82e012767\\SafeRegistryHandle.cs [Read Only]",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAACAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T11:44:05.135Z",
+              "EditorCaption": " [Read Only]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "AddStartup.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddStartup.xaml",
+              "RelativeDocumentMoniker": "AddStartup.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddStartup.xaml",
+              "RelativeToolTip": "AddStartup.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-24T09:06:28.922Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "AddStartup.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddStartup.xaml.cs",
+              "RelativeDocumentMoniker": "AddStartup.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\AddStartup.xaml.cs",
+              "RelativeToolTip": "AddStartup.xaml.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAswDUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T09:08:39.885Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "SafeRegistryHandle.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\SourceServer\\9deab46a30c9c3ae9a61ab0fd31c6af7e685142bdff10bb282d3c9e19a4ebc7b\\src\\libraries\\System.Private.CoreLib\\src\\Microsoft\\Win32\\SafeHandles\\SafeRegistryHandle.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\SourceServer\\9deab46a30c9c3ae9a61ab0fd31c6af7e685142bdff10bb282d3c9e19a4ebc7b\\src\\libraries\\System.Private.CoreLib\\src\\Microsoft\\Win32\\SafeHandles\\SafeRegistryHandle.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\SourceServer\\9deab46a30c9c3ae9a61ab0fd31c6af7e685142bdff10bb282d3c9e19a4ebc7b\\src\\libraries\\System.Private.CoreLib\\src\\Microsoft\\Win32\\SafeHandles\\SafeRegistryHandle.cs [Read Only]",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\SourceServer\\9deab46a30c9c3ae9a61ab0fd31c6af7e685142bdff10bb282d3c9e19a4ebc7b\\src\\libraries\\System.Private.CoreLib\\src\\Microsoft\\Win32\\SafeHandles\\SafeRegistryHandle.cs [Read Only]",
+              "ViewState": "AgIAABAAAAAAAAAAAAApwCQAAAAMAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T11:41:58.329Z",
+              "EditorCaption": " [Read Only]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Microsoft.Common.CurrentVersion.targets",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ViewState": "AgIAAPQLAAAAAAAAAAAhwAkMAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-06-21T23:30:44.579Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "RegCleaner.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\RegCleaner.xaml",
+              "RelativeDocumentMoniker": "RegCleaner.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\RegCleaner.xaml",
+              "RelativeToolTip": "RegCleaner.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-22T11:31:20.426Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "MemoryMon.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemoryMon.xaml",
+              "RelativeDocumentMoniker": "MemoryMon.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemoryMon.xaml",
+              "RelativeToolTip": "MemoryMon.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-22T04:41:02.784Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "RegCleaner.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\RegCleaner.xaml.cs",
+              "RelativeDocumentMoniker": "RegCleaner.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\RegCleaner.xaml.cs",
+              "RelativeToolTip": "RegCleaner.xaml.cs",
+              "ViewState": "AgIAAIUBAAAAAAAAAAAowKABAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T11:45:37.749Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Utilities.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Utilities.xaml",
+              "RelativeDocumentMoniker": "Utilities.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Utilities.xaml",
+              "RelativeToolTip": "Utilities.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-08T20:15:27.118Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "MemCleaner.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemCleaner.xaml",
+              "RelativeDocumentMoniker": "MemCleaner.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MemCleaner.xaml",
+              "RelativeToolTip": "MemCleaner.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-22T03:42:21.103Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Duplicate File Finder.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
+              "RelativeDocumentMoniker": "Duplicate File Finder.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
+              "RelativeToolTip": "Duplicate File Finder.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIsAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-12T19:56:09.16Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "Notify.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Notify.xaml.cs",
+              "RelativeDocumentMoniker": "Notify.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Notify.xaml.cs",
+              "RelativeToolTip": "Notify.xaml.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAWwBoAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T05:26:28.936Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "whousef.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\whousef.cs",
+              "RelativeDocumentMoniker": "whousef.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\whousef.cs",
+              "RelativeToolTip": "whousef.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T08:14:09.039Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "Configure.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Configure.xaml",
+              "RelativeDocumentMoniker": "Configure.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Configure.xaml",
+              "RelativeToolTip": "Configure.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-23T12:06:06.506Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "Duplicate File Finder.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Duplicate File Finder.xaml",
+              "RelativeDocumentMoniker": "Duplicate File Finder.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Duplicate File Finder.xaml",
+              "RelativeToolTip": "Duplicate File Finder.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-12T19:51:42.812Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "Notify.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Notify.xaml",
+              "RelativeDocumentMoniker": "Notify.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Notify.xaml",
+              "RelativeToolTip": "Notify.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-22T05:22:40.58Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "Settings.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Settings.xaml",
+              "RelativeDocumentMoniker": "Settings.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\Settings.xaml",
+              "RelativeToolTip": "Settings.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-02T16:35:41.654Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\App.xaml",
+              "RelativeDocumentMoniker": "App.xaml",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\App.xaml",
+              "RelativeToolTip": "App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-29T19:34:18.418Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Dispatcher.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\98d40c5de90092867548ab9aeec8e8494056a13de770e26f3b23d25e9f9c0c4a\\Dispatcher.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\98d40c5de90092867548ab9aeec8e8494056a13de770e26f3b23d25e9f9c0c4a\\Dispatcher.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\98d40c5de90092867548ab9aeec8e8494056a13de770e26f3b23d25e9f9c0c4a\\Dispatcher.cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\98d40c5de90092867548ab9aeec8e8494056a13de770e26f3b23d25e9f9c0c4a\\Dispatcher.cs",
+              "ViewState": "AgIAAF8GAAAAAAAAAADwv3EGAAADAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-22T06:51:29.257Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "XamlReader.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\aad6be2495d0a786b94b3514a5b6903407fe2d6a75ad7e505df6a9d895927867\\XamlReader.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\aad6be2495d0a786b94b3514a5b6903407fe2d6a75ad7e505df6a9d895927867\\XamlReader.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\aad6be2495d0a786b94b3514a5b6903407fe2d6a75ad7e505df6a9d895927867\\XamlReader.cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\aad6be2495d0a786b94b3514a5b6903407fe2d6a75ad7e505df6a9d895927867\\XamlReader.cs",
+              "ViewState": "AgIAAKEBAAAAAAAAAAAUwLUBAAACAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-21T23:24:46.649Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "MultronWinCleaner",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+              "RelativeDocumentMoniker": "MultronWinCleaner.csproj",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+              "RelativeToolTip": "MultronWinCleaner.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-03T11:11:24.684Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "DependencyObject.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2be6f58c7d199001219eee0ed4f8c60905fd331037c8600ebb281cdc5b6d96fa\\DependencyObject.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\2be6f58c7d199001219eee0ed4f8c60905fd331037c8600ebb281cdc5b6d96fa\\DependencyObject.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\2be6f58c7d199001219eee0ed4f8c60905fd331037c8600ebb281cdc5b6d96fa\\DependencyObject.cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\2be6f58c7d199001219eee0ed4f8c60905fd331037c8600ebb281cdc5b6d96fa\\DependencyObject.cs",
+              "ViewState": "AgIAAC0CAAAAAAAAAAAcwD8CAAAEAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-21T16:57:31.84Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "app.manifest",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\app.manifest",
+              "RelativeDocumentMoniker": "app.manifest",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\app.manifest",
+              "RelativeToolTip": "app.manifest",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001203|",
+              "WhenOpened": "2025-04-03T11:22:38.574Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\App.xaml.cs",
+              "RelativeDocumentMoniker": "App.xaml.cs",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\App.xaml.cs",
+              "RelativeToolTip": "App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-03T09:54:42.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "ItemCollection.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\fb15084c48174bff3023217d1ad58e803e1e4322708722f333707ce4bd465108\\ItemCollection.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\fb15084c48174bff3023217d1ad58e803e1e4322708722f333707ce4bd465108\\ItemCollection.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\fb15084c48174bff3023217d1ad58e803e1e4322708722f333707ce4bd465108\\ItemCollection.cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\fb15084c48174bff3023217d1ad58e803e1e4322708722f333707ce4bd465108\\ItemCollection.cs",
+              "ViewState": "AgIAAC0FAAAAAAAAAAAhwHAFAABLAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-08T23:40:29.701Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "image.png - PNG [1200x1200, 32 bit, PNG]",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\PNG\\image.png",
+              "RelativeDocumentMoniker": "PNG\\image.png",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\PNG\\image.png - PNG [1200x1200, 32 bit, PNG]",
+              "RelativeToolTip": "PNG\\image.png - PNG [1200x1200, 32 bit, PNG]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001533|",
+              "WhenOpened": "2025-06-08T21:40:02.773Z",
+              "EditorCaption": " - PNG [1200x1200, 32 bit, PNG]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "XamlReader.cs",
+              "DocumentMoniker": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\0a84cc53936b314ba955b54f50bf4796d8234943f3fd7b93873381b45d404026\\XamlReader.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\0a84cc53936b314ba955b54f50bf4796d8234943f3fd7b93873381b45d404026\\XamlReader.cs",
+              "ToolTip": "C:\\Users\\winba\\AppData\\Local\\Temp\\.vsdbgsrc\\0a84cc53936b314ba955b54f50bf4796d8234943f3fd7b93873381b45d404026\\XamlReader.cs",
+              "RelativeToolTip": "..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\0a84cc53936b314ba955b54f50bf4796d8234943f3fd7b93873381b45d404026\\XamlReader.cs",
+              "ViewState": "AgIAALUBAAAAAAAAAADgv7ABAAAkAAAAAQAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-08T17:20:48.15Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "MultronWinCleaner.csproj",
+              "DocumentMoniker": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+              "RelativeDocumentMoniker": "MultronWinCleaner.csproj",
+              "ToolTip": "C:\\Users\\winba\\Downloads\\MultronWcleaner-mwc112_b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+              "RelativeToolTip": "MultronWinCleaner.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-03T11:03:10.825Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
