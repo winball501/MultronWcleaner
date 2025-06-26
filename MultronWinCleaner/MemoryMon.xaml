@@ -1,0 +1,86 @@
+﻿<Window x:Class="MultronWinCleaner.MemoryMon"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Memory Monitor"
+        Height="75" Width="260"
+        WindowStartupLocation="Manual"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Background="Transparent"
+        MouseDown="Window_DragMove"
+        AllowsTransparency="True">
+
+    <Border CornerRadius="12"
+            Background="{DynamicResource PanelBackground}"
+            Padding="6"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1">
+        <StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="2" VerticalAlignment="Center" >
+
+            
+                <StackPanel Width="100" Margin="0,0,6,0">
+                    <TextBlock Text="RAM" 
+                               Foreground="{DynamicResource TextPrimary}" 
+                               FontSize="10" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,1,0,0">
+                        <ProgressBar x:Name="RamBar" Height="5" Width="70" Maximum="100"
+                                     Background="{DynamicResource ProgressBarBackground}"
+                                     BorderBrush="{DynamicResource ProgressBarBorder}" />
+                        <TextBlock x:Name="RamPercentText" Text="0%" 
+                                   Foreground="{DynamicResource SecondaryText}" 
+                                   FontSize="8" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+ 
+                <StackPanel Width="100" Margin="0,0,6,0">
+                    <TextBlock Text="CPU" 
+                               Foreground="{DynamicResource TextPrimary}" 
+                               FontSize="10" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,1,0,0">
+                        <ProgressBar x:Name="CpuBar" Height="5" Width="70" Maximum="100"
+                                     Background="{DynamicResource ProgressBarBackground}"
+                                     BorderBrush="{DynamicResource ProgressBarBorder}" />
+                        <TextBlock x:Name="CpuPercentText" Text="0%" 
+                                   Foreground="{DynamicResource SecondaryText}" 
+                                   FontSize="8" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+ 
+                <StackPanel VerticalAlignment="Center">
+                    <Button Content="🧼" Width="20" Height="18" ToolTip="Clean RAM"
+                            FontSize="9" Click="CleanMemory_Click"
+                            Background="{DynamicResource AccentColor}" 
+                            Foreground="{DynamicResource Text}" 
+                            BorderThickness="0" Margin="0,0,0,2"
+                            Cursor="Hand"/>
+                    <Button Content="🐢" Width="20" Height="18" ToolTip="Slow CPU"
+                            FontSize="9" Click="SlowProcesses_Click"
+                            Background="{DynamicResource AccentColorHover}" 
+                            Foreground="{DynamicResource Text}" 
+                            BorderThickness="0" Margin="0,0,0,2"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </StackPanel>
+ 
+            <TextBlock x:Name="FreedLabel"
+                       Text=""
+                       FontSize="9"
+                       Foreground="{DynamicResource NotifyCleanedAmountForeground}"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,4,0,0"
+                       Visibility="Visible"/>
+
+            
+            <ListView x:Name="ProcessesListView" Height="200" Visibility="Collapsed" Margin="0,6,0,0"
+                      Background="{DynamicResource ListBoxBackground}" 
+                      Foreground="{DynamicResource ListBoxForeground}" 
+                      BorderBrush="{DynamicResource BorderBrush}" 
+                      BorderThickness="1" />
+        </StackPanel>
+    </Border>
+</Window>
