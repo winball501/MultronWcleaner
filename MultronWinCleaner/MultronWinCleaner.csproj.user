@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="AddBootOperationWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AddStartup.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Configure.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Duplicate File Finder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="LargeFileFinder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MemCleaner.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MemoryMon.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="NewStartupItemDetected.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Notify.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="RegCleaner.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Settings.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="StartupManager.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Utilities.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Themes\Dark.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Light.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>
