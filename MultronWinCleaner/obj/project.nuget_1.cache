@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "5pNB6xMoag0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\winba\\Downloads\\Compressed\\MultronWcleaner-mwc111_b\\MultronWinCleaner\\MultronWinCleaner.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\winba\\.nuget\\packages\\hardcodet.notifyicon.wpf\\1.0.5\\hardcodet.notifyicon.wpf.1.0.5.nupkg.sha512",
+    "C:\\Users\\winba\\.nuget\\packages\\hardcodet.wpf.taskbarnotification\\1.0.5\\hardcodet.wpf.taskbarnotification.1.0.5.nupkg.sha512",
+    "C:\\Users\\winba\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\winba\\.nuget\\packages\\ookii.dialogs.wpf\\5.0.1\\ookii.dialogs.wpf.5.0.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Hardcodet.NotifyIcon.Wpf 1.0.5' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Hardcodet.NotifyIcon.Wpf",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    }
+  ]
+}
