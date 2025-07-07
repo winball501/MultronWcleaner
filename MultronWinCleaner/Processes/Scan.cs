@@ -1,0 +1,705 @@
+﻿using Multron_Win_Cleaner;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+
+namespace MultronWinCleaner.Processes
+{
+
+    public class Scan
+    {
+        MainWindow main;
+        long totalsize = 0;
+        int winsxs = 0;
+        CancellationTokenSource cts = new CancellationTokenSource();
+        List<(string file, long size, string path)> checkboxData = new List<(string file, long size, string path)>();
+     
+        public Scan(MainWindow main)
+        {
+            this.main = main;
+        }
+
+
+
+
+        public class MainViewModel : INotifyPropertyChanged
+        {
+            public ObservableCollection<GroupViewModel> Groups { get; set; } = new ObservableCollection<GroupViewModel>();
+
+            private GroupViewModel selectedGroup;
+            public GroupViewModel SelectedGroup
+            {
+                get => selectedGroup;
+                set
+                {
+                    selectedGroup = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        public class PathGroup : INotifyPropertyChanged
+        {
+            public string Path { get; set; }
+            public ObservableCollection<FileItem> Files { get; set; } = new ObservableCollection<FileItem>();
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string propName = null) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
+        public class FileItem : INotifyPropertyChanged
+        {
+
+            public string FileName { get; set; }
+            public long SizeBytes { get; set; }
+            public string File => $"File to delete={FileName}={formatsize(SizeBytes)}";
+
+            private bool isChecked;
+            public bool IsChecked
+            {
+                get => isChecked;
+                set
+                {
+                    isChecked = value;
+                    OnPropertyChanged();
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            private string formatsize(long size)
+            {
+                if ((size < 0))
+                    return "0 Byte";
+
+                string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
+                double len = size;
+                int order = 0;
+                while (len >= 1024 && order < sizes.Length - 1)
+                {
+                    order++;
+                    len /= 1024;
+                }
+                return $"{len:0.##} {sizes[order]}";
+            }
+        }
+
+        public class GroupViewModel : INotifyPropertyChanged
+        {
+            private const int PageSize = 100;
+            private int currentLoadedCount = 0;
+
+            public string Path { get; private set; }
+
+            public ObservableCollection<FileItem> Files { get; private set; } = new ObservableCollection<FileItem>();
+
+            public List<FileItem> allFiles;
+
+            public long TotalSizeBytes { get; private set; }
+            public string TotalSizeFormatted => formatsize(TotalSizeBytes);
+            public string ExpanderHeader => $"{Path} ({TotalSizeFormatted})";
+
+            public GroupViewModel(string path, List<FileItem> allFiles)
+            {
+                this.Path = path;
+                this.allFiles = allFiles;
+                this.TotalSizeBytes = allFiles.Sum(f => f.SizeBytes);
+
+                _ = LoadMoreFilesAsync();
+            }
+            private string formatsize(long size)
+            {
+                if ((size < 0))
+                    return "0 Byte";
+
+                string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
+                double len = size;
+                int order = 0;
+                while (len >= 1024 && order < sizes.Length - 1)
+                {
+                    order++;
+                    len /= 1024;
+                }
+                return $"{len:0.##} {sizes[order]}";
+            }
+
+
+            public async Task LoadMoreFilesAsync()
+            {
+                int remaining = allFiles.Count - currentLoadedCount;
+                if (remaining <= 0) return;
+
+                int toLoad = Math.Min(PageSize, remaining);
+
+                for (int i = currentLoadedCount; i < currentLoadedCount + toLoad; i++)
+                {
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        Files.Add(allFiles[i]);
+                    }, DispatcherPriority.Background);
+                }
+
+                currentLoadedCount += toLoad;
+                OnPropertyChanged(nameof(Files));
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+
+        }
+        public async Task ScandotsAsync(string text, CancellationToken cancellationToken)
+        {
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    if (main.cancelstatus.IsCancellationRequested)
+                        break;
+                    await main.Dispatcher.InvokeAsync(() => {
+                        main.label1_Copy.Text = text + ".";
+                        main.label1_Copy.Foreground = System.Windows.Media.Brushes.Blue;
+                    });
+
+                    await Task.Delay(1000, cancellationToken);
+
+                    await main.Dispatcher.InvokeAsync(() => {
+                        main.label1_Copy.Text = text + "..";
+                    });
+
+                    await Task.Delay(1000, cancellationToken);
+
+                    await main.Dispatcher.InvokeAsync(() => {
+                        main.label1_Copy.Text = text + "...";
+                    });
+
+                    await Task.Delay(1000, cancellationToken);
+                }
+               
+            }
+            catch (TaskCanceledException)
+            {
+
+            }
+        }
+        private string formatsize(long size)
+        {
+            if ((size < 0))
+                return "0 Byte";
+
+            string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
+            double len = size;
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len /= 1024;
+            }
+            return $"{len:0.##} {sizes[order]}";
+        }
+
+        public static async Task<string> RunDismAnalyzeComponentStoreAsync(
+        CancellationToken externalToken,
+        ProgressBar progressBar,
+        int timeoutMinutes = 1)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "dism.exe",
+                Arguments = "/Online /Cleanup-Image /AnalyzeComponentStore",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                Verb = "runas",
+                CreateNoWindow = true
+            };
+
+            using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
+            var outputBuilder = new StringBuilder();
+            var errorBuilder = new StringBuilder();
+
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
+            linkedCts.CancelAfter(TimeSpan.FromMinutes(timeoutMinutes));
+             
+            proc.OutputDataReceived += async (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    outputBuilder.AppendLine(e.Data);
+
+                
+                    var pctRx = new Regex(@"(\d{1,3})(?:\.\d+)?\s?%", RegexOptions.Compiled);
+                    var match = pctRx.Match(e.Data);
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out int pct))
+                    {
+                        pct = Math.Clamp(pct, 0, 100);
+                         
+                        await progressBar.Dispatcher.InvokeAsync(() =>
+                        {
+                            progressBar.IsIndeterminate = false;
+                            progressBar.Value = pct;
+                            
+                        });
+                    }
+                    else
+                    {
+                  
+                        await progressBar.Dispatcher.InvokeAsync(() =>
+                        {
+                            progressBar.IsIndeterminate = true;
+                        });
+                    }
+                }
+            };
+
+            proc.ErrorDataReceived += (s, e) =>
+            {
+                if (e.Data != null)
+                    errorBuilder.AppendLine(e.Data);
+            };
+
+            try
+            {
+                if (!proc.Start())
+                    throw new InvalidOperationException("DISM process could not be started.");
+
+                proc.BeginOutputReadLine();
+                proc.BeginErrorReadLine();
+
+                Task<int> waitForExitTask = Task.Run(() =>
+                {
+                    proc.WaitForExit();
+                    return proc.ExitCode;
+                });
+
+                Task completed = await Task.WhenAny(waitForExitTask, Task.Delay(Timeout.Infinite, linkedCts.Token));
+
+                if (completed != waitForExitTask)
+                { 
+                    try
+                    {
+                        if (!proc.HasExited)
+                        {
+                            proc.Kill(entireProcessTree: true);
+                            await Task.Delay(500);
+                        }
+                    }
+                    catch { }
+                    linkedCts.Token.ThrowIfCancellationRequested();
+                }
+
+                var exitCode = await waitForExitTask;
+ 
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 100;
+                });
+
+                if (exitCode != 0)
+                    throw new InvalidOperationException($"DISM exited with code {exitCode}.\n{errorBuilder}");
+
+                return outputBuilder.ToString();
+            }
+            catch (OperationCanceledException)
+            {
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 0;
+                });
+                throw;
+            }
+            catch (Exception ex)
+            {
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 0;
+                });
+                throw;
+            }
+        }
+
+
+
+        private static readonly Regex SizeLineRx = new Regex(
+            @"^(?:\s*Actual (?:Component Store |Size of Component )?Size\s*|\s*Potentially Reclaimable Size\s*|\s*Backups and Disabled Features\s*):\s*([\d\.]+)\s*(KB|MB|GB|TB)$",
+            RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+
+        private static (long Actual, long Reclaimable, long Backups) ParseSizes(string text)
+        {
+            long actual = -1;
+            long reclaimable = -1;
+            long backups = -1;
+
+
+         
+
+
+            foreach (Match m in SizeLineRx.Matches(text))
+            {
+                string key = m.Groups[1].Value;
+                string num = m.Groups[1].Value;
+                string unit = m.Groups[2].Value.ToUpperInvariant();
+
+
+                string fullLineMatch = m.Value;
+
+        
+
+                if (!double.TryParse(num, NumberStyles.Float, CultureInfo.InvariantCulture, out var val))
+                {
+                  
+                    continue;
+                }
+
+                long bytes = unit switch
+                {
+                    "KB" => (long)Math.Round(val * 1_024L),
+                    "MB" => (long)Math.Round(val * 1_024L * 1_024L),
+                    "GB" => (long)Math.Round(val * 1_024L * 1_024L * 1_024L),
+                    "TB" => (long)Math.Round(val * 1_024L * 1_024L * 1_024L * 1_024L),
+                    _ => -1
+                };
+
+                if (fullLineMatch.IndexOf("Actual ", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    fullLineMatch.IndexOf(" Size", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    actual = bytes;
+                }
+                else if (fullLineMatch.IndexOf("Potentially Reclaimable", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    reclaimable = bytes;
+                }
+                else if (fullLineMatch.IndexOf("Backups and Disabled Features", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    backups = bytes;
+                }
+             
+            }
+
+           
+            return (actual, reclaimable, backups);
+        }
+
+        public async Task run()
+        {
+            try
+            {
+                long size = main.database.Count();
+                long nowscanning = 0;
+                MainWindow.scanstatus = 2;
+                main.onclean = 1;
+
+                await main.Dispatcher.InvokeAsync(() =>
+                {
+
+
+                    var task = ScandotsAsync("Scanning", cts.Token);
+                    main.wrapPanelDirectories.Visibility = Visibility.Visible;
+                    main.ScrollViewerDirectories.Visibility = Visibility.Visible;
+                    main.progressBar1.Value = 0;
+                });
+
+                foreach (string directory in main.database)
+                {
+                    if (main.cancelstatus.IsCancellationRequested) break;
+
+                    string name = main.stringtokenizer(directory, "=", 0);
+                    string path = main.stringtokenizer(directory, "=", 1);
+                    TextBlock directorytextblock = null;
+
+                    await main.Dispatcher.InvokeAsync(() =>
+                    {
+                        directorytextblock = new TextBlock
+                        {
+                            Text = $"Scanning: {name}",
+                            Foreground = System.Windows.Media.Brushes.Goldenrod,
+                            FontSize = 16,
+                            Margin = new Thickness(5)
+                        };
+                        main.wrapPanelDirectories.Children.Add(directorytextblock);
+                    });
+                    if (directory.EndsWith("winsxs"))
+                    {
+                        try
+                        {
+                            string output = await RunDismAnalyzeComponentStoreAsync(main.dismcancel.Token, main.progressBar1);
+                            if (!main.cancelstatus.IsCancellationRequested)
+                            {
+                                string appFolder = System.IO.Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+    "Multron Win Cleaner");
+                                Directory.CreateDirectory(appFolder);
+                                string outputPath = System.IO.Path.Combine(appFolder, "dism_scan.log");
+
+                                await System.IO.File.WriteAllTextAsync(outputPath, output);
+
+                                var sizes = ParseSizes(output);
+                                long actual = Math.Max(0, sizes.Actual);
+                                long reclaimable = Math.Max(0, sizes.Reclaimable);
+                                long backups = Math.Max(0, sizes.Backups);
+                                long total = actual + reclaimable + backups;
+                                totalsize += total;
+
+                                checkboxData.Add(("WinSxS Folder=C:\\Windows\\WinSxS", total, "C:\\Windows\\WinSxS"));
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    main.wrapPanelDirectories.Children.Remove(directorytextblock);
+                                    directorytextblock = new TextBlock
+                                    {
+                                        Text = $"Completed: {name + " " + formatsize(total)}",
+                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                        FontSize = 16,
+                                        Margin = new Thickness(5)
+                                    };
+
+                                    main.wrapPanelDirectories.Children.Add(directorytextblock);
+                                });
+                            }
+                        }
+                        catch (OperationCanceledException)
+                        {
+                 
+                            return;
+                        }
+                       
+                      
+                    }
+                    else
+                    {
+                        if (directory.EndsWith("logscan"))
+                        {
+                            await ScanCDirectoryAsync(path, name, directorytextblock);
+
+                        }
+
+                        else if (System.IO.File.Exists(path))
+                        {
+                            long filelength = new FileInfo(path).Length;
+                            totalsize += filelength;
+                            checkboxData.Add((path, filelength, name));
+
+                        }
+
+                        else
+                        {
+                            await ScanDirectoryAsync(path, name, directorytextblock);
+                        }
+
+
+                        nowscanning++;
+                        double percent = (double)nowscanning / size * 100;
+                        await main.Dispatcher.InvokeAsync(() => main.progressBar1.Value = percent);
+                    }
+
+                }
+              
+                    await main.Dispatcher.InvokeAsync(async () =>
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+
+
+                        main.wrapPanelDirectories.Children.Clear();
+                        main.wrapPanelDirectories.Visibility = Visibility.Hidden;
+                        main.wrapPanel1.Visibility = Visibility.Hidden;
+                        main.dataGridGroups.Visibility = Visibility.Visible;
+                        main.ScrollViewerDetectedFiles.Visibility = Visibility.Hidden;
+                        main.Datagridscroll.Visibility = Visibility.Visible;
+                        var task = ScandotsAsync("Scanning", cts.Token);
+                     
+
+                        main.DataContext = main.viewModel;
+
+                        var groupedByPath = await Task.Run(() => checkboxData.GroupBy(x => x.path).ToList());
+
+                        int totalGroups = groupedByPath.Count;
+                        int currentGroup = 0;
+
+                        foreach (var group in groupedByPath)
+                        {
+                            string path = group.Key;
+                            var items = group.ToList();
+
+                            var allFiles = items.Select(item => new FileItem
+                            {
+
+                                FileName = item.file.Contains("WinSxS", StringComparison.OrdinalIgnoreCase)
+    ? $"Clean WinSxS Folder={item.file}={formatsize(item.size)}"
+    : $"File to delete={item.file}={formatsize(item.size)}",
+
+                                SizeBytes = item.size,
+                                IsChecked = true
+                            }).ToList();
+
+                            GroupViewModel groupVm = new GroupViewModel(path, allFiles);
+
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                main.viewModel.Groups.Add(groupVm);
+
+                                currentGroup++;
+                                main.label1_Copy.Text = $"Loading group {currentGroup} / {totalGroups}";
+                                main.progressBar1.Value = (double)currentGroup / totalGroups * 100;
+                            });
+
+                            await Task.Delay(10);
+                        }
+
+                        cts.Cancel();
+                        main.label1_Copy.Text = "Loading Completed!";
+                        main.progressBar1.Value = 100;
+                        main.label1_Copy.Foreground = System.Windows.Media.Brushes.Goldenrod;
+                        main.buttonReset.Visibility = Visibility.Visible;
+                        main.buttonStartScan.IsEnabled = true;
+                        main.buttonStartScan.Content = "Clean";
+                    
+                        if (main.autoclean == 1)
+                        {
+                            if (main.cancelstatus.IsCancellationRequested)
+                            {
+                                main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                                main.label1_Copy.Text = $"Auto scan canceled! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            } else
+                            {
+                                main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                                main.label1_Copy.Text = $"Auto scan completed! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            }
+                              
+                        }
+                        else
+                        {
+                            if(main.cancelstatus.IsCancellationRequested)
+                            {
+                                main.label1_Copy.Text = $"Scan canceled! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+
+                            } else
+                            {
+                                main.label1_Copy.Text = $"Scan completed! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            }
+                               
+                        }
+
+
+                    });
+             
+                   
+
+                MainWindow.scanstatus = 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+
+
+        public async Task ScanCDirectoryAsync(string directory, string name, TextBlock directorytextblock)
+        {
+            long dirSize = await GetCDirectorySizeAsync(directory);
+            totalsize += dirSize;
+            await directorytextblock.Dispatcher.InvokeAsync(() =>
+                directorytextblock.Text = $"Completed: {name} {formatsize(dirSize)}");
+        }
+
+        public async Task<long> GetCDirectorySizeAsync(string path)
+        {
+            long size = 0;
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    foreach (string dir in Directory.GetDirectories(path))
+                    {
+                        if (main.cancelstatus.IsCancellationRequested) break;
+                        size += await GetCDirectorySizeAsync(dir);
+                    }
+
+
+
+                    foreach (string file in Directory.GetFiles(path))
+                    {
+                        if (main.cancelstatus.IsCancellationRequested) break;
+
+                        if (!main.settings.excludedfiles.Contains(file))
+                        {
+                            if (".log.etl.dmp.trace.tmp.temp.bak.swp".Split('.').Any(ext => file.EndsWith($".{ext}")))
+                            {
+                                long fSize = new FileInfo(file).Length;
+                                size += fSize;
+                                totalsize += fSize;
+                                checkboxData.Add((file, fSize, "Deep log scans finded"));
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return size;
+        }
+
+        public async Task ScanDirectoryAsync(string directory, string name, TextBlock directorytextbox)
+        {
+            long dirSize = await GetDirectorySizeAsync(directory);
+            totalsize += dirSize;
+            await directorytextbox.Dispatcher.InvokeAsync(() =>
+                directorytextbox.Text = $"Completed: {name} {formatsize(dirSize)}");
+        }
+
+        public async Task<long> GetDirectorySizeAsync(string path)
+        {
+            long size = 0;
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+                    {
+                        if (main.cancelstatus.IsCancellationRequested) break;
+                        if (!main.settings.excludedfiles.Contains(file))
+                        {
+                            FileInfo fi = new FileInfo(file);
+                            size += fi.Length;
+                            checkboxData.Add((file, fi.Length, path));
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            return size;
+        }
+
+
+    }
+}
