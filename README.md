@@ -1,105 +1,90 @@
 
-🚀 Multron Win Cleaner – The Ultimate Free & Open-Source Windows Optimizer
-Looking for a powerful, no-strings-attached system cleaner? Multron Win Cleaner is a completely free and open-source toolkit for optimizing, cleaning, and boosting your Windows system — without subscriptions, or locked features. Built for performance, transparency, and control.
+Multron Win Cleaner – The Ultimate Free & Open-Source Windows Optimizer
 
-🧰 Key Features (Everything Included – No Pro Version Needed):
-🧠 Advanced Auto Memory Cleaner
-Automatically frees up RAM in real time to keep your system responsive.
+Multron Win Cleaner is a completely free and open-source toolkit designed to clean, optimize, and boost the performance of your Windows system. No subscriptions, no locked features — just powerful tools built with transparency and control in mind.
 
-📊 Memory Monitor
-Track RAM usage live — see exactly how your memory is performing.
+Key Features – All Included, No Paid Version
+Advanced Auto Memory Cleaner
+Continuously frees up RAM in real time to keep your system responsive and fast.
 
-📂 Duplicate File Finder
-Scan and remove unnecessary duplicate files to free up valuable storage.
+Memory Monitor
+Track live RAM usage and monitor how your system memory is performing.
 
-🗃️ Large File Finder
-Identify and delete oversized files that are eating up disk space.
+Duplicate File Finder
+Quickly scan for and remove duplicate files to reclaim valuable disk space.
 
-🧼 WinSxS Cleaner
-Clean old and unused system components from the WinSxS folder safely.
+Large File Finder
+Identify and delete oversized files that consume significant storage.
 
-🔥 Invalid Firewall Rule Cleaner
-Remove outdated or broken firewall rules to keep your system lean and secure.
+WinSxS Cleaner
+Safely remove outdated and unused system components from the WinSxS folder.
 
-🚀 Turbo Boost
-Boost overall system performance instantly with a single click.
+Invalid Firewall Rule Cleaner
+Clean up broken or outdated firewall rules to maintain a streamlined and secure system.
 
-🧬 Registry Cleaner
-Clean invalid and orphaned registry entries for improved stability and speed.
+Turbo Boost
+Instantly enhance system performance with a single click.
 
-⚙️ Startup Manager
-Easily manage which programs launch at startup — reduce boot time and improve performance.
+Startup Manager
+Control which programs run at startup to reduce boot time and improve performance.
 
-🔔 Startup Notification System
-Receive alerts when new items are added to startup so you’re always in control.
+Startup Notification System
+Get notified whenever a new item is added to the startup list so you stay in control.
 
-🔃 Boot Operations Manager
-Delete, move, or rename locked files at next reboot — including files that can’t be touched while Windows is running.
-✔️ View pending operations
-✔️ Add your own boot-time file actions
-✔️ Ideal for handling stubborn files or cleanup tasks before full startup
+Boot Operations Manager
+Manage locked or in-use files at the next system reboot.
 
-🛠️ Background Auto Cleaner
-Runs quietly in the background to keep your system clutter-free.
+View pending boot-time operations
 
-📁 Custom Folder Cleanup
-Define folders in database.txt to clean exactly what you want.
+Add custom file actions
 
-✅ Built-in support for 253+ applications
-Comes with predefined cleaning rules for popular apps — ready to use instantly.
+Handle stubborn or undeletable files with ease
 
-🛡️ Coming Soon:
-Malware Scanner – Some Open Source Antivirus Engine on the way.
+Background Auto Cleaner
+Runs silently in the background to keep your system clean over time.
 
-🧪 Fully Open Source. Truly Free. Forever.
-🧩 No paid tiers
+Custom Folder Cleanup
+Specify folders to clean via database.txt, giving you precise control.
 
-🛑 No locked features
+Built-in Support for 253+ Applications
+Includes predefined cleanup rules for hundreds of popular apps — ready to use out of the box.
 
+Real-Time Detection of Locked or Unremovable Files
+During cleanup, some files may be locked by other processes. Multron Win Cleaner features a powerful detection system that identifies these files in real time and provides full details.
 
-🔒 Real-Time Detection of Locked/Unremovable Files
-During cleanup, some files can’t be deleted because they’re actively locked by other applications or background processes. Multron Win Cleaner features a powerful real-time detection system that automatically identifies these problematic files and provides detailed information instantly.
+How it Works:
 
-🧠 Here’s how it works:
+Detects any file that cannot be deleted
 
-🧩 Detects every file that could not be deleted during cleaning.
+Identifies the process locking the file
 
-📌 Identifies which process is locking the file.
+Displays the file path and process ID/name
 
-📂 Displays the full file path and the locking process name or ID.
+Offers the option to retry, kill the process, and delete the file
 
-🔄 Gives you the option to retry, kill the process and delete file.
+Why It Matters:
 
-💡 Why this matters:
+No more guessing why files weren’t removed
 
-No more guessing why a file wasn’t removed.
+Prevents clutter caused by background processes
 
-Prevents clutter from lingering due to background tasks or stubborn software.
+Gives you full control over file handling during cleanup
 
-Gives you full visibility and control over what's happening during the cleaning process.
+This feature is especially useful for:
 
-✅ This feature is especially useful for:
+Malware remnants in temporary folders
 
-Malware remnants hiding in temp folders.
+Log files held open by crashed services
 
-Log files held open by crashed services.
+Stubborn apps that don’t release resources properly
 
-Stubborn apps that don’t fully release their resources.
-
-🔧 Combine this with Boot Operations Manager to automatically remove locked files after reboot, or handle them on the spot by terminating the responsible process.
-
-🛡️ Designed for advanced users, power cleaners, and anyone who wants total transparency and control over their system cleanup.
-
-
-⚙️ Requirements:
+System Requirements
 Requires .NET Core 8 Runtime
 
-Multron Win Cleaner puts you in control — no gimmicks, no nags, just powerful tools to clean and optimize your Windows system.
+Multron Win Cleaner is built for advanced users, power cleaners, and anyone who wants full transparency and control during system maintenance.
 
-🔗 Try it. Fork it. Improve it.
-We welcome your feedback, contributions, and ideas!
-
-📥 Download Now:
+Try it. Fork it. Improve it. Contributions and feedback are welcome.
+Download Now:
 🔹 [Download](https://github.com/winball501/MultronWcleaner-Database/releases) Database 
 
 🔹 [DOWNLOADS](https://github.com/winball501/MultronWcleaner/releases)
