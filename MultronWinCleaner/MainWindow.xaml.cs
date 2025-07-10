@@ -1,4 +1,4 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+using Hardcodet.Wpf.TaskbarNotification;
 using MFK;
 using Microsoft.VisualBasic.Logging;
 using MultronWinCleaner;
@@ -114,7 +114,30 @@ namespace Multron_Win_Cleaner
                  
                 }
             }
-           
+            string settingsFile = Environment.CurrentDirectory + "\\Settings.txt";
+
+            if (!System.IO.File.Exists(settingsFile))
+            {
+             
+                string[] defaultSettings = new string[]
+                {
+        "scheduletype:custom days",
+        "postaction:do nothing",
+        "minutes:3",
+        "starttime:01:00",
+        "endtime:22:00",
+        "day1:1",
+        "day2:1",
+        "day3:1",
+        "day4:1",
+        "day5:1",
+        "day6:1",
+        "day7:1"
+                };
+
+                
+                System.IO.File.WriteAllLines(settingsFile, defaultSettings);
+            }
             utilities = new Utilities(this);
 
 
