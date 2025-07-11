@@ -1398,11 +1398,12 @@ namespace Multron_Win_Cleaner
                 wrapPanel1.Visibility = Visibility.Hidden;
 
                 buttonStartScan.Content = "Cancel";
+                logfiles.Clear();
+                cancelclean = 0;
                 MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
                 await Task.Run(() => scan.run());
                  
-                logfiles.Clear();
-                cancelclean = 0;
+              
                
                 scanstatus = 0;
             } else if (buttonStartScan.Content == "Cancel")
@@ -1911,7 +1912,7 @@ namespace Multron_Win_Cleaner
              foreach(CheckBox box in checkboxes2)
             {
                 
-                box.IsChecked = false;
+                box.IsChecked = true;
                 i++;
             }
       
