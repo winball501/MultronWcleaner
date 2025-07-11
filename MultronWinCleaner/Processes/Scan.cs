@@ -1,4 +1,5 @@
-﻿using Multron_Win_Cleaner;
+using Multron_Win_Cleaner;
+using System;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,13 +12,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace MultronWinCleaner.Processes
 {
@@ -26,7 +27,8 @@ namespace MultronWinCleaner.Processes
     {
         MainWindow main;
         long totalsize = 0;
-        int winsxs = 0;
+        long deeplogscantotal = 0;
+        long currentscan = 0;
         CancellationTokenSource cts = new CancellationTokenSource();
         List<(string file, long size, string path)> checkboxData = new List<(string file, long size, string path)>();
      
@@ -126,7 +128,7 @@ namespace MultronWinCleaner.Processes
                 this.Path = path;
                 this.allFiles = allFiles;
                 this.TotalSizeBytes = allFiles.Sum(f => f.SizeBytes);
-
+           
                 _ = LoadMoreFilesAsync();
             }
             private string formatsize(long size)
@@ -207,22 +209,7 @@ namespace MultronWinCleaner.Processes
 
             }
         }
-        private string formatsize(long size)
-        {
-            if ((size < 0))
-                return "0 Byte";
-
-            string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
-            double len = size;
-            int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len /= 1024;
-            }
-            return $"{len:0.##} {sizes[order]}";
-        }
-
+     
         public static async Task<string> RunDismAnalyzeComponentStoreAsync(
         CancellationToken externalToken,
         ProgressBar progressBar,
@@ -348,65 +335,41 @@ namespace MultronWinCleaner.Processes
 
 
 
-        private static readonly Regex SizeLineRx = new Regex(
-            @"^(?:\s*Actual (?:Component Store |Size of Component )?Size\s*|\s*Potentially Reclaimable Size\s*|\s*Backups and Disabled Features\s*):\s*([\d\.]+)\s*(KB|MB|GB|TB)$",
-            RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex ExtraSizeRx = new Regex(
+      @"^\s*(?<label>Backups and Disabled Features|Cache and Temporary Data)\s*:\s*(?<value>[\d\.]+)\s*(?<unit>KB|MB|GB|TB)",
+      RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
-        private static (long Actual, long Reclaimable, long Backups) ParseSizes(string text)
+        private static (long BackupsAndDisabledFeatures, long CacheAndTemporaryData) ParseSizes(string text)
         {
-            long actual = -1;
-            long reclaimable = -1;
             long backups = -1;
+            long cache = -1;
 
-
-         
-
-
-            foreach (Match m in SizeLineRx.Matches(text))
+            foreach (Match match in ExtraSizeRx.Matches(text))
             {
-                string key = m.Groups[1].Value;
-                string num = m.Groups[1].Value;
-                string unit = m.Groups[2].Value.ToUpperInvariant();
+                string label = match.Groups["label"].Value;
+                string value = match.Groups["value"].Value;
+                string unit = match.Groups["unit"].Value.ToUpperInvariant();
 
-
-                string fullLineMatch = m.Value;
-
-        
-
-                if (!double.TryParse(num, NumberStyles.Float, CultureInfo.InvariantCulture, out var val))
-                {
-                  
+                if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double number))
                     continue;
-                }
 
                 long bytes = unit switch
                 {
-                    "KB" => (long)Math.Round(val * 1_024L),
-                    "MB" => (long)Math.Round(val * 1_024L * 1_024L),
-                    "GB" => (long)Math.Round(val * 1_024L * 1_024L * 1_024L),
-                    "TB" => (long)Math.Round(val * 1_024L * 1_024L * 1_024L * 1_024L),
+                    "KB" => (long)(number * 1024),
+                    "MB" => (long)(number * 1024 * 1024),
+                    "GB" => (long)(number * 1024 * 1024 * 1024),
+                    "TB" => (long)(number * 1024L * 1024L * 1024L * 1024L),
                     _ => -1
                 };
 
-                if (fullLineMatch.IndexOf("Actual ", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                    fullLineMatch.IndexOf(" Size", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    actual = bytes;
-                }
-                else if (fullLineMatch.IndexOf("Potentially Reclaimable", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    reclaimable = bytes;
-                }
-                else if (fullLineMatch.IndexOf("Backups and Disabled Features", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
+                if (label.Contains("Backups", StringComparison.OrdinalIgnoreCase))
                     backups = bytes;
-                }
-             
+                else if (label.Contains("Cache", StringComparison.OrdinalIgnoreCase))
+                    cache = bytes;
             }
 
-           
-            return (actual, reclaimable, backups);
+            return (backups, cache);
         }
 
         public async Task run()
@@ -463,10 +426,9 @@ namespace MultronWinCleaner.Processes
                                 await System.IO.File.WriteAllTextAsync(outputPath, output);
 
                                 var sizes = ParseSizes(output);
-                                long actual = Math.Max(0, sizes.Actual);
-                                long reclaimable = Math.Max(0, sizes.Reclaimable);
-                                long backups = Math.Max(0, sizes.Backups);
-                                long total = actual + reclaimable + backups;
+                                long  backups = Math.Max(0, sizes.BackupsAndDisabledFeatures);
+                                long cache = Math.Max(0, sizes.CacheAndTemporaryData);
+                                long total = cache + backups;
                                 totalsize += total;
 
                                 checkboxData.Add(("WinSxS Folder=C:\\Windows\\WinSxS", total, "C:\\Windows\\WinSxS"));
@@ -475,7 +437,7 @@ namespace MultronWinCleaner.Processes
                                     main.wrapPanelDirectories.Children.Remove(directorytextblock);
                                     directorytextblock = new TextBlock
                                     {
-                                        Text = $"Completed: {name + " " + formatsize(total)}",
+                                        Text = $"Completed: {name + " " + main.formatsize(total)}",
                                         Foreground = System.Windows.Media.Brushes.Goldenrod,
                                         FontSize = 16,
                                         Margin = new Thickness(5)
@@ -497,8 +459,10 @@ namespace MultronWinCleaner.Processes
                     {
                         if (directory.EndsWith("logscan"))
                         {
-                            await ScanCDirectoryAsync(path, name, directorytextblock);
-
+                          
+                            await ScanCDirectoryAsync(path); 
+                            await directorytextblock.Dispatcher.InvokeAsync(() =>
+                            directorytextblock.Text = $"Completed: {name} {main.formatsize(deeplogscantotal)}");
                         }
 
                         else if (System.IO.File.Exists(path))
@@ -506,11 +470,12 @@ namespace MultronWinCleaner.Processes
                             long filelength = new FileInfo(path).Length;
                             totalsize += filelength;
                             checkboxData.Add((path, filelength, name));
-
+                       
                         }
 
                         else
                         {
+                            currentscan = 0;
                             await ScanDirectoryAsync(path, name, directorytextblock);
                         }
 
@@ -543,7 +508,8 @@ namespace MultronWinCleaner.Processes
 
                         int totalGroups = groupedByPath.Count;
                         int currentGroup = 0;
-
+                        long newtotalsize = 0;
+                        cts.Cancel();
                         foreach (var group in groupedByPath)
                         {
                             string path = group.Key;
@@ -553,12 +519,18 @@ namespace MultronWinCleaner.Processes
                             {
 
                                 FileName = item.file.Contains("WinSxS", StringComparison.OrdinalIgnoreCase)
-    ? $"Clean WinSxS Folder={item.file}={formatsize(item.size)}"
-    : $"File to delete={item.file}={formatsize(item.size)}",
+    ? $"Clean WinSxS Folder={item.file}={main.formatsize(item.size)}"
+    : $"File to delete={item.file}={main.formatsize(item.size)}",
 
                                 SizeBytes = item.size,
+
                                 IsChecked = true
+
                             }).ToList();
+
+                           
+
+
 
                             GroupViewModel groupVm = new GroupViewModel(path, allFiles);
 
@@ -573,8 +545,10 @@ namespace MultronWinCleaner.Processes
 
                             await Task.Delay(10);
                         }
-
-                        cts.Cancel();
+                    
+                         
+                       
+               
                         main.label1_Copy.Text = "Loading Completed!";
                         main.progressBar1.Value = 100;
                         main.label1_Copy.Foreground = System.Windows.Media.Brushes.Goldenrod;
@@ -587,11 +561,11 @@ namespace MultronWinCleaner.Processes
                             if (main.cancelstatus.IsCancellationRequested)
                             {
                                 main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                                main.label1_Copy.Text = $"Auto scan canceled! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = $"Auto scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
                             } else
                             {
                                 main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                                main.label1_Copy.Text = $"Auto scan completed! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = $"Auto scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
                             }
                               
                         }
@@ -599,15 +573,15 @@ namespace MultronWinCleaner.Processes
                         {
                             if(main.cancelstatus.IsCancellationRequested)
                             {
-                                main.label1_Copy.Text = $"Scan canceled! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = $"Scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
 
                             } else
                             {
-                                main.label1_Copy.Text = $"Scan completed! + {formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = $"Scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
                             }
                                
                         }
-
+                      
 
                     });
              
@@ -623,17 +597,11 @@ namespace MultronWinCleaner.Processes
 
 
 
-        public async Task ScanCDirectoryAsync(string directory, string name, TextBlock directorytextblock)
-        {
-            long dirSize = await GetCDirectorySizeAsync(directory);
-            totalsize += dirSize;
-            await directorytextblock.Dispatcher.InvokeAsync(() =>
-                directorytextblock.Text = $"Completed: {name} {formatsize(dirSize)}");
-        }
+      
 
-        public async Task<long> GetCDirectorySizeAsync(string path)
+        public async Task ScanCDirectoryAsync(string path)
         {
-            long size = 0;
+         
             try
             {
                 if (Directory.Exists(path))
@@ -641,11 +609,11 @@ namespace MultronWinCleaner.Processes
                     foreach (string dir in Directory.GetDirectories(path))
                     {
                         if (main.cancelstatus.IsCancellationRequested) break;
-                        size += await GetCDirectorySizeAsync(dir);
+                        await ScanCDirectoryAsync(dir);
                     }
 
 
-
+                   
                     foreach (string file in Directory.GetFiles(path))
                     {
                         if (main.cancelstatus.IsCancellationRequested) break;
@@ -655,41 +623,37 @@ namespace MultronWinCleaner.Processes
                             if (".log.etl.dmp.trace.tmp.temp.bak.swp".Split('.').Any(ext => file.EndsWith($".{ext}")))
                             {
                                 long fSize = new FileInfo(file).Length;
-                                size += fSize;
+                                deeplogscantotal += fSize;
                                 totalsize += fSize;
+                                main.logfiles.Add(file);
+                                
                                 checkboxData.Add((file, fSize, "Deep log scans finded"));
                             }
                         }
                     }
+
                 }
             }
             catch { }
 
-            return size;
+           
         }
 
-        public async Task ScanDirectoryAsync(string directory, string name, TextBlock directorytextbox)
+        public async Task ScanDirectoryAsync(string path, string name, TextBlock directorytextbox)
         {
-            long dirSize = await GetDirectorySizeAsync(directory);
-            totalsize += dirSize;
-            await directorytextbox.Dispatcher.InvokeAsync(() =>
-                directorytextbox.Text = $"Completed: {name} {formatsize(dirSize)}");
-        }
-
-        public async Task<long> GetDirectorySizeAsync(string path)
-        {
-            long size = 0;
             try
             {
                 if (Directory.Exists(path))
                 {
+               
                     foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
                     {
                         if (main.cancelstatus.IsCancellationRequested) break;
                         if (!main.settings.excludedfiles.Contains(file))
                         {
                             FileInfo fi = new FileInfo(file);
-                            size += fi.Length;
+                            totalsize += fi.Length;
+                            currentscan += fi.Length;
                             checkboxData.Add((file, fi.Length, path));
                         }
                     }
@@ -697,8 +661,12 @@ namespace MultronWinCleaner.Processes
             }
             catch { }
 
-            return size;
+            await directorytextbox.Dispatcher.InvokeAsync(() =>
+                directorytextbox.Text = $"Completed: {name} {main.formatsize(currentscan)}");
+          
         }
+
+     
 
 
     }
