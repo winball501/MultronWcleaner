@@ -1,4 +1,4 @@
-﻿using MFK;
+using MFK;
 using Multron_Win_Cleaner;
 using MultronWinCleaner;
 using System;
@@ -30,7 +30,7 @@ namespace MultronWinCleaner.Processes
     {
         public MainWindow main;
         private long totalsize;
-        private long cleaned;
+      
         int winsxs = 0;
 
 
@@ -217,6 +217,7 @@ namespace MultronWinCleaner.Processes
         }
         public async Task run()
         {
+           
             await main.Dispatcher.InvokeAsync(() =>
             {
                 main.wrapPanelDirectories.Children.Clear();
@@ -237,25 +238,9 @@ namespace MultronWinCleaner.Processes
             totalsize = new DriveInfo("C:\\").AvailableFreeSpace;
 
             await UpdateStatusColor(System.Windows.Media.Brushes.Blue);
-
-            if (main.database[0].Contains("WinSxS") && winsxs == 0)
-            {
-
-
-                await AddStatusTextBlock("Cleaning: WinSxS Folder");
-
-                string appFolder = System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "Multron Win Cleaner");
-                Directory.CreateDirectory(appFolder);
-                string logFile = System.IO.Path.Combine(appFolder, "dism_cleanup.log");
-                if (System.IO.File.Exists(logFile)) System.IO.File.Delete(logFile);
-
-                await CleanupWinSxSWithRealProgress(logFile, main.progressBar1, main.dismcancel.Token);
-                winsxs = 1;
-
-            }
-            if (main.logfiles.Any())
+          
+           
+            if (main.logfiles.Count > 0)
             {
                 var logBlock = await AddStatusTextBlock("Cleaning: Deep Log Scan Files");
 
@@ -278,7 +263,7 @@ namespace MultronWinCleaner.Processes
                     {
                         long fileSize = new FileInfo(file).Length;
                         System.IO.File.Delete(file);
-                        cleaned += fileSize;
+                      
                     }
                     catch (System.IO.IOException ioEx)
                     {
@@ -295,20 +280,24 @@ namespace MultronWinCleaner.Processes
 
                         }
 
-                    }
+                    } catch (Exception ex)
+                    {
+
+                    } 
 
                 }
 
                 await main.Dispatcher.InvokeAsync(() =>
                 {
-                    logBlock.Text = $"Cleaned: Deep Log Scan Files - {main.formatsize(cleaned)}";
+                    logBlock.Text = $"Cleaned: Deep Log Scan Files";
                 });
-                cleaned = 0;
+              
             }
 
-            for (int i = 1; i < main.database.Count; i++)
+            for (int i = 0; i < main.database.Count; i++)
             {
                 string item = main.database[i];
+            
                 if (main.cancelclean == 2) break;
 
                 cleanedCount++;
@@ -316,36 +305,47 @@ namespace MultronWinCleaner.Processes
 
                 string name = GetToken(item, 0);
                 string path = GetToken(item, 1);
+                if (name.Equals("WinSxS Folder") && winsxs == 0)
+                {
+                    
 
+                    await AddStatusTextBlock("Cleaning: WinSxS Folder");
+
+                    string appFolder = System.IO.Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "Multron Win Cleaner");
+                    Directory.CreateDirectory(appFolder);
+                    string logFile = System.IO.Path.Combine(appFolder, "dism_cleanup.log");
+                    if (System.IO.File.Exists(logFile)) System.IO.File.Delete(logFile);
+
+                    await CleanupWinSxSWithRealProgress(logFile, main.progressBar1, main.dismcancel.Token);
+                    winsxs = 1;
+                    continue;
+                }
                 var statusBlock = await AddStatusTextBlock($"Cleaning: {name}");
 
                 try
                 {
-                    if (System.IO.File.Exists(path))
+                    if (File.Exists(path))
                     {
-                        if (!main.settings.excludedfiles.Contains(item))
+                       
+                        if (!main.settings.excludedfiles.Contains(path))
                         {
                             long size = new FileInfo(path).Length;
-                            System.IO.File.Delete(path);
-                            cleaned += size;
+                            File.Delete(path);
                         }
-
                     }
                     else if (Directory.Exists(path))
                     {
+                 
                         await CleanDirectory(path);
+                        await DeleteEmptyDirectories(path);
                     }
 
-
-                    statusBlock = await AddStatusTextBlock($"Cleaned: {name}");
-                    statusBlock.Text = $"Cleaned: {name} - {main.formatsize(cleaned)}";
-                    cleaned = 0;
-
+                    statusBlock.Text = $"Cleaned: {name}";
                 }
-                catch (System.IO.IOException ioEx)
+                catch (IOException ioEx)
                 {
-
-
                     const int ERROR_SHARING_VIOLATION = 0x20;
                     const int ERROR_LOCK_VIOLATION = 0x21;
 
@@ -353,16 +353,14 @@ namespace MultronWinCleaner.Processes
 
                     if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
                     {
-                        if (System.IO.File.Exists(path))
+                        if (File.Exists(path))
                             main.paths.Add(path);
                     }
-
                 }
                 catch (Exception ex)
                 {
-
+                    Console.WriteLine($"Exception cleaning {path}: {ex.Message}");
                 }
-
             }
 
             await FinalizeCleaning();
@@ -414,128 +412,84 @@ namespace MultronWinCleaner.Processes
             public string FilePath { get; set; }
 
         }
-     
+
 
 
 
         private async Task CleanDirectory(string path)
         {
-            var excluded = new HashSet<string>(main.settings.excludedfiles, StringComparer.OrdinalIgnoreCase);
-            await Task.Run(() => RecursiveClean(path, excluded));
-        }
-
-        private async Task RecursiveClean(string path, HashSet<string> excluded)
-        {
-            string[] files = await Task.Run(() =>
-            {
-                try
+            try
+            { 
+                foreach (var subDir in Directory.GetDirectories(path))
                 {
-                    return Directory.GetFiles(path);
+                    await CleanDirectory(subDir);
                 }
-                catch (Exception ex)
-                {
-
-                    return Array.Empty<string>();
-                }
-            });
-
-            string[] dirs = await Task.Run(() =>
-            {
-                try
-                {
-                    return Directory.GetDirectories(path);
-                }
-                catch (Exception ex)
-                {
-
-                    return Array.Empty<string>();
-                }
-            });
-
-            foreach (var file in files)
-            {
-                if (main.cancelclean == 2) return;
-
-
-
-                if (!excluded.Contains(file))
-                {
-                    var result = await Task.Run(() =>
-                    {
-                        try
-                        {
-
-                            if (!System.IO.File.Exists(file))
-                            {
-
-                                return (true, 0L, "File did not exist.");
-                            }
-
-
-                            long fileSize = new FileInfo(file).Length;
-
-                            System.IO.File.Delete(file);
-
-                            return (true, fileSize, string.Empty);
-                        }
-                        catch (System.IO.IOException ioEx)
-                        {
-
-                            const int ERROR_SHARING_VIOLATION = 0x20;
-                            const int ERROR_LOCK_VIOLATION = 0x21;
-
-
-                            int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
-
-                            if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
-                            {
-                                main.paths.Add(file);
-
-                                return (false, 0L, $"File is locked or in use by another process: {ioEx.Message}");
-                            }
-                            else
-                            {
-
-                                return (false, 0L, $"An I/O error occurred: {ioEx.Message}");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            return (false, 0L, $"An I/O error occurred: {ex.Message}");
-                        }
-
-                    });
-
-                    if (result.Item1)
-                    {
-                        cleaned += result.Item2;
-                    }
-
-                }
-            }
-
-            foreach (var dir in dirs)
-            {
-                if (main.cancelclean == 2) return;
-
-                await RecursiveClean(dir, excluded);
-
-                var result = await Task.Run(() =>
+                  
+                foreach (var file in Directory.GetFiles(path))
                 {
                     try
                     {
-                        Directory.Delete(dir, true);
-                        return (true, string.Empty);
+                        if (!main.settings.excludedfiles.Any(ex =>
+                                 string.Equals(ex, file, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            File.Delete(file);
+                        }
+                    }
+                    catch (IOException ioEx)
+                    {
+                        const int ERROR_SHARING_VIOLATION = 0x20;
+                        const int ERROR_LOCK_VIOLATION = 0x21;
+
+                        int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
+                        if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
+                        {
+                            main.paths.Add(file);  
+                        }
                     }
                     catch (Exception ex)
                     {
-                        return (false, ex.Message);
+                        Console.WriteLine($"[ERROR] Failed to delete file: {file}\n{ex.Message}");
                     }
-                });
+                }
 
-
+              
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[FATAL] Unexpected error in CleanDirectory for: {path}\n{ex.Message}");
             }
         }
+        public async Task DeleteEmptyDirectories(string parentPath)
+        {
+            try
+            {
+               
+                foreach (string subDir in Directory.GetDirectories(parentPath))
+                {
+                    await DeleteEmptyDirectories(subDir);
+
+                  
+                    if (Directory.Exists(subDir) && Directory.GetFileSystemEntries(subDir).Length == 0)
+                    {
+                        try
+                        {
+                            Directory.Delete(subDir);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[WARN] Failed to delete {subDir}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Failed processing {parentPath}: {ex.Message}");
+            }
+        }
+
+
+
         public class LockedFileViewModel
         {
             public string FilePath { get; set; }
