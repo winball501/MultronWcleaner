@@ -1,4 +1,4 @@
-﻿using Multron_Win_Cleaner;
+using Multron_Win_Cleaner;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -163,7 +163,7 @@ namespace MultronWinCleaner.Processes
                 }
 
                 Version latestVersion = new Version(match.Value);
-                Version currentVersion = new Version("1.20.2");
+                Version currentVersion = new Version("1.20.3");
 
                 if (latestVersion == currentVersion)
                 {
