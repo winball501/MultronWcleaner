@@ -163,7 +163,7 @@ namespace MultronWinCleaner.Processes
                 }
 
                 Version latestVersion = new Version(match.Value);
-                Version currentVersion = new Version("1.20.3");
+                Version currentVersion = new Version("1.20.4");
 
                 if (latestVersion == currentVersion)
                 {
