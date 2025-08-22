@@ -104,7 +104,7 @@ namespace MultronWinCleaner
                         FirewallScanResultLabel.Visibility = Visibility.Visible;
                         FirewallScanResultLabel.Content = $"{invalidrules.Count} invalid firewall rule(s) found.";
                         FirewallScanResultLabel.Foreground = Brushes.OrangeRed;
-                         
+                        FirewallScan.IsEnabled = true;
                     }
                     else
                     {
