@@ -245,7 +245,7 @@
         <DockPanel Background="{DynamicResource PanelBackground}" Height="56" VerticalAlignment="Top" LastChildFill="False" MouseDown="TopBar_MouseDown">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="16,0,0,0">
                 <TextBlock Text="🧼 Multron Win Cleaner" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
-                <TextBlock Text=" v1.20.4 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
+                <TextBlock Text=" v1.20.5 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,12,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
