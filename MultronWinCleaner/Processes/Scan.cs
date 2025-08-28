@@ -74,8 +74,11 @@ namespace MultronWinCleaner.Processes
         {
 
             public string FileName { get; set; }
+            public string Path { get; set; }
             public long SizeBytes { get; set; }
             public string File => $"File to delete={FileName}={formatsize(SizeBytes)}";
+
+          
 
             private bool isChecked;
             public bool IsChecked
@@ -524,11 +527,13 @@ namespace MultronWinCleaner.Processes
 
                                 SizeBytes = item.size,
 
-                                IsChecked = true
+                                IsChecked = true,
+
+                                Path = item.file
 
                             }).ToList();
 
-                           
+                            
 
 
 
