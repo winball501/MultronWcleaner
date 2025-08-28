@@ -15,15 +15,16 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Text.RegularExpressions;
-using System.Windows.Data;
 using static Multron_Win_Cleaner.MainWindow;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 namespace MultronWinCleaner.Processes
 {
     public class Clean
@@ -328,12 +329,24 @@ namespace MultronWinCleaner.Processes
                 {
                     if (File.Exists(path))
                     {
-                       
-                        if (!main.settings.excludedfiles.Contains(path))
+                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+
+
+                        var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
+
+                        if (fileToDelete != null)
                         {
-                            long size = new FileInfo(path).Length;
-                            File.Delete(path);
+                            if (!main.settings.excludedfiles.Contains(path))
+                            {
+                                if (File.Exists(path))
+                                {
+                                     File.Delete(path);
+                                }
+                            }
                         }
+
+
+
                     }
                     else if (Directory.Exists(path))
                     {
@@ -429,11 +442,22 @@ namespace MultronWinCleaner.Processes
                 {
                     try
                     {
-                        if (!main.settings.excludedfiles.Any(ex =>
-                                 string.Equals(ex, file, StringComparison.OrdinalIgnoreCase)))
+                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+
+
+                        var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, file, StringComparison.OrdinalIgnoreCase));
+
+                        if (fileToDelete != null)
                         {
-                            File.Delete(file);
+                            if (!main.settings.excludedfiles.Contains(file))
+                            {
+                                if (File.Exists(file))
+                                {
+                                    File.Delete(file);
+                                }
+                            }
                         }
+
                     }
                     catch (IOException ioEx)
                     {
