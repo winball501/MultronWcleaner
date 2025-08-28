@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.Win32;
 using Multron_Win_Cleaner;
 using System;
@@ -394,14 +394,14 @@ namespace MultronWinCleaner
 
         public void addexception(string path)
         {
-           
-
+         
             if (!string.IsNullOrWhiteSpace(path) && !lstExceptions.Items.Contains(path))
             {
                 lstExceptions.Items.Add(path);
                 excludedfiles.Add(path);
                 txtExceptionPath.Clear();
-                using (StreamWriter writer = new StreamWriter(excludedfilesdir))
+              
+                using (StreamWriter writer = new StreamWriter(excludedfilesdir, append: true))
                 {
                     writer.WriteLine(path);
                 }
