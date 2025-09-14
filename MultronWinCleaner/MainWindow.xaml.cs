@@ -964,10 +964,7 @@ namespace Multron_Win_Cleaner
             else if (content.Contains("WinSxS"))
 
             {
-                string name = stringtokenizer(content, "=", 0);
-                string path = stringtokenizer(content, "=", 3);
-                database.RemoveAll(item => item.EndsWith("=winsxs"));
-            
+                return;
             } else
             {
                 string file = stringtokenizer(checkBox.Content.ToString(), "=", 1);
