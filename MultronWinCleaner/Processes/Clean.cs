@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace MultronWinCleaner.Processes
 
             }
         }
-        public async Task CleanupWinSxSWithRealProgress(
+      public async Task CleanupWinSxSWithRealProgress(
       string logPath,
       ProgressBar progressBar,
       CancellationToken cancellationToken)
@@ -92,7 +93,7 @@ namespace MultronWinCleaner.Processes
             var psi = new ProcessStartInfo
             {
                 FileName = "dism.exe",
-                Arguments = $"/Online /Cleanup-Image /StartComponentCleanup /LogPath:\"{logPath}\"",
+                Arguments = $"/Online /Cleanup-Image /StartComponentCleanup /NoRestart /LogPath:\"{logPath}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -181,7 +182,7 @@ namespace MultronWinCleaner.Processes
 
                 if (exitCode != 0)
                 {
-                    AddStatusTextBlock($"DISM exited with code {exitCode}. Error:\n{errorBuilder}");
+                    AddStatusTextBlock($"Error: DISM exited with code {exitCode}. Error:\n{errorBuilder}");
                 }
                 else
                 {
@@ -204,7 +205,7 @@ namespace MultronWinCleaner.Processes
                     progressBar.IsIndeterminate = false;
                     progressBar.Value = 0;
                 });
-                AddStatusTextBlock("Cleanup cancelled.");
+                AddStatusTextBlock("Warning: Cleanup cancelled.");
             }
             catch (Exception ex)
             {
@@ -213,7 +214,7 @@ namespace MultronWinCleaner.Processes
                     progressBar.IsIndeterminate = false;
                     progressBar.Value = 0;
                 });
-                AddStatusTextBlock($"Error during cleanup: {ex.Message}");
+                AddStatusTextBlock($"Error: {ex.Message}");
             }
         }
         public async Task run()
@@ -308,25 +309,36 @@ namespace MultronWinCleaner.Processes
                 string path = GetToken(item, 1);
                 if (name.Equals("WinSxS Folder") && winsxs == 0)
                 {
-                    
 
-                    await AddStatusTextBlock("Cleaning: WinSxS Folder");
+                    var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
 
-                    string appFolder = System.IO.Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "Multron Win Cleaner");
-                    Directory.CreateDirectory(appFolder);
-                    string logFile = System.IO.Path.Combine(appFolder, "dism_cleanup.log");
-                    if (System.IO.File.Exists(logFile)) System.IO.File.Delete(logFile);
 
-                    await CleanupWinSxSWithRealProgress(logFile, main.progressBar1, main.dismcancel.Token);
-                    winsxs = 1;
-                    continue;
+                    var isWinSxSChecked = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
+                    if (isWinSxSChecked == null  || !isWinSxSChecked.IsChecked)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        await AddStatusTextBlock("Cleaning: WinSxS Folder");
+
+
+
+                        string logFile = System.IO.Path.Combine(Environment.CurrentDirectory, "dism_cleanup.log");
+                        if (System.IO.File.Exists(logFile)) System.IO.File.Delete(logFile);
+
+                        await CleanupWinSxSWithRealProgress(logFile, main.progressBar1, main.dismcancel.Token);
+                        winsxs = 1;
+                        continue;
+
+                    }
+                  
                 }
                 var statusBlock = await AddStatusTextBlock($"Cleaning: {name}");
 
                 try
                 {
+                    int iscleaned = 0;
                     if (File.Exists(path))
                     {
                         var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
@@ -341,6 +353,7 @@ namespace MultronWinCleaner.Processes
                                 if (File.Exists(path))
                                 {
                                      File.Delete(path);
+                                     iscleaned = 1;
                                 }
                             }
                         }
@@ -350,12 +363,45 @@ namespace MultronWinCleaner.Processes
                     }
                     else if (Directory.Exists(path))
                     {
-                 
-                        await CleanDirectory(path);
-                        await DeleteEmptyDirectories(path);
-                    }
+                        var targetGroup = main.viewModel.Groups .FirstOrDefault(g => g.Path != null &&  g.Path.StartsWith(path, StringComparison.OrdinalIgnoreCase));
 
-                    statusBlock.Text = $"Cleaned: {name}";
+                        if (targetGroup == null || targetGroup.Files == null || targetGroup.Files.Count == 0)
+                        {
+                            iscleaned = 2;
+                        }
+                        else
+                        {
+                            bool allUnchecked = targetGroup.Files.All(f => !f.IsChecked);
+
+                            if (!allUnchecked)
+                            {
+                                await CleanDirectory(path);
+                                await DeleteEmptyDirectories(path);
+                                iscleaned = 1;
+                            }
+                        }
+
+
+
+                    }
+                    await main.Dispatcher.InvokeAsync(() =>
+                    {
+                        if (iscleaned == 0)
+                        {
+                            statusBlock.Text = $"Ignored: {name}";
+                            statusBlock.Foreground = Brushes.Goldenrod;
+                        }
+                        else if (iscleaned == 2)
+                        {
+                            statusBlock.Text = $"Folder Empty: {name}";
+                            statusBlock.Foreground = Brushes.DarkGreen;
+
+                        } else {
+                            statusBlock.Text = $"Cleaned: {name}";
+                        }
+                    });
+                   
+                  
                 }
                 catch (IOException ioEx)
                 {
@@ -524,7 +570,8 @@ namespace MultronWinCleaner.Processes
 
             string resultMessage = "";
             await cts.CancelAsync();
-            long freedSpace = new DriveInfo("C:\\").AvailableFreeSpace - totalsize;
+            long newFreeSpace = new DriveInfo("C:\\").AvailableFreeSpace;
+            long freedSpace = newFreeSpace - totalsize;
             if (main.paths.Count > 0)
             {
                 await main.Dispatcher.InvokeAsync(() =>
@@ -577,6 +624,7 @@ namespace MultronWinCleaner.Processes
             TextBlock tb = null;
             await main.Dispatcher.InvokeAsync(() =>
             {
+             
                 tb = new TextBlock
                 {
                     Text = text,
@@ -587,6 +635,7 @@ namespace MultronWinCleaner.Processes
                     VerticalAlignment = VerticalAlignment.Top
                 };
                 main.wrapPanelDirectories.Children.Add(tb);
+            
             });
             return tb;
         }
