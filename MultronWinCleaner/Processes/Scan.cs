@@ -29,6 +29,8 @@ namespace MultronWinCleaner.Processes
         long totalsize = 0;
         long deeplogscantotal = 0;
         long currentscan = 0;
+        int winsxs = 0;
+        int logscan = 0;
         CancellationTokenSource cts = new CancellationTokenSource();
         List<(string file, long size, string path)> checkboxData = new List<(string file, long size, string path)>();
      
@@ -221,7 +223,7 @@ namespace MultronWinCleaner.Processes
             var psi = new ProcessStartInfo
             {
                 FileName = "dism.exe",
-                Arguments = "/Online /Cleanup-Image /AnalyzeComponentStore",
+                Arguments = "/Online /Cleanup-Image /AnalyzeComponentStore /NoRestart",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -308,31 +310,33 @@ namespace MultronWinCleaner.Processes
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
+                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 100;
                 });
 
-                if (exitCode != 0)
-                    throw new InvalidOperationException($"DISM exited with code {exitCode}.\n{errorBuilder}");
+                return outputBuilder.ToString() + "#=#" + exitCode;
 
-                return outputBuilder.ToString();
+
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException oce)
             {
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
+                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 0;
                 });
-                throw;
+                return oce.Message;
             }
             catch (Exception ex)
             {
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
+                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 0;
                 });
-                throw;
+                return ex.Message;
             }
         }
 
@@ -413,18 +417,17 @@ namespace MultronWinCleaner.Processes
                         };
                         main.wrapPanelDirectories.Children.Add(directorytextblock);
                     });
-                    if (directory.EndsWith("winsxs"))
+                    if (name.Contains("WinSxS Folder") && winsxs == 0)
                     {
                         try
                         {
                             string output = await RunDismAnalyzeComponentStoreAsync(main.dismcancel.Token, main.progressBar1);
+                     
                             if (!main.cancelstatus.IsCancellationRequested)
                             {
-                                string appFolder = System.IO.Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-    "Multron Win Cleaner");
-                                Directory.CreateDirectory(appFolder);
-                                string outputPath = System.IO.Path.Combine(appFolder, "dism_scan.log");
+                               
+                             
+                                string outputPath = System.IO.Path.Combine(Environment.CurrentDirectory, "dism_scan.log");
 
                                 await System.IO.File.WriteAllTextAsync(outputPath, output);
 
@@ -434,41 +437,61 @@ namespace MultronWinCleaner.Processes
                                 long total = cache + backups;
                                 totalsize += total;
 
-                                checkboxData.Add(("WinSxS Folder=C:\\Windows\\WinSxS", total, "C:\\Windows\\WinSxS"));
+                            
                                 await main.Dispatcher.InvokeAsync(() =>
                                 {
                                     main.wrapPanelDirectories.Children.Remove(directorytextblock);
-                                    directorytextblock = new TextBlock
+                                    if (output.EndsWith("#=#3010"))
                                     {
-                                        Text = $"Completed: {name + " " + main.formatsize(total)}",
-                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                        FontSize = 16,
-                                        Margin = new Thickness(5)
-                                    };
+                                        directorytextblock = new TextBlock
+                                        {
+                                            Text = $"Completed: {name + " " + main.formatsize(total)} " + "(Dism Requires System Restart)",
+                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                            FontSize = 16,
+                                            Margin = new Thickness(5)
+                                        };
+                                        checkboxData.Add(("(Dism Requires System Restart)=C:\\Windows\\WinSxS", total, "C:\\Windows\\WinSxS"));
+                                    }
+                                    else
+                                    {
 
+                                        directorytextblock = new TextBlock
+                                        {
+                                            Text = $"Completed: {name + " " + main.formatsize(total)}",
+                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                            FontSize = 16,
+                                            Margin = new Thickness(5)
+                                        };
+                                        checkboxData.Add(("C:\\Windows\\WinSxS", total, "C:\\Windows\\WinSxS"));
+                                    }
+                                     
+                              
                                     main.wrapPanelDirectories.Children.Add(directorytextblock);
                                 });
                             }
+                            winsxs = 1;
                         }
                         catch (OperationCanceledException)
                         {
-                 
-                            return;
+                            winsxs = 1;
+                            main.cancelstatus.Cancel();
+                            break;
                         }
                        
                       
                     }
                     else
                     {
-                        if (directory.EndsWith("logscan"))
+                        if (name.Contains("Deep Log Files Scan") && logscan == 0)
                         {
                           
                             await ScanCDirectoryAsync(path); 
                             await directorytextblock.Dispatcher.InvokeAsync(() =>
                             directorytextblock.Text = $"Completed: {name} {main.formatsize(deeplogscantotal)}");
+                            logscan = 1;
                         }
 
-                        else if (System.IO.File.Exists(path))
+                        else if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
                         {
                             long filelength = new FileInfo(path).Length;
                             totalsize += filelength;
@@ -479,6 +502,7 @@ namespace MultronWinCleaner.Processes
                         else
                         {
                             currentscan = 0;
+                            
                             await ScanDirectoryAsync(path, name, directorytextblock);
                         }
 
@@ -486,6 +510,7 @@ namespace MultronWinCleaner.Processes
                         nowscanning++;
                         double percent = (double)nowscanning / size * 100;
                         await main.Dispatcher.InvokeAsync(() => main.progressBar1.Value = percent);
+                      
                     }
 
                 }
