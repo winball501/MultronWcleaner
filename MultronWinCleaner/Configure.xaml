@@ -1,0 +1,82 @@
+﻿<Window x:Class="MultronWinCleaner.Configure"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Configure Turbo Boost Services"
+        Height="600" Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="{DynamicResource WindowBackground}">
+
+    <Border Background="{DynamicResource WindowBackground}" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource WindowBorder}">
+        <DockPanel>
+
+        
+            
+            <Grid DockPanel.Dock="Top" Height="36" Background="{DynamicResource TitleBarBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+             
+                <TextBlock Text="Configure Optimization Services" Foreground="{DynamicResource TitleBarText}" VerticalAlignment="Center" FontWeight="Bold" Margin="12,0,0,0"
+                           MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"/>
+
+               
+                <Button Grid.Column="1" Width="36" Height="36" Content="−" FontSize="16" 
+                        Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource TitleBarText}" 
+                        Cursor="Hand" Click="Minimize_Click"
+                        ToolTip="Minimize"/>
+
+             
+                <Button Grid.Column="2" Width="36" Height="36" Content="✕" FontSize="16" 
+                        Background="Transparent" BorderBrush="Transparent" Foreground="{DynamicResource TitleBarText}" 
+                        Cursor="Hand" Click="Close_Click"
+                        ToolTip="Close"/>
+            </Grid>
+
+          
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+ 
+                <TextBlock Grid.Row="0" Text="Select services to disable during Optimization:" 
+                           FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
+
+               
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Background="Transparent">
+                    <ItemsControl x:Name="ServicesList" Background="Transparent">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding ServiceName}" 
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" 
+                                          FontSize="14" Foreground="{DynamicResource TextPrimary}" 
+                                          Margin="5,2"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+               
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Save" Width="80" Margin="5" Click="Save_Click"
+                            Background="{DynamicResource ButtonBackground}" 
+                            Foreground="{DynamicResource ButtonForeground}"
+                            BorderBrush="{DynamicResource ButtonBorder}"
+                            Cursor="Hand"/>
+                    <Button Content="Cancel" Width="80" Margin="5" Click="Cancel_Click"
+                            Background="{DynamicResource ButtonBackground}" 
+                            Foreground="{DynamicResource ButtonForeground}"
+                            BorderBrush="{DynamicResource ButtonBorder}"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </Border>
+</Window>

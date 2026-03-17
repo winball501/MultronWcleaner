@@ -1,0 +1,27 @@
+scheduletype:Only Minutes
+postaction:Do Nothing
+minutes:60
+starttime:01:00
+endtime:22:00
+day1:0
+day2:0
+day3:0
+day4:0
+day5:0
+day6:0
+day7:0
+
+autoclean:0
+trayicon:0
+oldscan:0
+onlylowcpu:1
+runifactive:1
+batterylow:1
+oldscanindex:Custom
+
+customday:35
+customaccess:30
+access_scan:0
+accessscanindex:Custom
+themes:1
+pluggedin:1

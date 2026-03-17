@@ -1,0 +1,66 @@
+﻿<Window x:Class="MultronWinCleaner.NewStartupItemDetected"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="New Startup Item Detected"
+        Height="240" Width="480"
+        ResizeMode="NoResize"
+        WindowStartupLocation="Manual"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Border CornerRadius="12"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource BorderBrush}"
+            Background="{DynamicResource WindowBackground}"
+            Padding="20"
+            SnapsToDevicePixels="True"
+            Effect="{DynamicResource DialogShadow}">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="New Startup Item Detected"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource Text}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
+
+            <StackPanel Grid.Row="1" Margin="10,0,10,0" HorizontalAlignment="Center">
+                <TextBlock x:Name="ItemNameText"
+                           Text="StartupAppName.exe"
+                           FontWeight="SemiBold"
+                           FontSize="16"
+                           TextAlignment="Center"
+                           Foreground="{DynamicResource SecondaryTextBrush}"
+                           Margin="0,0,0,10"/>
+
+                <TextBlock x:Name="ItemPathText"
+                           Text="C:\Program Files\Example\StartupApp.exe"
+                           TextWrapping="Wrap"
+                           FontSize="12"
+                           TextAlignment="Center"
+                           Foreground="{DynamicResource SecondaryTextBrush}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="Open Startup Manager"
+            Width="140"
+            Margin="10,0"
+            Padding="10,4"
+            Style="{DynamicResource AccentButtonStyle}"
+            Click="AllowButton_Click"/>
+                <Button Content="Ignore"
+            Width="140"
+            Margin="10,0"
+            Padding="10,4"
+            Click="DisableButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
