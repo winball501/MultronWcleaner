@@ -21,7 +21,7 @@ Free, open-source Windows system cleaner and optimizer. No subscriptions, no loc
 - Memory Monitor — live RAM and CPU usage tracking
 
 **System Management**
-- Startup Manager — control which programs launch at boot, add new startup entries via Registry, Task Scheduler, WinLogon Userİnit
+- Startup Manager — control which programs launch at boot, add new startup entries to Registry, Task Scheduler, WinLogon Userİnit
 - Startup Notification — alerts when new startup items are added
 - Boot Operations Manager — handle locked files at next reboot, add custom file actions
 - Invalid Firewall Rule Cleaner — remove broken or outdated firewall rules
