@@ -1305,23 +1305,40 @@ namespace Multron_Win_Cleaner
                     }
 
                     var processes = whousef.WhoIsLocking(path);
-                    if (processes != null && processes.Count > 0)
+                    if (processes == null || processes.Count == 0)
                     {
-                        var processViewModels = new ObservableCollection<LockedProcessViewModel>(
-                            processes.Select(p => new LockedProcessViewModel
-                            {
-                                DisplayName = $"{p.ProcessName} (PID {p.Id})",
-                                Id = p.Id.ToString(),
-                                IsChecked = false
-                            }));
-
+                        
                         results.Add(new LockedFileGroupViewModel
                         {
                             FilePath = path,
                             GroupName = mainpath,
-                            Processes = processViewModels
+                            Processes = new ObservableCollection<LockedProcessViewModel>(
+                                new[] { new LockedProcessViewModel
+                            {
+                                DisplayName = "Unknown Process",
+                                Id = "0",
+                                IsChecked = false
+                            }})
                         });
+
+                        Interlocked.Increment(ref processedCount);
+                        progress?.Report((processedCount, total));
+                        continue;
                     }
+                    var processViewModels = new ObservableCollection<LockedProcessViewModel>(
+                        processes.Select(p => new LockedProcessViewModel
+                        {
+                            DisplayName = $"{p.ProcessName} (PID {p.Id})",
+                            Id = p.Id.ToString(),
+                            IsChecked = false
+                        }));
+
+                    results.Add(new LockedFileGroupViewModel
+                    {
+                        FilePath = path,
+                        GroupName = mainpath,
+                        Processes = processViewModels
+                    });
 
                     Interlocked.Increment(ref processedCount);
                     progress?.Report((processedCount, total));
@@ -1361,10 +1378,22 @@ namespace Multron_Win_Cleaner
                     {
                         string fullPath = g.FilePath;
                         string mainpath = g.GroupName;
-                        
-                        FileInfo info = new FileInfo(fullPath);
-                        string filesize = main.formatsize(info.Length);
 
+                        FileInfo info = null;
+                        string filesize = "0 Byte";
+                        try
+                        {
+                            if (System.IO.File.Exists(fullPath))
+                            {
+                                info = new FileInfo(fullPath);
+                                filesize = main.formatsize(info.Length);
+                            }
+                        }
+                        catch { }
+                        if(info == null)
+                        {
+                            continue;
+                        }
                         foreach (var proc in g.Processes)
                         {
                             string uniqueKey = $"{proc.Id}|{fullPath}";
@@ -1372,7 +1401,7 @@ namespace Multron_Win_Cleaner
                             if (!added.Add(uniqueKey))
                                 continue;
 
-                            bool isChecked = main.paths.Contains(fullPath + "=" + proc.Id);
+                            bool isChecked = main.paths.Any(p => p.StartsWith(fullPath + "="));
 
                             allItems.Add(new LockedProcessViewModel
                             {
@@ -1384,7 +1413,7 @@ namespace Multron_Win_Cleaner
                                 IsChecked = isChecked,
                                 OnCheckedChanged = (model, state) =>
                                 {
-                                    string key = model.FilePathWithoutSize + "=" + proc.Id;
+                                    string key = model.FilePathWithoutSize + "=" + model.GroupName;
                                     if (state)
                                     {
                                         if (!main.paths.Contains(key))
@@ -1435,6 +1464,13 @@ namespace Multron_Win_Cleaner
                     view.Refresh();
                     main.groupedProcesses = cvs;
                     main.listBoxProcesses.ItemsSource = view;
+
+                   
+                    var stillLockedPaths = main.LockedFileGroups .Select(g => g.FilePath) .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                    main.paths.RemoveAll(p => !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
+
+                    main.label1_Copy.Text = $"Locked Files: {main.LockedFileGroups.Count} files, {allItems.Count} processes";
                 });
             }
 
