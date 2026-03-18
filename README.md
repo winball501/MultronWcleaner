@@ -44,9 +44,14 @@ Scan results display each file's creation date, age in days, and last modified d
 - [Database](https://github.com/winball501/MultronWcleaner-Database/releases)
 
 ## Screenshots
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/b4a7ee41-984e-467c-bc46-6fb993b5fb2e" />
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/15d97441-1bcf-458c-889a-494fe8ed9e4f" />
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/c1b07c84-7b7e-4700-b5b4-4cbd82db93a6" />
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/177bbdd5-3661-40c0-a025-050d304e839c" />
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/daaf9d21-be24-4b5c-b3de-cd3f350562dc" />
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/81c382c6-90cd-4cc3-87d5-6b77e4c21fbe" />
+<img width="1200" height="1103" alt="image" src="https://github.com/user-attachments/assets/7964a4f3-ddf0-4934-a136-66b0977a2673" />
 
-![Screenshot 1](https://github.com/winball501/mwcphoto/blob/main/image.png?raw=true)
-![Screenshot 2](https://github.com/winball501/mwcphoto/blob/main/image1.png?raw=true)
 
 ## Contributing
 
