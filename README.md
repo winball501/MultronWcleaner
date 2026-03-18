@@ -7,7 +7,7 @@ Free, open-source Windows system cleaner and optimizer. No subscriptions, no loc
 **System Cleanup**
 - Scan and remove junk files from 253+ supported applications
 - WinSxS component store analysis and cleanup using DISM
-- Custom folder cleanup via configurable `database.txt`
+- Custom folder cleanup via configurable `database.txt`, open for community contributions
 - Deep log file scanner (`.log`, `.etl`, `.dmp`, `.tmp`, `.bak` and more)
 - File age filtering — scan by creation date or last access date with preset or custom day thresholds, disabled by default
 - Auto Cleaner — schedule automatic cleaning at custom intervals (hourly, daily, etc.), disabled by default
@@ -21,7 +21,7 @@ Free, open-source Windows system cleaner and optimizer. No subscriptions, no loc
 - Memory Monitor — live RAM and CPU usage tracking
 
 **System Management**
-- Startup Manager — control which programs launch at boot, add new startup entries via Registry, Task Scheduler, or WinLogon userinit
+- Startup Manager — control which programs launch at boot, add new startup entries via Registry, Task Scheduler, or User Startup folder
 - Startup Notification — alerts when new startup items are added
 - Boot Operations Manager — handle locked files at next reboot, add custom file actions
 - Invalid Firewall Rule Cleaner — remove broken or outdated firewall rules
