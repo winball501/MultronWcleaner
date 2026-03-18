@@ -14,6 +14,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -250,7 +251,7 @@ namespace MultronWinCleaner.Processes
                 {
                     try
                     {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
 
 
                         var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, logfile, StringComparison.OrdinalIgnoreCase));
@@ -271,8 +272,20 @@ namespace MultronWinCleaner.Processes
                             main.label1_Copy.Text = $"Cleaning {current} \\ {main.logfiles.Count}";
 
                         });
+                        current++;
                         await UpdateProgress(current, main.logfiles.Count);
-                    } catch (Exception ex)
+                    }
+                    catch (IOException ioEx)
+                    {
+                        int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
+                        if (errorCode == 0x20 || errorCode == 0x21)
+                            main.paths.Add(logfile + "=" + "Deep Log Scanner Result");
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        main.paths.Add(logfile + "=" + "Deep Log Scanner Result");
+                    }
+                    catch (Exception ex)
                     {
                          
                     }
@@ -305,7 +318,7 @@ namespace MultronWinCleaner.Processes
                 if (name.Contains("Dism.exe") && winsxs == 0)
                 {
 
-                    var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+                    var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
 
 
                     var isWinSxSChecked = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, name, StringComparison.OrdinalIgnoreCase));
@@ -337,7 +350,7 @@ namespace MultronWinCleaner.Processes
                     int iscleaned = 0;
                     if (File.Exists(path))
                     {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
 
 
                         var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
@@ -361,13 +374,13 @@ namespace MultronWinCleaner.Processes
                     {
                         var targetGroup = main.viewModel.Groups.FirstOrDefault(g => g.Path != null &&  g.Path.StartsWith(path, StringComparison.OrdinalIgnoreCase));
 
-                        if (targetGroup == null || targetGroup.Files == null || targetGroup.Files.Count == 0)
+                        if (targetGroup == null || targetGroup.allFiles == null || targetGroup.allFiles.Count == 0)
                         {
                             iscleaned = 2;
                         }
                         else
                         {
-                            bool allUnchecked = targetGroup.Files.All(f => !f.IsChecked);
+                            bool allUnchecked = targetGroup.allFiles.All(f => !f.IsChecked);
 
                             if (!allUnchecked)
                             {
@@ -407,26 +420,43 @@ namespace MultronWinCleaner.Processes
                 {
                     const int ERROR_SHARING_VIOLATION = 0x20;
                     const int ERROR_LOCK_VIOLATION = 0x21;
-
                     int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
-
-                    if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION )
+                    if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
                     {
                         if (File.Exists(path))
                         {
                             main.paths.Add(path + "=" + name);
                         }
-                            
-                         
+                        await main.Dispatcher.InvokeAsync(() =>
+                        {
+                            statusBlock.Text = $"Locked: {name}";
+                            statusBlock.Foreground = Brushes.Red;
+                        });
                     }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    main.paths.Add(path + "=" + name);
+                    await main.Dispatcher.InvokeAsync(() =>
+                    {
+                        statusBlock.Text = $"Access Denied: {name}";
+                        statusBlock.Foreground = Brushes.Red;
+                    });
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception cleaning {path}: {ex.Message}");
+                 
                 }
             }
 
             await FinalizeCleaning();
+        }
+        public void catchexception(string message)
+        {
+            using (StreamWriter writer = new StreamWriter(Environment.CurrentDirectory + "\\exceptions.txt"))
+            {
+                writer.WriteLine(message);
+            }
         }
         public class LockedFileGroupViewModel : INotifyPropertyChanged
         {
@@ -484,18 +514,25 @@ namespace MultronWinCleaner.Processes
 
         private async Task CleanDirectory(string path, string name)
         {
+
             try
-            { 
+            {
                 foreach (var subDir in Directory.GetDirectories(path))
                 {
                     await CleanDirectory(subDir, name);
                 }
-                  
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            try
+            {
                 foreach (var file in Directory.GetFiles(path))
                 {
                     try
                     {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.Files).Where(f => f.IsChecked).ToList();
+                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
 
 
                         var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, file, StringComparison.OrdinalIgnoreCase));
@@ -520,26 +557,31 @@ namespace MultronWinCleaner.Processes
                         int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
                         if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
                         {
-                            main.paths.Add(file + "=" + name);  
+                            main.paths.Add(file + "=" + name);
                         }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        main.paths.Add(file + "=" + name);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[ERROR] Failed to delete file: {file}\n{ex.Message}");
+                        catchexception(ex.Message + " " + ex.StackTrace);
                     }
                 }
+            } catch (Exception ex)
+            {
+
+            }
+        
 
               
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[FATAL] Unexpected error in CleanDirectory for: {path}\n{ex.Message}");
-            }
+           
+        
         }
         public async Task DeleteEmptyDirectories(string parentPath)
         {
-            try
-            {
+   
                
                 foreach (string subDir in Directory.GetDirectories(parentPath))
                 {
@@ -554,15 +596,11 @@ namespace MultronWinCleaner.Processes
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"[WARN] Failed to delete {subDir}: {ex.Message}");
+                            catchexception(ex.Message + " " + ex.StackTrace);
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[ERROR] Failed processing {parentPath}: {ex.Message}");
-            }
+          
         }
 
 
