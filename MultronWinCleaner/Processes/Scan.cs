@@ -81,7 +81,10 @@ namespace MultronWinCleaner.Processes
             public string FileName { get; set; }
             public string Path { get; set; }
             public long SizeBytes { get; set; }
-            public string File => $"File to delete={FileName}={formatsize(SizeBytes)}";
+            public int AgeDays { get; set; }
+            public string CreatedDate { get; set; }
+            public string ModifiedDate { get; set; }
+            public string File => $"File to delete={FileName}={formatsize(SizeBytes)} | Created: {CreatedDate} ({AgeDays} days ago) | Modified: {ModifiedDate}";
 
 
 
@@ -514,7 +517,7 @@ namespace MultronWinCleaner.Processes
                         }
                         else if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
                         {
-                            addtocheckbox(name, path, "Direct Files");
+                            await addtocheckbox(path, name, "Direct Files");
                         } 
 
                         else
@@ -563,14 +566,15 @@ namespace MultronWinCleaner.Processes
 
                         var allFiles = items.Select(item => new FileItem
                         {
-                                FileName = item.file.Contains("Dism.exe", StringComparison.OrdinalIgnoreCase) ? $"Clean WinSxS Folder={item.file}=WinSxS Scan Result {main.formatsize(item.size)}" : $"{item.file}={main.formatsize(item.size)}",
-
-                                SizeBytes = item.size,
-
-                                IsChecked = true,
-
-                                Path = item.file
-
+                            FileName = item.file.Contains("Dism.exe", StringComparison.OrdinalIgnoreCase)
+             ? $"Clean WinSxS Folder={item.file}=WinSxS Scan Result {main.formatsize(item.size)}"
+             : $"{item.file}={main.formatsize(item.size)} | Created: {item.date} ({item.days} days) | Last Access: {item.modified}",
+                            SizeBytes = item.size,
+                            IsChecked = true,
+                            Path = item.file,
+                            AgeDays = item.days,
+                            CreatedDate = item.date,
+                            ModifiedDate = item.modified
                         }).ToList();
 
                         GroupViewModel groupVm = new GroupViewModel(path, allFiles);
@@ -641,7 +645,7 @@ namespace MultronWinCleaner.Processes
         }
 
 
-        public async void addtocheckbox(string file, string path, string process)
+        public async Task addtocheckbox(string file, string path, string process)
         {
 
             await main.Dispatcher.InvokeAsync(() =>
@@ -759,10 +763,9 @@ namespace MultronWinCleaner.Processes
                             if (".log.etl.dmp.trace.tmp.temp.bak.swp".Split('.').Any(ext => file.EndsWith($".{ext}")))
                             {
 
-                                await main.Dispatcher.InvokeAsync(() =>
-                                {
-                                     addtocheckbox(file, path, "Deep Log Scanner Result");
-                                });
+                            
+                                     await addtocheckbox(file, path, "Deep Log Scanner Result");
+                           
 
                       
                             }
@@ -788,7 +791,7 @@ namespace MultronWinCleaner.Processes
                         if (main.cancelstatus.IsCancellationRequested) break;
                         if (!main.settings.excludedfiles.Contains(file))
                         {
-                            addtocheckbox(file, path, name);
+                            await addtocheckbox(file, path, name);
                            
                      
                         }
