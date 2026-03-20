@@ -1,4 +1,4 @@
-﻿using Multron_Win_Cleaner;
+using Multron_Win_Cleaner;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -580,6 +580,29 @@ namespace MultronWinCleaner.Processes
                                                 {
                                                     newCheckBox.Content = name + "=" + path + "=warning(" + haswarning + ")";
                                                 }
+
+                                                newCheckBox.ContextMenu = new ContextMenu();
+                                                newCheckBox.ContextMenu.Items.Add(new MenuItem
+                                                {
+                                                    Header = "Open directory",
+                                                });
+                                                newCheckBox.ContextMenu.Items.Add(new MenuItem
+                                                {
+                                                    Header = "Open location",
+                                                });
+                                                newCheckBox.ContextMenu.Items.Add(new MenuItem
+                                                {
+                                                    Header = "Copy path",
+                                                });
+                                                ((MenuItem)newCheckBox.ContextMenu.Items[0]).Click += main.OpenDirectory_MainMenu_Click;
+                                                ((MenuItem)newCheckBox.ContextMenu.Items[1]).Click += main.OpenFileLocation_MainMenu_Click;
+                                                ((MenuItem)newCheckBox.ContextMenu.Items[2]).Click += main.CopyPath_MainMenu_Click;
+                                                newCheckBox.PreviewMouseRightButtonUp += (s, ev) =>
+                                                {
+                                                    newCheckBox.ContextMenu.PlacementTarget = newCheckBox;
+                                                    newCheckBox.ContextMenu.IsOpen = true;
+                                                    ev.Handled = true;
+                                                };
                                                 newCheckBox.Checked += main.CheckBox_Checked;
                                                 newCheckBox.Unchecked += main.CheckBox_Unchecked;
                                                 main.listboxes.Add(groupBoxContent);
