@@ -1204,7 +1204,115 @@ namespace Multron_Win_Cleaner
         {
                 await startscan();
         }
+        public void OpenDirectory_MainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var target = contextMenu?.PlacementTarget as CheckBox;
 
+            if (target != null && checkboxes2.Contains(target))
+            {
+                int index = checkboxes2.IndexOf(target);
+                string wrap = checkboxes2[index].Content.ToString();
+                string wrapdir = stringtokenizer(wrap, "=", 1);
+                try
+                {
+                    if (System.IO.File.Exists(wrapdir))
+                    {
+                        string dir = System.IO.Path.GetDirectoryName(wrapdir);
+                        if (dir != null && Directory.Exists(dir))
+                        {
+                            Process.Start("explorer.exe", dir);
+                        }
+                 
+                        else
+                        {
+                            MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    }
+                   
+                    
+                    else
+                    {
+                        if (wrapdir != null && Directory.Exists(wrapdir))
+                            Process.Start("explorer.exe", wrapdir);
+                        else
+                            MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location",  MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error:\n" + ex.Message, "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+
+        }
+        public void OpenFileLocation_MainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var target = contextMenu?.PlacementTarget as CheckBox;
+
+            if (target != null && checkboxes2.Contains(target))
+            {
+                int index = checkboxes2.IndexOf(target);
+                string wrap = checkboxes2[index].Content.ToString();
+                string wrapdir = stringtokenizer(wrap, "=", 1);
+                try
+                {
+                    if (System.IO.File.Exists(wrapdir))
+                        Process.Start("explorer.exe", $"/select,\"{wrapdir}\"");
+                    else
+                    {
+                        string? dir = System.IO.Path.GetDirectoryName(wrapdir);
+                        if (dir != null && Directory.Exists(dir))
+                            Process.Start("explorer.exe", dir);
+                        else
+                            MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error:\n" + ex.Message, "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+         
+        }
+
+        public void CopyPath_MainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var target = contextMenu?.PlacementTarget as CheckBox;
+
+            if (target != null && checkboxes2.Contains(target))
+            {
+                int index = checkboxes2.IndexOf(target);
+                string wrap = checkboxes2[index].Content.ToString();
+                string wrapdir = stringtokenizer(wrap, "=", 1);
+              
+                try
+                {
+                    if (wrapdir != null)
+                    {
+                        Clipboard.SetText(wrapdir);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Directory returned null.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         private void OpenFileLocation_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not MenuItem menuItem) return;
