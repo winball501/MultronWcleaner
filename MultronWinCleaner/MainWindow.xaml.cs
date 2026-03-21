@@ -71,6 +71,7 @@ namespace Multron_Win_Cleaner
         public byte autoclean = 0;
         public byte onclean = 0;
         public byte killer = 0;
+        public string extensions = ".log.etl.dmp.trace.tmp.temp.bak.swp";
         public MainWindow()
         {
             InitializeComponent();

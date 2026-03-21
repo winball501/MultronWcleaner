@@ -67,7 +67,8 @@
                                     Cursor="Hand"/>
                         </StackPanel>
                     </GroupBox>
-                    <GroupBox Header="Scanner Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,10,0,0" Height="220">
+                    <GroupBox Header="Scanner Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,10,0,0" Height="281">
+
                         <Grid>
                             <StackPanel Margin="12">
 
@@ -86,7 +87,7 @@
                       FontSize="15"
                       FontWeight="SemiBold"
                       Margin="0,0,0,20"/>
- 
+
                                 <Grid Margin="0,0,0,14" VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="240"/>
@@ -160,7 +161,7 @@
                                     </TextBlock>
                                 </Grid>
 
-                             
+
                                 <Grid VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="240"/>
@@ -236,7 +237,7 @@
 
                             </StackPanel>
 
-                   
+
                             <Button x:Name="btnScannerHelp"
                 Content="?"
                 Width="26"
@@ -277,15 +278,66 @@
                                 </Button.Style>
                             </Button>
 
+
+
+
+
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Deep Log Scanner — File Extensions"
+FontSize="15"
+FontWeight="SemiBold"
+Foreground="{DynamicResource TextPrimary}"
+Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
+                                    <TextBlock.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform AngleY="0.252"/>
+                                            <RotateTransform/>
+                                            <TranslateTransform Y="0.44"/>
+                                        </TransformGroup>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                                <TextBox x:Name="txtNewExtension"
+             Grid.Column="0"
+             Height="32"
+             VerticalContentAlignment="Center"
+             FontSize="14"
+             Padding="8,0"
+             Style="{StaticResource RoundedTextBox}"
+             Text=".log.etl.dmp.trace.tmp.temp.bak.swp"
+             ToolTip="Example: .crash" Margin="10,184,30,10" RenderTransformOrigin="0.508,0.572" Grid.ColumnSpan="3"/>
+
+                                <Button Grid.Column="2"
+            Content="Add"
+            Width="70"
+            Height="32"
+            Margin="138,184,-54,10"
+            Click="AddExtension_Click"
+            Style="{DynamicResource AccentButtonStyle}"/>
+
+                                <Button Grid.Column="2"
+            Content="Reset"
+            Width="70"
+            Height="32"
+            Margin="220,184,-139,10"
+            Click="ResetExtensions_Click"
+            Style="{DynamicResource CancelButtonStyle}"/>
+                            </Grid>
                         </Grid>
+
                     </GroupBox>
 
 
                     <GroupBox Header="Automatic Cleaning" Style="{DynamicResource CustomGroupBoxStyle}">
                         <Grid>
                             <StackPanel>
-                         
-                               
+
+
                                 <CheckBox Content="Enable Automatic Cleaning" x:Name="chkAutoClean"
                       Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14"
                       Checked="chkAutoClean_Checked"/>
@@ -318,7 +370,7 @@
                                         <ComboBoxItem Content="Weekly"/>
                                         <ComboBoxItem Content="Custom Days"/>
                                     </ComboBox>
- 
+
                                     <WrapPanel Margin="0,0,0,14" HorizontalAlignment="Left">
                                         <WrapPanel.Style>
                                             <Style TargetType="WrapPanel">
@@ -338,7 +390,7 @@
                                         <CheckBox x:Name="Day2" Content="Saturday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
                                         <CheckBox x:Name="Day1" Content="Sunday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
                                     </WrapPanel>
- 
+
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
                                         <StackPanel.Style>
                                             <Style TargetType="StackPanel">
@@ -360,7 +412,7 @@
                              Style="{DynamicResource RoundedTextBox}"
                              PreviewTextInput="txtCleaningInterval_PreviewTextInput" Margin="12,0,0,0"/>
                                     </StackPanel>
- 
+
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
                                         <StackPanel.Style>
                                             <Style TargetType="StackPanel">
@@ -393,7 +445,7 @@
 
                                 </StackPanel>
                             </StackPanel>
-                             
+
                             <Button x:Name="btnAutoCleanHelp"
                 Content="?"
                 Width="26"
@@ -437,8 +489,8 @@
                         </Grid>
                     </GroupBox>
 
- 
- 
+
+
                     <GroupBox Header="System Tray" Style="{DynamicResource CustomGroupBoxStyle}">
                         <CheckBox x:Name="chkTrayIcon" Content="Enable System Tray Icon"
                                   Style="{DynamicResource CustomCheckBoxStyle}" Checked="chkTrayIcon_Checked"/>

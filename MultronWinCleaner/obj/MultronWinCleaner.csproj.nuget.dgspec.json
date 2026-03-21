@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\winball501\\Documents\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj": {}
+    "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj": {}
   },
   "projects": {
-    "C:\\Users\\winball501\\Documents\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj": {
+    "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\winball501\\Documents\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+        "projectUniqueName": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
         "projectName": "MultronWinCleaner",
-        "projectPath": "C:\\Users\\winball501\\Documents\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+        "projectPath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
         "packagesPath": "C:\\Users\\winball501\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\winball501\\Documents\\MultronWcleaner-beta\\MultronWinCleaner\\obj\\",
+        "outputPath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\winball501\\AppData\\Roaming\\NuGet\\NuGet.Config",

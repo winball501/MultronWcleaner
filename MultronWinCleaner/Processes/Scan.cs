@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
@@ -508,12 +509,32 @@ namespace MultronWinCleaner.Processes
                     }
                     else
                     {
-                        if (name.Contains("Deep Log Files Scan") && logscan == 0)
+                      if (name.Contains("Deep Log Files Scan") && logscan == 0)
                         {
+                            cts.Cancel();
+                            current = 0;
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                var animation = new DoubleAnimation
+                                {
+                                    From = 0,
+                                    To = 100,
+                                    Duration = TimeSpan.FromSeconds(2),
+                                    RepeatBehavior = RepeatBehavior.Forever
+                                };
+                                main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, animation);
+                            });
+                      
                             await ScanCDirectoryAsync(path);
-                            await directorytextblock.Dispatcher.InvokeAsync(() =>
-                            directorytextblock.Text = $"Completed: {name} {main.formatsize(deeplogscantotal)}");
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
+                                main.progressBar1.Value = 100;
+                            });
+                            await directorytextblock.Dispatcher.InvokeAsync(() =>  directorytextblock.Text = $"Completed: {name} {main.formatsize(deeplogscantotal)}");
+
                             logscan = 1;
+                        
                         }
                         else if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
                         {
@@ -738,7 +759,8 @@ namespace MultronWinCleaner.Processes
         }
 
 
-
+        public static long total = 0;
+        public static long current = 0;
         public async Task ScanCDirectoryAsync(string path)
         {
          
@@ -751,30 +773,33 @@ namespace MultronWinCleaner.Processes
                         if (main.cancelstatus.IsCancellationRequested) break;
                         await ScanCDirectoryAsync(dir);
                     }
-
-
-                   
                     foreach (string file in Directory.GetFiles(path))
                     {
                         if (main.cancelstatus.IsCancellationRequested) break;
 
                         if (!main.settings.excludedfiles.Contains(file))
                         {
-                            if (".log.etl.dmp.trace.tmp.temp.bak.swp".Split('.').Any(ext => file.EndsWith($".{ext}")))
+                            if (main.extensions.Split('.').Any(ext => file.EndsWith($".{ext}")))
                             {
-
-                            
-                                     await addtocheckbox(file, path, "Deep Log Scanner Result");
-                           
-
-                      
+                                await addtocheckbox(file, path, "Deep Log Scanner Result");
                             }
+                        }
+
+                        current++;
+                        if (current % 100 == 0)
+                        {
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                main.label1_Copy.Text = $"Scanning C:\\ — {current} files checked, {main.formatsize(deeplogscantotal)} found";
+                            });
                         }
                     }
 
                 }
             }
-            catch { }
+            catch (Exception Ex) {
+             
+            }
 
            
         }
