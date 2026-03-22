@@ -281,16 +281,17 @@ namespace MultronWinCleaner
                 this.DragMove();
             }
         }
+        [DllImport("kernel32.dll")]
+        static extern bool SetProcessWorkingSetSize(IntPtr hProcess, IntPtr dwMinimumWorkingSetSize, IntPtr dwMaximumWorkingSetSize);
 
+        [DllImport("psapi.dll")]
+        static extern bool EmptyWorkingSet(IntPtr hProcess);
         public async Task cleanmemory()
         {
             CleanButton.IsEnabled = false;
             CleanButton.Content = "Cleaning...";
             CleanedMemoryLabel.Text = "";
 
-            long totalFreedMemory = 0;
-
-          
             long beforeFree = (long)NativeMethods.GetAvailablePhysicalMemory();
 
             await Task.Run(() =>
@@ -299,34 +300,34 @@ namespace MultronWinCleaner
                 {
                     try
                     {
-                        if (!proc.HasExited && !string.IsNullOrEmpty(proc.ProcessName) && proc.ProcessName != "System" && proc.ProcessName != "Idle")
-                        { 
-                            SetProcessWorkingSetSize(proc.Handle, -1, -1);
+                        if (!proc.HasExited && proc.ProcessName != "System" && proc.ProcessName != "Idle")
+                        {
+                            EmptyWorkingSet(proc.Handle);
+                            SetProcessWorkingSetSize(proc.Handle, (IntPtr)(-1), (IntPtr)(-1));
                         }
                     }
-                    catch
-                    {
-                     
-                    }
+                    catch { }
                 }
-            });
 
          
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            });
+
             long afterFree = (long)NativeMethods.GetAvailablePhysicalMemory();
 
-            
             long freed = afterFree - beforeFree;
-            if (freed < 0) freed = 0; 
+            if (freed < 0) freed = 0;
 
             double mbFreed = freed / (1024.0 * 1024.0);
 
-           
             await Dispatcher.InvokeAsync(() =>
             {
-                CleanedMemoryLabel.Text = $"🧼 Freed {mbFreed:F2} MB system memory at {DateTime.Now:T}";
+                CleanedMemoryLabel.Text = $"Freed {mbFreed:F2} MB system memory at {DateTime.Now:T}";
 
                 if (memorymon != null)
-                    memorymon.FreedLabel.Text = $"🧼 Freed {mbFreed:F2} MB system memory at {DateTime.Now:T}";
+                    memorymon.FreedLabel.Text = $"Freed {mbFreed:F2} MB system memory at {DateTime.Now:T}";
 
                 CleanButton.Content = "Clean Memory Now";
                 CleanButton.IsEnabled = true;
@@ -335,16 +336,16 @@ namespace MultronWinCleaner
                 {
                     if (this.WindowState == WindowState.Minimized || this.Visibility == Visibility.Hidden)
                     {
-                        Notify notify = new Notify($"🧼 Freed {mbFreed:F2} MB");
+                        Notify notify = new Notify($"Freed {mbFreed:F2} MB");
                         notify.Show();
                     }
                 }
             });
         }
 
-        private void CleanMemoryButton_Click(object sender, RoutedEventArgs e)
+        private async void CleanMemoryButton_Click(object sender, RoutedEventArgs e)
         {
-            cleanmemory();
+            await cleanmemory();
         }
        
 
