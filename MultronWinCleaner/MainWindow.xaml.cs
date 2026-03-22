@@ -75,13 +75,35 @@ namespace Multron_Win_Cleaner
         public MainWindow()
         {
             InitializeComponent();
-        
-            
+            string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+
+            if (!System.IO.File.Exists(settingsPath))
+            {
+                string defaultSettings = "minutes:0" + Environment.NewLine +
+                                         "autoclean:0" + Environment.NewLine +
+                                         "trayicon:0" + Environment.NewLine +
+                                         "themes:0";
+                System.IO.File.WriteAllText(settingsPath, defaultSettings);
+            }
+
+            string fileContent = System.IO.File.ReadAllText(settingsPath);
+
+            string themePath = fileContent.Contains("themes:1") ? "Themes/Dark.xaml" : "Themes/Light.xaml";
+            ToggleThemeSwitch.IsChecked = fileContent.Contains("themes:1");
+
+            themeselector.selector(new Uri(themePath, UriKind.Relative));
+
+            var resourceDictionary = new ResourceDictionary
+            {
+                Source = new Uri(themePath, UriKind.Relative)
+            };
+            brush = (SolidColorBrush)resourceDictionary["Text"];
+
+
 
         }
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
             ReloadDb.IsEnabled = false;
             MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
             await Task.Run(() => updater.run());
@@ -92,32 +114,33 @@ namespace Multron_Win_Cleaner
             {
                 System.IO.File.Copy(updaterfile, Environment.CurrentDirectory + "\\Updater.exe", overwrite: true);
             }
-            if(Directory.Exists(updatesfolder))
+            if (Directory.Exists(updatesfolder))
             {
                 foreach (string file in Directory.GetFiles(updatesfolder))
                 {
                     try
                     {
                         System.IO.File.Delete(file);
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                     }
-               
+
                 }
                 if (Directory.Exists(updatesfolder))
                 {
                     try
                     {
                         Directory.Delete(updatesfolder);
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
 
                     }
-                 
+
                 }
             }
-         
             utilities = new Utilities(this);
 
 
@@ -133,57 +156,6 @@ namespace Multron_Win_Cleaner
             dataGridGroups.Visibility = Visibility.Hidden;
             Datagridscroll.Visibility = Visibility.Hidden;
 
-
-            
-            if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt"))
-            {
-                System.IO.File.Create(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt").Close();
-
-            }
-            string fileContent = System.IO.File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt");
-
-
-
-            if (System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt"))
-            {
-
-                if (fileContent.Contains("themes:1"))
-                {
-                    themeselector.selector(new Uri("Themes/Dark.xaml", UriKind.Relative));
-                    ToggleThemeSwitch.IsChecked = true;
-                }
-                else
-                {
-                    themeselector.selector(new Uri("Themes/Light.xaml", UriKind.Relative));
-                    ToggleThemeSwitch.IsChecked = false;
-                }
-                string themePath = null;
-                if (ToggleThemeSwitch.IsChecked == true)
-                {
-                    themePath = "Themes/Dark.xaml";
-                }
-                else
-                {
-                    themePath = "Themes/Light.xaml";
-                }
-
-
-                var resourceDictionary = new ResourceDictionary
-                {
-                    Source = new Uri(themePath, UriKind.Relative)
-                };
-                brush = (SolidColorBrush)resourceDictionary["Text"];
-                if (fileContent == "")
-                {
-
-                    string defaultSettings = "minutes:0" + Environment.NewLine +
-                                             "autoclean:0" + Environment.NewLine +
-                                             "trayicon:0" + Environment.NewLine +
-                                             "themes:0";
-                    System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt", defaultSettings);
-                    fileContent = defaultSettings;
-                }
-            }
             loadothers();
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
             {
@@ -217,9 +189,9 @@ namespace Multron_Win_Cleaner
                         UseShellExecute = true
                     });
                 }
-              
+
             }
-       
+
             TrayIconWindow trayiconwindow = new TrayIconWindow(this);
 
             Thread traythread = new Thread(trayiconwindow.run);
@@ -227,6 +199,7 @@ namespace Multron_Win_Cleaner
 
             TrayIcon.TrayMouseDoubleClick += TrayIcon_MouseDoubleClick;
             ReloadDb.IsEnabled = true;
+
         }
         public void loadothers()
         {
@@ -960,76 +933,66 @@ namespace Multron_Win_Cleaner
                 var dotsTask = ScandotsAsync("Killing", cts);
                 int progress = 0;
                 int killed = 0;
-                
-                
                 for (int i = 0; i < main.paths.Count; i++)
                 {
                     if (main.cancelstatus.IsCancellationRequested) break;
 
                     string path = main.stringtokenizer(main.paths[i], "=", 0);
-                    string id = main.stringtokenizer(main.paths[i], "=", 1);
-                    if(System.IO.File.Exists(path))
+
+                    if (System.IO.File.Exists(path))
                     {
-                        Process[] wuf = whousef.WhoIsLocking(path).ToArray();
-                        if (wuf != null)
+                        var procs = whousef.WhoIsLocking(path);
+                        if (procs != null && procs.Count > 0)
                         {
-                            foreach (Process proc in wuf)
+                            foreach (Process proc in procs)
                             {
-
-                                FileInfo info = new FileInfo(path);
-                             
-                                if (proc.Id.ToString() == id)
-                                {
-                                    try
-                                    {
-                                        await main.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            main.wrapPanelDirectories.Children.Add(new TextBlock
-                                            {
-                                                Text = $"Killing: {path} {main.formatsize(info.Length)} {proc.ProcessName} {proc.Id}",
-                                                Foreground = System.Windows.Media.Brushes.Red,
-                                                FontSize = 16,
-                                                Margin = new Thickness(5)
-                                            });
-                                        });
-
-                                        proc.Kill();
-                                        proc.WaitForExit();
-                                        killed++;
-                                        totalsize += info.Length;
-
-                                        await main.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            main.wrapPanelDirectories.Children.Add(new TextBlock
-                                            {
-                                                Text = $"Deleted File And Killed Process: {path} {main.formatsize(info.Length)} {proc.ProcessName} {proc.Id}",
-                                                Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                                FontSize = 16,
-                                                Margin = new Thickness(5)
-                                            });
-                                        });
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        await main.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            main.wrapPanelDirectories.Children.Add(new TextBlock
-                                            {
-                                                Text = $"Cannot Kill: {path} {main.formatsize(info.Length)} {proc.ProcessName} {proc.Id} - {ex.Message}",
-                                                Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                                FontSize = 16,
-                                                Margin = new Thickness(5)
-                                            });
-                                        });
-                                    }
-                                }
-                                else
+                                try
                                 {
                                     await main.Dispatcher.InvokeAsync(() =>
                                     {
                                         main.wrapPanelDirectories.Children.Add(new TextBlock
                                         {
-                                            Text = $"Skipping: {path} {main.formatsize(info.Length)} {proc.ProcessName} {proc.Id}",
+                                            Text = $"Killing: {proc.ProcessName} (PID {proc.Id}) for {path}",
+                                            Foreground = System.Windows.Media.Brushes.Red,
+                                            FontSize = 16,
+                                            Margin = new Thickness(5)
+                                        });
+                                    });
+
+                                    proc.Kill();
+                                    proc.WaitForExit();
+                                }
+                                catch (Exception ex)
+                                {
+                                    await main.Dispatcher.InvokeAsync(() =>
+                                    {
+                                        main.wrapPanelDirectories.Children.Add(new TextBlock
+                                        {
+                                            Text = $"Cannot Kill: {proc.ProcessName} (PID {proc.Id}) - {ex.Message}",
+                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                            FontSize = 16,
+                                            Margin = new Thickness(5)
+                                        });
+                                    });
+                                }
+                            }
+
+                       
+                            try
+                            {
+                                if (System.IO.File.Exists(path))
+                                {
+                                    FileInfo info = new FileInfo(path);
+                                    long fileSize = info.Length;
+                                    System.IO.File.Delete(path);
+                                    killed++;
+                                    totalsize += fileSize;
+
+                                    await main.Dispatcher.InvokeAsync(() =>
+                                    {
+                                        main.wrapPanelDirectories.Children.Add(new TextBlock
+                                        {
+                                            Text = $"Deleted: {path} ({main.formatsize(fileSize)})",
                                             Foreground = System.Windows.Media.Brushes.Green,
                                             FontSize = 16,
                                             Margin = new Thickness(5)
@@ -1037,22 +1000,70 @@ namespace Multron_Win_Cleaner
                                     });
                                 }
                             }
+                            catch (Exception ex)
+                            {
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    main.wrapPanelDirectories.Children.Add(new TextBlock
+                                    {
+                                        Text = $"Cannot Delete: {path} - {ex.Message}",
+                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                        FontSize = 16,
+                                        Margin = new Thickness(5)
+                                    });
+                                });
+                            }
                         }
-                    } else
+                        else
+                        {
+                      
+                            try
+                            {
+                                FileInfo info = new FileInfo(path);
+                                long fileSize = info.Length;
+                                System.IO.File.Delete(path);
+                                killed++;
+                                totalsize += fileSize;
+
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    main.wrapPanelDirectories.Children.Add(new TextBlock
+                                    {
+                                        Text = $"Deleted (no longer locked): {path} ({main.formatsize(fileSize)})",
+                                        Foreground = System.Windows.Media.Brushes.Green,
+                                        FontSize = 16,
+                                        Margin = new Thickness(5)
+                                    });
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    main.wrapPanelDirectories.Children.Add(new TextBlock
+                                    {
+                                        Text = $"Cannot Delete: {path} - {ex.Message}",
+                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
+                                        FontSize = 16,
+                                        Margin = new Thickness(5)
+                                    });
+                                });
+                            }
+                        }
+                    }
+                    else
                     {
                         await main.Dispatcher.InvokeAsync(() =>
                         {
                             main.wrapPanelDirectories.Children.Add(new TextBlock
                             {
-                                Text = $"File not exists anymore: {path}",
+                                Text = $"File no longer exists: {path}",
                                 Foreground = System.Windows.Media.Brushes.Blue,
                                 FontSize = 16,
                                 Margin = new Thickness(5)
                             });
                         });
-
                     }
-                  
 
                     progress++;
                     main.Dispatcher.Invoke(() =>
@@ -1378,7 +1389,7 @@ namespace Multron_Win_Cleaner
 
 
 
-      
+
 
         public class LoadLockedFiles
         {
@@ -1387,25 +1398,36 @@ namespace Multron_Win_Cleaner
             {
                 this.main = main;
             }
+
             public async Task CheckWhoUsesMultipleAsync(IEnumerable<string> paths, IProgress<(int current, int total)>? progress = null)
             {
-             
                 var results = new ConcurrentBag<LockedFileGroupViewModel>();
-
                 var pathList = paths.ToList();
-
-        
                 int total = pathList.Count;
                 int processedCount = 0;
+
                 await main.Dispatcher.InvokeAsync(() =>
                 {
                     main.label1_Copy.Foreground = System.Windows.Media.Brushes.Blue;
                 });
+
+                var processed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
                 for (int i = 0; i < pathList.Count; i++)
                 {
                     string path = main.stringtokenizer(pathList[i], "=", 0);
-                    string mainpath = main.stringtokenizer(pathList[i], "=", 1);
-                   
+                    string savedId = main.stringtokenizer(pathList[i], "=", 1);
+                    string savedName = main.stringtokenizer(pathList[i], "=", 2);
+                    string groupName = main.stringtokenizer(pathList[i], "=", 3);
+
+                    if (processed.Contains(path))
+                    {
+                        Interlocked.Increment(ref processedCount);
+                        progress?.Report((processedCount, total));
+                        continue;
+                    }
+                    processed.Add(path);
+
                     if (!System.IO.File.Exists(path))
                     {
                         Interlocked.Increment(ref processedCount);
@@ -1414,26 +1436,27 @@ namespace Multron_Win_Cleaner
                     }
 
                     var processes = whousef.WhoIsLocking(path);
+
                     if (processes == null || processes.Count == 0)
                     {
-                        
                         results.Add(new LockedFileGroupViewModel
                         {
                             FilePath = path,
-                            GroupName = mainpath,
+                            GroupName = groupName,
                             Processes = new ObservableCollection<LockedProcessViewModel>(
                                 new[] { new LockedProcessViewModel
-                            {
-                                DisplayName = "Unknown Process",
-                                Id = "0",
-                                IsChecked = false
-                            }})
+                    {
+                        DisplayName = savedName + " (PID " + savedId + ")",
+                        Id = savedId,
+                        IsChecked = false
+                    }})
                         });
 
                         Interlocked.Increment(ref processedCount);
                         progress?.Report((processedCount, total));
                         continue;
                     }
+
                     var processViewModels = new ObservableCollection<LockedProcessViewModel>(
                         processes.Select(p => new LockedProcessViewModel
                         {
@@ -1445,13 +1468,14 @@ namespace Multron_Win_Cleaner
                     results.Add(new LockedFileGroupViewModel
                     {
                         FilePath = path,
-                        GroupName = mainpath,
+                        GroupName = groupName,
                         Processes = processViewModels
                     });
 
                     Interlocked.Increment(ref processedCount);
                     progress?.Report((processedCount, total));
                 }
+
                 if (System.Windows.Application.Current != null)
                 {
                     await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
@@ -1466,6 +1490,7 @@ namespace Multron_Win_Cleaner
                         main.LockedFileGroups.Add(item);
                 }
             }
+
             public async Task run()
             {
                 var progress = new Progress<(int current, int total)>(async p =>
@@ -1475,7 +1500,8 @@ namespace Multron_Win_Cleaner
                         main.label1_Copy.Text = $"Loading locked files: {p.current}/{p.total}";
                     });
                 });
-
+                System.Windows.MessageBox.Show($"paths count: {main.paths.Count}\n" +
+        string.Join("\n", main.paths.Take(5)));
                 await CheckWhoUsesMultipleAsync(main.paths, progress);
 
                 await main.Dispatcher.InvokeAsync(() =>
@@ -1486,7 +1512,6 @@ namespace Multron_Win_Cleaner
                     foreach (var g in main.LockedFileGroups)
                     {
                         string fullPath = g.FilePath;
-                        string mainpath = g.GroupName;
 
                         FileInfo info = null;
                         string filesize = "0 Byte";
@@ -1499,10 +1524,10 @@ namespace Multron_Win_Cleaner
                             }
                         }
                         catch { }
-                        if(info == null)
-                        {
+
+                        if (info == null)
                             continue;
-                        }
+
                         foreach (var proc in g.Processes)
                         {
                             string uniqueKey = $"{proc.Id}|{fullPath}";
@@ -1510,19 +1535,17 @@ namespace Multron_Win_Cleaner
                             if (!added.Add(uniqueKey))
                                 continue;
 
-                            bool isChecked = main.paths.Any(p => p.StartsWith(fullPath + "="));
-
                             allItems.Add(new LockedProcessViewModel
                             {
                                 FilePath = fullPath + " " + filesize,
                                 FilePathWithoutSize = fullPath,
-                                GroupName = mainpath,  
+                                GroupName = g.GroupName,
                                 DisplayName = proc.DisplayName,
                                 Id = proc.Id,
-                                IsChecked = isChecked,
+                                IsChecked = true,
                                 OnCheckedChanged = (model, state) =>
                                 {
-                                    string key = model.FilePathWithoutSize + "=" + model.GroupName;
+                                    string key = model.FilePathWithoutSize + "=" + model.Id + "=" + model.DisplayName;
                                     if (state)
                                     {
                                         if (!main.paths.Contains(key))
@@ -1530,7 +1553,8 @@ namespace Multron_Win_Cleaner
                                     }
                                     else
                                     {
-                                        main.paths.Remove(key);
+                                        main.paths.RemoveAll(p =>
+                                            main.stringtokenizer(p, "=", 0).Equals(model.FilePathWithoutSize, StringComparison.OrdinalIgnoreCase));
                                     }
                                 }
                             });
@@ -1540,15 +1564,12 @@ namespace Multron_Win_Cleaner
                     main._allLockedFileGroups = allItems;
                     main.LockedProcesses.Clear();
 
-                 
                     foreach (var item in allItems)
                         main.LockedProcesses.Add(item);
 
                     main._itemsLoaded = main.LockedProcesses.Count;
 
                     var cvs = new CollectionViewSource { Source = main.LockedProcesses };
-
-                
                     cvs.GroupDescriptions.Add(new PropertyGroupDescription(nameof(LockedProcessViewModel.GroupName)));
 
                     var view = cvs.View;
@@ -1573,18 +1594,17 @@ namespace Multron_Win_Cleaner
                     view.Refresh();
                     main.groupedProcesses = cvs;
                     main.listBoxProcesses.ItemsSource = view;
+                     
+                    var stillLockedPaths = main.LockedFileGroups
+                        .Select(g => g.FilePath)
+                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-                   
-                    var stillLockedPaths = main.LockedFileGroups .Select(g => g.FilePath) .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-                    main.paths.RemoveAll(p => !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
+                    main.paths.RemoveAll(p =>
+                        !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
 
                     main.label1_Copy.Text = $"Locked Files: {main.LockedFileGroups.Count} files, {allItems.Count} processes";
                 });
             }
-
-
-
         }
 
         private async void ButtonLocked_Click(object sender, RoutedEventArgs e)

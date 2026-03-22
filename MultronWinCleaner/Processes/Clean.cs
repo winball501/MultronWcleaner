@@ -2,6 +2,7 @@ using MFK;
 using Microsoft.VisualBasic.Logging;
 using Multron_Win_Cleaner;
 using MultronWinCleaner;
+using Ookii.Dialogs.Wpf;
 using System;
 using System;
 using System.Collections.Concurrent;
@@ -25,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using static Multron_Win_Cleaner.MainWindow;
@@ -83,7 +85,7 @@ namespace MultronWinCleaner.Processes
       ProgressBar progressBar,
       CancellationToken cancellationToken)
         {
-            var dir = Path.GetDirectoryName(logPath)!;
+            var dir = System.IO.Path.GetDirectoryName(logPath)!;
             Directory.CreateDirectory(dir);
 
             if (File.Exists(logPath))
@@ -275,19 +277,10 @@ namespace MultronWinCleaner.Processes
                         current++;
                         await UpdateProgress(current, main.logfiles.Count);
                     }
-                    catch (IOException ioEx)
+                    catch (Exception Ex)
                     {
-                        int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
-                        if (errorCode == 0x20 || errorCode == 0x21)
-                            main.paths.Add(logfile + "=" + "Deep Log Scanner Result");
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        main.paths.Add(logfile + "=" + "Deep Log Scanner Result");
-                    }
-                    catch (Exception ex)
-                    {
-                         
+                   if (File.Exists(logfile))
+                            catchlockedfile(Ex, logfile, "Deep Log Scan Result");
                     }
 
 
@@ -416,40 +409,51 @@ namespace MultronWinCleaner.Processes
                    
                   
                 }
-                catch (IOException ioEx)
+                catch (Exception  Ex)
                 {
-                    const int ERROR_SHARING_VIOLATION = 0x20;
-                    const int ERROR_LOCK_VIOLATION = 0x21;
-                    int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
-                    if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
-                    {
-                        if (File.Exists(path))
-                        {
-                            main.paths.Add(path + "=" + name);
-                        }
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            statusBlock.Text = $"Locked: {name}";
-                            statusBlock.Foreground = Brushes.Red;
-                        });
-                    }
+                    if(File.Exists(path))
+                      catchlockedfile(Ex, path, name);
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    main.paths.Add(path + "=" + name);
-                    await main.Dispatcher.InvokeAsync(() =>
-                    {
-                        statusBlock.Text = $"Access Denied: {name}";
-                        statusBlock.Foreground = Brushes.Red;
-                    });
-                }
-                catch (Exception ex)
-                {
-                 
-                }
+              
             }
 
             await FinalizeCleaning();
+        }
+        public void catchlockedfile(Exception ex, string file, string groupName)
+        {
+            bool isLocked = false;
+
+            if (ex is IOException ioEx)
+            {
+                int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
+                if (errorCode == 0x20 || errorCode == 0x21)
+                    isLocked = true;
+            }
+            else if (ex is UnauthorizedAccessException)
+            {
+                isLocked = true;
+            }
+
+            if (isLocked)
+            {
+                try
+                {
+                    var procs = whousef.WhoIsLocking(file);
+                    if (procs != null && procs.Count > 0)
+                    {
+                        foreach (var proc in procs)
+                            main.paths.Add(file + "=" + proc.Id + "=" + proc.ProcessName + "=" + groupName);
+                    }
+                    else
+                    {
+                        main.paths.Add(file + "=" + "0" + "=" + "Unknown Process" + "=" + groupName);
+                    }
+                }
+                catch
+                {
+                    main.paths.Add(file + "=" + "0" + "=" + "Unknown Process" + "=" + groupName);
+                }
+            }
         }
         public void catchexception(string message)
         {
@@ -549,25 +553,13 @@ namespace MultronWinCleaner.Processes
                         }
 
                     }
-                    catch (IOException ioEx)
+                    catch (Exception Ex)
                     {
-                        const int ERROR_SHARING_VIOLATION = 0x20;
-                        const int ERROR_LOCK_VIOLATION = 0x21;
+                        if (File.Exists(path))
+                            catchlockedfile(Ex, path, name);
+                        catchexception(Ex.Message + " " + Ex.StackTrace);
+                    }
 
-                        int errorCode = Marshal.GetHRForException(ioEx) & 0x0000FFFF;
-                        if (errorCode == ERROR_SHARING_VIOLATION || errorCode == ERROR_LOCK_VIOLATION)
-                        {
-                            main.paths.Add(file + "=" + name);
-                        }
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        main.paths.Add(file + "=" + name);
-                    }
-                    catch (Exception ex)
-                    {
-                        catchexception(ex.Message + " " + ex.StackTrace);
-                    }
                 }
             } catch (Exception ex)
             {
