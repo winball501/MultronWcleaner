@@ -43,15 +43,19 @@ Scan results display each file's creation date, age in days, and last modified d
 - [Multron Win Cleaner](https://github.com/winball501/MultronWcleaner/releases)
 - [Database](https://github.com/winball501/MultronWcleaner-Database/releases)
 
-## Screenshots
-<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/b4a7ee41-984e-467c-bc46-6fb993b5fb2e" />
-<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/15d97441-1bcf-458c-889a-494fe8ed9e4f" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/c1b07c84-7b7e-4700-b5b4-4cbd82db93a6" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/177bbdd5-3661-40c0-a025-050d304e839c" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/daaf9d21-be24-4b5c-b3de-cd3f350562dc" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/81c382c6-90cd-4cc3-87d5-6b77e4c21fbe" />
-<img width="1200" height="1103" alt="image" src="https://github.com/user-attachments/assets/7964a4f3-ddf0-4934-a136-66b0977a2673" />
 
+## Screenshots
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/0fd8a83f-f04a-49be-b144-686cfbe4028f" />
+
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/668674e9-aaed-4e3e-a42d-60fb3784c9e1" />
+
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/631c9346-edb2-4e83-a1a5-8f93ce2d8bdc" />
+
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/47bfc46f-571f-4283-b1a0-7569739e4cec" />
+
+<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/158f85b0-94fd-42c7-b64d-8fb004803241" />
+
+<img width="1200" height="1103" alt="image" src="https://github.com/user-attachments/assets/1810724b-1e20-410f-896d-eb2f18c9f883" />
 
 ## Contributing
 
