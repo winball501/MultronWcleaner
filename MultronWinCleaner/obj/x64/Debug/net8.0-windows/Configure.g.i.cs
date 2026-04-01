@@ -61,7 +61,7 @@ namespace MultronWinCleaner {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;component/configure.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;V1.0.0.0;component/configure.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Configure.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

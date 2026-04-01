@@ -93,7 +93,7 @@ namespace MultronWinCleaner {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;component/addstartup.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;V1.0.0.0;component/addstartup.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\AddStartup.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

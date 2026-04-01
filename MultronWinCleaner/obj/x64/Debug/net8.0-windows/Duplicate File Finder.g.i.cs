@@ -125,7 +125,7 @@ namespace MultronWinCleaner {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;component/duplicate%20file%20finder.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;V1.0.0.0;component/duplicate%20file%20finder.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Duplicate File Finder.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

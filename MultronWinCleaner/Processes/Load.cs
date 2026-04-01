@@ -271,6 +271,7 @@ namespace MultronWinCleaner.Processes
 
             return firstChar + rest;
         }
+        string getline = null;
         public async Task RunAsync()
         {
             try
@@ -305,6 +306,7 @@ namespace MultronWinCleaner.Processes
                         ComboBox profilelist = null;
                         ScrollViewer scrollViewer = null;
                         string profile = "";
+                    
                         while ((line = reader.ReadLine()) != null)
                         {
                             currentLine++;
@@ -312,7 +314,7 @@ namespace MultronWinCleaner.Processes
                             int linecontains = 0;
                             string name = main.stringtokenizer(line, "=", 0);
                             string path = main.stringtokenizer(line, "=", 1);
-
+                            getline = line.Trim();
                             bool recommended = false;
                             if (line.StartsWith("{"))
                             {
@@ -696,7 +698,7 @@ namespace MultronWinCleaner.Processes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + " " + ex.StackTrace);
+                MessageBox.Show(ex.Message + " in Load.cs " + ex.StackTrace + " "  + getline, "database.txt error");
             }
 
 
