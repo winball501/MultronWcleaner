@@ -56,7 +56,7 @@ namespace MultronWinCleaner.Processes
 
                     await main.Dispatcher.InvokeAsync(() => {
                         main.label1_Copy.Text = text + ".";
-                        main.label1_Copy.Foreground = System.Windows.Media.Brushes.Blue;
+                        main.label1_Copy.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7"));
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -243,7 +243,7 @@ namespace MultronWinCleaner.Processes
             int cleanedCount = 0;
             totalsize = new DriveInfo("C:\\").AvailableFreeSpace;
 
-            await UpdateStatusColor(System.Windows.Media.Brushes.Blue);
+            await UpdateStatusColor(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7")));
          
             if (main.logfiles.Count > 0)
             {
@@ -396,14 +396,14 @@ namespace MultronWinCleaner.Processes
                         else if (iscleaned == 2)
                         {
                             statusBlock.Text = $"Folder Empty: {name}";
-                            statusBlock.Foreground = Brushes.DarkGreen;
+                            statusBlock.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00d700"));
 
                         } else if (name.Contains("Dism.exe")) {
                             statusBlock.Text = $"{name} Operation Done. Log files in current directory of mwc.";
                         } else
                         {
                             statusBlock.Text = $"Cleaned: {name}";
-                            statusBlock.Foreground = Brushes.Blue;
+                            statusBlock.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7"));
                         }
                     });
                    
@@ -633,7 +633,7 @@ namespace MultronWinCleaner.Processes
             await main.Dispatcher.InvokeAsync(() =>
             {
                 main.label1_Copy.Text = resultMessage;
-                main.label1_Copy.Foreground = System.Windows.Media.Brushes.Green;
+                main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8C00"));
                 main.reset = 1;
                 main.cancelclean = 0;
                 
@@ -665,7 +665,7 @@ namespace MultronWinCleaner.Processes
                 tb = new TextBlock
                 {
                     Text = text,
-                    Foreground = System.Windows.Media.Brushes.Blue,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7")),
                     FontSize = 16,
                     Margin = new Thickness(5),
                     HorizontalAlignment = HorizontalAlignment.Stretch,

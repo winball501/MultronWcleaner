@@ -101,7 +101,7 @@ namespace MultronWinCleaner {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;V1.0.0.0;component/memorymon.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;component/memorymon.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\MemoryMon.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

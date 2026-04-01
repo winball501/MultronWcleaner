@@ -31,7 +31,7 @@ namespace MultronWinCleaner.Processes
                 {
                     await main.Dispatcher.InvokeAsync(() => {
                         main.label1_Copy.Text = text + ".";
-                        main.label1_Copy.Foreground = System.Windows.Media.Brushes.Blue;
+                        main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));  
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -393,7 +393,7 @@ namespace MultronWinCleaner.Processes
                                     {
                                         profilelist = new ComboBox
                                         {
-                                            Foreground = System.Windows.Media.Brushes.Blue,
+                                            Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
                                             FontSize = 16,
                                             Margin = new Thickness(5),
                                             HorizontalAlignment = HorizontalAlignment.Stretch,
