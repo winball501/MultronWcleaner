@@ -38,12 +38,20 @@ namespace MultronWinCleaner.Processes
         public MainWindow main;
         private long totalsize;
         int winsxs = 0;
+        private static readonly SolidColorBrush BLUE = CreateBrush("#0078d7");
+        private static readonly SolidColorBrush GREEN = CreateBrush("#00d700");
 
 
         CancellationTokenSource cts = new CancellationTokenSource();
         public Clean(MainWindow main)
         {
             this.main = main;
+        }
+        private static SolidColorBrush CreateBrush(string hex)
+        {
+            var brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+            brush.Freeze();  
+            return brush;
         }
         public async Task ScandotsAsync(string text, CancellationToken cancellationToken)
         {
@@ -56,7 +64,7 @@ namespace MultronWinCleaner.Processes
 
                     await main.Dispatcher.InvokeAsync(() => {
                         main.label1_Copy.Text = text + ".";
-                        main.label1_Copy.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7"));
+                        main.label1_Copy.Foreground = BLUE;
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -243,7 +251,7 @@ namespace MultronWinCleaner.Processes
             int cleanedCount = 0;
             totalsize = new DriveInfo("C:\\").AvailableFreeSpace;
 
-            await UpdateStatusColor(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7")));
+            await UpdateStatusColor(BLUE);
          
             if (main.logfiles.Count > 0)
             {
@@ -391,19 +399,19 @@ namespace MultronWinCleaner.Processes
                         if (iscleaned == 0)
                         {
                             statusBlock.Text = $"Ignored: {name}";
-                            statusBlock.Foreground = Brushes.Goldenrod;
+                            statusBlock.Foreground = GREEN;
                         }
                         else if (iscleaned == 2)
                         {
                             statusBlock.Text = $"Folder Empty: {name}";
-                            statusBlock.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00d700"));
+                            statusBlock.Foreground = Brushes.Goldenrod;
 
                         } else if (name.Contains("Dism.exe")) {
                             statusBlock.Text = $"{name} Operation Done. Log files in current directory of mwc.";
                         } else
                         {
                             statusBlock.Text = $"Cleaned: {name}";
-                            statusBlock.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7"));
+                            statusBlock.Foreground = BLUE;
                         }
                     });
                    
@@ -665,7 +673,7 @@ namespace MultronWinCleaner.Processes
                 tb = new TextBlock
                 {
                     Text = text,
-                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0078d7")),
+                    Foreground = BLUE,
                     FontSize = 16,
                     Margin = new Thickness(5),
                     HorizontalAlignment = HorizontalAlignment.Stretch,
