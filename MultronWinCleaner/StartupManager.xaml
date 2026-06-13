@@ -7,12 +7,13 @@
         FontFamily="Segoe UI"
         AllowsTransparency="True"
         Loaded="MainWindow_Loaded"
+    
         WindowStyle="None" ResizeMode="CanResizeWithGrip">
-        
-  
+
+
 
     <Grid Background="{DynamicResource WindowBackground}">
-      
+
         <DockPanel Background="{DynamicResource PanelBackground}" Height="55" VerticalAlignment="Top" LastChildFill="False" MouseDown="TopBar_MouseDown">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="16,0,0,0">
                 <TextBlock Text="Multron Startup Manager" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
@@ -25,7 +26,7 @@
                 <Button Content="✕" Style="{DynamicResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="Close"/>
             </StackPanel>
         </DockPanel>
-  
+
         <Grid Margin="0,40,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -40,15 +41,16 @@
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
 
-               
-                <Border Grid.Column="0" Background="{DynamicResource PanelBackground}" Padding="10" Margin="0,24,10,0"
-                        CornerRadius="10" >
+
+                <Border Grid.Column="0" Background="{DynamicResource PanelBackground}" Padding="10" Margin="0,24,0,0"
+                        CornerRadius="10" Grid.ColumnSpan="3" >
                     <DockPanel LastChildFill="True">
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
                             <Button Content="Add" Width="80" Height="30" Style="{DynamicResource RoundedButtonStyle}" Cursor="Hand" Margin="0,0,8,0" Click="AddButton_Click"/>
                             <Button Content="Remove" Width="80" Height="30" Style="{DynamicResource RoundedButtonStyle}" Cursor="Hand" IsEnabled="False" Margin="0,0,8,0" x:Name="btnRemove" Click="RemoveButton_Click"/>
                             <Button Content="Refresh" Width="80" Height="30" Style="{DynamicResource RoundedButtonStyle}" Cursor="Hand" Click="RefreshButton_Click"/>
                             <Button Content="Apply" Width="80" Height="30" Style="{DynamicResource RoundedButtonStyle}" Name="btnApply" Cursor="Hand" Margin="10,0,0,0" Click="ApplyButton_Click" />
+                            <Button Content="Add Operation" Width="113" Height="30"   Cursor="Hand" Style="{DynamicResource RoundedButtonStyle}" Margin="10,0,0,0" Click="AddOperationButton_Click"/>
                         </StackPanel>
                         <DataGrid x:Name="StartupAppsDataGrid"
           AutoGenerateColumns="False"
@@ -66,7 +68,7 @@
           SelectionUnit="FullRow"
           SelectionChanged="StartupAppsDataGrid_SelectionChanged">
 
-                          
+
                             <DataGrid.RowStyle>
                                 <Style TargetType="DataGridRow">
                                     <Setter Property="Background" Value="{DynamicResource RowBackground}"/>
@@ -74,11 +76,11 @@
                                     <Setter Property="FontSize" Value="14"/>
                                     <Style.Triggers>
 
-                                      
+
                                         <Trigger Property="ItemsControl.AlternationIndex" Value="1">
                                             <Setter Property="Background" Value="{DynamicResource AlternateRowBackground}"/>
                                         </Trigger>
- 
+
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter Property="Background" Value="{DynamicResource SelectedRowBackground}"/>
                                             <Setter Property="Foreground" Value="White"/>
@@ -87,7 +89,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </DataGrid.RowStyle>
- 
+
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Enabled" Width="70">
                                     <DataGridTemplateColumn.CellTemplate>
@@ -114,20 +116,67 @@
 
                     </DockPanel>
                 </Border>
- 
-                <Border Grid.Column="1" Background="{DynamicResource PanelBackground}" Padding="10" CornerRadius="10" Grid.ColumnSpan="2" Margin="10,24,0,0">
-                    <StackPanel>
-                        <TextBlock Text="Scheduled File Operations" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                        <TextBlock Text="Manage file delete, move or rename operations scheduled at next boot. Add your own operations below." 
-                                   FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,15"/>
-                        <ListBox x:Name="ScheduledFileOperationsList" Height="300" Background="{DynamicResource PanelBackground}" BorderBrush="Transparent"
-                                 Foreground="{DynamicResource TextPrimary}" />
-                        <Button Content="Add Operation" Margin="0,10,0,0" Width="140" Height="36" HorizontalAlignment="Left"
-                                Cursor="Hand" Style="{DynamicResource RoundedButtonStyle}" Click="AddOperationButton_Click"/>
+                <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" Margin="10,102,10,0" Grid.ColumnSpan="3">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                        <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" 
+               Width="64" Height="64" Margin="0,0,0,30">
+                            <Image.Effect>
+                                <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="0.3" Color="Gray"/>
+                            </Image.Effect>
+                        </Image>
+
+                        <Grid Width="48" Height="48" HorizontalAlignment="Center">
+
+                            <Ellipse Stroke="{DynamicResource PanelBackground}" 
+                     StrokeThickness="5" 
+                     Opacity="0.4"/>
+
+                            <Path Data="M 24,2 A 22,22 0 1 1 2,24" 
+                  StrokeThickness="5" 
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
+                  RenderTransformOrigin="0.5,0.5">
+                                <Path.Stroke>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="{DynamicResource ToggleOffBackgroundColor}" Offset="0"/>
+                                        <GradientStop Color="{DynamicResource TextColor}" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Path.Stroke>
+                                <Path.RenderTransform>
+                                    <RotateTransform Angle="0"/>
+                                </Path.RenderTransform>
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Style.Triggers>
+                                            <EventTrigger RoutedEvent="Loaded">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation 
+                                            Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                            From="0" To="360" 
+                                            Duration="0:0:0.8" 
+                                            RepeatBehavior="Forever"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Grid>
+
+                        <TextBlock Text="Loading startup apps &amp; scheduled operations..." 
+                   Foreground="{DynamicResource TextSecondary}" 
+                   FontSize="13" 
+                   Margin="0,20,0,0" 
+                   HorizontalAlignment="Center"
+                   FontWeight="Medium"
+                   Opacity="0.8"/>
                     </StackPanel>
-                </Border>
+                </Grid>
             </Grid>
- 
+
             <Border Grid.Row="2" Background="{DynamicResource PanelBackground}" Padding="15" Margin="10,15,10,10" CornerRadius="10">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,40,0">

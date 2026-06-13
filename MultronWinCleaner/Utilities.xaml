@@ -103,12 +103,12 @@
                                         Width="140" Height="36"
                                         Cursor="Hand" Click="FirewallClean_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="FirewallReset" Content="Reset Firewall"
+                                <Button x:Name="FirewallReset" Content="Reset"
                                         Width="140" Height="36"
                                         Cursor="Hand" Click="FirewallReset_Click"
                                         Visibility="Collapsed"
                                         Margin="8,0,0,0"
-                                        Background="{DynamicResource DangerButtonBackground}"
+                                        Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                             </StackPanel>
                         </StackPanel>

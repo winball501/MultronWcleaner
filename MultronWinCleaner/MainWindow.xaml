@@ -37,6 +37,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <CollectionViewSource x:Key="GroupedProcesses"
                               Source="{Binding FlatLockedFiles}">
             <CollectionViewSource.GroupDescriptions>
@@ -246,7 +247,7 @@
         <DockPanel Background="{DynamicResource PanelBackground}" Height="56" VerticalAlignment="Top" LastChildFill="False" MouseDown="TopBar_MouseDown">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="16,0,0,0">
                 <TextBlock Text="Multron Win Cleaner" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
-                <TextBlock Text=" v1.21.8 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
+                <TextBlock Text=" v1.22 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,12,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
@@ -264,7 +265,65 @@
                 <Button Content="✕" Style="{StaticResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="Close"/>
             </StackPanel>
         </DockPanel>
+        <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                     
+                <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" 
+Width="64" Height="64" Margin="0,0,0,30">
+                    <Image.Effect>
+                        <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="0.3" Color="Gray"/>
+                    </Image.Effect>
+                </Image>
 
+                <Grid Width="48" Height="48" HorizontalAlignment="Center">
+
+                    <Ellipse Stroke="{DynamicResource PanelBackground}" 
+      StrokeThickness="5" 
+      Opacity="0.4"/>
+
+                    <Path Data="M 24,2 A 22,22 0 1 1 2,24" 
+   StrokeThickness="5" 
+   StrokeEndLineCap="Round"
+   StrokeStartLineCap="Round"
+   RenderTransformOrigin="0.5,0.5">
+                        <Path.Stroke>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="{DynamicResource ToggleOffBackgroundColor}" Offset="0"/>
+                                <GradientStop Color="{DynamicResource TextColor}" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Path.Stroke>
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="0"/>
+                        </Path.RenderTransform>
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Style.Triggers>
+                                    <EventTrigger RoutedEvent="Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                             Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                             From="0" To="360" 
+                             Duration="0:0:0.8" 
+                             RepeatBehavior="Forever"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                </Grid>
+
+                <TextBlock Name="StatusLoad" Text="Loading..." 
+    Foreground="{DynamicResource TextSecondary}" 
+    FontSize="13" 
+    Margin="0,20,0,0" 
+    HorizontalAlignment="Center"
+    FontWeight="Medium"
+    Opacity="0.8"/>
+            </StackPanel>
+        </Grid>
         <Grid Margin="28,72,28,28" Background="{DynamicResource PanelBackground}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" MinWidth="280" />
@@ -671,7 +730,7 @@
                             </DataGrid>
                         </StackPanel>
                     </ScrollViewer>
-
+           
 
                     <ScrollViewer x:Name="ScrollViewerDetectedFiles"
               VerticalScrollBarVisibility="Auto"

@@ -16,6 +16,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -280,53 +282,97 @@ namespace MultronWinCleaner
 
                     });
                 }
-                foreach (var app in entries)
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    StartupApps.Add(app);
-                }
+                    foreach (var app in entries)
+                    {
+                        StartupApps.Add(app);
+                    }
+                });
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message);
-            
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                  
+                    MessageBox.Show(
+                        ex.Message,
+                        "Operation Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
             }
          
 
         }
+        private Storyboard _spinnerStoryboard;
+
+
+
+         
+        private bool _isLoadingStartupApps = false;
+
         private async void LoadStartupApps()
         {
-            StartupApps.Clear();
-            StartupAppsDataGrid.ItemsSource = null;
-            GetWinlogonEntries();
-            string[] subKeys = new[]
+      
+            if (!this.IsVisible || _isLoadingStartupApps)
             {
-                    @"Software\Microsoft\Windows\CurrentVersion\Run",
-                    @"Software\Microsoft\Windows\CurrentVersion\RunOnce",
-                    @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run",
-                    @"Software\Microsoft\Windows\CurrentVersion\RunServices",
-                    @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run",
-                    @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce",
-                    @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunServices"
-            };
-        
-            foreach (var subKey in subKeys)
-            {
-                await ReadRegistryStartupApps(Registry.CurrentUser, subKey);
-                await ReadRegistryStartupApps(Registry.LocalMachine, subKey);
+                return;
             }
 
-            await AddBackupStartupApps(Registry.CurrentUser);
-            await AddBackupStartupApps(Registry.LocalMachine);
-            await AddBackupStartupApps(Registry.LocalMachine, isWow64: true);
+            try
+            { 
+                _isLoadingStartupApps = true;
 
-            await LoadStartupFromTaskScheduler();
-            await ReadStartupFolderShortcuts();
-  
-            await Dispatcher.InvokeAsync(() =>
-            {
+                LoadingOverlay.Visibility = Visibility.Visible;
+                StartupAppsDataGrid.ItemsSource = null;
+                StartupApps.Clear();
+ 
+                await System.Threading.Tasks.Task.Run(async() =>
+                {
+                    GetWinlogonEntries();
+
+                    string[] subKeys = new[]
+                    {
+                @"Software\Microsoft\Windows\CurrentVersion\Run",
+                @"Software\Microsoft\Windows\CurrentVersion\RunOnce",
+                @"Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run",
+                @"Software\Microsoft\Windows\CurrentVersion\RunServices",
+                @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run",
+                @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunOnce",
+                @"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\RunServices"
+            };
+
+                    foreach (var subKey in subKeys)
+                    {
+                        await ReadRegistryStartupApps(Registry.CurrentUser, subKey);
+                        await ReadRegistryStartupApps(Registry.LocalMachine, subKey);
+                    }
+
+                    await AddBackupStartupApps(Registry.CurrentUser);
+                    await AddBackupStartupApps(Registry.LocalMachine);
+                    await AddBackupStartupApps(Registry.LocalMachine, isWow64: true);
+
+                  
+                });
+                await LoadStartupFromTaskScheduler();
+                await ReadStartupFolderShortcuts();
+                if (!this.IsVisible)
+                {
+                    return; 
+                }
+
+                
                 StartupAppsDataGrid.ItemsSource = StartupApps;
                 CollectionViewSource.GetDefaultView(StartupApps).Refresh();
                 SubscribeToPendingChanges(StartupApps);
-            });
+            }
+            finally
+            {
+                 await System.Threading.Tasks.Task.Delay(50);
+                 LoadingOverlay.Visibility = Visibility.Collapsed;
+                _isLoadingStartupApps = false;
+            }
         }
 
         private async System.Threading.Tasks.Task ReadStartupFolderApps()

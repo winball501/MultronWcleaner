@@ -53,8 +53,6 @@ namespace Multron_Win_Cleaner
 
     public partial class MainWindow : Window
     {
-
-
         public Settings settings;
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModel = new MultronWinCleaner.Processes.Scan.MainViewModel();
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModelbac = new MultronWinCleaner.Processes.Scan.MainViewModel();
@@ -72,6 +70,7 @@ namespace Multron_Win_Cleaner
         public byte onclean = 0;
         public byte killer = 0;
         public string extensions = ".log.etl.dmp.trace.tmp.temp.bak.swp";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -99,12 +98,21 @@ namespace Multron_Win_Cleaner
             };
             brush = (SolidColorBrush)resourceDictionary["Text"];
 
-
+            Window.GetWindow(this)?.DragMove();
 
         }
+        private void LoadingOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        { 
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+         
+                this.DragMove();
+            }
+        }
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            ReloadDb.IsEnabled = false;
+        {   
+            LoadingOverlay.Visibility = Visibility.Visible;
+             
             MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
             await Task.Run(() => updater.run());
             string updaterfile = Environment.CurrentDirectory + "\\Update\\mwc\\Updater.exe";
@@ -157,6 +165,7 @@ namespace Multron_Win_Cleaner
             Datagridscroll.Visibility = Visibility.Hidden;
 
             loadothers();
+            loadothers2();
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
             {
 
@@ -198,10 +207,11 @@ namespace Multron_Win_Cleaner
             traythread.Start();
 
             TrayIcon.TrayMouseDoubleClick += TrayIcon_MouseDoubleClick;
-            ReloadDb.IsEnabled = true;
-
+        
+            LoadingOverlay.Visibility = Visibility.Collapsed;
         }
-        public void loadothers()
+
+        public async Task loadothers2()
         {
             CheckBox malscan = new CheckBox
             {
@@ -268,10 +278,6 @@ namespace Multron_Win_Cleaner
             };
             newExpander1.Content = groupBoxContent2;
             expanders.Add(newExpander1);
-
-
-
-
             try
             {
                 wrapPanel1.Children.Add(newExpander1);
@@ -279,119 +285,144 @@ namespace Multron_Win_Cleaner
             catch (Exception)
             {
             }
-            CheckBox newCheckBox3 = new CheckBox
+        }
+        public async Task loadothers()
+        {
+            await createshortcut("cleanmgr.exe=/d C:=(Opens Disk Cleanup for a specific drive)=shortcut_0", "cleanmgr.exe Commands");
+            await createshortcut("cleanmgr.exe=/sagerun:1=(Configures advanced cleanup settings for auto-run)=shortcut1", "cleanmgr.exe Commands");
+            await createshortcut("cleanmgr.exe=/lowdisk=(Prompts to clean default unnecessary files)=shortcut2", "cleanmgr.exe Commands");
+            await createshortcut("cleanmgr.exe=/verylowdisk=(Silently clears default unnecessary files)=shortcut3", "cleanmgr.exe Commands");
+             
+            await createshortcut("Dism.exe=/Online /Cleanup-Image /StartComponentCleanup=warning=(No Warning)=winsxs", "Dism.exe Commands");
+
+            await createshortcut("Deep Log Files Scan=C:\\=warning=Its can take long time.=logscan", "Deep Log Files Scan");
+
+        }
+
+        public async Task createshortcut(string checkboxname, string expander)
+        { 
+            CheckBox checkbox = new CheckBox
             {
-                Content = "Dism.exe" + "=" + "WinSxS Clean" + "=warning=(No Warning)" + "=" + "winsxs",
+                Content = checkboxname,
                 Margin = new Thickness(10),
                 IsChecked = false,
                 BorderThickness = new Thickness(0),
                 BorderBrush = new SolidColorBrush(Colors.Transparent),
                 Background = new SolidColorBrush(System.Windows.Media.Colors.White),
-                Foreground = brush,
+                Foreground = brush, 
                 FontSize = 12,
                 FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
                 FontWeight = FontWeights.Regular,
                 FontStyle = FontStyles.Normal,
             };
-            checkboxes2.Add(newCheckBox3);
-          
-            StackPanel groupBoxContent5 = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Left
+            checkbox.Checked += CheckBox2_Checked;
+            checkbox.Unchecked += CheckBox2_Unchecked;
+            checkboxes2.Add(checkbox);
 
-            };
-            stackpanels.Add(groupBoxContent5);
-            Expander newExpander4 = new Expander
+            Expander existingExpander = expanders.FirstOrDefault(e => e.Header != null && e.Header.ToString() == expander);
+
+            if (existingExpander != null)
             {
-                Header = "Dism.exe",
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Colors.Transparent),
-                Foreground = brush,
-                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                BorderThickness = new Thickness(2),
-                FontSize = 14,
-                FontWeight = FontWeights.Regular,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            groupBoxContent5.Children.Add(newCheckBox3);
-            newExpander4.Content = groupBoxContent5;
-            expanders.Add(newExpander4);
-            newCheckBox3.Checked += CheckBox_Checked;
-            newCheckBox3.Unchecked += CheckBox_Unchecked;
-            try
-            {
-                wrapPanel1.Children.Add(newExpander4);
+                
+                if (existingExpander.Content is StackPanel existingPanel)
+                {
+                    existingPanel.Children.Add(checkbox);
+                }
             }
-            catch (Exception)
+            else
             {
+               
+                StackPanel groupBoxContent2 = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+                stackpanels.Add(groupBoxContent2);
+
+                groupBoxContent2.Children.Add(checkbox);
+
+                Expander newExpander1 = new Expander
+                {
+                    Header = expander,
+                    Margin = new Thickness(5),
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    Foreground = brush,
+                    BorderBrush = new SolidColorBrush(Colors.Transparent),
+                    BorderThickness = new Thickness(2),
+                    FontSize = 14,
+                    FontWeight = FontWeights.Regular,
+                    IsEnabled = true,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top
+                };
+
+                newExpander1.Content = groupBoxContent2;
+                expanders.Add(newExpander1);
+
+                try
+                {
+                    wrapPanel1.Children.Add(newExpander1);
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+        private void CheckBox2_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            if (checkBox == null || checkBox.Content == null) return;  
+
+            string content = checkBox.Content.ToString();
+             
+          if (content.Contains("Dism.exe") || content.Contains("cleanmgr.exe") || content.Contains("Deep Log Files Scan"))
+            {
+
+                database.Insert(0, content);
+            } else
+            {
+                string file = stringtokenizer(content, "=", 1);
+                settings.removeexception(file);
+            }
+        }
+        private void CheckBox2_Unchecked(object sender, RoutedEventArgs e)
+
+        {
+
+
+            CheckBox checkBox = sender as CheckBox;
+
+            string content = checkBox.Content.ToString();
+
+            if (content.Contains("Dism.exe") || content.StartsWith("cleanmgr.exe") || content.Contains("Deep Log Files Scan"))
+
+            {
+                        database.Remove(content);
 
             }
-            CheckBox newCheckBox = new CheckBox
-            {
-                Content = "Deep Log Files Scan" + "=" + "C:\\" + "=warning=Its can take long time." + "=" + "logscan",
-                Margin = new Thickness(10),
-                IsChecked = false,
-                BorderThickness = new Thickness(0),
-                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
-                Foreground = brush,
-                FontSize = 12,
-                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
-                FontWeight = FontWeights.Regular,
-                FontStyle = FontStyles.Normal,
-            };
-            checkboxes2.Add(newCheckBox);
 
-            StackPanel groupBoxContent3 = new StackPanel
-            {
-                Orientation = Orientation.Vertical,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Left
+            else
 
-            };
-            stackpanels.Add(groupBoxContent3);
-            Expander newExpander2 = new Expander
             {
-                Header = "Deep Log Files Scan",
-                Margin = new Thickness(5),
-                Background = new SolidColorBrush(Colors.Transparent),
-                Foreground = brush,
-                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                BorderThickness = new Thickness(2),
-                FontSize = 14,
-                FontWeight = FontWeights.Regular,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            groupBoxContent3.Children.Add(newCheckBox);
-            newExpander2.Content = groupBoxContent3;
-            expanders.Add(newExpander2);
 
-            try
-            {
-                wrapPanel1.Children.Add(newExpander2);
-            }
-            catch (Exception)
-            {
+                string file = stringtokenizer(checkBox.Content.ToString(), "=", 1);
+
+                settings.addexception(file);
 
             }
-            newCheckBox.Checked += CheckBox_Checked;
-            newCheckBox.Unchecked += CheckBox_Unchecked;
-       
+
         }
         private void ProgressBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdateArc(progressBar1.Value);
         }
- 
-         
+
+
         private System.Windows.Shapes.Path _arcPath;
-       public void UpdateArc(double percent)
+        public void UpdateArc(double percent)
         {
-            
+
             percent = Math.Max(0, Math.Min(100, percent));
 
             double angle = 360 * (percent / 100);
@@ -409,7 +440,7 @@ namespace Multron_Win_Cleaner
             {
                 g = Geometry.Empty;
             }
-            else if (percent >= 99.999) 
+            else if (percent >= 99.999)
             {
                 g = new EllipseGeometry(center, radius, radius);
             }
@@ -442,18 +473,18 @@ namespace Multron_Win_Cleaner
 
         private void TrayIcon_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-           
+
             if (this.Visibility == Visibility.Hidden)
             {
-                this.Show();  
+                this.Show();
                 this.WindowState = WindowState.Normal;
             }
             else
             {
-                this.WindowState = WindowState.Normal;  
+                this.WindowState = WindowState.Normal;
             }
 
-            this.Activate(); 
+            this.Activate();
         }
         private void HideApp_Click(object sender, RoutedEventArgs e)
         {
@@ -472,8 +503,8 @@ namespace Multron_Win_Cleaner
             Application.Current.Shutdown();
         }
 
-  
-   
+
+
         public string stringtokenizer(string input, string token, int index)
         {
 
@@ -520,14 +551,15 @@ namespace Multron_Win_Cleaner
                         });
                         Thread.Sleep(1000);
                     }
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
 
                 }
 
             }
         }
-         
+
         public string formatsize(long size)
         {
             if (size < 0)
@@ -561,7 +593,7 @@ namespace Multron_Win_Cleaner
             {
                 if (sender is ScrollViewer scrollViewer && scrollViewer.DataContext is MultronWinCleaner.Processes.Scan.GroupViewModel vm)
                 {
-                    if (isLoading) return;  
+                    if (isLoading) return;
 
                     isLoading = true;
                     await vm.LoadMoreFilesAsync();
@@ -569,7 +601,7 @@ namespace Multron_Win_Cleaner
                 }
             }
         }
-         
+
         public T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
@@ -583,7 +615,7 @@ namespace Multron_Win_Cleaner
                     return childOfChild;
             }
             return null;
-        } 
+        }
         public static T FindVisualParent<T>(DependencyObject obj) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(obj);
@@ -596,10 +628,10 @@ namespace Multron_Win_Cleaner
             }
             return null;
         }
-       
-      
-       
-         
+
+
+
+
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
@@ -618,60 +650,17 @@ namespace Multron_Win_Cleaner
             {
                 this.Hide();
                 settings.Hide();
-            } else
+            }
+            else
             {
                 Environment.Exit(0);
             }
-           
+
         }
-        private void CheckBox2_Checked(object sender, RoutedEventArgs e)
-        {
-            CheckBox checkBox = sender as CheckBox;
-            string content = checkBox.Content.ToString();
-            if (content.Contains("logscan"))
-            {
-                return;
-            }
-            else if (content.Contains("WinSxS"))
-
-
-            {
-                string name = stringtokenizer(content, "=", 0);
-                string path = stringtokenizer(content, "=", 3);
-                database.Add("WinSxS Folder=C:\\Windows\\WinSxS=winsxs");
-
-            } else
-            {
-                string file = stringtokenizer(checkBox.Content.ToString(), "=", 1);
-                settings.removeexception(file);
-            }
-              
-            
-        }
-        private void CheckBox2_Unchecked(object sender, RoutedEventArgs e)
-        {
-            
-            CheckBox checkBox = sender as CheckBox;
-            string content = checkBox.Content.ToString();
-            if (content.Contains("logscan"))
-            {
-                return;
-            }
-            else if (content.Contains("WinSxS"))
-
-            {
-                return;
-            } else
-            {
-                string file = stringtokenizer(checkBox.Content.ToString(), "=", 1);
-                settings.addexception(file);
-            }
-
-           
-    
-        }
-      
        
+     
+
+
         public void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = sender as CheckBox;
@@ -679,29 +668,15 @@ namespace Multron_Win_Cleaner
             {
 
                 string content = checkBox.Content.ToString();
-             
-                if(content.Contains("logscan"))
-                {
-                    string name = stringtokenizer(content, "=", 0);
-                    string path = stringtokenizer(content, "=", 1);
-                    database.Add(name + "=" + path + "=" + "logscan");
-               
-                } else if (content.Contains("winsxs")) 
-                {
-                    string name = stringtokenizer(content, "=", 0);
-                    string path = stringtokenizer(content, "=", 1);
-                    database.Add(name + "=" + path + "=" + "winsxs");
-             
 
-                } else
-                {
-                    string name = stringtokenizer(content, "=", 0);
-                    string path = stringtokenizer(content, "=", 1);
+            
+               string name = stringtokenizer(content, "=", 0);
+               string path = stringtokenizer(content, "=", 1);
 
-                    database.Add(name + "=" + path);
-                     
-                }
-          
+               database.Add(name + "=" + path);
+
+              
+
             }
         }
         public void CheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -710,49 +685,29 @@ namespace Multron_Win_Cleaner
             if (checkBox != null)
             {
                 string content = checkBox.Content.ToString();
-                
-                if (content.Contains("winsxs"))
-                {
-                    string name = stringtokenizer(content, "=", 0);
-                    string path = stringtokenizer(content, "=", 1);
-                    database.RemoveAll(item => item.EndsWith("=winsxs"));
-
-                }
-                else
-                {
-                    if (content.Contains("logscan"))
-                    {
-                        string name = stringtokenizer(content, "=", 0);
-                        string path = stringtokenizer(content, "=", 1);
-                        database.RemoveAll(item => item.EndsWith("=logscan"));
-
-                    }
-                    else
-                    {
-                        string name = stringtokenizer(content, "=", 0);
-                        string path = stringtokenizer(content, "=", 1);
-                        database.Remove(name + "=" + path);
-
-                    }
-                }
+                string name = stringtokenizer(content, "=", 0);
+                string path = stringtokenizer(content, "=", 1);
+                database.Remove(name + "=" + path);
+ 
+           }
 
 
 
 
 
-            }
+          
         }
         private async void ScrollViewerWrap_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            
+
             if (sender is not ScrollViewer scrollViewer) return;
 
             double verticalOffset = scrollViewer.VerticalOffset;
             double viewportHeight = scrollViewer.ViewportHeight;
             double extentHeight = scrollViewer.ExtentHeight;
 
-         
-           
+
+
 
             const double threshold = 20.0;
             bool isAtBottom = (extentHeight - (verticalOffset + viewportHeight)) <= threshold;
@@ -760,27 +715,20 @@ namespace Multron_Win_Cleaner
             if (!isAtBottom) return;
 
 
-            foreach(Expander expander in expanders)
+            foreach (Expander expander in expanders)
             {
-                  if(!wrapPanel1.Children.Contains(expander))
+                if (!wrapPanel1.Children.Contains(expander))
                 {
                     wrapPanel1.Children.Add(expander);
                     break;
                 }
             }
-            
+
         }
-    
-
-
-
-         
-    
-   
         private double previousWidth, previousHeight, previousLeft, previousTop;
-   
+
         private bool isMaximized = false;
-       
+
         private void MaximizeButton_Click(object sender, RoutedEventArgs e)
         {
             if (isMaximized)
@@ -791,17 +739,17 @@ namespace Multron_Win_Cleaner
                 this.Left = previousLeft;
                 this.Top = previousTop;
                 isMaximized = false;
-                buttonMaximize.Content = "↔"; 
+                buttonMaximize.Content = "↔";
             }
             else
             {
-                 
+
                 previousWidth = this.Width;
                 previousHeight = this.Height;
                 previousLeft = this.Left;
                 previousTop = this.Top;
 
-           
+
                 this.WindowState = WindowState.Normal;
                 this.Left = SystemParameters.WorkArea.Left;
                 this.Top = SystemParameters.WorkArea.Top;
@@ -809,7 +757,7 @@ namespace Multron_Win_Cleaner
                 this.Height = SystemParameters.WorkArea.Height;
 
                 isMaximized = true;
-                buttonMaximize.Content = "↔";  
+                buttonMaximize.Content = "↔";
             }
         }
         public static byte[] getrandombytes(long size)
@@ -818,14 +766,14 @@ namespace Multron_Win_Cleaner
             System.Security.Cryptography.RandomNumberGenerator.Create().GetNonZeroBytes(randombs);
             return randombs;
         }
-     
-       
+
+
         public int cancelclean = 0;
         public int reset = 0;
-      
+
         public static class SystemActions
         {
-         
+
             [DllImport("user32.dll", SetLastError = true)]
             private static extern bool ExitWindowsEx(uint uFlags, uint dwReason);
 
@@ -835,13 +783,13 @@ namespace Multron_Win_Cleaner
             const uint EWX_FORCE = 0x00000004;
             const uint EWX_FORCEIFHUNG = 0x00000010;
 
-          
+
             public static bool LogOff()
             {
                 return ExitWindowsEx(EWX_LOGOFF | EWX_FORCE, 0);
             }
 
-         
+
             public static void Restart()
             {
                 Process.Start(new ProcessStartInfo("shutdown", "/r /t 0")
@@ -850,7 +798,7 @@ namespace Multron_Win_Cleaner
                     UseShellExecute = false
                 });
             }
-             
+
             public static void Shutdown()
             {
                 Process.Start(new ProcessStartInfo("shutdown", "/s /t 0")
@@ -896,7 +844,7 @@ namespace Multron_Win_Cleaner
             void HideChildrenOfAllDockPanels(Panel parent)
             {
                 foreach (UIElement child in parent.Children)
-                { 
+                {
                     if (child is DockPanel dockPanel)
                     {
                         foreach (UIElement dpChild in dockPanel.Children)
@@ -904,7 +852,7 @@ namespace Multron_Win_Cleaner
                             dpChild.Visibility = Visibility.Hidden;
                         }
                     }
-                     
+
                     if (child is Panel nestedPanel)
                     {
                         HideChildrenOfAllDockPanels(nestedPanel);
@@ -921,7 +869,7 @@ namespace Multron_Win_Cleaner
                     main.progressBar1.Minimum = 0;
                     main.progressBar1.Maximum = main.paths.Count;
                     main.progressBar1.Value = 0;
-                     
+
                     main.wrapPanelDirectories.Children.Add(new TextBlock
                     {
                         Text = "Started...",
@@ -977,7 +925,7 @@ namespace Multron_Win_Cleaner
                                 }
                             }
 
-                       
+
                             try
                             {
                                 if (System.IO.File.Exists(path))
@@ -1016,7 +964,7 @@ namespace Multron_Win_Cleaner
                         }
                         else
                         {
-                      
+
                             try
                             {
                                 FileInfo info = new FileInfo(path);
@@ -1074,8 +1022,8 @@ namespace Multron_Win_Cleaner
                     });
                 }
 
-                await cts.CancelAsync(); 
-                await dotsTask; 
+                await cts.CancelAsync();
+                await dotsTask;
 
                 await main.Dispatcher.InvokeAsync(() =>
                 {
@@ -1107,7 +1055,7 @@ namespace Multron_Win_Cleaner
         public int _itemsLoaded = 0;
         public int _pageSize = 50;
 
-        
+
         public async Task startscan()
         {
             if (buttonStartScan.Content == "Clean")
@@ -1129,14 +1077,14 @@ namespace Multron_Win_Cleaner
                 wrapPanel1.Visibility = Visibility.Hidden;
 
                 buttonStartScan.Content = "Cancel";
-         
+
                 cancelclean = 0;
                 MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
 
                 await Task.Run(() => scan.run());
 
 
-               
+
                 scanstatus = 0;
             }
             else if (buttonStartScan.Content == "Cancel")
@@ -1214,7 +1162,18 @@ namespace Multron_Win_Cleaner
         }
         private async void ButtonStartScan_Click(object sender, RoutedEventArgs e)
         {
-                await startscan();
+            
+            bool allUnchecked = checkboxes2.All(cb => cb.IsChecked != true);
+
+            if (allUnchecked)
+            {
+
+                label1_Copy.Text = "Nothing is selected!";
+                label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
+                return;
+            }
+             
+            await startscan();
         }
         public void OpenDirectory_MainMenu_Click(object sender, RoutedEventArgs e)
         {
@@ -1236,20 +1195,20 @@ namespace Multron_Win_Cleaner
                         {
                             Process.Start("explorer.exe", dir);
                         }
-                 
+
                         else
                         {
                             MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     }
-                   
-                    
+
+
                     else
                     {
                         if (wrapdir != null && Directory.Exists(wrapdir))
                             Process.Start("explorer.exe", wrapdir);
                         else
-                            MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location",  MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show("Path not found:\n" + wrapdir, "Open File Location", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 catch (Exception ex)
@@ -1293,7 +1252,7 @@ namespace Multron_Win_Cleaner
                 }
             }
 
-         
+
         }
 
         public void CopyPath_MainMenu_Click(object sender, RoutedEventArgs e)
@@ -1307,7 +1266,7 @@ namespace Multron_Win_Cleaner
                 int index = checkboxes2.IndexOf(target);
                 string wrap = checkboxes2[index].Content.ToString();
                 string wrapdir = stringtokenizer(wrap, "=", 1);
-              
+
                 try
                 {
                     if (wrapdir != null)
@@ -1364,21 +1323,21 @@ namespace Multron_Win_Cleaner
 
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
-           
+
             settings.Show();
             settings.WindowState = WindowState.Normal;
         }
-   
+
         int doit = 0;
         private void UtilitiesButton_Click(object sender, RoutedEventArgs e)
         {
-           
-                utilities.Show();
-                settings.WindowState = WindowState.Normal;
+
+            utilities.Show();
+            settings.WindowState = WindowState.Normal;
 
 
         }
-        
+
         private void TopBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -1500,8 +1459,8 @@ namespace Multron_Win_Cleaner
                         main.label1_Copy.Text = $"Loading locked files: {p.current}/{p.total}";
                     });
                 });
-                System.Windows.MessageBox.Show($"paths count: {main.paths.Count}\n" +
-        string.Join("\n", main.paths.Take(5)));
+ 
+        string.Join("\n", main.paths.Take(5));
                 await CheckWhoUsesMultipleAsync(main.paths, progress);
 
                 await main.Dispatcher.InvokeAsync(() =>
@@ -1594,7 +1553,7 @@ namespace Multron_Win_Cleaner
                     view.Refresh();
                     main.groupedProcesses = cvs;
                     main.listBoxProcesses.ItemsSource = view;
-                     
+
                     var stillLockedPaths = main.LockedFileGroups
                         .Select(g => g.FilePath)
                         .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -1624,18 +1583,18 @@ namespace Multron_Win_Cleaner
             ButtonLockedFiles.Visibility = Visibility.Hidden;
             buttonStartScan.IsEnabled = true;
             buttonStartScan.Content = "Kill";
-         
+
             LoadLockedFiles lockedfiles = new LoadLockedFiles(this);
             await Task.Run(() => lockedfiles.run());
-           
+
         }
 
         private void ButtonReset_Click(object sender, RoutedEventArgs e)
         {
-             wrapPanelDirectories.Visibility = Visibility.Hidden;
-             
+            wrapPanelDirectories.Visibility = Visibility.Hidden;
+
             dataGridGroups.Visibility = Visibility.Hidden;
-             ScrollViewerDetectedFiles.Visibility = Visibility.Hidden;
+            ScrollViewerDetectedFiles.Visibility = Visibility.Hidden;
             Datagridscroll.Visibility = Visibility.Hidden;
             ScrollViewerDirectories.Visibility = Visibility.Hidden;
             wrapPanelDirectories.Visibility = Visibility.Hidden;
@@ -1650,7 +1609,7 @@ namespace Multron_Win_Cleaner
             buttonStartScan.Content = "Scan";
             buttonStartScan.IsEnabled = true;
 
-             
+
             progressBar1.Value = 0;
 
             scanstatus = 0;
@@ -1682,12 +1641,12 @@ namespace Multron_Win_Cleaner
                 return;
             }
 
-             
+
             var filteredList = await Task.Run(() =>
                 viewModelbac.Groups
                     .Where(g => !string.IsNullOrEmpty(g.Path) && g.Path.ToLower().Contains(searchText))
                     .ToList());
-             
+
             viewModel.Groups.Clear();
             foreach (var group in filteredList)
                 viewModel.Groups.Add(group);
@@ -1710,7 +1669,7 @@ namespace Multron_Win_Cleaner
                 System.IO.File.WriteAllText(path, fileContent);
             }
 
-           
+
             string themePath = "Themes/Dark.xaml";
             var resourceDictionary = new ResourceDictionary
             {
@@ -1731,15 +1690,15 @@ namespace Multron_Win_Cleaner
         {
             string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
 
-             
+
             string fileContent = System.IO.File.ReadAllText(path);
-             
+
             fileContent = fileContent.Replace("themes:1", "").TrimEnd();
 
-           
+
             if (!fileContent.Contains("themes:0"))
             {
-              
+
                 if (!fileContent.EndsWith(Environment.NewLine))
                     fileContent += Environment.NewLine;
 
@@ -1747,25 +1706,25 @@ namespace Multron_Win_Cleaner
                 System.IO.File.WriteAllText(path, fileContent);
             }
 
-           
+
             string themePath = "Themes/Light.xaml";
 
-            
+
             var resourceDictionary = new ResourceDictionary
             {
                 Source = new Uri(themePath, UriKind.Relative)
             };
 
-           
+
             brush = (SolidColorBrush)resourceDictionary["Text"];
 
-         
+
             themeselector.selector(new Uri(themePath, UriKind.Relative));
 
-             
+
             foreach (CheckBox box in checkboxes2)
                 box.Foreground = brush;
-             
+
             foreach (Expander er in expanders)
                 er.Foreground = brush;
         }
@@ -1780,7 +1739,7 @@ namespace Multron_Win_Cleaner
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string searchText = (sender as TextBox)?.Text?.Trim().ToLower() ?? "";
- 
+
             await UpdateListViewAsync(searchText);
         }
         private async Task UpdateProcessViewModel(string searchText)
@@ -1791,11 +1750,11 @@ namespace Multron_Win_Cleaner
                 if (string.IsNullOrWhiteSpace(searchText))
                 {
                     groupedProcesses.View.Filter = null;
-                    
+
                 }
                 else
                 {
-                  
+
                     groupedProcesses.View.Filter = item =>
                     {
                         if (item is MultronWinCleaner.Processes.Clean.LockedProcessViewModel proc)
@@ -1849,17 +1808,17 @@ namespace Multron_Win_Cleaner
                 }
             }
         }
-  
+
         private void SelectAll_wpanel_Click(object sender, RoutedEventArgs e)
         {
             int i = 0;
-             foreach(CheckBox box in checkboxes2)
+            foreach (CheckBox box in checkboxes2)
             {
-                
+
                 box.IsChecked = true;
                 i++;
             }
-      
+
         }
 
 
@@ -1867,22 +1826,22 @@ namespace Multron_Win_Cleaner
         {
             foreach (CheckBox box in checkboxes2)
             {
-              
+
                 box.IsChecked = false;
             }
-         
+
         }
         private void SelectAll_AllGroups_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in dataGridGroups.Items)
             {
                 if (item is GroupViewModel group)
-                { 
+                {
                     foreach (var file in group.allFiles)
                     {
                         file.IsChecked = true;
                     }
-                     
+
                     var sp = stackpanels.FirstOrDefault(s => s.DataContext == group);
                     if (sp != null)
                     {
@@ -1904,12 +1863,12 @@ namespace Multron_Win_Cleaner
             foreach (var item in dataGridGroups.Items)
             {
                 if (item is GroupViewModel group)
-                { 
+                {
                     foreach (var file in group.allFiles)
                     {
                         file.IsChecked = false;
                     }
- 
+
                     var sp = stackpanels.FirstOrDefault(s => s.DataContext == group);
                     if (sp != null)
                     {
@@ -1962,7 +1921,7 @@ namespace Multron_Win_Cleaner
 
                 wrapPanelDirectories.Visibility = Visibility.Hidden;
                 ScrollViewerDirectories.Visibility = Visibility.Hidden;
-                
+
                 var load = new MultronWinCleaner.Processes.Load(this);
                 await Task.Run(() => load.RunAsync());
                 ReloadDb.IsEnabled = true;
@@ -1980,19 +1939,19 @@ namespace Multron_Win_Cleaner
         {
             Dictionary<string, bool> checkBoxStates = null;
 
-            
+
             await Dispatcher.InvokeAsync(() =>
             {
                 checkBoxStates = new Dictionary<string, bool>();
                 foreach (CheckBox box in checkboxes2)
                 {
-                 
+
                     string path = stringtokenizer(box.Content.ToString(), "=", 1);
                     checkBoxStates[path] = box.IsChecked == true;
                 }
             });
 
-         
+
             await Task.Run(async () =>
             {
                 string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "database.txt");
@@ -2016,40 +1975,42 @@ namespace Multron_Win_Cleaner
                         bool isChecked = kvp.Value;
                         if (profilemode == 1)
                         {
-                            if (lin.Contains("#profileget#")) {
+                            if (lin.Contains("#profileget#"))
+                            {
                                 string pat = profile;
 
                                 pat = pat.Replace("\\\\", "\\");
                                 pat = pat.Replace("{##}", Environment.UserName);
                                 string fullpath = "";
-                                 
 
-                              await this.Dispatcher.InvokeAsync(() => {
-                                 foreach (ComboBox box in comboboxlist)
-                                 {
 
-                                
-                                    fullpath = pat  + box.SelectedItem.ToString()  + stringtokenizer(lin, "=", 2);
-                                    if(System.IO.File.Exists(fullpath) || System.IO.Directory.Exists(fullpath))
+                                await this.Dispatcher.InvokeAsync(() => {
+                                    foreach (ComboBox box in comboboxlist)
                                     {
-                                         break;
-                                    }
-                                }
-                              });
 
-                            
+
+                                        fullpath = pat + box.SelectedItem.ToString() + stringtokenizer(lin, "=", 2);
+                                        if (System.IO.File.Exists(fullpath) || System.IO.Directory.Exists(fullpath))
+                                        {
+                                            break;
+                                        }
+                                    }
+                                });
+
+
                                 if (path.Contains(fullpath))
                                 {
-                                   
+
                                     lines[i] = isChecked
                                         ? lines[i].Replace("=false", "=true")
                                         : lines[i].Replace("=true", "=false");
                                 }
                             }
-                           
-                        } else
+
+                        }
+                        else
                         {
-                            if(lin.Contains("{##}"))
+                            if (lin.Contains("{##}"))
                             {
                                 lin = lin.Replace("{##}", Environment.UserName);
                             }
@@ -2060,13 +2021,13 @@ namespace Multron_Win_Cleaner
                                     : lines[i].Replace("=true", "=false");
                             }
                         }
-                    
+
                     }
                 }
 
                 System.IO.File.WriteAllLines(filePath, lines);
             });
-             
+
             await Dispatcher.InvokeAsync(() =>
             {
                 MessageBox.Show("Settings saved to database sucessfully.");
@@ -2078,7 +2039,7 @@ namespace Multron_Win_Cleaner
         {
             SaveSettings.IsEnabled = false;
             SaveSettings.Content = "Saving...";
-            await savetodatabase(); 
+            await savetodatabase();
         }
 
         private void UnselectAll_Click(object sender, RoutedEventArgs e)
@@ -2103,7 +2064,7 @@ namespace Multron_Win_Cleaner
         }
         private async Task LoadMoreItemsAsync()
         {
-      
+
             var toAdd = _allLockedFileGroups.Skip(_itemsLoaded).Take(_pageSize).ToList();
 
             if (toAdd.Count == 0)
@@ -2117,7 +2078,7 @@ namespace Multron_Win_Cleaner
 
             _itemsLoaded += toAdd.Count;
         }
-      
+
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);

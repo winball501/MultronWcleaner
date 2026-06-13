@@ -30,20 +30,20 @@ namespace MultronWinCleaner.Processes
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + ".";
-                        main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));  
+                        main.StatusLoad.Text = text + ".";
+                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));  
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "..";
+                        main.StatusLoad.Text = text + "..";
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "...";
+                        main.StatusLoad.Text = text + "...";
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -685,12 +685,33 @@ namespace MultronWinCleaner.Processes
 
                         await main.Dispatcher.InvokeAsync(() =>
                         {
+                            string lastLine = null;
 
-                            main.label1_Copy.Text = "Ready to scan";
-                            main.buttonStartScan.IsEnabled = true;
-                            main.progressBar1.Value = 0;
-                            main.UpdateArc(main.progressBar1.Value);
-                            cts.Cancel();
+                         
+                            if (!string.IsNullOrWhiteSpace(main.settings.logfilepath) && File.Exists(main.settings.logfilepath))
+                            {
+                              
+                                lastLine = File.ReadLines(main.settings.logfilepath).LastOrDefault();
+                            }
+
+                             
+                           
+                            if (lastLine != null && main.settings.chkShowLastLog.IsChecked == true) 
+                            {
+                                main.label1_Copy.Text = lastLine;
+                                main.buttonStartScan.IsEnabled = true;
+                                main.progressBar1.Value = 0;
+                                main.UpdateArc(main.progressBar1.Value);
+                                cts.Cancel();
+                            } else
+                            {
+                                main.label1_Copy.Text = "Ready to scan";
+                                main.buttonStartScan.IsEnabled = true;
+                                main.progressBar1.Value = 0;
+                                main.UpdateArc(main.progressBar1.Value);
+                                cts.Cancel();
+                            }
+                         
                         });
 
                     }

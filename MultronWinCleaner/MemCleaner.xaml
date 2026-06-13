@@ -104,7 +104,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Text="Clean every" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" FontSize="16" Grid.Column="0" Margin="0,0,12,0" />
-                                <ComboBox x:Name="cbCleanInterval" Height="32" SelectedIndex="0" Grid.Column="1" FontSize="16">
+                                <ComboBox x:Name="cbCleanInterval" Height="32" SelectedIndex="0" Grid.Column="1" FontSize="16" SelectionChanged="cbCleanInterval_SelectionChanged">
+                             
                                     <ComboBoxItem Content="1 minutes"/>
                                     <ComboBoxItem Content="5 minutes" />
                                     <ComboBoxItem Content="10 minutes" />
@@ -122,6 +123,7 @@
                             <CheckBox x:Name="chkTopMostMonitor" Content="Keep Memory Monitor Always Top" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkTopMostMonitor_Checked" Unchecked="chkTopMostMonitor_Unchecked" Margin="0,0,0,12" />
 
                             <CheckBox x:Name="chkSmartRAM" Content="Enable Memory Monitor Panel" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkSmartRAM_Checked" Unchecked="chkSmartRAM_Unchecked" />
+                            <TextBlock x:Name="Status"  Text="Auto Clean Not Working"  Foreground="{DynamicResource TextPrimary}"  FontSize="16"  FontWeight="Medium" TextAlignment="Center"  TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

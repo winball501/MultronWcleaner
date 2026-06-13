@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -385,7 +386,24 @@ namespace MultronWinCleaner.Processes
 
             return (backups, cache);
         }
+        public async void dropscanmessage(string name, string Color)
+        {
+            await main.Dispatcher.InvokeAsync(() =>
+            {
+               
+                var converter = new System.Windows.Media.BrushConverter();
+                var brush = (System.Windows.Media.Brush)converter.ConvertFromString(Color);
 
+                TextBlock directorytextblock = new TextBlock
+                {
+                    Text = name,
+                    Foreground = brush,  
+                    FontSize = 16,
+                    Margin = new Thickness(5)
+                };
+                main.wrapPanelDirectories.Children.Add(directorytextblock);
+            });
+        }
         public async Task run()
         {
             try
@@ -405,46 +423,29 @@ namespace MultronWinCleaner.Processes
                     main.ScrollViewerDirectories.Visibility = Visibility.Visible;
                     main.progressBar1.Value = 0;
                 });
-
+   
                 foreach (string directory in main.database)
                 {
                     if (main.cancelstatus.IsCancellationRequested) break;
 
                     string name = main.stringtokenizer(directory, "=", 0);
                     string path = main.stringtokenizer(directory, "=", 1);
-                    TextBlock directorytextblock = null;
-                    if(!name.Contains("Dism.exe")) {
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            directorytextblock = new TextBlock
-                            {
-                                Text = $"Scanning: {name}",
-                                Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                FontSize = 16,
-                                Margin = new Thickness(5)
-                            };
-                            main.wrapPanelDirectories.Children.Add(directorytextblock);
-                        });
-                    } else
-                    {
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            directorytextblock = new TextBlock
-                            {
-                                Text = $"{name} Scanning WinSxS",
-                                Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                FontSize = 16,
-                                Margin = new Thickness(5)
-                            };
-                            main.wrapPanelDirectories.Children.Add(directorytextblock);
-                        });
-                    }
-                
 
-                    if (name.Contains("Dism.exe") && winsxs == 0)
+
+
+                  
+
+                    if (name.Contains("cleanmgr.exe"))
+                    {
+                        dropscanmessage("The cleanmgr.exe command will run after the scan is completed and you click the Clean button!", "#0078d7");
+                        continue;
+                    }
+                  
+                if (name.Contains("Dism.exe") && winsxs == 0)
                     {
                         try
                         {
+                            dropscanmessage("Running Command: " + name, "#0078d7");
                             string output = await RunDismAnalyzeComponentStoreAsync(main.dismcancel.Token, main.progressBar1);
 
                             if (!main.cancelstatus.IsCancellationRequested)
@@ -464,36 +465,21 @@ namespace MultronWinCleaner.Processes
 
                                 await main.Dispatcher.InvokeAsync(() =>
                                 {
-                                    main.wrapPanelDirectories.Children.Remove(directorytextblock);
+                               
                                     if (output.EndsWith("#=#3010"))
                                     {
 
-                                        directorytextblock = new TextBlock
-                                        {
-                                            Text = $"Completed: {name + " " + main.formatsize(total)} " + "(Dism Requires System Restart)",
-                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                            FontSize = 16,
-                                            Margin = new Thickness(5)
-                                        };
-                                        checkboxData.Add(("(Dism Requires System Restart)=", total, "WinSxS Clean", 0, "", ""));
-
+               
+                                        checkboxData.Add(("(Dism Requires System Restart)=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
+                                        dropscanmessage("Dism.exe scan completed but requires system restart to free up space. Please restart your computer to complete the cleanup process. " + main.formatsize(total), "#0078d7");
                                     }
                                     else
                                     {
-
-                                        directorytextblock = new TextBlock
-                                        {
-                                            Text = $"Completed: {name + " " + main.formatsize(total)}",
-                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                            FontSize = 16,
-                                            Margin = new Thickness(5)
-                                        };
-                                        checkboxData.Add(("Dism.exe", total, "WinSxS Scan Result", 0, "", ""));
+                                        dropscanmessage("Dism.exe scan completed! " + main.formatsize(total), "#107c10");
+                                    
 
                                     }
-
-
-                                    main.wrapPanelDirectories.Children.Add(directorytextblock);
+ 
                                 });
                             }
                             winsxs = 1;
@@ -507,11 +493,10 @@ namespace MultronWinCleaner.Processes
 
 
                     }
-                    else
+                    else if(name.Contains("Deep Log Files Scan") && logscan == 0)
                     {
-                      if (name.Contains("Deep Log Files Scan") && logscan == 0)
-                        {
-                            cts.Cancel();
+                        dropscanmessage("Running Deep Log Files Scan", "#0078d7");
+                        cts.Cancel();
                             current = 0;
                             await main.Dispatcher.InvokeAsync(() =>
                             {
@@ -531,28 +516,33 @@ namespace MultronWinCleaner.Processes
                                 main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
                                 main.progressBar1.Value = 100;
                             });
-                            await directorytextblock.Dispatcher.InvokeAsync(() =>  directorytextblock.Text = $"Completed: {name} {main.formatsize(deeplogscantotal)}");
+                        dropscanmessage("Deep Log Files Scan Completed!", "#107c10");
 
-                            logscan = 1;
+                        logscan = 1;
                         
-                        }
-                        else if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
+                
+                       
+
+                    }
+                    else
+                    {
+                        dropscanmessage("Scanning: " + name, "#0078d7");
+                        if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
                         {
                             await addtocheckbox(path, name, "Direct Files");
-                        } 
+                        }
 
                         else
                         {
                             currentscan = 0;
 
-                            await ScanDirectoryAsync(path, name, directorytextblock);
+                            await ScanDirectoryAsync(path, name);
                         }
 
 
                         nowscanning++;
                         double percent = (double)nowscanning / size * 100;
                         await main.Dispatcher.InvokeAsync(() => main.progressBar1.Value = percent);
-
                     }
 
                 }
@@ -791,6 +781,9 @@ namespace MultronWinCleaner.Processes
                             await main.Dispatcher.InvokeAsync(() =>
                             {
                                 main.label1_Copy.Text = $"Scanning C:\\ — {current} files checked, {main.formatsize(deeplogscantotal)} found";
+                                 
+                                var converter = new System.Windows.Media.BrushConverter();
+                                main.label1_Copy.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString("#0078d7");
                             });
                         }
                     }
@@ -804,7 +797,7 @@ namespace MultronWinCleaner.Processes
            
         }
 
-        public async Task ScanDirectoryAsync(string path, string name, TextBlock directorytextbox)
+        public async Task ScanDirectoryAsync(string path, string name)
         {
             try
             {
@@ -824,8 +817,8 @@ namespace MultronWinCleaner.Processes
                 }
             }
             catch { }
-
-            await directorytextbox.Dispatcher.InvokeAsync(() => directorytextbox.Text = $"Completed: {name} {main.formatsize(currentscan)}");
+            dropscanmessage($"Completed: {name} {main.formatsize(currentscan)}", "#107c10");
+          
           
         }
 

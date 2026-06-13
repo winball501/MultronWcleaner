@@ -30,20 +30,20 @@ namespace MultronWinCleaner.Processes
                     if (main.cancelstatus.IsCancellationRequested)
                         break;
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + ".";
-                        main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
+                        main.StatusLoad.Text = text + ".";
+                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "..";
+                        main.StatusLoad.Text = text + "..";
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "...";
+                        main.StatusLoad.Text = text + "...";
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -119,7 +119,7 @@ namespace MultronWinCleaner.Processes
                                 {
                                     main.Dispatcher.InvokeAsync(() =>
                                     {
-                                        main.label1_Copy.Text = "Downloading Latest Database " + progress.ToString() + "%";
+                                        main.StatusLoad.Text = "Downloading Latest Database " + progress.ToString() + "%";
                                         lastProgress = progress;
                                     });
 
@@ -137,7 +137,7 @@ namespace MultronWinCleaner.Processes
                 await main.Dispatcher.InvokeAsync(async() =>
                 {
                     await cts.CancelAsync();
-                    main.label1_Copy.Text = ex.Message;
+                    main.StatusLoad.Text = ex.Message;
                 });
             }
             
@@ -163,7 +163,7 @@ namespace MultronWinCleaner.Processes
                 }
 
                 Version latestVersion = new Version(match.Value);
-                Version currentVersion = new Version("1.21.8");
+                Version currentVersion = new Version("1.22");
 
                 if (latestVersion == currentVersion)
                 {
@@ -205,7 +205,7 @@ namespace MultronWinCleaner.Processes
                                 {
                                     main.Dispatcher.InvokeAsync(() =>
                                     {
-                                        main.label1_Copy.Text = "Downloading Update " + progress.ToString() + "%";
+                                        main.StatusLoad.Text = "Downloading Update " + progress.ToString() + "%";
                                         lastProgress = progress;
                                     });
 
@@ -249,7 +249,7 @@ namespace MultronWinCleaner.Processes
                 {
                     await main.Dispatcher.InvokeAsync(() =>
                     {
-                        main.label1_Copy.Text = "Updater.exe not found";
+                        main.StatusLoad.Text = "Updater.exe not found";
                     });
                 }
            
@@ -258,7 +258,7 @@ namespace MultronWinCleaner.Processes
                 await main.Dispatcher.InvokeAsync(async() =>
                 {
                     await cts.CancelAsync();
-                    main.label1_Copy.Text = ex.Message;
+                    main.StatusLoad.Text = ex.Message;
                 });
                 
             }

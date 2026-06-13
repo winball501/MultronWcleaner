@@ -22,7 +22,7 @@ namespace MultronWinCleaner
   
     public partial class MemCleaner : Window
     {
-
+      
         [DllImport("user32.dll")]
         static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
@@ -125,23 +125,30 @@ namespace MultronWinCleaner
         public class AutoCleanMem
         {
             private MemCleaner memcleaner;
-            private System.Threading.Timer? timer;
+       
 
+            private CancellationTokenSource _autoCleanCts;
             public AutoCleanMem(MemCleaner memcleaner)
             {
                 this.memcleaner = memcleaner;
             }
 
-            public void StartAutoClean()
+            public async void StartAutoClean()
             {
-                memcleaner.Dispatcher.Invoke(new Action(() =>
+                _autoCleanCts?.Cancel();
+                await Task.Delay(100);
+                _autoCleanCts = new CancellationTokenSource();
+                var token = _autoCleanCts.Token;
+
+             
+                int intervalMinutes = 5;
+                await memcleaner.Dispatcher.InvokeAsync(() =>
                 {
                     var selectedItem = memcleaner.cbCleanInterval.SelectedItem as ComboBoxItem;
                     if (selectedItem == null) return;
 
-                    string content = selectedItem.Content.ToString()?.ToLower() ?? "";
-
-                    int intervalMinutes = content switch
+                    string content = selectedItem.Content?.ToString()?.ToLower() ?? "";
+                    intervalMinutes = content switch
                     {
                         "1 minutes" => 1,
                         "5 minutes" => 5,
@@ -152,24 +159,102 @@ namespace MultronWinCleaner
                         "2 hour" => 120,
                         _ => 5
                     };
+                });
 
-                    timer = new System.Threading.Timer(_ =>
+                memcleaner.window.utilities.savesettings("mcminutes:" + intervalMinutes + " minutes");
+                _ = Task.Run(async () =>
+                {
+                    while (!token.IsCancellationRequested)
                     {
-                        memcleaner.Dispatcher.Invoke(() =>
+                        for (int i = intervalMinutes * 60; i > 0; i--)
                         {
-                            if(memcleaner.chkSkipOnLowBattery.IsChecked == true)
-                            {
-                                if (GetBatteryPercent() > 30)
-                                {
-                                    memcleaner.cleanmemory();
-                                }
-                            }
-                            
+                            if (token.IsCancellationRequested) break;
 
-                         
+                            int seconds = i;
+                            await memcleaner.Dispatcher.InvokeAsync(() =>
+                            {
+                                int mins = seconds / 60;
+                                int secs = seconds % 60;
+                                memcleaner.Status.Text = $"Next clean: {mins:D2}:{secs:D2}";
+
+                            });
+
+                            try
+                            {
+                                await Task.Delay(1000, token);
+                            }
+                            catch (TaskCanceledException)
+                            {
+                                break;
+                            }
+                        }
+
+                        if (token.IsCancellationRequested) break;
+
+                        bool isSkipChecked = false;
+                        await memcleaner.Dispatcher.InvokeAsync(() =>
+                        {
+                            isSkipChecked = memcleaner.chkSkipOnLowBattery.IsChecked == true;
                         });
-                    }, null, TimeSpan.Zero, TimeSpan.FromMinutes(intervalMinutes));
-                }));
+
+                        if (isSkipChecked)
+                        {
+                            int battery = GetBatteryPercent();
+
+                            if (battery == -1)
+                            {
+                                await memcleaner.Dispatcher.InvokeAsync(() =>
+                                {
+                                    memcleaner.Status.Text = "Battery status unknown, skipping low battery check.";
+                                });
+                                await Task.Delay(5000, token);
+                                await memcleaner.Dispatcher.InvokeAsync(async () =>
+                                {
+                                    await memcleaner.cleanmemory();
+                                });
+                                continue;
+                            }
+                            else if (battery <= 30)
+                            {
+                                await memcleaner.Dispatcher.InvokeAsync(() =>
+                                {
+                                    memcleaner.Status.Text = "Skipping clean due to low battery.";
+                                });
+                                await Task.Delay(5000, token);
+                                continue;
+                            }
+                            else
+                            {
+                                await memcleaner.Dispatcher.InvokeAsync(async () =>
+                                {
+                                    await memcleaner.cleanmemory();
+                                });
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            await memcleaner.Dispatcher.InvokeAsync(async () =>
+                            {
+                                await memcleaner.cleanmemory();
+                            });
+                            continue;
+                        }
+                    }
+                });
+            }
+
+            public void StopAutoClean()
+            {
+                if (_autoCleanCts == null) return;
+
+                _autoCleanCts.Cancel();
+                _autoCleanCts = null;
+
+                memcleaner.Dispatcher.Invoke(() =>
+                {
+                    memcleaner.Status.Text = "Auto clean stopped.";
+                });
             }
             public int GetBatteryPercent()
             {
@@ -178,11 +263,7 @@ namespace MultronWinCleaner
                 if (status.BatteryLifePercent == 255) return -1;
                 return status.BatteryLifePercent;
             }
-            public void StopAutoClean()
-            {
-                timer?.Dispose();
-                timer = null;
-            }
+       
         }
     
         public class MemoryUsage
@@ -342,7 +423,14 @@ namespace MultronWinCleaner
                 }
             });
         }
+        private void cbCleanInterval_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (autocleanmem == null) return;
 
+            autocleanmem.StopAutoClean();
+            autocleanmem.StartAutoClean();
+        
+        }
         private async void CleanMemoryButton_Click(object sender, RoutedEventArgs e)
         {
             await cleanmemory();

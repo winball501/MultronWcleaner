@@ -35,11 +35,15 @@ namespace MultronWinCleaner
     {
 
         public HashSet<string> excludedfiles = new HashSet<string>();
+
+        public string logfilepath = "";
+
         string excludedfilesdir = Environment.CurrentDirectory + "\\excluded.txt";
         MemCleaner memcleaner;
         Utilities Utilities;
         MainWindow mainWindow;
         StartupManager manager;
+      
         public Settings(MemCleaner memcleaner, Utilities utilities, MainWindow mainWindow, StartupManager manager)
         {
             InitializeComponent();
@@ -48,15 +52,16 @@ namespace MultronWinCleaner
             getusers();
             this.mainWindow = mainWindow;
             this.manager = manager;
+      
         }
-
-
-
-
-
-
-
-
+        public void defaultloglocation()
+        {
+            if(logfilepath == "")
+            {
+                txtLogPath.Text = Environment.CurrentDirectory + "\\mwc_cleanlog.txt";
+            }
+        
+        }
         public async Task getusers()
         {
             await Task.Run(async () =>
@@ -180,6 +185,7 @@ namespace MultronWinCleaner
             txtStartTime.Text = Get("starttime") ?? "08:00";
             txtEndTime.Text = Get("endtime") ?? "22:00";
             txtCleaningInterval.Text = Get("minutes") ?? "0";
+            txtCleaningInterval.Text = Get("");
             if (settings.TryGetValue("deepscanlogex=", out string value0))
             {
                 mainWindow.extensions = value0;
@@ -218,9 +224,25 @@ namespace MultronWinCleaner
             {
                 OnlyBattery.IsChecked = (plug == "1");
             }
+            if (settings.TryGetValue("enablelog", out string log))
+            {
+                chkEnableLog.IsChecked = (log == "1");
+            }
+            if (settings.TryGetValue("showlastlog", out string lastlog))
+            {
+                chkShowLastLog.IsChecked = (log == "1");
+            }
             if (settings.TryGetValue("oldscan", out string oldscan))
             {
                 OldScan.IsChecked = (oldscan == "1");
+            }
+            if (settings.TryGetValue("logpath", out string log_path))
+            {
+                txtLogPath.Text = log_path;
+                logfilepath = log_path;
+            } else
+            {
+                defaultloglocation();
             }
             if (settings.TryGetValue("turboboost", out string value5))
             {
@@ -244,6 +266,19 @@ namespace MultronWinCleaner
                 manager.tglShowNotifications.IsChecked = (value7 == "1");
             }
 
+
+            string mcminutes = Get("mcminutes");
+            if (!string.IsNullOrEmpty(mcminutes))
+            {
+                foreach (ComboBoxItem item in memcleaner.cbCleanInterval.Items)
+                {
+                    if (item.Content.ToString().Equals(mcminutes, StringComparison.OrdinalIgnoreCase))
+                    {
+                        memcleaner.cbCleanInterval.SelectedItem = item;
+                        break;
+                    }
+                }
+            }
             string scanindex2 = Get("accessscanindex");
             if (!string.IsNullOrEmpty(scanindex2))
             {
@@ -328,6 +363,7 @@ namespace MultronWinCleaner
                 Upsert("customaccess", txtCustomAccess.Text.Trim());
                 Upsert("endtime", txtEndTime.Text.Trim());
                 Upsert("minutes", txtCleaningInterval.Text.Trim());
+                Upsert("loglocation", txtLogPath.Text.Trim());
                 Upsert("autoclean", chkAutoClean.IsChecked == true ? "1" : "0");
                 Upsert("trayicon", chkTrayIcon.IsChecked == true ? "1" : "0");
                 Upsert("oldscan", OldScan.IsChecked == true ? "1" : "0");
@@ -336,7 +372,11 @@ namespace MultronWinCleaner
                 Upsert("runifactive", RunIfInactive.IsChecked == true ? "1" : "0");
                 Upsert("pluggedin", OnlyBattery.IsChecked == true ? "1" : "0");
                 Upsert("batterylow", SkipBattery.IsChecked == true ? "1" : "0");
+                Upsert("enablelog", chkEnableLog.IsChecked == true ? "1" : "0");
+                Upsert("showlastlog", chkShowLastLog.IsChecked == true ? "1" : "0");
+                Upsert("logpath", logfilepath);
                 Upsert("deepscanlogex=", mainWindow.extensions);
+                
                 if (cmbAccessPreset.SelectedItem is ComboBoxItem selectedaccess)
                     Upsert("accessscanindex", selectedaccess.Content.ToString());
                 if (cmbAgePreset.SelectedItem is ComboBoxItem selectedindex)
@@ -621,6 +661,105 @@ namespace MultronWinCleaner
                 mainWindow.extensions = txtNewExtension.Text;
                 System.Windows.MessageBox.Show("Changes applied. " + mainWindow.extensions   + " > " + txtNewExtension.Text, "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             } 
+        }
+
+        private void OpenLogFile_Click(object sender, RoutedEventArgs e)
+        {
+         
+                Process.Start("explorer.exe", logfilepath);
+ 
+        }
+
+        private void OpenAppFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string folderPath;
+
+            if (!string.IsNullOrEmpty(logfilepath) && System.IO.File.Exists(logfilepath))
+            {
+                folderPath = System.IO.Path.GetDirectoryName(logfilepath);
+            }
+            else
+            {
+                folderPath = Environment.CurrentDirectory;
+            }
+
+            Process.Start("explorer.exe", folderPath);
+        }
+
+        private void ClearLog_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.IO.File.WriteAllText(logfilepath, "");
+                MessageBox.Show("Log file " + logfilepath + " all logs cleaned!", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Error clearing log: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+       
+
+        }
+
+     
+        private void BrowseLogPath_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFolderDialog dialog = new OpenFolderDialog();
+            dialog.Title = "Select Folder For Log File.";
+          
+            dialog.DefaultDirectory = Environment.CurrentDirectory;
+            dialog.InitialDirectory = Environment.CurrentDirectory;
+            if (dialog.ShowDialog() == true)
+            {
+                txtLogPath.Text = dialog.FolderName;
+            }
+        }
+
+      
+
+        private void ResetLogPath_Click(object sender, RoutedEventArgs e)
+        {
+               
+        }
+
+        private void chkEnableLog_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void txtLogPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void ApplyLog_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string logEntry = DateTime.Now + " Log path applied successfully!" + Environment.NewLine;
+
+                if (!txtLogPath.Text.EndsWith(".txt"))
+                {
+                    string path = txtLogPath.Text + "\\mwc_cleanlog.txt";
+                    System.IO.File.AppendAllText(path, logEntry);
+                    logfilepath = path;
+                    txtLogPath.Text = path;
+                }
+                else
+                {
+                    System.IO.File.AppendAllText(txtLogPath.Text, logEntry);
+                    logfilepath = txtLogPath.Text;
+
+                }
+
+                MessageBox.Show("Log path applied successfully!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error applying log path: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+        
         }
     }
 }

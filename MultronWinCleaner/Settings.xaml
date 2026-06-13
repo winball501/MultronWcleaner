@@ -67,6 +67,62 @@
                                     Cursor="Hand"/>
                         </StackPanel>
                     </GroupBox>
+                    <GroupBox Header="Cleanup Log" Style="{DynamicResource CustomGroupBoxStyle}">
+                        <StackPanel>
+                            <CheckBox x:Name="chkEnableLog" Content="Enable Cleanup Log"
+                  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,12" Checked="chkEnableLog_Checked"/>
+                            <CheckBox x:Name="chkShowLastLog" Content="Show last log in status"
+Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" Checked="chkEnableLog_Checked"/>
+                            <TextBlock Text="Log File Location:" FontSize="13"
+                   Foreground="{DynamicResource TextPrimary}"
+                   FontWeight="SemiBold" Margin="0,0,0,6"/>
+
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="105*"/>
+                                    <ColumnDefinition Width="122*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="txtLogPath" Grid.Column="0"
+                     Style="{DynamicResource RoundedTextBox}"
+                     Height="50" FontSize="13"
+                     VerticalContentAlignment="Center"
+                     Margin="0,0,219,0" TextChanged="txtLogPath_TextChanged" Grid.ColumnSpan="2"/>
+
+                                <Button Content="Browse"
+                    Click="BrowseLogPath_Click"
+                    FontWeight="SemiBold"
+                    Cursor="Hand" Margin="158,2,10,2" Grid.Column="1"/>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <Button x:Name="btnOpenLog" Content="Open Log File"
+                    Width="150" Height="34"
+                    Click="OpenLogFile_Click"
+                    FontWeight="SemiBold"
+                    Cursor="Hand" Margin="0,0,10,0"/>
+                                <Button x:Name="btnOpenAppFolder" Content="Open Folder"
+                    Width="150" Height="34"
+                    Click="OpenAppFolder_Click"
+                    FontWeight="SemiBold"
+                    Cursor="Hand" Margin="0,0,10,0"/>
+                                <Button x:Name="btnClearLog" Content="Clear Log File"
+                    Width="120" Height="34"
+                    Click="ClearLog_Click"
+                    Style="{DynamicResource CancelButtonStyle}"
+                    FontWeight="SemiBold"
+                    Cursor="Hand" Margin="0,0,10,0"/>
+
+                                <Button x:Name="btnApplyLog" Content="Apply"
+                    Width="120" Height="34"
+                    Click="ApplyLog_Click"
+                    FontWeight="SemiBold"
+                    Cursor="Hand"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
                     <GroupBox Header="Scanner Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,10,0,0" Height="281">
 
                         <Grid>
