@@ -45,12 +45,9 @@ Scan results display each file's creation date, age in days, and last modified d
 
 
 ## Screenshots
-<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/c21f2476-2091-45ce-bfd3-0a6a4f062951" />
-<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/54bf55a4-b984-41a0-8c7c-4b0b544c3163" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/02536779-41e3-4205-bdb0-7dd9ee939d53" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/47496750-cb66-4a23-bb6b-56a5ddd9775d" />
-<img width="1275" height="1125" alt="image" src="https://github.com/user-attachments/assets/e0b131a3-e004-4f91-94b8-ecf3ed6f4369" />
-<img width="1200" height="1103" alt="image" src="https://github.com/user-attachments/assets/75aaf17c-16b6-42c4-9462-a33bf073a45e" />
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/e76d5348-93e9-4d68-8484-55c56544c883" />
+<img width="1350" height="1050" alt="image" src="https://github.com/user-attachments/assets/88744868-f5aa-4e70-b205-b96aa813ae72" />
+
 
 ## Contributing
 
