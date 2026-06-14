@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "L8rzklp5v2o=",
+  "dgSpecHash": "Ou9uJOQQJpI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+  "projectFilePath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\winball501\\.nuget\\packages\\hardcodet.notifyicon.wpf\\1.0.5\\hardcodet.notifyicon.wpf.1.0.5.nupkg.sha512",
     "C:\\Users\\winball501\\.nuget\\packages\\hardcodet.wpf.taskbarnotification\\1.0.5\\hardcodet.wpf.taskbarnotification.1.0.5.nupkg.sha512",
@@ -23,22 +23,22 @@
     "C:\\Users\\winball501\\.nuget\\packages\\system.serviceprocess.servicecontroller\\9.0.6\\system.serviceprocess.servicecontroller.9.0.6.nupkg.sha512",
     "C:\\Users\\winball501\\.nuget\\packages\\taskscheduler\\2.12.1\\taskscheduler.2.12.1.nupkg.sha512",
     "C:\\Users\\winball501\\.nuget\\packages\\windowsinput\\6.4.1\\windowsinput.6.4.1.nupkg.sha512",
-    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.25\\microsoft.windowsdesktop.app.ref.8.0.25.nupkg.sha512",
-    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.25\\microsoft.netcore.app.ref.8.0.25.nupkg.sha512",
-    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.25\\microsoft.aspnetcore.app.ref.8.0.25.nupkg.sha512",
-    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.25\\microsoft.netcore.app.host.win-x64.8.0.25.nupkg.sha512"
+    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.28\\microsoft.windowsdesktop.app.ref.8.0.28.nupkg.sha512",
+    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.28\\microsoft.netcore.app.ref.8.0.28.nupkg.sha512",
+    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.28\\microsoft.aspnetcore.app.ref.8.0.28.nupkg.sha512",
+    "C:\\Users\\winball501\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.28\\microsoft.netcore.app.host.win-x64.8.0.28.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1701",
       "level": "Warning",
       "message": "Package 'Hardcodet.NotifyIcon.Wpf 1.0.5' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "projectPath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "filePath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
       "libraryId": "Hardcodet.NotifyIcon.Wpf",
       "targetGraphs": [
-        "net8.0-windows7.0"
+        "net8.0-windows"
       ]
     }
   ]

@@ -1,7 +1,7 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
-    "net8.0-windows7.0": {
+    "net8.0-windows": {
       "Hardcodet.NotifyIcon.Wpf/1.0.5": {
         "type": "package",
         "compile": {
@@ -1065,7 +1065,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net8.0-windows7.0": [
+    "net8.0-windows": [
       "Hardcodet.Wpf.TaskbarNotification >= 1.0.5",
       "Newtonsoft.Json >= 13.0.3",
       "Octokit >= 14.0.0",
@@ -1082,11 +1082,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "projectUniqueName": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
       "projectName": "MultronWinCleaner",
-      "projectPath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "projectPath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
       "packagesPath": "C:\\Users\\winball501\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\winball501\\Downloads\\MultronWcleaner-beta (2)\\MultronWcleaner-beta\\MultronWinCleaner\\obj\\",
+      "outputPath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\winball501\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1100,7 +1100,8 @@
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net8.0-windows7.0": {
+        "net8.0-windows": {
+          "framework": "net8.0-windows7.0",
           "targetAlias": "net8.0-windows",
           "projectReferences": {}
         }
@@ -1115,10 +1116,11 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.200"
+      "SdkAnalysisLevel": "10.0.300"
     },
     "frameworks": {
-      "net8.0-windows7.0": {
+      "net8.0-windows": {
+        "framework": "net8.0-windows7.0",
         "targetAlias": "net8.0-windows",
         "dependencies": {
           "Hardcodet.Wpf.TaskbarNotification": {
@@ -1168,19 +1170,19 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.28, 8.0.28]"
           },
           {
             "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.28, 8.0.28]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.28, 8.0.28]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.28, 8.0.28]"
           }
         ],
         "frameworkReferences": {
@@ -1191,7 +1193,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
@@ -1203,7 +1205,7 @@
       "message": "Package 'Hardcodet.NotifyIcon.Wpf 1.0.5' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0-windows7.0'. This package may not be fully compatible with your project.",
       "libraryId": "Hardcodet.NotifyIcon.Wpf",
       "targetGraphs": [
-        "net8.0-windows7.0"
+        "net8.0-windows"
       ]
     }
   ]

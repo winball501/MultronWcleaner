@@ -1,3 +1,0 @@
-minutes:1
-autoclean:1
-trayicon:1themes:1

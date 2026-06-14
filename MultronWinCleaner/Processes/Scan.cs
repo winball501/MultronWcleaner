@@ -470,11 +470,13 @@ namespace MultronWinCleaner.Processes
                                     {
 
                
-                                        checkboxData.Add(("(Dism Requires System Restart)=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
+                                        checkboxData.Add(("Dism.exe(Dism Requires System Restart)=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
                                         dropscanmessage("Dism.exe scan completed but requires system restart to free up space. Please restart your computer to complete the cleanup process. " + main.formatsize(total), "#0078d7");
                                     }
                                     else
                                     {
+
+                                        checkboxData.Add(("Dism.exe=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
                                         dropscanmessage("Dism.exe scan completed! " + main.formatsize(total), "#107c10");
                                     
 
@@ -577,9 +579,7 @@ namespace MultronWinCleaner.Processes
 
                         var allFiles = items.Select(item => new FileItem
                         {
-                            FileName = item.file.Contains("Dism.exe", StringComparison.OrdinalIgnoreCase)
-             ? $"Clean WinSxS Folder={item.file}=WinSxS Scan Result {main.formatsize(item.size)}"
-             : $"{item.file}={main.formatsize(item.size)} | Created: {item.date} ({item.days} days) | Last Access: {item.modified}",
+                            FileName = $"{item.file}={main.formatsize(item.size)} | Created: {item.date} ({item.days} days) | Last Access: {item.modified}",
                             SizeBytes = item.size,
                             IsChecked = true,
                             Path = item.file,
@@ -658,86 +658,94 @@ namespace MultronWinCleaner.Processes
 
         public async Task addtocheckbox(string file, string path, string process)
         {
-
-            await main.Dispatcher.InvokeAsync(() =>
+            try
             {
-                try
+         
+                if (!System.IO.File.Exists(file))
                 {
-                    if (!System.IO.File.Exists(file))
-                    {
+                    return;
+                }
 
-                        return;
+                FileInfo fileinfo = new FileInfo(file);
 
-                    }
-                    FileInfo fileinfo = new FileInfo(file); 
-
-                    DateTime datetime = fileinfo.CreationTime;
-                    DateTime accessdate = fileinfo.LastAccessTime;
-                    DateTime modifiedate = fileinfo.LastWriteTime;
-
-                    double days = (DateTime.Now - datetime).TotalDays;
-                    double date = (DateTime.Now - accessdate).TotalDays;
+                DateTime creationTime = fileinfo.CreationTime;
+                DateTime accessDate = fileinfo.LastAccessTime;
+                DateTime modifiedDate = fileinfo.LastWriteTime; 
+                long fSize = fileinfo.Length;
                  
-                    if (file.Contains("Dism.exe"))
-                    {
-                        totalsize += int.Parse(path);
-                        currentscan += int.Parse(path);
-                        checkboxData.Add((file, int.Parse(path), process, (int)days, datetime.ToString(), modifiedate.ToString()));
-                        return;
-                    }
+                double modifiedDays = (DateTime.Now - modifiedDate).TotalDays;
+                double accessDays = (DateTime.Now - accessDate).TotalDays;
+                 
+                bool isAccessChecked = false;
+                bool isOldChecked = false;
+                int customAccess = 0;
+                int customOld = 0;
+                 
+                await main.Dispatcher.InvokeAsync(() =>
+                {
+                    isAccessChecked = main.settings.AccessScan.IsChecked == true;
+                    isOldChecked = main.settings.OldScan.IsChecked == true;
 
-                    void AddEntry()
+                    int.TryParse(main.settings.txtCustomAccess.Text, out customAccess);
+                    int.TryParse(main.settings.txtCustomDay.Text, out customOld);
+                });
+
+                bool shouldAdd = false;
+                 
+                if (isAccessChecked || isOldChecked)
+                {
+                    if (isAccessChecked)
                     {
-                        long fSize = fileinfo.Length;
+                        shouldAdd = accessindex switch
+                        {
+                            0 => accessDays > 7,
+                            1 => accessDays > 30,
+                            2 => accessDays > 90,
+                            3 => customAccess > 0 && accessDays > customAccess,  
+                            _ => false
+                        };
+                    }
+                    else if (isOldChecked)  
+                    {
+                        shouldAdd = olderindex switch
+                        {
+                            0 => modifiedDays > 7,
+                            1 => modifiedDays > 30,
+                            2 => modifiedDays > 90,
+                            3 => customOld > 0 && modifiedDays > customOld,
+                            _ => false
+                        };
+                    }
+                }
+                else
+                { 
+                    shouldAdd = true;
+                } 
+                if (shouldAdd)
+                {
+                    await main.Dispatcher.InvokeAsync(() =>
+                    {
                         totalsize += fSize;
                         currentscan += fSize;
-                     
+
                         if (process.Contains("Deep Log Scanner Result"))
                         {
                             main.logfiles.Add(file);
                             deeplogscantotal += fSize;
                         }
-                        checkboxData.Add((file, fSize, path, (int)days, datetime.ToString(), modifiedate.ToString()));
-                    }
-                   
-                    if (main.settings.OldScan.IsChecked == true || main.settings.AccessScan.IsChecked == true)
-                    {
-                        if (main.settings.AccessScan.IsChecked == true)
-                        {
-                            bool pass = accessindex switch
-                            {
-                                0 => date > 7,
-                                1 => date > 30,
-                                2 => date > 90,
-                                3 => int.TryParse(main.settings.txtCustomAccess.Text, out int ca) && date > ca,
-                                _ => false
-                            };
-                            if (pass) AddEntry();
-                        }
-
-                        if (main.settings.OldScan.IsChecked == true)
-                        {
-                            bool pass = olderindex switch
-                            {
-                                0 => days > 7,
-                                1 => days > 30,
-                                2 => days > 90,
-                                3 => int.TryParse(main.settings.txtCustomDay.Text, out int cd) && days > cd,
-                                _ => false
-                            };
-                            if (pass) AddEntry();
-                        }
-                    }
-                    else 
-                    {
-                        AddEntry();
-                    }
+                         
+                        checkboxData.Add((file, fSize, path, (int)modifiedDays, creationTime.ToString(), modifiedDate.ToString()));
+                    });
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+          
+                await main.Dispatcher.InvokeAsync(() =>
                 {
                     catchexception(ex.Message + " " + ex.StackTrace);
-                }
-            });
+                });
+            }
         }
 
         public void catchexception(string message)
