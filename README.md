@@ -5,7 +5,7 @@ Free, open-source Windows system cleaner and optimizer. No subscriptions, no loc
 ## Features
 
 **System Cleanup**
-- Scan and remove junk files from 253+ supported applications
+- Scan and remove junk files from 253+ supported applications (the database.txt file lives in a separate repo and can be extended by the community via commits/PRs)
 - WinSxS component store analysis and cleanup using DISM
 - Custom folder cleanup via configurable `database.txt`, open for community contributions
 - Deep log file scanner (`.log`, `.etl`, `.dmp`, `.tmp`, `.bak` and more and you can add custom extensions)
