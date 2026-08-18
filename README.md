@@ -37,5 +37,4 @@ Files locked by other processes are detected in real time, showing the locking p
 Each file's creation date, age in days, last modified date, and size are shown before cleanup.
 
 **For more information**
-Main repo: https://github.com/winball501/MultronWcleaner
 Database repo: https://github.com/winball501/MultronWcleaner-Database
