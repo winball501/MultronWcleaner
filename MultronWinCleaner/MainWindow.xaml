@@ -249,7 +249,7 @@
         <DockPanel Background="{DynamicResource PanelBackground}" Height="56" VerticalAlignment="Top" LastChildFill="False" MouseDown="TopBar_MouseDown">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="16,0,0,0">
                 <TextBlock Text="Multron Win Cleaner" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
-                <TextBlock Text=" v1.23 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
+                <TextBlock Text=" v1.23.1 beta" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="8,6,0,0" VerticalAlignment="Top" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,12,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
@@ -270,7 +270,7 @@
                 <Button Content="✕" Style="{StaticResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="Close"/>
             </StackPanel>
         </DockPanel>
-        <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown">
+        <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown" Margin="0,72,0,0">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                      
                 <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" 

@@ -69,7 +69,7 @@ namespace Multron_Win_Cleaner {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;component/rotatingcleanicon.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/MultronWinCleaner;V1.0.0.0;component/rotatingcleanicon.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\RotatingCleanIcon.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

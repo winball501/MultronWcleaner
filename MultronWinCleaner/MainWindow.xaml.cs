@@ -1388,7 +1388,13 @@ namespace Multron_Win_Cleaner
 
         private void OpenDiscord_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("https://discord.com/invite/xXmQw3MUAR");
+            string url = "https://discord.gg/xXmQw3MUAR";
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
         }
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
