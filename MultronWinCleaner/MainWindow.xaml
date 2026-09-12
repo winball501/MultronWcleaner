@@ -270,7 +270,7 @@
                 <Button Content="✕" Style="{StaticResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="Close"/>
             </StackPanel>
         </DockPanel>
-        <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown" Margin="0,72,0,0">
+        <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                      
                 <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}" 
