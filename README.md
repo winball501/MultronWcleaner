@@ -38,3 +38,12 @@ Each file's creation date, age in days, last modified date, and size are shown b
 
 **For more information**
 Database repo: https://github.com/winball501/MultronWcleaner-Database
+
+
+<img width="675" height="525" alt="{2AA6E66E-809B-44C0-981A-51A11D6356D6}" src="https://github.com/user-attachments/assets/0d9d6f64-b99a-409b-b546-5732afad7990" />
+<img width="675" height="525" alt="{F10F7FD7-A2EA-483F-84D3-BF42980FF232}" src="https://github.com/user-attachments/assets/68915da3-9a77-4fb3-bc20-899287092890" />
+
+
+
+
+
