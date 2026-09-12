@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64</Platforms>
-    <ApplicationIcon>mwc_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\mwc_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\frame00.png" />
+    <None Remove="Assets\frame01.png" />
+    <None Remove="Assets\frame02.png" />
+    <None Remove="Assets\frame03.png" />
+    <None Remove="Assets\frame04.png" />
+    <None Remove="Assets\frame05.png" />
+    <None Remove="Assets\frame06.png" />
+    <None Remove="Assets\frame07.png" />
+    <None Remove="Assets\frame08.png" />
+    <None Remove="Assets\frame09.png" />
+    <None Remove="Assets\frame10.png" />
+    <None Remove="Assets\frame11.png" />
+    <None Remove="Assets\TrayFrames\frame00.ico" />
+    <None Remove="Assets\TrayFrames\frame01.ico" />
+    <None Remove="Assets\TrayFrames\frame02.ico" />
+    <None Remove="Assets\TrayFrames\frame03.ico" />
+    <None Remove="Assets\TrayFrames\frame04.ico" />
+    <None Remove="Assets\TrayFrames\frame05.ico" />
+    <None Remove="Assets\TrayFrames\frame06.ico" />
+    <None Remove="Assets\TrayFrames\frame07.ico" />
+    <None Remove="Assets\TrayFrames\frame08.ico" />
+    <None Remove="Assets\TrayFrames\frame09.ico" />
+    <None Remove="Assets\TrayFrames\frame10.ico" />
+    <None Remove="Assets\TrayFrames\frame11.ico" />
     <None Remove="mwc_icon.ico" />
   </ItemGroup>
 
@@ -58,7 +82,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="mwc_icon.ico" />
+    <Resource Include="Assets\mwc_icon.ico" />
+    <Resource Include="Assets\TrayFrames\frame00.ico" />
+    <Resource Include="Assets\TrayFrames\frame01.ico" />
+    <Resource Include="Assets\TrayFrames\frame02.ico" />
+    <Resource Include="Assets\TrayFrames\frame03.ico" />
+    <Resource Include="Assets\TrayFrames\frame04.ico" />
+    <Resource Include="Assets\TrayFrames\frame05.ico" />
+    <Resource Include="Assets\TrayFrames\frame06.ico" />
+    <Resource Include="Assets\TrayFrames\frame07.ico" />
+    <Resource Include="Assets\TrayFrames\frame08.ico" />
+    <Resource Include="Assets\TrayFrames\frame09.ico" />
+    <Resource Include="Assets\TrayFrames\frame10.ico" />
+    <Resource Include="Assets\TrayFrames\frame11.ico" />
   </ItemGroup>
 
   <ItemGroup>

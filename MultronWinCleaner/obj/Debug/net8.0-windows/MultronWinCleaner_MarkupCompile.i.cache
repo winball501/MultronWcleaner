@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\winball501\Documents\GitHub\MultronWcleaner2\MultronWinCleaner\obj\Debug\net8.0-windows\
+C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\obj\Debug\net8.0-windows\
 MultronWinCleaner
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-C:\Users\winball501\Documents\GitHub\MultronWcleaner2\MultronWinCleaner\App.xaml
-15-1663129803
-1-1917176054
-25-1368914009
-219-797128234
-AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;LargeFileFinder.xaml;MainWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\App.xaml
+16-334432281
+1157652452
+281797642030
+2192117131742
+AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;LargeFileFinder.xaml;MainWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;RotatingCleanIcon.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
 
-False
+True
 

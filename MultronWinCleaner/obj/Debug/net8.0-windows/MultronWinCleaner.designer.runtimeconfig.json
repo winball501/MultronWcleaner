@@ -12,8 +12,8 @@
       }
     ],
     "additionalProbingPaths": [
-      "C:\\Users\\winball501\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\winball501\\.nuget\\packages"
+      "C:\\Users\\winball_501\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\winball_501\\.nuget\\packages"
     ],
     "configProperties": {
       "CSWINRT_USE_WINDOWS_UI_XAML_PROJECTIONS": false,

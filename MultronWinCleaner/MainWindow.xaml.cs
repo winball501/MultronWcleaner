@@ -69,12 +69,15 @@ namespace Multron_Win_Cleaner
         public byte autoclean = 0;
         public byte onclean = 0;
         public byte killer = 0;
+        public readonly TrayIconAnimator _trayAnimator ;
         public string extensions = ".log.etl.dmp.trace.tmp.temp.bak.swp";
-
+        string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
         public MainWindow()
         {
+       
+
             InitializeComponent();
-            string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+            _trayAnimator = new TrayIconAnimator(TrayIcon, "pack://application:,,,/MultronWinCleaner;component/Assets/mwc_icon.ico", "pack://application:,,,/MultronWinCleaner;component/Assets/TrayFrames/frame{0:00}.ico", frameCount: 12);
 
             if (!System.IO.File.Exists(settingsPath))
             {
@@ -101,6 +104,7 @@ namespace Multron_Win_Cleaner
             Window.GetWindow(this)?.DragMove();
 
         }
+    
         private void LoadingOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         { 
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -109,10 +113,39 @@ namespace Multron_Win_Cleaner
                 this.DragMove();
             }
         }
+        public void AnimateIcon(bool isCleaning)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (isCleaning)
+                {
+                    _trayAnimator.Start();
+                    cleanIcon.StartSpinning();
+                }
+                else
+                {
+                    _trayAnimator.Stop();
+                    cleanIcon.StopSpinning();
+                }
+            });
+        }
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {   
+        {
+          
+            if (App.LaunchedFromStartup)
+            {
+                await this.Dispatcher.InvokeAsync(() =>
+                {
+                    this.Visibility = Visibility.Hidden;
+                    this.Hide();
+                    this.ShowInTaskbar = false;
+              
+                });
+            }
+          
             LoadingOverlay.Visibility = Visibility.Visible;
-             
+           
             MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
             await Task.Run(() => updater.run());
             string updaterfile = Environment.CurrentDirectory + "\\Update\\mwc\\Updater.exe";
@@ -164,8 +197,8 @@ namespace Multron_Win_Cleaner
             dataGridGroups.Visibility = Visibility.Hidden;
             Datagridscroll.Visibility = Visibility.Hidden;
 
-            loadothers();
-            loadothers2();
+            await loadothers();
+            await loadothers2();
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
             {
 
@@ -209,6 +242,9 @@ namespace Multron_Win_Cleaner
             TrayIcon.TrayMouseDoubleClick += TrayIcon_MouseDoubleClick;
         
             LoadingOverlay.Visibility = Visibility.Collapsed;
+            
+            await startup();
+           
         }
 
         public async Task loadothers2()
@@ -285,6 +321,34 @@ namespace Multron_Win_Cleaner
             catch (Exception)
             {
             }
+          
+        }
+
+        public async Task startup()
+        {
+            if (App.LaunchedFromStartup)
+            {
+                await Task.Delay(2064);
+
+                bool scanEnabled = false;
+                bool cleanEnabled = false;
+
+                await this.Dispatcher.InvokeAsync(() =>
+                {
+                    scanEnabled = settings.chkEnableStartupScan.IsChecked == true;
+                    cleanEnabled = settings.chkEnableStartupClean.IsChecked == true;
+                });
+
+                if (scanEnabled)
+                {
+                    if (cleanEnabled)
+                    {
+                        autoclean = 1;
+                    }
+
+                    await this.startscan();
+                }
+            }
         }
         public async Task loadothers()
         {
@@ -294,7 +358,8 @@ namespace Multron_Win_Cleaner
             await createshortcut("cleanmgr.exe=/verylowdisk=(Silently clears default unnecessary files)=shortcut3", "cleanmgr.exe Commands");
              
             await createshortcut("Dism.exe=/Online /Cleanup-Image /StartComponentCleanup=warning=(No Warning)=winsxs", "Dism.exe Commands");
-
+            await createshortcut("Dism.exe=/Online /Cleanup-Image /RestoreHealth=warning=(No Warning)=health","Dism.exe Commands");
+            await createshortcut("sfc.exe=sfc /scannow=warning=(No Warning)=sfc", "SFC Commands");
             await createshortcut("Deep Log Files Scan=C:\\=warning=Its can take long time.=logscan", "Deep Log Files Scan");
 
         }
@@ -369,18 +434,19 @@ namespace Multron_Win_Cleaner
                 }
             }
         }
+
         private void CheckBox2_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = sender as CheckBox;
-            if (checkBox == null || checkBox.Content == null) return;  
+            if (checkBox == null || checkBox.Content == null) return;
 
             string content = checkBox.Content.ToString();
              
-          if (content.Contains("Dism.exe") || content.Contains("cleanmgr.exe") || content.Contains("Deep Log Files Scan"))
+            if (content.Contains("Dism.exe") || content.Contains("cleanmgr.exe") || content.Contains("Deep Log Files Scan") || content.Contains("sfc.exe"))
             {
-
                 database.Insert(0, content);
-            } else
+            }
+            else
             {
                 string file = stringtokenizer(content, "=", 1);
                 settings.removeexception(file);
@@ -1058,7 +1124,7 @@ namespace Multron_Win_Cleaner
 
         public async Task startscan()
         {
-            if (buttonStartScan.Content == "Clean")
+            if (buttonStartScan.Content.Equals("Clean"))
             {
                 cancelstatus = new CancellationTokenSource();
                 dismcancel = new CancellationTokenSource();
@@ -1087,7 +1153,7 @@ namespace Multron_Win_Cleaner
 
                 scanstatus = 0;
             }
-            else if (buttonStartScan.Content == "Cancel")
+            else if (buttonStartScan.Content.Equals ("Cancel"))
             {
                 cancelstatus.Cancel();
                 cancelclean = 2;
@@ -1097,7 +1163,7 @@ namespace Multron_Win_Cleaner
 
 
             }
-            else if (buttonStartScan.Content == "Kill")
+            else if (buttonStartScan.Content.Equals("Kill"))
             {
 
                 if (paths.Count != 0)
@@ -1320,7 +1386,10 @@ namespace Multron_Win_Cleaner
             }
         }
 
-
+        private void OpenDiscord_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("https://discord.com/invite/xXmQw3MUAR");
+        }
         private void OpenSettings_Click(object sender, RoutedEventArgs e)
         {
 

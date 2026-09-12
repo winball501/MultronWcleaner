@@ -20,11 +20,13 @@ namespace MultronWinCleaner
     public partial class Notify : Window
     {
         
-        public Notify(string cleaned)
+        public Notify(string status, string proc, string cleaned)
         {
             InitializeComponent();
             
-            CleanedAmountText.Text = cleaned;
+            Status.Text = status;
+            DetailsText.Text = proc;
+            AmountText.Text = cleaned;
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {

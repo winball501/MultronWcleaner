@@ -111,11 +111,9 @@ namespace MultronWinCleaner.Processes
                 string targetFile = parts[0];
                 string arguments = parts[1];
 
-             
                 if (targetFile.Equals("Dism.exe", StringComparison.OrdinalIgnoreCase))
-                { 
-                    arguments = $"/k {targetFile} {arguments}";
-                     
+                {
+                    arguments = $"/c {targetFile} {arguments}";   
                     targetFile = "cmd.exe";
                 }
 
@@ -166,6 +164,7 @@ namespace MultronWinCleaner.Processes
         }
         public async Task run()
         {
+       
             await main.Dispatcher.InvokeAsync(() =>
             {
                 main.wrapPanelDirectories.Children.Clear();
@@ -177,6 +176,7 @@ namespace MultronWinCleaner.Processes
                 main.buttonStartScan.Content = "Cancel";
                 main.buttonReset.Visibility = Visibility.Hidden;
                 main.progressBar1.Value = 0;
+                main.AnimateIcon(true);
             });
 
             var task = ScandotsAsync("Cleaning", cts.Token);
@@ -256,11 +256,60 @@ namespace MultronWinCleaner.Processes
                 }
                 else if (name.Contains("Dism.exe"))
                 {
-                    await AddStatusTextBlock("Running Dism.exe (WinSxS Clean)");
                     string dismArguments = GetToken(item, 1);
-                    string cmdKeepOpenItem = $"cmd.exe=/k Dism.exe {dismArguments}";
-                    await ProcessCommandAsync(cmdKeepOpenItem);
-                    iscleaned = 3;
+
+                    if (dismArguments.Contains("RestoreHealth", StringComparison.OrdinalIgnoreCase))
+                    {
+                        
+                        var restoreGroup = main.viewModel.Groups.FirstOrDefault(g =>
+                            g.Path != null && g.Path.Equals("Dism Command: /Online /Cleanup-Image /RestoreHealth", StringComparison.OrdinalIgnoreCase));
+
+                        bool shouldRun = restoreGroup != null
+                                          && restoreGroup.allFiles != null
+                                          && restoreGroup.allFiles.Any(f => f.IsChecked);
+
+                        if (!shouldRun)
+                        {
+                            var skipBlock = await AddStatusTextBlock("Skipped: Dism.exe RestoreHealth (no corruption found or unchecked)");
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                skipBlock.Foreground = GREEN;
+                            });
+                        }
+                        else
+                        {
+                            await AddStatusTextBlock("Running Dism.exe (Restore Health)");
+                            string cmdItem = $"cmd.exe=/c Dism.exe {dismArguments}";
+                            await ProcessCommandAsync(cmdItem);
+                            iscleaned = 3;
+                        }
+                    }
+              
+                }
+               
+                else if (name.Contains("sfc.exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    var sfcGroup = main.viewModel.Groups.FirstOrDefault(g =>
+                        g.Path != null && g.Path.Equals("SFC Command: /scannow", StringComparison.OrdinalIgnoreCase));
+
+                    bool shouldRun = sfcGroup != null
+                                      && sfcGroup.allFiles != null
+                                      && sfcGroup.allFiles.Any(f => f.IsChecked);
+
+                    if (!shouldRun)
+                    {
+                        var skipBlock = await AddStatusTextBlock("Skipped: sfc.exe /scannow (no violations found or unchecked)");
+                        await main.Dispatcher.InvokeAsync(() =>
+                        {
+                            skipBlock.Foreground = GREEN;
+                        });
+                    }
+                    else
+                    {
+                        await AddStatusTextBlock("Running sfc.exe /scannow (this may take several minutes)");
+                        await ProcessShortcutAsync("cmd.exe=/c sfc /scannow");
+                        iscleaned = 3;
+                    }
                 }
                 else if (Directory.Exists(path) || File.Exists(path))
                 {
@@ -347,6 +396,7 @@ namespace MultronWinCleaner.Processes
                             {
                                 statusBlock.Text = $"Cleaned: {name}";
                                 statusBlock.Foreground = BLUE;
+                             
                             }
                             else if (iscleaned == 3)
                             {
@@ -570,7 +620,7 @@ namespace MultronWinCleaner.Processes
         }
         private async Task FinalizeCleaning()
         {
-
+            main.AnimateIcon(false);
             string resultMessage = "";
             await cts.CancelAsync();
             long newFreeSpace = new DriveInfo("C:\\").AvailableFreeSpace;
@@ -592,17 +642,16 @@ namespace MultronWinCleaner.Processes
                     ? $"Auto Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}"
                     : $"Cleaning done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}";
             }
-
-            
-    
-
-
-
+        
             await main.Dispatcher.InvokeAsync(() =>
             {
                 if (main.settings.chkShowLastLog.IsChecked == true)
                 {
-                    System.IO.File.AppendAllText(main.settings.logfilepath, resultMessage + "(last scan)" + Environment.NewLine);
+                    if(File.Exists(main.settings.logfilepath))
+                    {
+                        System.IO.File.AppendAllText(main.settings.logfilepath, resultMessage + "(last scan)" + Environment.NewLine);
+                    }
+                 
                 }
                 main.label1_Copy.Text = resultMessage;
                 main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8C00"));
@@ -614,7 +663,11 @@ namespace MultronWinCleaner.Processes
                 main.buttonStartScan.Content = "Scan";
                 main.buttonStartScan.IsEnabled = false;
                 main.buttonReset.Visibility = Visibility.Visible;
-
+                if (main.settings.chkEnableNotifyClean.IsChecked == true && main.Visibility == Visibility.Hidden)
+                {
+                    Notify notify = new Notify("Clean Information", $"Your system cleaned!\r\n", $"{main.formatsize(totalsize)}");
+                    notify.Show();
+                }
                 var action = (main.settings.cmbPostCleanupAction.SelectedItem as ComboBoxItem)?.Content?.ToString();
 
                 switch (action)

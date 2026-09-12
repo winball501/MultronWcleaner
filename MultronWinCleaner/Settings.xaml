@@ -67,6 +67,7 @@
                                     Cursor="Hand"/>
                         </StackPanel>
                     </GroupBox>
+                    
                     <GroupBox Header="Cleanup Log" Style="{DynamicResource CustomGroupBoxStyle}">
                         <StackPanel>
                             <CheckBox x:Name="chkEnableLog" Content="Enable Cleanup Log"
@@ -388,12 +389,47 @@ Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
 
                     </GroupBox>
 
+                    <GroupBox Header="Startup &amp; Notify Settings" Style="{DynamicResource CustomGroupBoxStyle}">
+                        <StackPanel>
+                             <CheckBox x:Name="chkEnableStartupScan" 
+                             Content="Enable Startup Scan"
+                             Style="{DynamicResource CustomCheckBoxStyle}" 
+                             Margin="0,0,0,12" />
+                            
+                            <CheckBox x:Name="chkEnableStartupClean" 
+                              Content="Enable Startup Cleaning"
+                              Style="{DynamicResource CustomCheckBoxStyle}" 
+                              Margin="0,0,0,12" />
+                            
+                            <CheckBox x:Name="chkEnableNotifyScan" 
+                              Content="Send notification all scan operation in background" 
+                              Style="{DynamicResource CustomCheckBoxStyle}" 
+                              Margin="0,0,0,14"   />
+                            <CheckBox x:Name="chkEnableNotifyClean" 
+                              Content="Send notification all clean operation in background" 
+                              Style="{DynamicResource CustomCheckBoxStyle}" 
+                              Margin="0,0,0,14"   />
+                        
 
+               
+
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="105*"/>
+                                    <ColumnDefinition Width="122*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+ 
+
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
                     <GroupBox Header="Automatic Cleaning" Style="{DynamicResource CustomGroupBoxStyle}">
                         <Grid>
                             <StackPanel>
 
-
+                                 
                                 <CheckBox Content="Enable Automatic Cleaning" x:Name="chkAutoClean"
                       Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14"
                       Checked="chkAutoClean_Checked"/>

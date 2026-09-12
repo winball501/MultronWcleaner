@@ -1077,19 +1077,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\winball501\\.nuget\\packages\\": {}
+    "C:\\Users\\winball_501\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "projectUniqueName": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MultronWinCleaner.csproj",
       "projectName": "MultronWinCleaner",
-      "projectPath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\MultronWinCleaner.csproj",
-      "packagesPath": "C:\\Users\\winball501\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\winball501\\Documents\\GitHub\\MultronWcleaner2\\MultronWinCleaner\\obj\\",
+      "projectPath": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MultronWinCleaner.csproj",
+      "packagesPath": "C:\\Users\\winball_501\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\winball501\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\winball_501\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1116,7 +1116,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net8.0-windows": {
@@ -1170,19 +1170,19 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.28, 8.0.28]"
+            "version": "[8.0.31, 8.0.31]"
           },
           {
             "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[8.0.28, 8.0.28]"
+            "version": "[8.0.31, 8.0.31]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.28, 8.0.28]"
+            "version": "[8.0.31, 8.0.31]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.28, 8.0.28]"
+            "version": "[8.0.31, 8.0.31]"
           }
         ],
         "frameworkReferences": {
@@ -1193,7 +1193,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

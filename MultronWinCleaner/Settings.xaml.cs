@@ -143,194 +143,108 @@ namespace MultronWinCleaner
 
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
+        { 
             SettingsTasks settingsManager = new SettingsTasks(this);
-            Thread t = new Thread(settingsManager.run);
-            t.Start();
-            string settingsPath = AppDomain.CurrentDomain.BaseDirectory + "Settings.txt";
+            new Thread(settingsManager.run) { IsBackground = true }.Start();
+             
             if (!System.IO.File.Exists(excludedfilesdir))
                 System.IO.File.Create(excludedfilesdir).Close();
-
-            foreach (string line in System.IO.File.ReadLines(excludedfilesdir))
+            else
             {
-                lstExceptions.Items.Add(line);
-                excludedfiles.Add(line);
+                foreach (string line in System.IO.File.ReadLines(excludedfilesdir).Where(l => !string.IsNullOrWhiteSpace(l)))
+                {
+                    lstExceptions.Items.Add(line);
+                    excludedfiles.Add(line);
+                }
             }
+             
+            string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+            var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             if (!System.IO.File.Exists(settingsPath))
             {
                 System.IO.File.Create(settingsPath).Close();
-                return;
             }
+            else
+            {
+                var lines = System.IO.File.ReadAllLines(settingsPath);
+                settings = lines
+                    .Where(l => l.Contains(":") && !l.StartsWith("selectedservice:", StringComparison.OrdinalIgnoreCase))
+                    .Select(l => l.Split(new[] { ':' }, 2))
+                    .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
+            }
+             
+            string GetString(string key, string fallback = "") => settings.TryGetValue(key, out string val) ? val : fallback;
+            bool GetBool(string key) => GetString(key) == "1";
 
-            var lines = System.IO.File.ReadAllLines(settingsPath);
-            Dictionary<string, string> settings = lines
-              .Where(l => l.Contains(":") && !l.StartsWith("selectedservice:", StringComparison.OrdinalIgnoreCase))
-              .Select(l => l.Split(new[] { ':' }, 2))
-              .ToDictionary(parts => parts[0].Trim().ToLower(), parts => parts[1].Trim());
-
-            string Get(string key) => settings.TryGetValue(key.ToLower(), out string val) ? val : null;
-            bool GetBool(string key) => Get(key) == "1";
-
-
-
-
-
+            void SetComboBoxSelection(ComboBox comboBox, string value)
+            {
+                if (string.IsNullOrEmpty(value)) return;
+                foreach (ComboBoxItem item in comboBox.Items)
+                {
+                    if (item.Content.ToString().Equals(value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        comboBox.SelectedItem = item;
+                        break;
+                    }
+                }
+            } 
             chkAutoClean.IsChecked = GetBool("autoclean");
             chkTrayIcon.IsChecked = GetBool("trayicon");
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
             RunIfInactive.IsChecked = GetBool("runifactive");
             SkipBattery.IsChecked = GetBool("batterylow");
-
-            txtStartTime.Text = Get("starttime") ?? "08:00";
-            txtEndTime.Text = Get("endtime") ?? "22:00";
-            txtCleaningInterval.Text = Get("minutes") ?? "0";
-            txtCleaningInterval.Text = Get("");
-            if (settings.TryGetValue("deepscanlogex=", out string value0))
+            chkEnableStartupScan.IsChecked = GetBool("startupscan");
+            chkEnableStartupClean.IsChecked = GetBool("startupclean");
+            chkEnableNotifyScan.IsChecked = GetBool("startupnotifyscan");
+            chkEnableNotifyClean.IsChecked = GetBool("startupnotifyclean");
+           
+            AccessScan.IsChecked = GetBool("access_scan");
+            OnlyBattery.IsChecked = GetBool("pluggedin");
+            chkEnableLog.IsChecked = GetBool("enablelog");
+            chkShowLastLog.IsChecked = GetBool("showlastlog"); 
+            OldScan.IsChecked = GetBool("oldscan");
+             
+            memcleaner.chkEnableAutoClean.IsChecked = GetBool("automemclean");  
+            memcleaner.chkSmartRAM.IsChecked = GetBool("mon");
+            memcleaner.chkShowNotification.IsChecked = GetBool("sendnotify");
+            memcleaner.chkSkipOnLowBattery.IsChecked = GetBool("skipiflow");
+            memcleaner.chkTopMostMonitor.IsChecked = GetBool("topmost");
+            manager.tglShowNotifications.IsChecked = GetBool("startupwarning");
+             
+            txtStartTime.Text = GetString("starttime", "08:00");
+            txtEndTime.Text = GetString("endtime", "22:00");
+            txtCleaningInterval.Text = GetString("minutes", "0"); 
+            txtCustomAccess.Text = GetString("customaccess");
+            txtCustomDay.Text = GetString("customday");
+             
+            string logPath = GetString("logpath");
+            if (!string.IsNullOrEmpty(logPath))
             {
-                mainWindow.extensions = value0;
-                mainWindow.settings.txtNewExtension.Text = value0;
+                txtLogPath.Text = logPath;
+                logfilepath = logPath;
             }
-            if (settings.TryGetValue("mon", out string value1))
-            {
-                memcleaner.chkSmartRAM.IsChecked = (value1 == "1");
-            }
-            if (settings.TryGetValue("automemclean", out string value2))
-            {
-                memcleaner.chkEnableAutoClean.IsChecked = (value2 == "1");
-            }
-            if (settings.TryGetValue("sendnotify", out string value3))
-            {
-                memcleaner.chkShowNotification.IsChecked = (value3 == "1");
-            }
-            if (settings.TryGetValue("skipiflow", out string value4))
-            {
-                memcleaner.chkSkipOnLowBattery.IsChecked = (value4 == "1");
-            }
-            if (settings.TryGetValue("customaccess", out string customaccess))
-            {
-                txtCustomAccess.Text = customaccess;
-            }
-            if (settings.TryGetValue("customday", out string customday))
-            {
-                txtCustomDay.Text = customday;
-            }
-            if (settings.TryGetValue("access_scan", out string access_scan))
-            {
-                AccessScan.IsChecked = (access_scan == "1");
-            }
-
-            if (settings.TryGetValue("pluggedin", out string plug))
-            {
-                OnlyBattery.IsChecked = (plug == "1");
-            }
-            if (settings.TryGetValue("enablelog", out string log))
-            {
-                chkEnableLog.IsChecked = (log == "1");
-            }
-            if (settings.TryGetValue("showlastlog", out string lastlog))
-            {
-                chkShowLastLog.IsChecked = (log == "1");
-            }
-            if (settings.TryGetValue("oldscan", out string oldscan))
-            {
-                OldScan.IsChecked = (oldscan == "1");
-            }
-            if (settings.TryGetValue("logpath", out string log_path))
-            {
-                txtLogPath.Text = log_path;
-                logfilepath = log_path;
-            } else
+            else
             {
                 defaultloglocation();
             }
-            if (settings.TryGetValue("turboboost", out string value5))
-            {
-                if (value5 == "1")
-                {
-                    Utilities.Turbo.Content = "Apply Optimization";
-                    Utilities.turboBoostActive = true;
-                }
-                else
-                {
-                    Utilities.Turbo.Content = "Undo Optimization";
-                    Utilities.turboBoostActive = false;
-                }
-            }
-            if (settings.TryGetValue("topmost", out string value6))
-            {
-                memcleaner.chkTopMostMonitor.IsChecked = (value6 == "1");
-            }
-            if (settings.TryGetValue("startupwarning", out string value7))
-            {
-                manager.tglShowNotifications.IsChecked = (value7 == "1");
-            }
 
+            bool isTurboActive = GetBool("turboboost");
+            Utilities.Turbo.Content = isTurboActive ? "Apply Optimization" : "Undo Optimization";
+            Utilities.turboBoostActive = isTurboActive;
 
-            string mcminutes = Get("mcminutes");
-            if (!string.IsNullOrEmpty(mcminutes))
+            string extensionValue = GetString("deepscanlogex"); 
+            if (!string.IsNullOrEmpty(extensionValue))
             {
-                foreach (ComboBoxItem item in memcleaner.cbCleanInterval.Items)
-                {
-                    if (item.Content.ToString().Equals(mcminutes, StringComparison.OrdinalIgnoreCase))
-                    {
-                        memcleaner.cbCleanInterval.SelectedItem = item;
-                        break;
-                    }
-                }
+                mainWindow.extensions = extensionValue;
+                mainWindow.settings.txtNewExtension.Text = extensionValue;
             }
-            string scanindex2 = Get("accessscanindex");
-            if (!string.IsNullOrEmpty(scanindex2))
-            {
-                foreach (ComboBoxItem item in cmbAccessPreset.Items)
-                {
-                    if (item.Content.ToString().Equals(scanindex2, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cmbAccessPreset.SelectedItem = item;
-                        break;
-                    }
-                }
-            }
-
-            string scanindex1 = Get("oldscanindex");
-            if (!string.IsNullOrEmpty(scanindex1))
-            {
-                foreach (ComboBoxItem item in cmbAgePreset.Items)
-                {
-                    if (item.Content.ToString().Equals(scanindex1, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cmbAgePreset.SelectedItem = item;
-                        break;
-                    }
-                }
-            }
-
-            string schedule = Get("scheduletype");
-            if (!string.IsNullOrEmpty(schedule))
-            {
-                foreach (ComboBoxItem item in cmbScheduleType.Items)
-                {
-                    if (item.Content.ToString().Equals(schedule, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cmbScheduleType.SelectedItem = item;
-                        break;
-                    }
-                }
-            }
-
-
-            string postAction = Get("postaction");
-            if (!string.IsNullOrEmpty(postAction))
-            {
-                foreach (ComboBoxItem item in cmbPostCleanupAction.Items)
-                {
-                    if (item.Content.ToString().Equals(postAction, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cmbPostCleanupAction.SelectedItem = item;
-                        break;
-                    }
-                }
-            }
+             
+            SetComboBoxSelection(memcleaner.cbCleanInterval, GetString("mcminutes"));
+            SetComboBoxSelection(cmbAccessPreset, GetString("accessscanindex"));
+            SetComboBoxSelection(cmbAgePreset, GetString("oldscanindex"));
+            SetComboBoxSelection(cmbScheduleType, GetString("scheduletype"));
+            SetComboBoxSelection(cmbPostCleanupAction, GetString("postaction"));
         }
 
         private void txtCleaningInterval_TextChanged(object sender, TextChangedEventArgs e)
@@ -375,12 +289,19 @@ namespace MultronWinCleaner
                 Upsert("enablelog", chkEnableLog.IsChecked == true ? "1" : "0");
                 Upsert("showlastlog", chkShowLastLog.IsChecked == true ? "1" : "0");
                 Upsert("logpath", logfilepath);
-                Upsert("deepscanlogex=", mainWindow.extensions);
-                
+
+                Upsert("startupscan", chkEnableStartupScan.IsChecked == true ? "1" : "0");
+                Upsert("startupclean", chkEnableStartupClean.IsChecked == true ? "1" : "0");
+                Upsert("startupnotifyscan", chkEnableNotifyScan.IsChecked == true ? "1" : "0");
+                Upsert("startupnotifyclean", chkEnableNotifyClean.IsChecked == true ? "1" : "0");
+         
+
                 if (cmbAccessPreset.SelectedItem is ComboBoxItem selectedaccess)
                     Upsert("accessscanindex", selectedaccess.Content.ToString());
+
                 if (cmbAgePreset.SelectedItem is ComboBoxItem selectedindex)
                     Upsert("oldscanindex", selectedindex.Content.ToString());
+
                 if (cmbScheduleType.SelectedItem is ComboBoxItem selectedSchedule)
                     Upsert("scheduletype", selectedSchedule.Content.ToString());
 
@@ -560,36 +481,64 @@ namespace MultronWinCleaner
 
             return proc.ExitCode == 0;
         }
-        public void RemoveFromStartup_Act()
+        public bool RemoveFromStartup_Act()
         {
-            Process proc = new Process();
-            proc.StartInfo.FileName = "schtasks.exe";
-            proc.StartInfo.Arguments = "/delete /tn \"MultronWCleaner\" /f";
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.Start();
-            proc.WaitForExit();
+            try
+            {
+                Process proc = new Process();
+                proc.StartInfo.FileName = "schtasks.exe";
+                proc.StartInfo.Arguments = "/delete /tn \"MultronWCleaner\" /f";
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.Start();
+                proc.WaitForExit();
+
+                return proc.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
-        public void AddToStartup_Act()
+
+        public bool CreateStartupTask()
         {
-            string appPath = Process.GetCurrentProcess().MainModule.FileName;
+            try
+            {
+                 
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
-            string command = $"/create /tn \"MultronWCleaner\" /tr \"\\\"{appPath}\\\"\" /sc onlogon /rl highest /f";
+                Process proc = new Process();
+                proc.StartInfo.FileName = "schtasks.exe";
 
-            Process proc = new Process();
-            proc.StartInfo.FileName = "schtasks.exe";
-            proc.StartInfo.Arguments = command;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.Start();
-            proc.WaitForExit();
+                proc.StartInfo.Arguments = $"/create /tn \"MultronWCleaner\" /tr \"\\\"{exePath}\\\" -startup\" /sc onlogon /rl highest /f";
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.Start();
+                proc.WaitForExit();
+
+                return proc.ExitCode == 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
         private void AddToStartup_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInStartup_Act())
             {
-                AddToStartup_Act();
-                MessageBox.Show("Successfully added to startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                bool success = CreateStartupTask();
+
+                if (success)
+                {
+                    MessageBox.Show("Successfully added to startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to add to startup. Please make sure to run the program as Administrator.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
@@ -599,17 +548,25 @@ namespace MultronWinCleaner
 
         private void RemoveFromStartup_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsInStartup_Act())
+            
+            if (IsInStartup_Act())
             {
-                RemoveFromStartup_Act();
-                MessageBox.Show("Successfully added to startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                bool success = RemoveFromStartup_Act();
+
+                if (success)
+                {
+                    MessageBox.Show("Successfully removed from startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to remove from startup. Please make sure to run the program as Administrator.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
-                MessageBox.Show("It is not already added to startup.", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("The program is not currently in the startup list.", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-
         private void OldScan_Checked(object sender, RoutedEventArgs e)
         {
             AccessScan.IsChecked = false;

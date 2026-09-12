@@ -417,7 +417,7 @@ namespace MultronWinCleaner
                 {
                     if (this.WindowState == WindowState.Minimized || this.Visibility == Visibility.Hidden)
                     {
-                        Notify notify = new Notify($"Freed {mbFreed:F2} MB");
+                        Notify notify = new Notify("Memory Cleaned", $"Your system memory has been optimized successfully.\r\n", $"Freed {mbFreed:F2} MB");
                         notify.Show();
                     }
                 }

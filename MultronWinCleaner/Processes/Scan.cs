@@ -33,6 +33,8 @@ namespace MultronWinCleaner.Processes
         long deeplogscantotal;
         long currentscan = 0;
         int winsxs = 0;
+        int health = 0;
+        int sfc = 0;
         int logscan = 0;
         int olderindex = 0;
         int accessindex = 0;
@@ -222,16 +224,129 @@ namespace MultronWinCleaner.Processes
 
             }
         }
+        public static async Task<string> RunSfcCommandAsync(
+    string arguments,
+    CancellationToken externalToken,
+    ProgressBar progressBar,
+    int timeoutMinutes = 20)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sfc.exe",
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.Unicode, 
+                StandardErrorEncoding = Encoding.Unicode,
+                UseShellExecute = false,
+                Verb = "runas",
+                CreateNoWindow = true
+            };
 
-        public static async Task<string> RunDismAnalyzeComponentStoreAsync(
-        CancellationToken externalToken,
-        ProgressBar progressBar,
-        int timeoutMinutes = 1)
+            using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
+            var outputBuilder = new StringBuilder();
+
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
+            linkedCts.CancelAfter(TimeSpan.FromMinutes(timeoutMinutes));
+
+            proc.OutputDataReceived += async (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    outputBuilder.AppendLine(e.Data);
+
+                    var pctRx = new Regex(@"(\d{1,3})(?:\.\d+)?\s?%", RegexOptions.Compiled);
+                    var match = pctRx.Match(e.Data);
+                    if (match.Success && int.TryParse(match.Groups[1].Value, out int pct))
+                    {
+                        pct = Math.Clamp(pct, 0, 100);
+                        await progressBar.Dispatcher.InvokeAsync(() =>
+                        {
+                            progressBar.IsIndeterminate = false;
+                            progressBar.Value = pct;
+                        });
+                    }
+                    else
+                    {
+                        await progressBar.Dispatcher.InvokeAsync(() =>
+                        {
+                            progressBar.IsIndeterminate = true;
+                        });
+                    }
+                }
+            };
+
+            proc.ErrorDataReceived += (s, e) => { };
+
+            try
+            {
+                if (!proc.Start())
+                    throw new InvalidOperationException("sfc.exe could not be started.");
+
+                proc.BeginOutputReadLine();
+                proc.BeginErrorReadLine();
+
+                Task<int> waitForExitTask = Task.Run(() =>
+                {
+                    proc.WaitForExit();
+                    return proc.ExitCode;
+                });
+
+                Task completed = await Task.WhenAny(waitForExitTask, Task.Delay(Timeout.Infinite, linkedCts.Token));
+
+                if (completed != waitForExitTask)
+                {
+                    try
+                    {
+                        if (!proc.HasExited)
+                        {
+                            proc.Kill(entireProcessTree: true);
+                            await Task.Delay(500);
+                        }
+                    }
+                    catch { }
+                    linkedCts.Token.ThrowIfCancellationRequested();
+                }
+
+                await waitForExitTask;
+
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 100;
+                });
+
+                return outputBuilder.ToString();
+            }
+            catch (OperationCanceledException oce)
+            {
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 0;
+                });
+                return oce.Message;
+            }
+            catch (Exception ex)
+            {
+                await progressBar.Dispatcher.InvokeAsync(() =>
+                {
+                    progressBar.IsIndeterminate = false;
+                    progressBar.Value = 0;
+                });
+                return ex.Message;
+            }
+        }
+        public static async Task<string> RunDismCommandWithProgressAsync(
+   string arguments,
+   CancellationToken externalToken,
+   ProgressBar progressBar,
+   int timeoutMinutes = 10)
         {
             var psi = new ProcessStartInfo
             {
                 FileName = "dism.exe",
-                Arguments = "/Online /Cleanup-Image /AnalyzeComponentStore /NoRestart",
+                Arguments = arguments,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -252,23 +367,19 @@ namespace MultronWinCleaner.Processes
                 {
                     outputBuilder.AppendLine(e.Data);
 
-
                     var pctRx = new Regex(@"(\d{1,3})(?:\.\d+)?\s?%", RegexOptions.Compiled);
                     var match = pctRx.Match(e.Data);
                     if (match.Success && int.TryParse(match.Groups[1].Value, out int pct))
                     {
                         pct = Math.Clamp(pct, 0, 100);
-
                         await progressBar.Dispatcher.InvokeAsync(() =>
                         {
                             progressBar.IsIndeterminate = false;
                             progressBar.Value = pct;
-
                         });
                     }
                     else
                     {
-
                         await progressBar.Dispatcher.InvokeAsync(() =>
                         {
                             progressBar.IsIndeterminate = true;
@@ -318,20 +429,16 @@ namespace MultronWinCleaner.Processes
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
-                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 100;
                 });
 
                 return outputBuilder.ToString() + "#=#" + exitCode;
-
-
             }
             catch (OperationCanceledException oce)
             {
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
-                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 0;
                 });
                 return oce.Message;
@@ -341,13 +448,16 @@ namespace MultronWinCleaner.Processes
                 await progressBar.Dispatcher.InvokeAsync(() =>
                 {
                     progressBar.IsIndeterminate = false;
-                    proc.Kill(entireProcessTree: true);
                     progressBar.Value = 0;
                 });
                 return ex.Message;
             }
         }
 
+        
+        public static Task<string> RunDismAnalyzeComponentStoreAsync(
+            CancellationToken externalToken, ProgressBar progressBar, int timeoutMinutes = 1)
+            => RunDismCommandWithProgressAsync("/Online /Cleanup-Image /AnalyzeComponentStore /NoRestart", externalToken, progressBar, timeoutMinutes);
 
 
         private static readonly Regex ExtraSizeRx = new Regex(
@@ -404,6 +514,7 @@ namespace MultronWinCleaner.Processes
                 main.wrapPanelDirectories.Children.Add(directorytextblock);
             });
         }
+        
         public async Task run()
         {
             try
@@ -412,7 +523,7 @@ namespace MultronWinCleaner.Processes
                 long nowscanning = 0;
                 MainWindow.scanstatus = 2;
                 main.onclean = 1;
-
+             
 
                 await main.Dispatcher.InvokeAsync(() =>
                 {
@@ -422,6 +533,7 @@ namespace MultronWinCleaner.Processes
                     main.wrapPanelDirectories.Visibility = Visibility.Visible;
                     main.ScrollViewerDirectories.Visibility = Visibility.Visible;
                     main.progressBar1.Value = 0;
+                    main.AnimateIcon(true);
                 });
    
                 foreach (string directory in main.database)
@@ -431,18 +543,17 @@ namespace MultronWinCleaner.Processes
                     string name = main.stringtokenizer(directory, "=", 0);
                     string path = main.stringtokenizer(directory, "=", 1);
 
+ 
 
-
-                  
 
                     if (name.Contains("cleanmgr.exe"))
                     {
                         dropscanmessage("The cleanmgr.exe command will run after the scan is completed and you click the Clean button!", "#0078d7");
                         continue;
                     }
-                  
-                if (name.Contains("Dism.exe") && winsxs == 0)
+                    else if (name.Contains("Dism.exe") && !path.Contains("RestoreHealth", StringComparison.OrdinalIgnoreCase) && winsxs == 0)
                     {
+                   
                         try
                         {
                             dropscanmessage("Running Command: " + name, "#0078d7");
@@ -450,10 +561,7 @@ namespace MultronWinCleaner.Processes
 
                             if (!main.cancelstatus.IsCancellationRequested)
                             {
-
-
                                 string outputPath = System.IO.Path.Combine(Environment.CurrentDirectory, "dism_scan.log");
-
                                 await System.IO.File.WriteAllTextAsync(outputPath, output);
 
                                 var sizes = ParseSizes(output);
@@ -462,26 +570,18 @@ namespace MultronWinCleaner.Processes
                                 long total = cache + backups;
                                 totalsize += total;
 
-
                                 await main.Dispatcher.InvokeAsync(() =>
                                 {
-                               
                                     if (output.EndsWith("#=#3010"))
                                     {
-
-               
                                         checkboxData.Add(("Dism.exe(Dism Requires System Restart)=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
                                         dropscanmessage("Dism.exe scan completed but requires system restart to free up space. Please restart your computer to complete the cleanup process. " + main.formatsize(total), "#0078d7");
                                     }
                                     else
                                     {
-
                                         checkboxData.Add(("Dism.exe=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
                                         dropscanmessage("Dism.exe scan completed! " + main.formatsize(total), "#107c10");
-                                    
-
                                     }
- 
                                 });
                             }
                             winsxs = 1;
@@ -492,39 +592,114 @@ namespace MultronWinCleaner.Processes
                             main.cancelstatus.Cancel();
                             break;
                         }
-
-
                     }
-                    else if(name.Contains("Deep Log Files Scan") && logscan == 0)
+
+                    else if (name.Contains("Dism.exe") && path.Contains("RestoreHealth", StringComparison.OrdinalIgnoreCase) && health == 0)
+                    {
+                        try
+                        {
+                            dropscanmessage("Checking component store health (Dism.exe /ScanHealth)...", "#0078d7");
+
+                            string output = await RunDismCommandWithProgressAsync(
+                                "/Online /Cleanup-Image /ScanHealth /NoRestart",
+                                main.dismcancel.Token,
+                                main.progressBar1,
+                                timeoutMinutes: 10);
+
+                            if (!main.cancelstatus.IsCancellationRequested)
+                            {
+                                bool isCorrupt = output.Contains("is repairable", StringComparison.OrdinalIgnoreCase);
+
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    if (isCorrupt)
+                                    {
+                                        checkboxData.Add(("Dism.exe(Restore Health)=", 0, "Dism Command: /Online /Cleanup-Image /RestoreHealth Restore Health command is recommended.", 0, "", ""));
+                                        dropscanmessage("Component store corruption detected! Restore Health command is recommended.", "#D83B01");
+                                    }
+                                    else
+                                    {
+                                        checkboxData.Add(("Dism.exe(Restore Health)=", 0, "Dism Command: /Online /Cleanup-Image /RestoreHealth Restore Health is not needed", 0, "", ""));
+                                        dropscanmessage("No component store corruption detected. Restore Health is not needed.", "#107c10");
+                                    }
+                                });
+                            }
+                            health = 1;
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            main.cancelstatus.Cancel();
+                            break;
+                        }
+                    }
+                    else if (name.Contains("Deep Log Files Scan") && logscan == 0)
                     {
                         dropscanmessage("Running Deep Log Files Scan", "#0078d7");
                         cts.Cancel();
-                            current = 0;
-                            await main.Dispatcher.InvokeAsync(() =>
+                        current = 0;
+                        await main.Dispatcher.InvokeAsync(() =>
+                        {
+                            var animation = new DoubleAnimation
                             {
-                                var animation = new DoubleAnimation
-                                {
-                                    From = 0,
-                                    To = 100,
-                                    Duration = TimeSpan.FromSeconds(2),
-                                    RepeatBehavior = RepeatBehavior.Forever
-                                };
-                                main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, animation);
-                            });
-                      
-                            await ScanCDirectoryAsync(path);
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
-                                main.progressBar1.Value = 100;
-                            });
+                                From = 0,
+                                To = 100,
+                                Duration = TimeSpan.FromSeconds(2),
+                                RepeatBehavior = RepeatBehavior.Forever
+                            };
+                            main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, animation);
+                        });
+
+                        await ScanCDirectoryAsync(path);
+                        await main.Dispatcher.InvokeAsync(() =>
+                        {
+                            main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
+                            main.progressBar1.Value = 100;
+                        });
                         dropscanmessage("Deep Log Files Scan Completed!", "#107c10");
 
                         logscan = 1;
-                        
-                
-                       
 
+
+
+
+                    }
+                    else if (name.ToLower().Contains("sfc.exe") && sfc == 0)
+                    {
+                        try
+                        {
+                            dropscanmessage("Checking system files (sfc /verifyonly)...", "#0078d7");
+
+                            string output = await RunSfcCommandAsync(
+                                "/verifyonly",
+                                main.dismcancel.Token,
+                                main.progressBar1,
+                                timeoutMinutes: 20);
+
+                            if (!main.cancelstatus.IsCancellationRequested)
+                            {
+                                bool isClean = output.IndexOf("did not find any integrity violations", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    if (!isClean)
+                                    {
+                                        checkboxData.Add(("sfc.exe(System File Repair)=", 0,    "SFC Command: /scannow", 0, "", ""));
+                                        dropscanmessage("System file integrity violations detected! sfc /scannow repair is recommended.", "#D83B01");
+                                    }
+                                    else
+                                    {
+                                        dropscanmessage("No system file integrity violations detected. sfc /scannow is not needed.", "#107c10");
+                                    }
+                                });
+                            }
+                            sfc = 1;
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            main.cancelstatus.Cancel();
+                            break;
+                        }
+                      
                     }
                     else
                     {
@@ -548,7 +723,7 @@ namespace MultronWinCleaner.Processes
                     }
 
                 }
-
+               
                 await main.Dispatcher.InvokeAsync(async () =>
                 {
                     GC.Collect();
@@ -604,28 +779,34 @@ namespace MultronWinCleaner.Processes
                     }
 
                     main.DataContext = main.viewModel;
-
-
-
-
-
                     main.label1_Copy.Text = "Loading Completed!";
                     main.progressBar1.Value = 100;
                     main.label1_Copy.Foreground = System.Windows.Media.Brushes.Goldenrod;
                     main.buttonReset.Visibility = Visibility.Visible;
                     main.buttonStartScan.IsEnabled = true;
                     main.buttonStartScan.Content = "Clean";
-
+                
+                    main.AnimateIcon(false);
+                 
                     if (main.autoclean == 1)
                     {
                         if (main.cancelstatus.IsCancellationRequested)
                         {
                             main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                             main.label1_Copy.Text = $"Auto scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                        
                         } else
                         {
                             main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                             main.label1_Copy.Text = $"Auto scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            main.Dispatcher.Invoke(() =>
+                            {
+                                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
+                                {
+                                    Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                    notify.Show();
+                                }
+                            });
                         }
 
                     }
@@ -638,9 +819,18 @@ namespace MultronWinCleaner.Processes
                         } else
                         {
                             main.label1_Copy.Text = $"Scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
+                                {
+                                    Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                    notify.Show();
+                                }
+                            });
                         }
 
                     }
+                  
 
 
                 });
