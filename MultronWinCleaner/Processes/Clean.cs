@@ -665,7 +665,7 @@ namespace MultronWinCleaner.Processes
                 main.buttonReset.Visibility = Visibility.Visible;
                 if (main.settings.chkEnableNotifyClean.IsChecked == true && main.Visibility == Visibility.Hidden)
                 {
-                    Notify notify = new Notify("Clean Information", $"Your system cleaned!\r\n", $"{main.formatsize(totalsize)}");
+                    Notify notify = new Notify("Clean Information", $"Your system cleaned!\r\n", $"{main.formatsize(freedSpace)}");
                     notify.Show();
                 }
                 var action = (main.settings.cmbPostCleanupAction.SelectedItem as ComboBoxItem)?.Content?.ToString();
