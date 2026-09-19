@@ -1,49 +1,102 @@
-**Multron Win Cleaner (Beta)**
-Developer: Winball501
+<div align="center">
 
-Free, open-source Windows system cleaner and optimizer. No subscriptions, no locked features. Continuously updated over time.
+  <img src="MultronWinCleaner/Assets/mwc_logo.png" alt="Multron Win Cleaner Logo" width="130" />
 
-**Features**
+  # Multron Win Cleaner
 
-**System Cleanup**
-- Scan and remove junk files from 250+ supported applications, constantly updated
-- The `database.txt` file lives in a separate repo and can be extended both by the developer and by the community via commits/PRs
-- WinSxS component store analysis and cleanup using DISM (`dism.exe` integration)
-- Custom folder cleanup via configurable `database.txt`, open for community contributions
-- Deep log file scanner (`.log`, `.etl`, `.dmp`, `.tmp`, `.bak` and more — custom extensions supported)
-- File age filtering — scan by creation date or last access date, preset or custom day thresholds
-- Auto Cleaner — schedule automatic cleaning at custom intervals (hourly, daily, etc.)
-- New in latest version: built-in `cleanmgr` (Disk Cleanup) shortcuts for quick access
+  **Modern, lightweight, and community-driven Windows system optimizer.**  
+  Completely free, open-source, and free of subscriptions, paywalls, or background telemetry.
 
-**File Tools**
-- Duplicate File Finder — find and remove duplicate files
-- Large File Finder — identify oversized files consuming disk space
+  <p align="center">
+    <a href="https://github.com/winball501/MultronWcleaner/releases">
+      <img src="https://img.shields.io/github/v/release/winball501/MultronWcleaner?style=for-the-badge&color=0e7490&label=Release" alt="Release" />
+    </a>
+    <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078d4?style=for-the-badge&logo=windows&logoColor=white" alt="Platform" />
+    <img src="https://img.shields.io/badge/Stack-C%23%20%7C%20WPF-512bd4?style=for-the-badge&logo=dotnet&logoColor=white" alt="Stack" />
+    <a href="https://github.com/winball501/MultronWcleaner-Database">
+      <img src="https://img.shields.io/badge/Database-Community%20Driven-059669?style=for-the-badge&logo=github&logoColor=white" alt="Database Repo" />
+    </a>
+    <img src="https://img.shields.io/github/license/winball501/MultronWcleaner?style=for-the-badge&color=15803d" alt="License" />
+  </p>
 
-**Memory**
-- Memory Cleaner — free up RAM manually or automatically at set intervals
-- Memory Monitor — live RAM and CPU usage tracking
+  [Download Release](https://github.com/winball501/MultronWcleaner/releases/latest) • [Rule Database Repo](https://github.com/winball501/MultronWcleaner-Database) • [Report Issue](https://github.com/winball501/MultronWcleaner/issues)
 
-**System Management**
-- Startup Manager — control boot-time programs, add entries to Registry, Task Scheduler, WinLogon Userinit
-- Startup Notification — alerts when new startup items are added
-- Boot Operations Manager — handle locked files at next reboot, custom file actions
-- Invalid Firewall Rule Cleaner — remove broken or outdated firewall rules
-- Optimization for Old Systems — one-click performance optimization
+</div>
 
-**Locked File Detection**
-Files locked by other processes are detected in real time, showing the locking process name/PID and full file path, with retry or force-delete options.
+---
 
-**Scan Details**
-Each file's creation date, age in days, last modified date, and size are shown before cleanup.
+## Previews
 
-**For more information**
-Database repo: https://github.com/winball501/MultronWcleaner-Database
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/0d9d6f64-b99a-409b-b546-5732afad7990" width="48%" alt="Multron Win Cleaner Interface 1" />
+  <img src="https://github.com/user-attachments/assets/68915da3-9a77-4fb3-bc20-899287092890" width="48%" alt="Multron Win Cleaner Interface 2" />
+</div>
 
+---
 
-<img width="675" height="525" alt="{2AA6E66E-809B-44C0-981A-51A11D6356D6}" src="https://github.com/user-attachments/assets/0d9d6f64-b99a-409b-b546-5732afad7990" />
-<img width="675" height="525" alt="{F10F7FD7-A2EA-483F-84D3-BF42980FF232}" src="https://github.com/user-attachments/assets/68915da3-9a77-4fb3-bc20-899287092890" />
+## Overview
 
+**Multron Win Cleaner** is a comprehensive system maintenance and disk recovery suite engineered for Windows. Unlike conventional cleaning tools, it pairs deep low-level system controls (DISM, WinSxS, boot-time operations) with transparent, community-updatable cleaning definitions.
 
+---
 
+## Key Features
 
+### 🧹 Deep System Cleanup
+* **250+ Application Rules:** Continuously updated definitions for third-party software, browser caches, and temporary data.
+* **Modular Rule Database:** Cleanup targets are governed by a modular [`database.txt`](https://github.com/winball501/MultronWcleaner-Database) repository, allowing instant community contributions without altering core application binaries.
+* **WinSxS Optimization:** Integrated component store analysis and image reduction utilizing native `DISM.exe` commands.
+* **Deep Log Tracing:** Configurable detection and wiping of `.log`, `.etl`, `.dmp`, `.tmp`, and `.bak` files across target directories.
+* **Age-Based File Filters:** Target files strictly older than defined day thresholds based on file creation or last access timestamps.
+* **Auto Cleaner:** Configurable background routines to schedule automatic cleanup intervals (hourly, daily, custom).
+* **Native cleanmgr Access:** Integrated launch shortcuts to Windows Disk Cleanup presets.
 
+### 🔒 Locked File & Process Management
+* **Real-Time Lock Detection:** Surfaces file locks dynamically, displaying the active locking Process Name, Process ID (PID), and absolute file path.
+* **Force Unlock & Delete:** Inline retry mechanisms or administrative force-kill routines to dispose of locked traces.
+* **Boot Operations Manager:** Schedules pending file removal and modification routines to execute cleanly during the next Windows reboot cycle.
+
+### ⚙️ System & Startup Control
+* **Startup Manager:** Inspects and toggles boot entries across Registry keys, Task Scheduler, and Winlogon Userinit targets.
+* **Startup Sentinel:** Delivers real-time notifications whenever a newly installed application registers a boot entry.
+* **Firewall Rule Hygiene:** Scans for and prunes broken, orphaned, or obsolete Windows Firewall rules.
+* **Legacy System Optimization:** One-click resource tuning profiles tailored to accelerate low-spec or older machines.
+
+### 📊 Memory & Performance Tracking
+* **RAM Optimizer:** Manual or interval-based memory working set reductions.
+* **Real-Time Resource Monitor:** Continuous visual tracking for active CPU and memory utilization.
+
+### 🔍 Storage Utilities
+* **Duplicate File Finder:** Fast byte-level comparison scanner to identify and eliminate duplicate copies.
+* **Large File Finder:** Scans drive structures to isolate overgrown archives, installers, and oversized media.
+* **Pre-Deletion Audit:** Comprehensive summary table displaying each file's size, creation date, modification date, and age in days prior to execution.
+
+---
+
+## System Requirements
+
+* **OS:** Windows 10 / Windows 11 (64-bit recommended)
+* **Privileges:** Administrator permissions (required for DISM operations, boot-time actions, and Registry access)
+* **Runtimes:** Microsoft .NET Framework / Desktop Runtime
+
+---
+
+## Installation
+
+1. Navigate to the [Releases](https://github.com/winball501/MultronWcleaner/releases) section.
+2. Download the latest `MultronWinCleaner.exe` executable or installer archive.
+3. Right-click the application and select **Run as administrator**.
+
+---
+
+## Community Database Contributions
+
+The cleaning rules are kept outside the main codebase to allow rapid additions without needing a new version release. You can inspect or extend the rule definitions directly at the [MultronWcleaner-Database](https://github.com/winball501/MultronWcleaner-Database) repository.
+
+Pull Requests adding support for new applications or custom directory paths are always reviewed and merged there.
+
+---
+
+## License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for complete details.
