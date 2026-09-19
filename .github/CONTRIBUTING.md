@@ -1,4 +1,3 @@
-cat << 'EOF' > .github/CONTRIBUTING.md
 # Contributing to Multron Win Cleaner
 
 Thank you for your interest in contributing to Multron Win Cleaner!
@@ -12,4 +11,3 @@ Thank you for your interest in contributing to Multron Win Cleaner!
 1. Fork the repository and create your feature branch.
 2. Ensure your changes build cleanly.
 3. Provide a clear PR title and summary of changes.
-EOF

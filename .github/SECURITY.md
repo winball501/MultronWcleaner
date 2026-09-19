@@ -1,4 +1,3 @@
-cat << 'EOF' > .github/SECURITY.md
 # Security Policy
 
 ## Supported Versions
@@ -9,4 +8,3 @@ cat << 'EOF' > .github/SECURITY.md
 
 ## Reporting a Vulnerability
 If you discover a security vulnerability, please do not open a public issue. Contact the repository maintainer directly or report it via GitHub Security Advisories.
-EOF
