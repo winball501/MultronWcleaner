@@ -30,3 +30,9 @@ jobs:
 
     - name: Çözümü Derle
       run: msbuild MultronWinCleaner.csproj /p:Configuration=Release
+
+- name: Derleme Çıktısını Arşivle
+      uses: actions/upload-artifact@v4
+      with:
+        name: MultronWinCleaner-beta-build
+        path: MultronWinCleaner/bin/Release/
