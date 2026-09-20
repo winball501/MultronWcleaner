@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push:
+    branches: [ beta, main ]
+  pull_request:
+    branches: [ beta, main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Kodu Çek
+      uses: actions/checkout@v4
+
+    - name: .NET SDK Kurulumu
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' 
+
+    - name: Bağımlılıkları Geri Yükle
+      run: dotnet restore
+
+    - name: Çözümü Derle
+      run: dotnet build --no-restore --configuration Release
