@@ -1,0 +1,850 @@
+﻿using Newtonsoft.Json;
+using Ookii.Dialogs.Wpf;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+
+namespace MultronWinCleaner
+{
+    public partial class Duplicate_File_Finder : Window
+    {
+        public ObservableCollection<DuplicateFile> DuplicateFiles { get; } = new ObservableCollection<DuplicateFile>();
+        private List<DuplicateFileModel> allDuplicates = new List<DuplicateFileModel>();
+        private HashSet<string> foundDuplicatePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private string duplicatesFilePath = Path.Combine(Environment.CurrentDirectory, "duplicates.json");
+        private ScrollViewer dataGridScrollViewer;
+        private const int PageSize = 100;
+        private int currentPage = 0;
+
+ 
+        private bool _isScanned = false;
+        private CancellationTokenSource _cts;
+        public Duplicate_File_Finder()
+        {
+            InitializeComponent();
+            DuplicatesTreeView.ItemsSource = DuplicateFiles;
+            DuplicatesTreeView.Loaded += DuplicatesTreeView_Loaded;
+ 
+            this.Loaded += Window_Loaded;
+            SetSearchPlaceholder();
+            LoadExistingDuplicates();
+        }
+
+        public class FolderNodeModel : INotifyPropertyChanged
+        {
+            public string Name { get; set; } = string.Empty;
+            public string FullPath { get; set; } = string.Empty;
+
+            public ObservableCollection<FolderNodeModel> SubFolders { get; set; } = new ObservableCollection<FolderNodeModel>();
+            public ObservableCollection<FileNodeModel> Files { get; set; } = new ObservableCollection<FileNodeModel>();
+
+            public int TotalDuplicateCount => Files.Count + SubFolders.Sum(s => s.TotalDuplicateCount);
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+        }
+
+        // Dosya Düğümü (Ağaçtaki her bir dosya)
+        public class FileNodeModel : INotifyPropertyChanged
+        {
+            public string FileName { get; set; } = string.Empty;
+            public string FilePath { get; set; } = string.Empty;
+            public long FileSize { get; set; }
+            public string Hash { get; set; } = string.Empty;
+            public bool IsSelectedForDeletion { get; set; } = true;
+
+            // Hash görünürlük durumu
+            private bool _isHashVisible;
+            public bool IsHashVisible
+            {
+                get => _isHashVisible;
+                set
+                {
+                    _isHashVisible = value;
+                    OnPropertyChanged(nameof(IsHashVisible));
+                }
+            }
+
+            public string FormattedSize
+            {
+                get
+                {
+                    string[] sizes = { "B", "KB", "MB", "GB" };
+                    double len = FileSize;
+                    int order = 0;
+                    while (len >= 1024 && order < sizes.Length - 1)
+                    {
+                        order++;
+                        len /= 1024;
+                    }
+                    return $"{len:0.#} {sizes[order]}";
+                }
+            }
+
+            public string FileIcon
+            {
+                get
+                {
+                    string ext = System.IO.Path.GetExtension(FileName).ToLower();
+                    return ext switch
+                    {
+                        ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" => "🖼️",
+                        ".mp4" or ".mkv" or ".avi" or ".mov" => "🎥",
+                        ".mp3" or ".wav" or ".flac" => "🎵",
+                        ".zip" or ".rar" or ".7z" => "📦",
+                        ".exe" or ".msi" => "⚙️",
+                        ".pdf" or ".doc" or ".docx" or ".txt" => "📄",
+                        _ => "📄"
+                    };
+                }
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged(string propName) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+        private void ContextMenu_OpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.Tag is string folderPath && !string.IsNullOrEmpty(folderPath))
+            {
+                if (Directory.Exists(folderPath))
+                {
+                    Process.Start(new ProcessStartInfo { FileName = folderPath, UseShellExecute = true });
+                }
+            }
+        }
+         
+        private void ContextMenu_OpenFileLocation_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.Tag is string filePath && !string.IsNullOrEmpty(filePath))
+            {
+                if (File.Exists(filePath))
+                {
+                    Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+                }
+            }
+        } 
+        private void ContextMenu_OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.Tag is string filePath && !string.IsNullOrEmpty(filePath))
+            {
+                if (File.Exists(filePath))
+                {
+                    Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });
+                }
+            }
+        }
+        public ObservableCollection<FolderNodeModel> ExplorerTree { get; set; } = new ObservableCollection<FolderNodeModel>();
+
+        private FolderNodeModel BuildFolderTree(List<DuplicateFileModel> duplicates)
+        {
+            var rootNode = new FolderNodeModel { Name = "Kopyalanmış Klasörler", FullPath = "" };
+
+            foreach (var file in duplicates)
+            {
+                string directory = Path.GetDirectoryName(file.FilePath);
+                if (string.IsNullOrEmpty(directory)) continue;
+
+                string[] pathParts = directory.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                FolderNodeModel currentNode = rootNode;
+                string currentFullPath = "";
+
+                // Yol boyunca klasörleri oluştur/bul
+                foreach (var part in pathParts)
+                {
+                    currentFullPath = string.IsNullOrEmpty(currentFullPath) ? part : Path.Combine(currentFullPath, part);
+
+                    var childNode = currentNode.SubFolders.FirstOrDefault(f => f.Name.Equals(part, StringComparison.OrdinalIgnoreCase));
+                    if (childNode == null)
+                    {
+                        childNode = new FolderNodeModel { Name = part, FullPath = currentFullPath };
+                        currentNode.SubFolders.Add(childNode);
+                    }
+                    currentNode = childNode;
+                }
+
+                // Dosyayı ilgili klasöre ekle
+                currentNode.Files.Add(new FileNodeModel
+                {
+                    FileName = file.FileName,
+                    FilePath = file.FilePath,
+                    FileSize = file.FileSize,
+                    Hash = file.Hash,
+                    IsSelectedForDeletion = true // Otomatik seçili
+                });
+            }
+
+            return rootNode;
+        }
+        private void BtnOpenJson_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(duplicatesFilePath))
+            {
+                try
+                {
+                    
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(duplicatesFilePath)
+                    {
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not open the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("The duplicates data file does not exist yet. Run a scan first.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void BtnDeleteJson_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(duplicatesFilePath))
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "Are you sure you want to delete the saved duplicates data file?",
+                    "Confirm Deletion",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        File.Delete(duplicatesFilePath);
+
+                     
+                        DuplicateFiles.Clear();
+                        allDuplicates.Clear();
+                        foundDuplicatePaths.Clear();
+                        currentPage = 0;
+                        ResetToScanState();
+
+                        if (SearchCountText != null) SearchCountText.Text = "";
+
+                        MessageBox.Show("Data file successfully deleted.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Could not delete the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("The duplicates data file does not exist.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+  
+    
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = SearchBox.Text.ToLower().Trim();
+
+            if (string.IsNullOrEmpty(query))
+            {
+                DuplicatesTreeView.ItemsSource = ExplorerTree;
+                return;
+            }
+
+            // Arama filtrelemesi yapıldığında TreeView kaynağını yenileyin
+            var filteredRoot = FilterFolderTree(ExplorerTree.FirstOrDefault(), query);
+            DuplicatesTreeView.ItemsSource = filteredRoot != null
+                ? new ObservableCollection<FolderNodeModel> { filteredRoot }
+                : null;
+        }
+        private FolderNodeModel? FilterFolderTree(FolderNodeModel? node, string query)
+        {
+            if (node == null) return null;
+
+            var filteredNode = new FolderNodeModel
+            {
+                Name = node.Name,
+                FullPath = node.FullPath
+            };
+
+            foreach (var subFolder in node.SubFolders)
+            {
+                var matchedSub = FilterFolderTree(subFolder, query);
+                if (matchedSub != null && (matchedSub.Files.Any() || matchedSub.SubFolders.Any()))
+                {
+                    filteredNode.SubFolders.Add(matchedSub);
+                }
+            }
+
+            foreach (var file in node.Files)
+            {
+                if (file.FileName.ToLower().Contains(query) || file.FilePath.ToLower().Contains(query))
+                {
+                    filteredNode.Files.Add(file);
+                }
+            }
+
+            if (filteredNode.Files.Any() || filteredNode.SubFolders.Any())
+            {
+                return filteredNode;
+            }
+
+            return null;
+        }
+        private void SetSearchPlaceholder()
+        {
+            SearchBox.Text = "Search by File Name or SHA256 Hash...";
+            SearchBox.Foreground = new SolidColorBrush(Colors.Gray);
+
+            SearchBox.GotFocus += (s, e) =>
+            {
+                if (SearchBox.Text == "Search by File Name or SHA256 Hash...")
+                {
+                    SearchBox.Text = "";
+                    SearchBox.Foreground = (Brush)FindResource("TextPrimary");
+                }
+            };
+
+            SearchBox.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchBox.Text))
+                {
+                    SearchBox.Text = "Search by File Name or SHA256 Hash...";
+                    SearchBox.Foreground = new SolidColorBrush(Colors.Gray);
+                }
+            };
+        }
+        private class DuplicateFileModel
+        {
+            public string FileName { get; set; }
+            public string FilePath { get; set; }
+            public long FileSize { get; set; }
+            public string Hash { get; set; }
+        }
+
+        public class DuplicateFile
+        {
+            public string FileName { get; set; }
+            public string FilePath { get; set; }
+            public long FileSize { get; set; }
+            public string Hash { get; set; }
+        }
+
+    
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        { 
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+            if (!string.IsNullOrEmpty(userProfile) && FolderListBox.Items.Count == 0)
+            {
+                FolderListBox.Items.Add(userProfile);
+            }
+        }
+
+        private void AdvancedToggle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (AdvancedPanel.Visibility == Visibility.Collapsed)
+            {
+                AdvancedPanel.Visibility = Visibility.Visible;
+                AdvancedToggleText.Text = "▲ Hide Advanced Settings";
+            }
+            else
+            {
+                AdvancedPanel.Visibility = Visibility.Collapsed;
+                AdvancedToggleText.Text = "▼ Advanced Scan Settings";
+            }
+        }
+
+        private void BtnAddDefault_Click(object sender, RoutedEventArgs e)
+        {
+            FolderListBox.Items.Clear();
+            string osDrive = Path.GetPathRoot(Environment.SystemDirectory);
+            if (!string.IsNullOrEmpty(osDrive))
+            {
+                FolderListBox.Items.Add(osDrive);
+            }
+        }
+         
+
+        private async void MainActionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FolderListBox.Items.Count == 0)
+            {
+                MessageBox.Show("Please select at least one folder.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!_isScanned)
+            {
+             
+                
+                MainActionButton.Content = "Cancel";
+                TotalSizeText.Visibility = Visibility.Collapsed;
+                SearchCountText.Text = "";
+                await RunScanAsync();
+                 
+
+                if (allDuplicates.Count > 0)
+                {
+                    _isScanned = true;
+                    MainActionButton.Content = "CLEAN";
+                    MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
+                }
+                else
+                {
+                    ResetToScanState();
+                }
+
+                MainActionButton.IsEnabled = true;
+            }
+            else if(MainActionButton.Content == "Cancel")
+            {
+                _cts?.Cancel();
+                MainActionButton.IsEnabled = false;
+            } else
+            {
+
+                CleanDuplicates();
+            }
+        }
+
+       
+
+        private void CleanDuplicates()
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "This will keep ONE original file from each duplicate group and permanently delete the rest. Are you sure?",
+                "Confirm Cleanup",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                int deletedCount = 0;
+                var groups = allDuplicates.GroupBy(d => d.Hash);
+
+                foreach (var group in groups)
+                {
+                    if (group.Count() > 1)
+                    {
+                        var filesToDelete = group.Skip(1).ToList();
+                        foreach (var file in filesToDelete)
+                        {
+                            try
+                            {
+                                if (File.Exists(file.FilePath))
+                                {
+                                    File.Delete(file.FilePath);
+                                    deletedCount++;
+                                }
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                    }
+                }
+
+                MessageBox.Show($"Cleanup Complete!\n\nSuccessfully deleted {deletedCount} duplicate files.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                 
+                ClearListButton_Click(null, null);
+                ResetToScanState();
+            }
+        }
+
+        private void ResetToScanState()
+        {
+            _isScanned = false;
+            MainActionButton.Content = "SCAN";
+            MainActionButton.Background = (Brush)FindResource("AccentColor");
+            StatusText.Text = "Ready to scan the system drive";
+            TotalSizeText.Visibility = Visibility.Collapsed;
+        }
+ 
+     
+        private async Task RunScanAsync()
+        {
+            await Dispatcher.InvokeAsync(() =>
+            {
+                DuplicateFiles.Clear();
+                allDuplicates.Clear();
+                foundDuplicatePaths.Clear();
+            });
+         
+            foreach (string folder in FolderListBox.Items)
+            {
+                await Scan(folder);
+            }
+            await Dispatcher.InvokeAsync(() =>
+            {
+                DuplicateFiles.Clear();
+                foundDuplicatePaths.Clear();
+                currentPage = 0;
+                LoadNextPage();
+                SetupGrouping();
+                StatusText.Text = _cts.IsCancellationRequested
+                ? $"Scan Canceled. Found {allDuplicates.Count} duplicate files."
+                : $"Scan Complete. Found {allDuplicates.Count} duplicate files.";
+            });
+        }
+
+        private async Task Scan(string rootFolderPath)
+        {
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
+ 
+            var hashMap = new ConcurrentDictionary<string, string>();   
+            var dupPaths = new ConcurrentDictionary<string, byte>();  
+            var dupResults = new ConcurrentBag<DuplicateFileModel>();
+
+            int scannedCount = 0;
+            int hashedCount = 0;
+            long lastUpdateTicks = 0;
+            const int updateIntervalMs = 200;
+
+            void MaybeReportStatus(string currentFile, string phase)
+            {
+                var now = Environment.TickCount64;
+                if (now - Interlocked.Read(ref lastUpdateTicks) < updateIntervalMs) return;
+                Interlocked.Exchange(ref lastUpdateTicks, now);
+                 
+                Dispatcher.BeginInvoke(() =>
+                {
+                    StatusText.Text = $"{phase}... {scannedCount} files scanned, {dupResults.Count} duplicate files found.";
+                    FilesScannedText.Text = currentFile;
+                });
+            }
+
+            try
+            {
+                await Task.Run(() =>
+                {
+            
+                    IEnumerable<string> EnumerateAllFiles(string root)
+                    {
+                        var stack = new Stack<string>();
+                        stack.Push(root);
+                        while (stack.Count > 0)
+                        {
+                            token.ThrowIfCancellationRequested();
+                            var dir = stack.Pop();
+
+                            string[] subDirs = Array.Empty<string>();
+                            string[] filesHere = Array.Empty<string>();
+                            try
+                            {
+                                filesHere = Directory.GetFiles(dir);
+                                subDirs = Directory.GetDirectories(dir);
+                            }
+                            catch {  }
+
+                            foreach (var d in subDirs) stack.Push(d);
+                            foreach (var f in filesHere) yield return f;
+                        }
+                    }
+
+               
+                    var sizeGroups = new ConcurrentDictionary<long, ConcurrentBag<string>>();
+
+                    Parallel.ForEach(
+                        EnumerateAllFiles(rootFolderPath),
+                        new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = token },
+                        file =>
+                        {
+                            long size;
+                            try { size = new FileInfo(file).Length; }
+                            catch { return; }
+
+                            sizeGroups.GetOrAdd(size, _ => new ConcurrentBag<string>()).Add(file);
+                            Interlocked.Increment(ref scannedCount);
+                            MaybeReportStatus(file, "Scanning...");
+                        });
+
+                    var candidates = sizeGroups.Values.Where(g => g.Count > 1).SelectMany(g => g);
+
+                   
+                    Parallel.ForEach(
+                        candidates,
+                        new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = token },
+                        file =>
+                        {
+                            string hash;
+                            long length;
+                            try
+                            {
+                                var fi = new FileInfo(file);
+                                length = fi.Length;
+
+                                using var stream = new FileStream(
+                                    file, FileMode.Open, FileAccess.Read, FileShare.Read,
+                                    bufferSize: 1 << 20, FileOptions.SequentialScan);
+
+                                hash = Convert.ToHexString(SHA256.HashData(stream));
+                            }
+                            catch { return; }
+
+                        
+                            var firstSeen = hashMap.GetOrAdd(hash, file);
+                            if (firstSeen != file)
+                            {
+                                if (dupPaths.TryAdd(firstSeen, 0))
+                                {
+                                    var origInfo = new FileInfo(firstSeen);
+                                    dupResults.Add(new DuplicateFileModel
+                                    {
+                                        FileName = origInfo.Name,
+                                        FilePath = firstSeen,
+                                        FileSize = origInfo.Length,
+                                        Hash = hash
+                                    });
+                                }
+                                if (dupPaths.TryAdd(file, 0))
+                                {
+                                    dupResults.Add(new DuplicateFileModel
+                                    {
+                                        FileName = Path.GetFileName(file),
+                                        FilePath = file,
+                                        FileSize = length,
+                                        Hash = hash
+                                    });
+                                }
+                            }
+
+                            Interlocked.Increment(ref hashedCount);
+                            MaybeReportStatus(file, "Hashing");
+                        });
+                }, token);
+                 
+                var finalList = dupResults.ToList();
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    allDuplicates.Clear();
+                    foreach (var item in finalList) allDuplicates.Add(item);
+
+                    foundDuplicatePaths.Clear();
+                    foreach (var p in dupPaths.Keys) foundDuplicatePaths.Add(p);
+
+                    StatusText.Text = $"Scan completed! {allDuplicates.Count} duplicate files found.";
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                var finalList = dupResults.ToList();
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    allDuplicates.Clear();
+                    foreach (var item in finalList) allDuplicates.Add(item);
+                    StatusText.Text = $"Scan Canceled {allDuplicates.Count} duplicate files found.";
+                });
+            }
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(allDuplicates, Formatting.Indented);
+                await File.WriteAllTextAsync(duplicatesFilePath, json);
+            }
+            catch { }
+        }
+
+
+        private async void LoadExistingDuplicates()
+        {
+            if (!File.Exists(duplicatesFilePath)) return;
+
+            var json = await File.ReadAllTextAsync(duplicatesFilePath);
+            allDuplicates = JsonConvert.DeserializeObject<List<DuplicateFileModel>>(json) ?? new List<DuplicateFileModel>();
+
+            DuplicateFiles.Clear();
+            foundDuplicatePaths.Clear();
+            currentPage = 0;
+            LoadNextPage();
+            SetupGrouping();
+        }
+        private void ShowHashCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ToggleHashVisibility(ExplorerTree, true);
+        }
+
+        // CheckBox işareti kaldırıldığında çalışır
+        private void ShowHashCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToggleHashVisibility(ExplorerTree, false);
+        }
+        private void ToggleHashVisibility(IEnumerable<FolderNodeModel> folders, bool isVisible)
+        {
+            if (folders == null) return;
+
+            foreach (var folder in folders)
+            {
+                foreach (var file in folder.Files)
+                {
+                    file.IsHashVisible = isVisible;
+                }
+                // Alt klasörler için özyinelemeli (recursive) çağrı
+                ToggleHashVisibility(folder.SubFolders, isVisible);
+            }
+        }
+        private void DuplicatesTreeView_Loaded(object sender, RoutedEventArgs e)
+        {
+            dataGridScrollViewer = GetDescendantByType(DuplicatesTreeView, typeof(ScrollViewer)) as ScrollViewer;
+            if (dataGridScrollViewer != null)
+            {
+                dataGridScrollViewer.ScrollChanged += DataGridScrollViewer_ScrollChanged;
+            }
+        }
+
+        private void DataGridScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight - 50)
+            {
+                LoadNextPage();
+            }
+        }
+
+        private static Visual GetDescendantByType(Visual element, Type type)
+        {
+            if (element == null) return null;
+            if (element.GetType() == type) return element;
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i) as Visual;
+                var found = GetDescendantByType(child, type);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private void LoadNextPage()
+        {
+            int start = currentPage * PageSize;
+            if (start >= allDuplicates.Count) return;
+
+            var nextItems = allDuplicates.Skip(start).Take(PageSize);
+            foreach (var d in nextItems)
+            {
+                if (foundDuplicatePaths.Add(d.FilePath))
+                {
+                    DuplicateFiles.Add(new DuplicateFile
+                    {
+                        FileName = d.FileName,
+                        FilePath = d.FilePath,
+                        FileSize = d.FileSize,
+                        Hash = d.Hash
+                    });
+                }
+            }
+            currentPage++;
+        }
+
+        private void SetupGrouping()
+        {
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(DuplicateFiles);
+            if (view != null)
+            {
+                view.GroupDescriptions.Clear();
+                view.GroupDescriptions.Add(new PropertyGroupDescription("Hash"));
+            }
+        }
+
+     
+
+        private void DeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            if (DuplicatesTreeView.SelectedItem is DuplicateFile sel)
+            {
+                try
+                {
+                    File.Delete(sel.FilePath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting file: {ex.Message}");
+                    return;
+                }
+                DuplicateFiles.Remove(sel);
+            }
+        }
+
+        private void OpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (DuplicatesTreeView.SelectedItem is DuplicateFile sel)
+            {
+                string argument = "/select, \"" + sel.FilePath + "\"";
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+            }
+        }
+
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new VistaFolderBrowserDialog { Description = "Select folder" };
+            if (dlg.ShowDialog() == true && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
+                FolderListBox.Items.Add(dlg.SelectedPath);
+        }
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        { 
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FolderListBox.SelectedItem != null)
+                FolderListBox.Items.Remove(FolderListBox.SelectedItem);
+        }
+
+        private void ClearListButton_Click(object sender, RoutedEventArgs e)
+        {
+            DuplicateFiles.Clear();
+            allDuplicates.Clear();
+            foundDuplicatePaths.Clear();
+            currentPage = 0;
+            StatusText.Text = "List cleared.";
+            File.Delete(duplicatesFilePath);
+            ResetToScanState();
+        }
+
+     
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Hide();
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+        private bool isMax = false;
+        private double prevW, prevH, prevX, prevY;
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isMax)
+            {
+                prevW = Width; prevH = Height; prevX = Left; prevY = Top;
+                Left = SystemParameters.WorkArea.Left; Top = SystemParameters.WorkArea.Top;
+                Width = SystemParameters.WorkArea.Width; Height = SystemParameters.WorkArea.Height;
+            }
+            else
+            {
+                Width = prevW; Height = prevH; Left = prevX; Top = prevY;
+            }
+            isMax = !isMax;
+        }
+
+        private void TopBar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
+        }
+    }
+}

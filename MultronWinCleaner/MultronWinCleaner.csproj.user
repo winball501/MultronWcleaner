@@ -19,7 +19,13 @@
     <Compile Update="Duplicate File Finder.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="FolderDuplicatesWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="LargeFileFinder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MatchingFilesWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="MemCleaner.xaml.cs">

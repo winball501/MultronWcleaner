@@ -53,6 +53,7 @@ namespace Multron_Win_Cleaner
 
     public partial class MainWindow : Window
     {
+        private string diskModel = string.Empty;
         public Settings settings;
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModel = new MultronWinCleaner.Processes.Scan.MainViewModel();
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModelbac = new MultronWinCleaner.Processes.Scan.MainViewModel();
@@ -67,11 +68,14 @@ namespace Multron_Win_Cleaner
         public CancellationTokenSource dismcancel = new CancellationTokenSource();
         public Utilities utilities;
         public byte autoclean = 0;
+        public byte startupclean = 0;
+        public byte startupscan = 0;
         public byte onclean = 0;
         public byte killer = 0;
         public readonly TrayIconAnimator _trayAnimator ;
         public string extensions = ".log.etl.dmp.trace.tmp.temp.bak.swp";
         string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+        private DispatcherTimer diskSpaceTimer;
         public MainWindow()
         {
        
@@ -100,11 +104,87 @@ namespace Multron_Win_Cleaner
                 Source = new Uri(themePath, UriKind.Relative)
             };
             brush = (SolidColorBrush)resourceDictionary["Text"];
-
+            diskModel = GetDiskModel("C:\\");
             Window.GetWindow(this)?.DragMove();
 
+            label1_Copy.Text = "Ready for the scan";
+             
+            diskSpaceTimer = new DispatcherTimer();
+            diskSpaceTimer.Interval = TimeSpan.FromSeconds(2);  
+            diskSpaceTimer.Tick += DiskSpaceTimer_Tick;
+            diskSpaceTimer.Start();
+             
+            UpdateDiskSpace();
         }
-    
+
+        
+        private string GetDiskModel(string driveLetter)
+        {
+            try
+            {
+              
+                char letter = driveLetter[0];
+
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = "powershell",
+                 
+                    Arguments = $"-Command \"(Get-Partition -DriveLetter '{letter}' | Get-Disk).FriendlyName\"",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(psi))
+                {
+                    string output = process.StandardOutput.ReadToEnd().Trim();
+                    process.WaitForExit();
+
+                    return string.IsNullOrWhiteSpace(output) ? "Disk" : output;
+                }
+            }
+            catch
+            {
+                return "Disk";
+            }
+        }
+        private void DiskSpaceTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateDiskSpace();
+        }
+        private void UpdateDiskSpace()
+        {
+            try
+            {
+                string driveLetter = System.IO.Path.GetPathRoot(Environment.SystemDirectory); 
+                DriveInfo drive = new DriveInfo(driveLetter);
+                 
+                if (string.IsNullOrEmpty(diskModel) || diskModel == "Disk")
+                {
+                    diskModel = GetDiskModel(driveLetter);
+                }
+
+                if (drive.IsReady)
+                {
+                    double freeSpaceGB = drive.AvailableFreeSpace / (1024.0 * 1024 * 1024);
+                    double totalSizeGB = drive.TotalSize / (1024.0 * 1024 * 1024);
+
+                    labelDiskSize.Text = $"[{diskModel}] Drive {driveLetter} Free: {freeSpaceGB:F2} GB / Total: {totalSizeGB:F2} GB";
+                }
+            }
+            catch (Exception)
+            {
+                labelDiskSize.Text = "Disk size could not be read.";
+            }
+        }
+        private void OpenGitHub_Click(object sender, RoutedEventArgs e)
+        { 
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "https://github.com/winball501",
+                UseShellExecute = true
+            });
+        }
         private void LoadingOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         { 
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -139,7 +219,7 @@ namespace Multron_Win_Cleaner
                 {
                     this.Visibility = Visibility.Hidden;
                     this.Hide();
-                    this.ShowInTaskbar = false;
+              
               
                 });
             }
@@ -185,13 +265,17 @@ namespace Multron_Win_Cleaner
             utilities = new Utilities(this);
 
 
-            utilities.Show();
-            utilities.Hide();
+     
+          
 
+          
 
             progressBar1.ValueChanged += ProgressBar1_ValueChanged;
             settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
 
+        
+            utilities.Show();
+            utilities.Hide();
             settings.Show();
             settings.Hide();
             dataGridGroups.Visibility = Visibility.Hidden;
@@ -216,8 +300,7 @@ namespace Multron_Win_Cleaner
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show(
-       "The database.txt file could not be found. This may be due to an internet connectivity issue, as the program attempts to download the latest database.txt file from GitHub but was unable to do so.\n\nWould you like to be redirected to the GitHub page to manually download the latest database.txt file?",
+                MessageBoxResult result = MessageBox.Show("The database.txt file could not be found. This may be due to an internet connectivity issue, as the program attempts to download the latest database.txt file from GitHub but was unable to do so.\n\nWould you like to be redirected to the GitHub page to manually download the latest database.txt file?",
        "Multron Windows Cleaner",
        MessageBoxButton.YesNo,
        MessageBoxImage.Question
@@ -244,7 +327,8 @@ namespace Multron_Win_Cleaner
             LoadingOverlay.Visibility = Visibility.Collapsed;
             
             await startup();
-           
+        
+
         }
 
         public async Task loadothers2()
@@ -328,7 +412,7 @@ namespace Multron_Win_Cleaner
         {
             if (App.LaunchedFromStartup)
             {
-                await Task.Delay(2064);
+                await Task.Delay(3000);
 
                 bool scanEnabled = false;
                 bool cleanEnabled = false;
@@ -341,12 +425,13 @@ namespace Multron_Win_Cleaner
 
                 if (scanEnabled)
                 {
+                  
+                    this.startupscan = 1;
                     if (cleanEnabled)
-                    {
-                        autoclean = 1;
-                    }
-
-                    await this.startscan();
+                      this.startupclean = 1;
+                   
+                    await startscan();
+                
                 }
             }
         }
@@ -566,7 +651,7 @@ namespace Multron_Win_Cleaner
 
         private void ExitApp_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            Environment.Exit(0);
         }
 
 
@@ -1130,47 +1215,49 @@ namespace Multron_Win_Cleaner
                 dismcancel = new CancellationTokenSource();
                 scanstatus = 0;
                 cancelclean = 0;
+             
+
+
+
+                buttonStartScan.Content = "Cancel"; 
 
                 wrapPanelDirectories.Children.Clear();
                 MultronWinCleaner.Processes.Clean clean = new MultronWinCleaner.Processes.Clean(this);
                 await Task.Run(() => clean.run());
-
             }
             else if (buttonStartScan.Content.Equals("Scan"))
             {
+                cancelstatus.Dispose();
+                dismcancel.Dispose();
                 cancelstatus = new CancellationTokenSource();
                 dismcancel = new CancellationTokenSource();
-                wrapPanel1.Visibility = Visibility.Hidden;
-
-                buttonStartScan.Content = "Cancel";
-
-                cancelclean = 0;
-                MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
-
-                await Task.Run(() => scan.run());
 
 
 
                 scanstatus = 0;
+                cancelclean = 0;
+                MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
+
+                await Task.Run(() => scan.run());
+                buttonStartScan.Content = "Cancel";
+
             }
-            else if (buttonStartScan.Content.Equals ("Cancel"))
+            else if (buttonStartScan.Content.Equals("Cancel"))
             {
                 cancelstatus.Cancel();
+                dismcancel.Cancel();
                 cancelclean = 2;
                 buttonReset.Visibility = Visibility.Visible;
 
-                dismcancel.Cancel();
-
-
+                
             }
             else if (buttonStartScan.Content.Equals("Kill"))
             {
-
                 if (paths.Count != 0)
                 {
                     killer = 1;
                     wrapPanelDirectories.Children.Clear();
-                    wrapPanelDirectories.Visibility = Visibility.Visible;
+              
                     buttonStartScan.Content = "Cancel";
                     Kill kill = new Kill(this);
                     await Task.Run(() => kill.run());
@@ -1180,51 +1267,34 @@ namespace Multron_Win_Cleaner
                     label1_Copy.Text = "No Process Selected.";
                     label1_Copy.Foreground = System.Windows.Media.Brushes.Goldenrod;
                 }
-
-
             }
+
+       
+            if (scanstatus == 1 || scanstatus == 2)
             {
-                if (scanstatus == 1)
-                {
+                ScrollViewerDirectories.Visibility = Visibility.Hidden;
+                wrapPanelDirectories.Visibility = Visibility.Hidden;
+                wrapPanelDirectories.Children.Clear();
+                buttonStartScan.IsEnabled = true;
 
-                    ScrollViewerDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Children.Clear();
-                    buttonStartScan.IsEnabled = true;
+                wrapPanel1.Visibility = Visibility.Visible;
+                buttonStartScan.Content = "Scan";
 
-                    wrapPanel1.Visibility = Visibility.Visible;
-                    buttonStartScan.Content = "Scan";
-                    cancelstatus.Cancel();
-                    dismcancel.Cancel();
-
-                }
-                else if (scanstatus == 2)
-                {
-                    ScrollViewerDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Children.Clear();
-                    buttonStartScan.IsEnabled = true;
-
-                    wrapPanel1.Visibility = Visibility.Visible;
-                    buttonStartScan.Content = "Scan";
-                    cancelstatus.Cancel();
-                    dismcancel.Cancel();
-                }
-                else if (cancelclean == 1)
-                {
-
-                    ScrollViewerDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Visibility = Visibility.Hidden;
-                    wrapPanelDirectories.Children.Clear();
-                    buttonStartScan.IsEnabled = true;
-
-                    wrapPanel1.Visibility = Visibility.Visible;
-                    cancelclean = 2;
-                    buttonStartScan.Content = "Scan";
-                }
-
+                
+                 
+                scanstatus = 0;
             }
+            else if (cancelclean == 1)
+            {
+                ScrollViewerDirectories.Visibility = Visibility.Hidden;
+                wrapPanelDirectories.Visibility = Visibility.Hidden;
+                wrapPanelDirectories.Children.Clear();
+                buttonStartScan.IsEnabled = true;
 
+                wrapPanel1.Visibility = Visibility.Visible;
+                cancelclean = 2;
+                buttonStartScan.Content = "Scan";
+            }
         }
         private async void ButtonStartScan_Click(object sender, RoutedEventArgs e)
         {
@@ -1658,10 +1728,20 @@ namespace Multron_Win_Cleaner
             ButtonLockedFiles.Visibility = Visibility.Hidden;
             buttonStartScan.IsEnabled = true;
             buttonStartScan.Content = "Kill";
-
+            LockedFilesWindowOverlay.Visibility = Visibility.Visible;
             LoadLockedFiles lockedfiles = new LoadLockedFiles(this);
             await Task.Run(() => lockedfiles.run());
 
+        }
+        private void CloseLockedFiles_Click(object sender, RoutedEventArgs e)
+        {
+            LockedFilesWindowOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void CloseLockedFiles_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+          
+            LockedFilesWindowOverlay.Visibility = Visibility.Collapsed;
         }
 
         private void ButtonReset_Click(object sender, RoutedEventArgs e)
@@ -1686,7 +1766,10 @@ namespace Multron_Win_Cleaner
 
 
             progressBar1.Value = 0;
-
+            startupscan = 0;
+            startupclean = 0;
+            autoclean = 0;
+            cancelclean = 0;
             scanstatus = 0;
             reset = 0;
         }
@@ -1884,8 +1967,18 @@ namespace Multron_Win_Cleaner
             }
         }
 
-        private void SelectAll_wpanel_Click(object sender, RoutedEventArgs e)
+        private async void SelectAll_wpanel_Click(object sender, RoutedEventArgs e)
         {
+            var dialogResult = await ShowCustomDialogAsync(
+      "Warning",
+      "Selecting all items across all groups may cause critical like browser history & downloads and recent files to be permanently deleted during cleanup.\n\nAre you sure you want to select everything?",
+      CustomDialogIcon.Warning,
+      CustomDialogButtons.YesNo);
+
+            if (dialogResult != CustomDialogResult.Yes)
+            {
+                return;
+            }
             int i = 0;
             foreach (CheckBox box in checkboxes2)
             {
@@ -1899,6 +1992,7 @@ namespace Multron_Win_Cleaner
 
         private void UnselectAll_wpanel_Click(object sender, RoutedEventArgs e)
         {
+       
             foreach (CheckBox box in checkboxes2)
             {
 
@@ -1908,6 +2002,9 @@ namespace Multron_Win_Cleaner
         }
         private void SelectAll_AllGroups_Click(object sender, RoutedEventArgs e)
         {
+           
+       
+
             foreach (var item in dataGridGroups.Items)
             {
                 if (item is GroupViewModel group)
@@ -1931,7 +2028,106 @@ namespace Multron_Win_Cleaner
                 }
             }
         }
+        #region Custom Dialog Infrastructure
 
+        public enum CustomDialogIcon
+        {
+            Info,
+            Warning,
+            Error,
+            Question
+        }
+
+        public enum CustomDialogButtons
+        {
+            Ok,
+            YesNo
+        }
+
+        public enum CustomDialogResult
+        {
+            None,
+            Ok,
+            Yes,
+            No
+        }
+
+        private TaskCompletionSource<CustomDialogResult> _dialogTcs;
+
+        /// <summary>
+        /// XAML tabanlı modern uyarı dialogunu gösterir.
+        /// </summary>
+        public Task<CustomDialogResult> ShowCustomDialogAsync(
+            string title,
+            string message,
+            CustomDialogIcon icon = CustomDialogIcon.Info,
+            CustomDialogButtons buttons = CustomDialogButtons.Ok)
+        {
+            _dialogTcs = new TaskCompletionSource<CustomDialogResult>();
+
+            Dispatcher.Invoke(() =>
+            {
+                DialogTitleText.Text = title;
+                DialogMessageText.Text = message;
+                 
+                switch (icon)
+                {
+                    case CustomDialogIcon.Info:
+                        DialogIconText.Text = "ℹ️";
+                        DialogIconBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#200078D4"));
+                        break;
+                    case CustomDialogIcon.Warning:
+                        DialogIconText.Text = "⚠️";
+                        DialogIconBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#20FFB900"));
+                        break;
+                    case CustomDialogIcon.Error:
+                        DialogIconText.Text = "❌";
+                        DialogIconBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#20E81123"));
+                        break;
+                    case CustomDialogIcon.Question:
+                        DialogIconText.Text = "❓";
+                        DialogIconBorder.Background = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#200078D4"));
+                        break;
+                }
+
+                if (buttons == CustomDialogButtons.Ok)
+                {
+                    DialogOkButton.Visibility = Visibility.Visible;
+                    DialogYesButton.Visibility = Visibility.Collapsed;
+                    DialogNoButton.Visibility = Visibility.Collapsed;
+                }
+                else if (buttons == CustomDialogButtons.YesNo)
+                {
+                    DialogOkButton.Visibility = Visibility.Collapsed;
+                    DialogYesButton.Visibility = Visibility.Visible;
+                    DialogNoButton.Visibility = Visibility.Visible;
+                }
+
+                CustomDialogOverlay.Visibility = Visibility.Visible;
+            });
+
+            return _dialogTcs.Task;
+        }
+
+        private void DialogOkButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomDialogOverlay.Visibility = Visibility.Collapsed;
+            _dialogTcs?.TrySetResult(CustomDialogResult.Ok);
+        }
+
+        private void DialogYesButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomDialogOverlay.Visibility = Visibility.Collapsed;
+            _dialogTcs?.TrySetResult(CustomDialogResult.Yes);
+        }
+
+        private void DialogNoButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomDialogOverlay.Visibility = Visibility.Collapsed;
+            _dialogTcs?.TrySetResult(CustomDialogResult.No);
+        }
+
+        #endregion
 
         private void UnselectAll_AllGroups_Click(object sender, RoutedEventArgs e)
         {
@@ -2153,7 +2349,11 @@ namespace Multron_Win_Cleaner
 
             _itemsLoaded += toAdd.Count;
         }
-
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+ 
+                 base.OnClosing(e);
+        }
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);

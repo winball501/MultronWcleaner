@@ -1,0 +1,7 @@
+minutes:0
+autoclean:0
+trayicon:0
+themes:0
+utilitiestrayicon:0
+mon:1
+aggdeepclean:1

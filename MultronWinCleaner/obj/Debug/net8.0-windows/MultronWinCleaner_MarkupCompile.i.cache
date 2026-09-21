@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\App.xaml
-16-334432281
+18-1776095515
 1157652452
-281797642030
+30905482127
 2192117131742
-AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;LargeFileFinder.xaml;MainWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;RotatingCleanIcon.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
+AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;FolderDuplicatesWindow.xaml;LargeFileFinder.xaml;MainWindow.xaml;MatchingFilesWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;RotatingCleanIcon.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
 
 False
 

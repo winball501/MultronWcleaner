@@ -3,30 +3,39 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Utilities" Height="735" Width="800"
         WindowStyle="None" ResizeMode="NoResize"
+        Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
+        Icon="pack://application:,,,/Assets/mwc_utilities.ico"
         TextOptions.TextFormattingMode="Display">
 
     <Grid SnapsToDevicePixels="True" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display" Margin="0,0,0,23">
 
         <Border Background="{DynamicResource PanelBackground}" Height="56" VerticalAlignment="Top" CornerRadius="10"
-                Margin="10,10,10,0" Padding="0,0,10,0"
-                MouseDown="TopPanel_MouseLeftButtonDown"
-                Effect="{StaticResource DropShadowEffect}">
+        Margin="10,10,10,0" Padding="0,0,10,0"
+        MouseDown="TopPanel_MouseLeftButtonDown"
+        Effect="{StaticResource DropShadowEffect}">
             <DockPanel LastChildFill="False" Margin="8,0,8,0">
+               
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
                     <TextBlock Text="Multron Win Cleaner Utilities"
-                               FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
+                       FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
                 </StackPanel>
+ 
                 <Button Content="✕" DockPanel.Dock="Right" Style="{DynamicResource DangerButtonStyle}" Width="31" Height="30" FontSize="14"
-                        Click="CloseButton_Click" ToolTip="Close"
-                        Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+           Click="CloseButton_Click" ToolTip="Close"
+           Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+ 
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                    <TextBlock Text="Tray Icon" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="13"/>
+                    <ToggleButton x:Name="chkTrayIconUtil" Style="{StaticResource ToggleSwitchStyle}" Checked="chkTrayIconUtil_CheckedChanged" Unchecked="chkTrayIconUtil_CheckedChanged" VerticalAlignment="Center" />
+                </StackPanel>
             </DockPanel>
         </Border>
 
-        <ScrollViewer Margin="0,76,0,-28"
+        <ScrollViewer Margin="0,76,0,-33"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Padding="10,0,10,10">
@@ -45,33 +54,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Border Margin="10,0,10,0" Padding="12"
-        Background="{DynamicResource PanelBackground}"
-        CornerRadius="10"
-        VerticalAlignment="Center"
-        Effect="{StaticResource DropShadowEffect}" Grid.ColumnSpan="2">
-                        <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="6,0,8,0">
-                                <!-- Basit bir GitHub simgesi olarak emoji kullandım; isterseniz Path ile SVG de koyabilirsiniz -->
-                                <TextBlock Text="🐙" FontSize="20" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <StackPanel>
-                                    <TextBlock Text="Developed by" FontSize="12" Foreground="{DynamicResource TextSecondary}" />
-                                    <TextBlock x:Name="DevNameText" Text="winball501" FontSize="14" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimary}" />
-                                </StackPanel>
-                            </StackPanel>
 
-                            <Button x:Name="GitHubButton"
-                Content="View on GitHub"
-                Width="150" Height="36"
-                DockPanel.Dock="Right"
-                Cursor="Hand"
-                Click="GitHubButton_Click"
-                Style="{StaticResource RoundedButtonStyle}"
-                HorizontalAlignment="Right"
-                Margin="8,0,0,0"/>
-                        </DockPanel>
-                    </Border>
                     <Border Grid.Row="1" Grid.Column="0" Margin="10" Padding="15"
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
@@ -100,16 +83,14 @@
                                    HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                 <Button x:Name="FirewallScan" Content="Start Scan"
-                                        Width="140" Height="36"
-                                        Cursor="Hand" Click="FirewallClean_Click"
+                                        Width="140" Height="36" Cursor="Hand" Click="FirewallClean_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                                 <Button x:Name="FirewallReset" Content="Reset"
-                                        Width="140" Height="36"
-                                        Cursor="Hand" Click="FirewallReset_Click"
-                                        Visibility="Collapsed"
-                                        Margin="8,0,0,0"
-                                        Background="Blue"
+                                        Width="140" Height="36" Cursor="Hand" Click="FirewallReset_Click"
+                                        Visibility="Collapsed" Margin="8,0,0,0" Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
+                         
+                                <TextBlock x:Name="lblStatusFirewall" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -123,10 +104,14 @@
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
                             <TextBlock Text="Scans a selected folder for the largest files consuming disk space."
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                            <Button Content="Launch" Margin="0,15,0,0" Width="140" Height="36" HorizontalAlignment="Left"
-                                    Cursor="Hand" Click="LargeFilesScan_Click"
-                                    Style="{StaticResource RoundedButtonStyle}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="LargeFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusLargeFile" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseLargeFile" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseLargeFile_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                            </StackPanel>
+
                         </StackPanel>
+                        
                     </Border>
 
 
@@ -138,9 +123,11 @@
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
                             <TextBlock Text="Scans a selected folder to find duplicate files and helps you clean up disk space."
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                            <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left"
-                                    Cursor="Hand" Click="DuplicateFilesScan_Click"
-                                    Style="{StaticResource RoundedButtonStyle}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="DuplicateFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusDuplicate" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseDuplicate" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseDuplicate_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
@@ -156,10 +143,13 @@
                             <TextBlock FontSize="13" Foreground="DodgerBlue" Margin="0,0,0,10" Cursor="Hand">
                                 <Hyperlink Click="ConfigureTurboBoost_Click">Configure</Hyperlink>
                             </TextBlock>
-                            <Button x:Name="Turbo" Content="Apply Optimization" Width="180" Height="36"
-                                    HorizontalAlignment="Left" Cursor="Hand"
-                                    Click="ActivateTurboBoost_Click"
-                                    Style="{StaticResource RoundedButtonStyle}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Button x:Name="Turbo" Content="Apply Optimization" Width="180" Height="36"
+                                        HorizontalAlignment="Left" Cursor="Hand" Click="ActivateTurboBoost_Click"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                              
+                                <TextBlock x:Name="lblStatusTurbo" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
@@ -170,10 +160,12 @@
                             <TextBlock Text="Memory Cleaner" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
                             <TextBlock Text="Cleans system memory to help boost system speed and performance." 
-           FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                            <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left"
-                                    Cursor="Hand" Click="OpenMemoryCleaner_Click"
-                                    Style="{StaticResource RoundedButtonStyle}"/>
+                                       FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="OpenMemoryCleaner_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusMemCleaner" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseMemCleaner" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseMemCleaner_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
@@ -185,9 +177,11 @@
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
                             <TextBlock Text="Manage programs that run automatically when Windows starts. Speed up your boot time and disable or delete unwanted startup entries."
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                            <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left"
-                                    Cursor="Hand" Click="StartupManager_Click"
-                                    Style="{StaticResource RoundedButtonStyle}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="StartupManager_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusStartup" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseStartup" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseStartup_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 

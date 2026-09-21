@@ -168,10 +168,11 @@ namespace MultronWinCleaner.Processes
             await main.Dispatcher.InvokeAsync(() =>
             {
                 main.wrapPanelDirectories.Children.Clear();
-                main.wrapPanelDirectories.Visibility = Visibility.Visible;
-                main.wrapPanel1.Visibility = Visibility.Visible;
+                main.wrapPanelDirectories.Visibility = Visibility.Hidden;
+                main.wrapPanel1.Visibility = Visibility.Hidden;
                 main.dataGridGroups.Visibility = Visibility.Hidden;
-                main.ScrollViewerDetectedFiles.Visibility = Visibility.Visible;
+                main.wrapPanelDirectories.Visibility = Visibility.Visible;
+                main.ScrollViewerDirectories.Visibility = Visibility.Visible;
                 main.Datagridscroll.Visibility = Visibility.Hidden;
                 main.buttonStartScan.Content = "Cancel";
                 main.buttonReset.Visibility = Visibility.Hidden;
@@ -633,14 +634,11 @@ namespace MultronWinCleaner.Processes
                 });
 
                 resultMessage = main.autoclean == 1
-                    ? $"Auto Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}"
-                    : $"Cleaning done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}";
+                    ? $"Auto Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}" :   main.startupclean == 1   ? $"Startup Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}"  : $"Cleaning done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}";
             }
             else
             {
-                resultMessage = main.autoclean == 1
-                    ? $"Auto Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}"
-                    : $"Cleaning done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}";
+                resultMessage = main.autoclean == 1   ? $"Auto Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}" : main.startupclean == 1   ? $"Startup Clean done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now} Locked Files Found! {main.paths.Count}"    : $"Cleaning done! {main.formatsize(freedSpace)} cleaned. {DateTime.Now}";
             }
         
             await main.Dispatcher.InvokeAsync(() =>
@@ -656,13 +654,14 @@ namespace MultronWinCleaner.Processes
                 main.label1_Copy.Text = resultMessage;
                 main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8C00"));
                 main.reset = 1;
-                main.cancelclean = 0;
+               
                 
                 main.autoclean = 0;
                 main.onclean = 0;
                 main.buttonStartScan.Content = "Scan";
                 main.buttonStartScan.IsEnabled = false;
                 main.buttonReset.Visibility = Visibility.Visible;
+
                 if (main.settings.chkEnableNotifyClean.IsChecked == true && main.Visibility == Visibility.Hidden)
                 {
                     Notify notify = new Notify("Clean Information", $"Your system cleaned!\r\n", $"{main.formatsize(freedSpace)}");
@@ -697,7 +696,7 @@ namespace MultronWinCleaner.Processes
                     VerticalAlignment = VerticalAlignment.Top
                 };
                 main.wrapPanelDirectories.Children.Add(tb);
-            
+                main.ScrollViewerDirectories.ScrollToBottom();
             });
             return tb;
         }

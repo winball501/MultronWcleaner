@@ -512,6 +512,7 @@ namespace MultronWinCleaner.Processes
                     Margin = new Thickness(5)
                 };
                 main.wrapPanelDirectories.Children.Add(directorytextblock);
+                main.ScrollViewerDirectories.ScrollToBottom();
             });
         }
         
@@ -787,49 +788,77 @@ namespace MultronWinCleaner.Processes
                     main.buttonStartScan.Content = "Clean";
                 
                     main.AnimateIcon(false);
-                 
-                    if (main.autoclean == 1)
+                    if (main.startupscan == 1)
                     {
-                        if (main.cancelstatus.IsCancellationRequested)
+                        if (main.cancelstatus.IsCancellationRequested == true)
                         {
-                            main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                            main.label1_Copy.Text = $"Auto scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
-                        
-                        } else
+                           main.label1_Copy.Text = $"Startup scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+
+                        }
+                        else
                         {
-                            main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                            main.label1_Copy.Text = $"Auto scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                          
+                            main.label1_Copy.Text = $"Startup scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
                             main.Dispatcher.Invoke(() =>
                             {
                                 if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
                                 {
-                                    Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                    Notify notify = new Notify("Scan Information", $"Your startup system scan done!\r\n", $"{main.formatsize(totalsize)}");
                                     notify.Show();
                                 }
                             });
+                            if(main.startupclean == 1)
+                              main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         }
-
-                    }
-                    else
+                    } else
                     {
-                        if (main.cancelstatus.IsCancellationRequested)
+                        if (main.autoclean == 1)
                         {
-                            main.label1_Copy.Text = $"Scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
-
-                        } else
-                        {
-                            main.label1_Copy.Text = $"Scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
-                            await main.Dispatcher.InvokeAsync(() =>
+                            if (main.cancelstatus.IsCancellationRequested == true)
                             {
-                                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
-                                {
-                                    Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
-                                    notify.Show();
-                                }
-                            });
-                        }
+                             
+                                main.label1_Copy.Text = $"Auto scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
 
+                            }
+                            else
+                            {
+                           
+                                main.label1_Copy.Text = $"Auto scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.Dispatcher.Invoke(() =>
+                                {
+                                    if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
+                                    {
+                                        Notify notify = new Notify("Scan Information", $"Your auto system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                        notify.Show();
+                                    }
+                                });
+                                main.buttonStartScan.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                            }
+
+                        }
+                        else
+                        {
+                            if (main.cancelstatus.IsCancellationRequested == true)
+                            {
+                                main.label1_Copy.Text = $"Scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+
+                            }
+                            else
+                            {
+                                main.label1_Copy.Text = $"Scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                await main.Dispatcher.InvokeAsync(() =>
+                                {
+                                    if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
+                                    {
+                                        Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                        notify.Show();
+                                    }
+                                });
+                            }
+
+                        }
                     }
+                 
                   
 
 

@@ -1,131 +1,161 @@
 ﻿<Window x:Class="MultronWinCleaner.MemCleaner"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Memory Cleaner" Height="520" Width="513"
+        Title="Memory Cleaner" Height="480" Width="920"
         WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
         ResizeMode="NoResize"
         WindowStyle="None"
-     
-        Background="{DynamicResource WindowBackground}">
+        Background="Transparent"
+        AllowsTransparency="True">
 
-    <Border Background="{DynamicResource PanelBackground}" CornerRadius="18" Padding="0" Margin="12" Effect="{StaticResource DropShadowEffect}">
+    <Border Background="{DynamicResource PanelBackground}" CornerRadius="16" Padding="0" Margin="12" Effect="{StaticResource DropShadowEffect}">
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="56" />
+                <RowDefinition Height="50" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-         
-            <Border Background="{DynamicResource WindowBackground}" Grid.Row="0" CornerRadius="18,18,0,0" Padding="12,0" MouseDown="WindowDragMove">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" MouseDown="WindowDragMove" Background="Transparent" Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Multron Memory Cleaner" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Multron" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
+                    <TextBlock Text=" Memory Cleaner" FontSize="18" FontWeight="Light" Foreground="{DynamicResource TextSecondary}" />
+                </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" >
-                        <ToggleButton x:Name="BtnSettings" Content="≡"
-                                      Style="{DynamicResource ModernToggleButtonStyle}"
-                                      ToolTip="Show/Hide Settings"
-                                      Checked="BtnSettings_Checked"
-                                      Unchecked="BtnSettings_Unchecked" />
-                        <Button Width="36" Height="32" Content="─" FontSize="18" FontWeight="Bold"
-                                Style="{DynamicResource ModernButtonStyle}" Click="MinimizeButton_Click" ToolTip="Minimize" />
-                        <Button Width="36" Height="32" Content="✕" FontSize="16" FontWeight="Bold"
-                                Style="{DynamicResource DangerButtonStyle}" Click="CloseButton_Click" ToolTip="Close" />
-                    </StackPanel>
-                </Grid>
-            </Border>
- 
-            <Grid Grid.Row="1" Margin="24,24,24,-179">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
- 
-                <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,24">
-                    <Grid Width="210" Height="210">
-                      
-                        <Ellipse Width="210" Height="210"
-                 Stroke="{DynamicResource TextSecondary}"
-                 StrokeThickness="16" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1">
+                    <Button Width="30" Height="30" Content="─" FontSize="14" FontWeight="Bold"
+                            Style="{DynamicResource ModernButtonStyle}" Click="MinimizeButton_Click" ToolTip="Minimize" Margin="0,0,8,0"/>
+                    <Button Width="30" Height="30" Content="✕" FontSize="12" FontWeight="Bold"
+                            Style="{DynamicResource DangerButtonStyle}" Click="CloseButton_Click" ToolTip="Close" />
+                </StackPanel>
+            </Grid>
 
-                        <Path x:Name="ArcPath"
-      Width="210"
-      Height="210"
-      Stroke="{DynamicResource ProgressBarForeground}"
-      StrokeThickness="16"
-      StrokeStartLineCap="Round"
-      StrokeEndLineCap="Round"
-      Stretch="None"
-      RenderTransformOrigin="0.5,0.5" />
+            <Border Grid.Row="0" Height="1" Background="{DynamicResource TextSecondary}" Opacity="0.1" VerticalAlignment="Bottom" Margin="20,0"/>
 
+            <Grid Grid.Row="1" Margin="20,15,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="280" />
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                        <TextBlock x:Name="RamUsagePercentText"
-                   Text="0%" FontSize="44" FontWeight="Bold"
-                   Foreground="{DynamicResource TextPrimary}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
 
-                <TextBlock Text="Current RAM Usage"
-                           FontSize="20"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextSecondary}"
-                           HorizontalAlignment="Center"
-                           Margin="0,230,0,23" Grid.RowSpan="2" />
- 
-                <Button Name="CleanButton" Content="Clean Memory Now" Height="50"
-                        Style="{StaticResource ModernButtonStyle}" FontSize="18" FontWeight="SemiBold" Grid.Row="2"
-                        HorizontalAlignment="Center"
-                        Width="320"
-                        Click="CleanMemoryButton_Click" Margin="0,4,0,4" />
-
-                <TextBlock x:Name="CleanedMemoryLabel" Text="" FontSize="15" Foreground="Green" 
-                           HorizontalAlignment="Center" Grid.Row="3" Margin="0,44,0,0" />
- 
-                <StackPanel Grid.Row="3" HorizontalAlignment="Center" Width="420" Margin="0,10,0,94" Grid.RowSpan="2">
-
-                    <Border Background="{DynamicResource PanelBackground}" CornerRadius="12" Padding="20" Visibility="Collapsed" x:Name="SettingsPanel" Margin="0,12,0,0" Effect="{StaticResource DropShadowEffect}">
-                        <StackPanel>
-                            <CheckBox x:Name="chkEnableAutoClean" Content="Enable Automatic Cleaning" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkEnableAutoClean_Checked" Unchecked="chkEnableAutoClean_UnChecked" Margin="0,0,0,12" />
-
-                            <Grid VerticalAlignment="Center" Width="320" Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="Clean every" VerticalAlignment="Center" Foreground="{DynamicResource TextPrimary}" FontSize="16" Grid.Column="0" Margin="0,0,12,0" />
-                                <ComboBox x:Name="cbCleanInterval" Height="32" SelectedIndex="0" Grid.Column="1" FontSize="16" SelectionChanged="cbCleanInterval_SelectionChanged">
-                             
-                                    <ComboBoxItem Content="1 minutes"/>
-                                    <ComboBoxItem Content="5 minutes" />
-                                    <ComboBoxItem Content="10 minutes" />
-                                    <ComboBoxItem Content="15 minutes" />
-                                    <ComboBoxItem Content="30 minutes" />
-                                    <ComboBoxItem Content="1 hour" />
-                                    <ComboBoxItem Content="2 hour" />
-                                </ComboBox>
-                            </Grid>
-
-                            <CheckBox x:Name="chkSkipOnLowBattery" Content="Skip cleaning if battery lower than %30" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkSkipOnLowBattery_Checked" Unchecked="chkSkipOnLowBattery_UnChecked" Margin="0,0,0,12" />
-
-                            <CheckBox x:Name="chkShowNotification" Content="Show notification after cleaning" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkShowNotification_Checked" Unchecked="chkShowNotification_UnChecked" Margin="0,0,0,12" />
-
-                            <CheckBox x:Name="chkTopMostMonitor" Content="Keep Memory Monitor Always Top" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkTopMostMonitor_Checked" Unchecked="chkTopMostMonitor_Unchecked" Margin="0,0,0,12" />
-
-                            <CheckBox x:Name="chkSmartRAM" Content="Enable Memory Monitor Panel" FontSize="16" Foreground="{DynamicResource TextPrimary}" Checked="chkSmartRAM_Checked" Unchecked="chkSmartRAM_Unchecked" />
-                            <TextBlock x:Name="Status"  Text="Auto Clean Not Working"  Foreground="{DynamicResource TextPrimary}"  FontSize="16"  FontWeight="Medium" TextAlignment="Center"  TextWrapping="Wrap" />
+                    <Grid Width="150" Height="150" Margin="0,0,0,25">
+                        <Ellipse Width="150" Height="150" Stroke="{DynamicResource TextSecondary}" StrokeThickness="10" Opacity="0.1" />
+                        <Path x:Name="ArcPath" Width="150" Height="150" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stretch="None" RenderTransformOrigin="0.5,0.5">
+                            <Path.Stroke>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#3B82F6" Offset="0"/>
+                                    <GradientStop Color="#8B5CF6" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Path.Stroke>
+                        </Path>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="RAM" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock x:Name="RamUsagePercentText" Text="0%" FontSize="34" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
                         </StackPanel>
-                    </Border>
+                    </Grid>
+
+                    <StackPanel Margin="10,0">
+                        <TextBlock Text="INFO" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,8" />
+                        <TextBlock x:Name="CpuNameText" Text="Loading CPU..." FontSize="13" FontWeight="Medium" Foreground="{DynamicResource TextPrimary}" TextTrimming="CharacterEllipsis" Margin="0,0,0,6"/>
+                        <TextBlock x:Name="CpuUsageText" Text="CPU Load: %0" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                        <TextBlock x:Name="RamInfoText" Text="RAM: 0 GB / 0 GB" FontSize="13" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,6"/>
+                        <TextBlock x:Name="Status" Text="Auto Clean Status: Idle" Foreground="{DynamicResource TextSecondary}" FontSize="13" TextAlignment="Left" />
+                    </StackPanel>
+                </StackPanel>
+
+                <Border Grid.Column="1" Background="{DynamicResource TextSecondary}" Opacity="0.1" Margin="0,10"/>
+                <Border Grid.Column="3" Background="{DynamicResource TextSecondary}" Opacity="0.1" Margin="0,10"/>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="20,0,20,0" Height="262">
+                    <Button Name="CleanButton" Height="50" Style="{StaticResource ModernButtonStyle}" Click="CleanMemoryButton_Click" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🚀" FontSize="18" Margin="0,0,8,0"/>
+                            <TextBlock Text="Clean Memory Now" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock x:Name="CleanedMemoryLabel" Text="" FontSize="12" FontWeight="SemiBold" Foreground="#10B981" HorizontalAlignment="Center" Margin="0,0,0,25" />
+
+                    <TextBlock Text="CLEANING MODE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,8" />
+                    <RadioButton x:Name="rbQuickClean" Content="Quick Clean" FontSize="13" Foreground="{DynamicResource TextPrimary}" IsChecked="True" Margin="0,0,0,8"/>
+                    <RadioButton x:Name="rbDeepClean" Content="Deep Clean" FontSize="13" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,8" Checked="rbDeepClean_Checked"/>
+                    <RadioButton x:Name="rbDeepCleanAggresive" Content="Deep Clean (Aggressive)" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="rbDeepCleanAgressive_Checked"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="4" VerticalAlignment="Center" Margin="20,0">
+                    <TextBlock Text="AUTOMATION &amp; PREFERENCES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,12" />
+ 
+                    <CheckBox x:Name="chkSmartRAM" Content="Enable Memory Monitor Widget" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkSmartRAM_Checked" Unchecked="chkSmartRAM_Unchecked" Margin="0,0,0,6"/>
+ 
+                    <Button x:Name="btnResetWidgetLocation" Content="⌖ Reset Widget Location (Center)" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Background="#10000000" BorderBrush="Gray" BorderThickness="1" Cursor="Hand" Padding="12,6" HorizontalAlignment="Left" Margin="24,0,0,12" Click="btnResetWidgetLocation_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                         
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                                                <ContentPresenter HorizontalAlignment="Center" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                             
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Background" Value="#1A0078D4"/>
+                                                    <Setter TargetName="border" Property="BorderBrush" Value="#FF0078D4"/>
+                                                    <Setter Property="Foreground" Value="#FF0078D4"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                             
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=chkSmartRAM}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <CheckBox x:Name="chkTopMostMonitor" Content="Keep widget window always on top" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkTopMostMonitor_Checked" Unchecked="chkTopMostMonitor_Unchecked" Margin="0,0,0,10" />
+
+                    <CheckBox x:Name="chkEnableAutoClean" Content="Enable Automatic Cleaning" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkEnableAutoClean_Checked" Unchecked="chkEnableAutoClean_UnChecked" Margin="0,0,0,6"/>
+                    <Grid Margin="24,0,0,12" Width="180" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Every:" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}" FontSize="12" Grid.Column="0" Margin="0,0,8,0" />
+                        <ComboBox x:Name="cbCleanInterval" Height="26" SelectedIndex="0" Grid.Column="1" FontSize="12" SelectionChanged="cbCleanInterval_SelectionChanged">
+                            <ComboBoxItem Content="1 Minute"/>
+                            <ComboBoxItem Content="5 Minutes" />
+                            <ComboBoxItem Content="10 Minutes" />
+                            <ComboBoxItem Content="15 Minutes" />
+                            <ComboBoxItem Content="30 Minutes" />
+                            <ComboBoxItem Content="1 Hour" />
+                            <ComboBoxItem Content="2 Hours" />
+                        </ComboBox>
+                    </Grid>
+
+                    <CheckBox x:Name="chkShowNotification" Content="Show notification after cleaning" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkShowNotification_Checked" Unchecked="chkShowNotification_UnChecked" Margin="0,0,0,10" />
+                    <CheckBox x:Name="chkSkipOnLowBattery" Content="Skip cleaning if battery is below 30%" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkSkipOnLowBattery_Checked" Unchecked="chkSkipOnLowBattery_UnChecked" Margin="0,0,0,20" />
+                    <CheckBox x:Name="chkStartWithWinCleaner" Content="Start with Win Cleaner" FontSize="13" Foreground="{DynamicResource TextPrimary}" Checked="chkStartWithWinCleaner_Checked" Unchecked="chkStartWithWinCleaner_UnChecked" Margin="0,0,0,20" />
+
+                    <TextBlock Text="EXTRA CLEANUP" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,10" />
+                    <CheckBox x:Name="chkClearTemp" Content="Clear Windows Temp Files" FontSize="13" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,8" Checked="chkClearTemp_Checked" Unchecked="chkClearTemp_Unchecked"/>
+                    <CheckBox x:Name="chkClearClipboard" Content="Clear Clipboard Data" FontSize="13" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,8" Checked="chkClearClipboard_Checked" Unchecked="chkClearClipboard_Unchecked"/>
                 </StackPanel>
             </Grid>
         </Grid>

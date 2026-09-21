@@ -2,65 +2,120 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="New Startup Item Detected"
-        Height="240" Width="480"
+        Width="460" SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="Manual"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        Topmost="True"
+        FontFamily="Segoe UI Variable">
 
-    <Border CornerRadius="12"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource BorderBrush}"
-            Background="{DynamicResource WindowBackground}"
-            Padding="20"
-            SnapsToDevicePixels="True"
-            Effect="{DynamicResource DialogShadow}">
+    <Window.Resources>
+      
+        <DropShadowEffect x:Key="DropShadowSoft" Color="Black" BlurRadius="25" ShadowDepth="8" Opacity="0.30" />
+ 
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource ButtonHoverBackground}" />
+                                <Setter Property="Foreground" Value="{DynamicResource ButtonHoverForeground}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource ButtonPressedBackground}" />
+                                <Setter TargetName="border" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97" CenterX="0.5" CenterY="0.5"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        
+        <Style x:Key="WarningButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Background" Value="#FFB900" />
+            <Setter Property="Foreground" Value="#111111" />
+          
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFCC33" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#E6A600" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+ 
+    <Border Margin="20" Background="{DynamicResource PanelBackground}" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="16" Effect="{StaticResource DropShadowSoft}">
+        <Border Background="#10000000" CornerRadius="16" Padding="24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Text="New Startup Item Detected"
-                       FontSize="18"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource Text}"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,10"/>
+          
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
+                    <Border Width="40" Height="40" CornerRadius="20" Background="#20FFB900" Margin="0,0,12,0">
+                        <TextBlock Text="⚠️" Foreground="{DynamicResource TextPrimary}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="New Startup Item Detected!" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                </StackPanel>
+ 
+                <StackPanel Grid.Row="1" Margin="0,0,0,24">
+                    <TextBlock Text="A new application has been added to your system startup sequence. You can manage or disable it below." 
+                               FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" LineHeight="20" Margin="0,0,0,16"/>
+ 
+                    <Border Background="#08FFB900" BorderBrush="#60FFB900" BorderThickness="4,1,1,1" CornerRadius="8" Padding="16">
+                        <StackPanel>
+                            <TextBlock x:Name="ItemNameText" Text="StartupAppName.exe" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,6"/>
+                            <TextBlock x:Name="ItemPathText" Text="C:\Program Files\Example\StartupApp.exe" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+ 
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="1" Margin="10,0,10,0" HorizontalAlignment="Center">
-                <TextBlock x:Name="ItemNameText"
-                           Text="StartupAppName.exe"
-                           FontWeight="SemiBold"
-                           FontSize="16"
-                           TextAlignment="Center"
-                           Foreground="{DynamicResource SecondaryTextBrush}"
-                           Margin="0,0,0,10"/>
+                    <Button Grid.Column="0" Content="Ignore" Style="{StaticResource ModernButtonStyle}" 
+                            Background="Transparent" BorderThickness="1" BorderBrush="Gray" Foreground="{DynamicResource TextPrimary}" 
+                            Padding="0,12" Click="DisableButton_Click"/>
 
-                <TextBlock x:Name="ItemPathText"
-                           Text="C:\Program Files\Example\StartupApp.exe"
-                           TextWrapping="Wrap"
-                           FontSize="12"
-                           TextAlignment="Center"
-                           Foreground="{DynamicResource SecondaryTextBrush}" />
-            </StackPanel>
-
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button Content="Open Startup Manager"
-            Width="140"
-            Margin="10,0"
-            Padding="10,4"
-            Style="{DynamicResource AccentButtonStyle}"
-            Click="AllowButton_Click"/>
-                <Button Content="Ignore"
-            Width="140"
-            Margin="10,0"
-            Padding="10,4"
-            Click="DisableButton_Click"/>
-            </StackPanel>
-        </Grid>
+                    <Button Grid.Column="2" Content="Open Startup Manager" Style="{StaticResource WarningButtonStyle}" 
+                            Padding="0,12" Click="AllowButton_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
     </Border>
 </Window>

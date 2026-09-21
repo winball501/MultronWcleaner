@@ -37,11 +37,11 @@ namespace MultronWinCleaner
             this.Top = workingArea.Bottom - this.ActualHeight - 10; 
         }
 
-        private void AllowButton_Click(object sender, RoutedEventArgs e)
+        private async void AllowButton_Click(object sender, RoutedEventArgs e)
         {
-            
             startupManager.Show();
-            startupManager.WindowState = WindowState.Normal;
+            await Task.Delay(2064); 
+            this.Close();
         }
 
         private void DisableButton_Click(object sender, RoutedEventArgs e)

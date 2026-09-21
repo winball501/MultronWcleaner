@@ -3,10 +3,10 @@ using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.Win32;
 using Multron_Win_Cleaner;
 using System;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
@@ -15,7 +15,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,138 +25,147 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using static Multron_Win_Cleaner.MainWindow;
+
 namespace MultronWinCleaner
 {
-    /// <summary>
-    /// Interaction logic for Settings.xaml
-    /// </summary>
     public partial class Settings : Window
     {
-
         public HashSet<string> excludedfiles = new HashSet<string>();
-
         public string logfilepath = "";
-
         string excludedfilesdir = Environment.CurrentDirectory + "\\excluded.txt";
+
         MemCleaner memcleaner;
         Utilities Utilities;
         MainWindow mainWindow;
         StartupManager manager;
-      
+
         public Settings(MemCleaner memcleaner, Utilities utilities, MainWindow mainWindow, StartupManager manager)
         {
             InitializeComponent();
             this.memcleaner = memcleaner;
-            Utilities = utilities;
-            getusers();
+            this.Utilities = utilities;
             this.mainWindow = mainWindow;
             this.manager = manager;
-      
+             
+            _ = getusers();
         }
+
         public void defaultloglocation()
         {
-            if(logfilepath == "")
+            if (logfilepath == "")
             {
                 txtLogPath.Text = Environment.CurrentDirectory + "\\mwc_cleanlog.txt";
             }
-        
         }
+         
         public async Task getusers()
         {
-            await Task.Run(async () =>
+            string currentUser = WindowsIdentity.GetCurrent().Name;
+            string currentUserShort = currentUser.Contains("\\") ? currentUser.Split('\\')[1] : currentUser;
+
+           
+            List<string> foundUsers = new List<string>();
+             
+            await Task.Run(() =>
             {
-                await this.Dispatcher.InvokeAsync(() =>
+                using (PrincipalContext ctx = new PrincipalContext(ContextType.Machine))
                 {
-                    comboBoxUserSelection.Items.Clear();
-
-                    string currentUser = WindowsIdentity.GetCurrent().Name;
-                    string currentUserShort = currentUser.Contains("\\") ? currentUser.Split('\\')[1] : currentUser;
-
-                    using (PrincipalContext ctx = new PrincipalContext(ContextType.Machine))
+                    UserPrincipal userPrincipal = new UserPrincipal(ctx);
+                    using (PrincipalSearcher searcher = new PrincipalSearcher(userPrincipal))
                     {
-                        UserPrincipal userPrincipal = new UserPrincipal(ctx);
-                        PrincipalSearcher searcher = new PrincipalSearcher(userPrincipal);
-
                         foreach (var result in searcher.FindAll())
                         {
-                            UserPrincipal user = result as UserPrincipal;
-                            if (user != null && !string.IsNullOrEmpty(user.SamAccountName))
+                            if (result is UserPrincipal user && !string.IsNullOrEmpty(user.SamAccountName))
                             {
-                                comboBoxUserSelection.Items.Add(user.SamAccountName);
-
-
-                                if (user.SamAccountName.Equals(currentUserShort, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    comboBoxUserSelection.SelectedItem = user.SamAccountName;
-                                }
+                                foundUsers.Add(user.SamAccountName);
                             }
                         }
                     }
-
-                });
-
+                }
             });
-
-        }
-
-        public class SettingsTasks
-        {
-            Settings settings;
-
-            public SettingsTasks(Settings settings)
+             
+            comboBoxUserSelection.Items.Clear();
+            foreach (var username in foundUsers)
             {
-                this.settings = settings;
-            }
-
-            public async void run()
-            {
-                while (true)
+                comboBoxUserSelection.Items.Add(username);
+                if (username.Equals(currentUserShort, StringComparison.OrdinalIgnoreCase))
                 {
-                    await settings.Dispatcher.InvokeAsync(() =>
-                    {
-                        DateTime time = DateTime.Now;
-
-                        switch (settings.cmbScheduleType.SelectedIndex)
-                        {
-                            case 0:
-                                settings.txtStat.Text = "Status: " + time + " Selected = Only Minutes";
-                                break;
-
-                            case 1:
-                                settings.txtStat.Text = "Status: " + time + " Selected = Daily Default Interval Min 120 : " + settings.txtStartTime.Text + " " + settings.txtEndTime.Text;
-                                break;
-
-                            case 2:
-                                settings.txtStat.Text = "Status: " + time + " Selected = Weekly Default Interval Min 120 : " + settings.txtStartTime.Text + " " + settings.txtEndTime.Text;
-                                break;
-                            case 3:
-                                settings.txtStat.Text = "Status: " + time + " Selected = Custom";
-                                break;
-
-                        }
-                    });
-
-                    await Task.Delay(1000);
+                    comboBoxUserSelection.SelectedItem = username;
                 }
             }
-
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        { 
-            SettingsTasks settingsManager = new SettingsTasks(this);
-            new Thread(settingsManager.run) { IsBackground = true }.Start();
+
+ 
+        private async Task StatusUpdateLoop()
+        {
+            while (true)
+            {
+                DateTime time = DateTime.Now;
+                switch (cmbScheduleType.SelectedIndex)
+                {
+                    case 0: txtStat.Text = "Status: " + time + " Selected = Only Minutes"; break;
+                    case 1: txtStat.Text = "Status: " + time + " Selected = Daily Default Interval Min 120 : " + txtStartTime.Text + " " + txtEndTime.Text; break;
+                    case 2: txtStat.Text = "Status: " + time + " Selected = Weekly Default Interval Min 120 : " + txtStartTime.Text + " " + txtEndTime.Text; break;
+                    case 3: txtStat.Text = "Status: " + time + " Selected = Custom"; break;
+                }
+                await Task.Delay(1000);
+            }
+        }
+
+        public void LoadServiceSettings()
+        {
+            string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+            if (!System.IO.File.Exists(settingsPath)) return;
+
+            var lines = System.IO.File.ReadAllLines(settingsPath);
+            var settingsDict = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
              
+             
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("selectedservice:", StringComparison.OrdinalIgnoreCase))
+                {
+                    var parts = line.Split(':');
+                    if (parts.Length >= 3)
+                    {
+                        string serviceName = parts[1].Trim();
+                        bool isSelected = parts[2].Trim().Equals("true", StringComparison.OrdinalIgnoreCase);
+                        settingsDict[serviceName] = isSelected;
+                    }
+                }
+            }
+             
+            foreach (var svc in Utilities.turboBoostServices)
+            {
+                if (settingsDict.TryGetValue(svc.ServiceName, out bool isSelected))
+                {
+                    svc.IsSelected = isSelected;
+                }
+                else
+                {
+                    svc.IsSelected = true;  
+                }
+            }
+        }
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadServiceSettings();
+            _ = StatusUpdateLoop();
+
             if (!System.IO.File.Exists(excludedfilesdir))
+            {
                 System.IO.File.Create(excludedfilesdir).Close();
+            }
             else
             {
-                foreach (string line in System.IO.File.ReadLines(excludedfilesdir).Where(l => !string.IsNullOrWhiteSpace(l)))
+                var excludeLines = await System.IO.File.ReadAllLinesAsync(excludedfilesdir);
+                foreach (string line in excludeLines.Where(l => !string.IsNullOrWhiteSpace(l)))
                 {
                     lstExceptions.Items.Add(line);
                     excludedfiles.Add(line);
                 }
             }
-             
+
             string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
             var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -167,13 +175,13 @@ namespace MultronWinCleaner
             }
             else
             {
-                var lines = System.IO.File.ReadAllLines(settingsPath);
+                var lines = await System.IO.File.ReadAllLinesAsync(settingsPath);
                 settings = lines
                     .Where(l => l.Contains(":") && !l.StartsWith("selectedservice:", StringComparison.OrdinalIgnoreCase))
                     .Select(l => l.Split(new[] { ':' }, 2))
                     .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
             }
-             
+
             string GetString(string key, string fallback = "") => settings.TryGetValue(key, out string val) ? val : fallback;
             bool GetBool(string key) => GetString(key) == "1";
 
@@ -188,7 +196,9 @@ namespace MultronWinCleaner
                         break;
                     }
                 }
-            } 
+            }
+       
+
             chkAutoClean.IsChecked = GetBool("autoclean");
             chkTrayIcon.IsChecked = GetBool("trayicon");
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
@@ -198,26 +208,53 @@ namespace MultronWinCleaner
             chkEnableStartupClean.IsChecked = GetBool("startupclean");
             chkEnableNotifyScan.IsChecked = GetBool("startupnotifyscan");
             chkEnableNotifyClean.IsChecked = GetBool("startupnotifyclean");
-           
+
             AccessScan.IsChecked = GetBool("access_scan");
             OnlyBattery.IsChecked = GetBool("pluggedin");
             chkEnableLog.IsChecked = GetBool("enablelog");
-            chkShowLastLog.IsChecked = GetBool("showlastlog"); 
+            chkShowLastLog.IsChecked = GetBool("showlastlog");
             OldScan.IsChecked = GetBool("oldscan");
-             
-            memcleaner.chkEnableAutoClean.IsChecked = GetBool("automemclean");  
-            memcleaner.chkSmartRAM.IsChecked = GetBool("mon");
-            memcleaner.chkShowNotification.IsChecked = GetBool("sendnotify");
-            memcleaner.chkSkipOnLowBattery.IsChecked = GetBool("skipiflow");
-            memcleaner.chkTopMostMonitor.IsChecked = GetBool("topmost");
-            manager.tglShowNotifications.IsChecked = GetBool("startupwarning");
-             
+             if(memcleaner != null)
+            {
+                memcleaner.chkEnableAutoClean.IsChecked = GetBool("automemclean");
+                memcleaner.chkSmartRAM.IsChecked = GetBool("mon");
+                memcleaner.chkShowNotification.IsChecked = GetBool("sendnotify");
+                memcleaner.chkSkipOnLowBattery.IsChecked = GetBool("skipiflow");
+                memcleaner.chkTopMostMonitor.IsChecked = GetBool("topmost");
+
+                memcleaner.chkClearTemp.IsChecked = GetBool("cleartemp");
+                memcleaner.chkClearClipboard.IsChecked = GetBool("clearclip");
+                memcleaner.chkStartWithWinCleaner.IsChecked = GetBool("startwithwincleaner");
+
+                memcleaner.rbDeepClean.IsChecked = GetBool("deepclean");
+                memcleaner.rbDeepCleanAggresive.IsChecked = GetBool("aggdeepclean");
+                if (memcleaner.rbDeepClean.IsChecked == true)
+                {
+                    memcleaner.rbDeepCleanAggresive.IsChecked = false;
+                }
+                else if (memcleaner.rbDeepCleanAggresive.IsChecked == true)
+                {
+                    memcleaner.rbDeepClean.IsChecked = false;
+                }
+                else if (memcleaner.rbDeepClean.IsChecked == false && memcleaner.rbDeepCleanAggresive.IsChecked == false)
+                {
+                    memcleaner.rbQuickClean.IsChecked = true;
+                }
+            }
+          
+
+
+            if(manager != null)
+               manager.tglShowNotifications.IsChecked = GetBool("startupwarning");
+
             txtStartTime.Text = GetString("starttime", "08:00");
             txtEndTime.Text = GetString("endtime", "22:00");
-            txtCleaningInterval.Text = GetString("minutes", "0"); 
+            txtCleaningInterval.Text = GetString("minutes", "0");
             txtCustomAccess.Text = GetString("customaccess");
             txtCustomDay.Text = GetString("customday");
-             
+
+
+          
             string logPath = GetString("logpath");
             if (!string.IsNullOrEmpty(logPath))
             {
@@ -228,18 +265,7 @@ namespace MultronWinCleaner
             {
                 defaultloglocation();
             }
-
-            bool isTurboActive = GetBool("turboboost");
-            Utilities.Turbo.Content = isTurboActive ? "Apply Optimization" : "Undo Optimization";
-            Utilities.turboBoostActive = isTurboActive;
-
-            string extensionValue = GetString("deepscanlogex"); 
-            if (!string.IsNullOrEmpty(extensionValue))
-            {
-                mainWindow.extensions = extensionValue;
-                mainWindow.settings.txtNewExtension.Text = extensionValue;
-            }
-             
+ 
             SetComboBoxSelection(memcleaner.cbCleanInterval, GetString("mcminutes"));
             SetComboBoxSelection(cmbAccessPreset, GetString("accessscanindex"));
             SetComboBoxSelection(cmbAgePreset, GetString("oldscanindex"));
@@ -247,32 +273,23 @@ namespace MultronWinCleaner
             SetComboBoxSelection(cmbPostCleanupAction, GetString("postaction"));
         }
 
-        private void txtCleaningInterval_TextChanged(object sender, TextChangedEventArgs e)
+        private async void SaveSettings_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-        private void txtCleaningInterval_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-
-        }
-        private void SaveSettings_Click(object sender, RoutedEventArgs e)
-        {
-
             SaveButton.IsEnabled = false;
-            for (int c = 0; c < 32; c++)
+            try
             {
                 string path = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt";
-                var lines = System.IO.File.Exists(path) ? System.IO.File.ReadAllLines(path).ToList() : new List<string>();
+                var lines = System.IO.File.Exists(path) ? (await System.IO.File.ReadAllLinesAsync(path)).ToList() : new List<string>();
 
                 void Upsert(string key, string value)
                 {
-                    int index = lines.FindIndex(l => l.StartsWith(key + ":"));
+                    int index = lines.FindIndex(l => l.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase));
                     if (index != -1)
                         lines[index] = $"{key}:{value}";
                     else
                         lines.Add($"{key}:{value}");
                 }
-                System.IO.File.Delete(path);
+
                 Upsert("customday", txtCustomDay.Text.Trim());
                 Upsert("customaccess", txtCustomAccess.Text.Trim());
                 Upsert("endtime", txtEndTime.Text.Trim());
@@ -294,7 +311,6 @@ namespace MultronWinCleaner
                 Upsert("startupclean", chkEnableStartupClean.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyscan", chkEnableNotifyScan.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyclean", chkEnableNotifyClean.IsChecked == true ? "1" : "0");
-         
 
                 if (cmbAccessPreset.SelectedItem is ComboBoxItem selectedaccess)
                     Upsert("accessscanindex", selectedaccess.Content.ToString());
@@ -312,68 +328,60 @@ namespace MultronWinCleaner
                 {
                     string controlName = $"Day{i}";
                     string keyName = $"day{i}";
-
                     if (this.FindName(controlName) is CheckBox dayBox)
                         Upsert(keyName, dayBox.IsChecked == true ? "1" : "0");
                 }
 
-                System.IO.File.WriteAllLines(path, lines);
+                await System.IO.File.WriteAllLinesAsync(path, lines);
+                MessageBox.Show("Settings Saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            SaveButton.IsEnabled = true;
-
-
-            MessageBox.Show("Settings Saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            finally
+            {
+                SaveButton.IsEnabled = true;
+            }
+          
         }
+
 
 
         private void txtCleaningInterval_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-
             e.Handled = !IsNumeric(e.Text);
         }
 
         private bool IsNumeric(string text)
         {
-            int result;
-            return int.TryParse(text, out result);
+            return int.TryParse(text, out _);
         }
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.DragMove();
             }
         }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
         }
 
-        private void chkAutoClean_Checked(object sender, RoutedEventArgs e)
+        public async void addexception(string path)
         {
-
-        }
-
-        public void addexception(string path)
-        {
-
             if (!string.IsNullOrWhiteSpace(path) && !lstExceptions.Items.Contains(path))
             {
                 lstExceptions.Items.Add(path);
                 excludedfiles.Add(path);
                 txtExceptionPath.Clear();
 
-                using (StreamWriter writer = new StreamWriter(excludedfilesdir, append: true))
-                {
-                    writer.WriteLine(path);
-                }
+                await System.IO.File.AppendAllTextAsync(excludedfilesdir, path + Environment.NewLine);
             }
         }
-        public void removeexception(string path)
+
+        public async void removeexception(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return;
-
 
             foreach (var item in lstExceptions.Items.Cast<string>().ToList())
             {
@@ -384,20 +392,19 @@ namespace MultronWinCleaner
                 }
             }
 
-
             excludedfiles.Remove(path);
-
 
             if (System.IO.File.Exists(excludedfilesdir))
             {
-                var lines = System.IO.File.ReadAllLines(excludedfilesdir);
+                var lines = await System.IO.File.ReadAllLinesAsync(excludedfilesdir);
                 var updatedLines = lines
                     .Where(line => !line.Equals(path, StringComparison.OrdinalIgnoreCase))
                     .ToList();
 
-                System.IO.File.WriteAllLines(excludedfilesdir, updatedLines);
+                await System.IO.File.WriteAllLinesAsync(excludedfilesdir, updatedLines);
             }
         }
+
         private void AddException_Click(object sender, RoutedEventArgs e)
         {
             if (System.IO.File.Exists(txtExceptionPath.Text))
@@ -408,12 +415,12 @@ namespace MultronWinCleaner
             {
                 MessageBox.Show("Path is not correct or file not exists anymore");
             }
-
         }
 
         private void RemoveException_Click(object sender, RoutedEventArgs e)
         {
-            removeexception(lstExceptions.SelectedItem.ToString());
+            if (lstExceptions.SelectedItem != null)
+                removeexception(lstExceptions.SelectedItem.ToString());
         }
 
         private void RemoveExceptionAll_Click(object sender, RoutedEventArgs e)
@@ -424,112 +431,98 @@ namespace MultronWinCleaner
             }
         }
 
-        private void chkTrayIcon_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void chkRunOnStartup_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void chkRunOnStartup_Unchecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void allusersChecked(object sender, RoutedEventArgs e)
         {
             comboBoxUserSelection.IsEnabled = false;
-
         }
+
         private void allusersUnchecked(object sender, RoutedEventArgs e)
         {
             comboBoxUserSelection.IsEnabled = true;
-
-        }
-
-        private void comboBoxUserSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-
-
-
         }
 
         private async void ApplyUserSelection_Click(object sender, RoutedEventArgs e)
         {
-
             mainWindow.database.Clear();
             mainWindow.wrapPanel1.Children.Clear();
             var load = new MultronWinCleaner.Processes.Load(mainWindow);
             await Task.Run(() => load.RunAsync());
-
-
         }
-        public bool IsInStartup_Act()
-        {
-            Process proc = new Process();
-            proc.StartInfo.FileName = "schtasks.exe";
-            proc.StartInfo.Arguments = "/query /tn \"MultronWCleaner\"";
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.Start();
-            proc.WaitForExit();
 
-            return proc.ExitCode == 0;
-        }
-        public bool RemoveFromStartup_Act()
+
+        public async Task<bool> IsInStartup_ActAsync()
         {
             try
             {
-                Process proc = new Process();
-                proc.StartInfo.FileName = "schtasks.exe";
-                proc.StartInfo.Arguments = "/delete /tn \"MultronWCleaner\" /f";
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.CreateNoWindow = true;
-                proc.Start();
-                proc.WaitForExit();
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "schtasks.exe",
+                    Arguments = "/query /tn \"MultronWCleaner\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                  
+                };
 
+                using var proc = Process.Start(startInfo);
+                if (proc == null) return false;
+
+                
+                await Task.Run(() => proc.WaitForExit());
                 return proc.ExitCode == 0;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
-        public bool CreateStartupTask()
+        public async Task<bool> RemoveFromStartup_ActAsync()
         {
             try
             {
-                 
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "schtasks.exe",
+                    Arguments = "/delete /tn \"MultronWCleaner\" /f",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using var proc = Process.Start(startInfo);
+                if (proc == null) return false;
+
+                await Task.Run(() => proc.WaitForExit());
+                return proc.ExitCode == 0;
+            }
+            catch { return false; }
+        }
+
+        public async Task<bool> CreateStartupTaskAsync()
+        {
+            try
+            {
                 string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 
-                Process proc = new Process();
-                proc.StartInfo.FileName = "schtasks.exe";
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "schtasks.exe",
+                   
+                    Arguments = $"/create /tn \"MultronWCleaner\" /tr \"\\\"{exePath}\\\" -startup\" /sc onlogon /rl highest /f",
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
-                proc.StartInfo.Arguments = $"/create /tn \"MultronWCleaner\" /tr \"\\\"{exePath}\\\" -startup\" /sc onlogon /rl highest /f";
-                proc.StartInfo.UseShellExecute = false;
-                proc.StartInfo.CreateNoWindow = true;
-                proc.Start();
-                proc.WaitForExit();
+                using var proc = Process.Start(startInfo);
+                if (proc == null) return false;
 
+                await Task.Run(() => proc.WaitForExit());
                 return proc.ExitCode == 0;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
-        private void AddToStartup_Click(object sender, RoutedEventArgs e)
+        private async void AddToStartup_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsInStartup_Act())
+            if (!await IsInStartup_ActAsync())
             {
-                bool success = CreateStartupTask();
+                bool success = await CreateStartupTaskAsync();
 
                 if (success)
                 {
@@ -546,12 +539,11 @@ namespace MultronWinCleaner
             }
         }
 
-        private void RemoveFromStartup_Click(object sender, RoutedEventArgs e)
+        private async void RemoveFromStartup_Click(object sender, RoutedEventArgs e)
         {
-            
-            if (IsInStartup_Act())
+            if (await IsInStartup_ActAsync())
             {
-                bool success = RemoveFromStartup_Act();
+                bool success = await RemoveFromStartup_ActAsync();
 
                 if (success)
                 {
@@ -567,18 +559,22 @@ namespace MultronWinCleaner
                 MessageBox.Show("The program is not currently in the startup list.", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
         private void OldScan_Checked(object sender, RoutedEventArgs e)
         {
             AccessScan.IsChecked = false;
         }
+
         private void btnAutoCleanHelp_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Once you configure your settings, automatic cleaning will start if the checkmark above is enabled. However, if you close and reopen the software, it will reset. It needs to keep running continuously, this way it will no longer create files or registry in the system. I may think about improving this later, but for now this approach seemed better.", "Auto Clean Help", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
         private void btnScannerHelp_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("These settings are intended for high-end systems. If you are using an older system, there is no need to modify these settings. You don't need to use in old systems because cache files cause slowdowns and fill up storage space on older systems. However, high-end systems can reduce power consumption and allow applications to open faster by using cache files and similar optimizations. The recommended setting is 30 days, but you can adjust it according to your own knowledge or situation.", "Scanner Help", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
         private void AccessScan_Checked(object sender, RoutedEventArgs e)
         {
             OldScan.IsChecked = false;
@@ -591,12 +587,12 @@ namespace MultronWinCleaner
 
         private void AddExtension_Click(object sender, RoutedEventArgs e)
         {
-            if(mainWindow.extensions == txtNewExtension.Text)
+            if (mainWindow.extensions == txtNewExtension.Text)
             {
                 System.Windows.Forms.MessageBox.Show("No changed detected. " + txtNewExtension.Text + " > " + mainWindow.extensions);
                 return;
-
             }
+
             string input = txtNewExtension.Text.Trim();
 
             if (input.Contains(" "))
@@ -610,21 +606,20 @@ namespace MultronWinCleaner
                 MessageBox.Show("Invalid format. Example: .log.etl.dmp.tmp", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
             var result = System.Windows.MessageBox.Show("Are you sure to add " + txtNewExtension.Text + "?", "Confirm", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
 
             if (result == System.Windows.MessageBoxResult.Yes)
             {
-
                 mainWindow.extensions = txtNewExtension.Text;
-                System.Windows.MessageBox.Show("Changes applied. " + mainWindow.extensions   + " > " + txtNewExtension.Text, "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-            } 
+                System.Windows.MessageBox.Show("Changes applied. " + mainWindow.extensions + " > " + txtNewExtension.Text, "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
         }
 
         private void OpenLogFile_Click(object sender, RoutedEventArgs e)
         {
-         
+            if (System.IO.File.Exists(logfilepath))
                 Process.Start("explorer.exe", logfilepath);
- 
         }
 
         private void OpenAppFolder_Click(object sender, RoutedEventArgs e)
@@ -643,27 +638,25 @@ namespace MultronWinCleaner
             Process.Start("explorer.exe", folderPath);
         }
 
-        private void ClearLog_Click(object sender, RoutedEventArgs e)
+        private async void ClearLog_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                System.IO.File.WriteAllText(logfilepath, "");
+                await System.IO.File.WriteAllTextAsync(logfilepath, "");
                 MessageBox.Show("Log file " + logfilepath + " all logs cleaned!", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Error clearing log: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-       
-
         }
 
-     
         private void BrowseLogPath_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new OpenFolderDialog();
             dialog.Title = "Select Folder For Log File.";
-          
+
             dialog.DefaultDirectory = Environment.CurrentDirectory;
             dialog.InitialDirectory = Environment.CurrentDirectory;
             if (dialog.ShowDialog() == true)
@@ -672,24 +665,7 @@ namespace MultronWinCleaner
             }
         }
 
-      
-
-        private void ResetLogPath_Click(object sender, RoutedEventArgs e)
-        {
-               
-        }
-
-        private void chkEnableLog_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void txtLogPath_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void ApplyLog_Click(object sender, RoutedEventArgs e)
+        private async void ApplyLog_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -698,15 +674,14 @@ namespace MultronWinCleaner
                 if (!txtLogPath.Text.EndsWith(".txt"))
                 {
                     string path = txtLogPath.Text + "\\mwc_cleanlog.txt";
-                    System.IO.File.AppendAllText(path, logEntry);
+                    await System.IO.File.AppendAllTextAsync(path, logEntry);
                     logfilepath = path;
                     txtLogPath.Text = path;
                 }
                 else
                 {
-                    System.IO.File.AppendAllText(txtLogPath.Text, logEntry);
+                    await System.IO.File.AppendAllTextAsync(txtLogPath.Text, logEntry);
                     logfilepath = txtLogPath.Text;
-
                 }
 
                 MessageBox.Show("Log path applied successfully!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -714,9 +689,7 @@ namespace MultronWinCleaner
             catch (Exception ex)
             {
                 MessageBox.Show("Error applying log path: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
             }
-        
         }
     }
 }

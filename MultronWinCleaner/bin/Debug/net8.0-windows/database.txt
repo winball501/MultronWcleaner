@@ -1,0 +1,1636 @@
+{=Windows
+LocalTemp=C:\Users\{##}\AppData\Local\Temp=true
+WindowsTemp=C:\Windows\Temp=true
+Prefetch=C:\Windows\Prefetch=false
+Recent=C:\Users\{##}\AppData\Roaming\Microsoft\Windows\Recent=false
+Downloads=C:\Users\{##}\Downloads=false
+DeliveryOptimization=C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization=true
+WindowsUpdateDownload=C:\WINDOWS\SoftwareDistribution\Download=true
+D3DSCache=C:\Users\{##}\AppData\Local\D3DSCache=false
+WindowsLogs=C:\Windows\Logs=true
+$WindowsBT=C:\$Windows.~BT=true
+WindowsFontCache=C:\Windows\ServiceProfiles\LocalService\AppData\Local\FontCache=true
+WindowsWebCache=C:\Users\{##}\AppData\Local\Microsoft\Windows\WebCache=true
+DownloadedProgramFiles=C:\Windows\Downloaded Program Files=true
+WindowsErrorReporting=C:\ProgramData\Microsoft\Windows\WER=true
+OldDriverFiles=C:\Windows\System32\DriverStore\FileRepository=false
+WindowsEventLogs=C:\Windows\System32\winevt\Logs=true
+WindowsRestorePoints=C:\System Volume Information=false
+WindowsMemoryDump=C:\Windows\MEMORY.DMP=false
+WindowsThumbnailCache=C:\Users\{##}\AppData\Local\Microsoft\Windows\Explorer=true
+WindowsSearchIndex=C:\ProgramData\Microsoft\Search\Data\Applications\Windows=true
+CrashDumps=C:\Windows\Minidump=true
+DirectXShaderCache=C:\Users\{##}\AppData\Local\Microsoft\DirectX=false
+WindowsFODCache=C:\Windows\servicing\InboxFodMetadataCache=false
+WindowsCortanaUICache=C:\Windows\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\Cortana.UI\cache=true
+WindowsClientWebExperienceCache=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Cache=true
+WindowsClientWebExperienceCodeCache=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Code Cache=true
+WindowsClientWebExperienceServiceWorkerCacheStorage=C:\Users\{##}\AppData\Local\Packages\MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy\LocalState\EBWebView\Default\Service Worker\CacheStorage=false
+WindowsLogFiles=C:\Windows\System32\LogFiles=true
+WindowsSystemTemp=C:\Windows\System32\Temp=false
+WindowsInstallerTemp=C:\Windows\Installer\$PatchCache$=true
+WindowsCompatCache=C:\Windows\AppCompat\Programs=true
+WindowsDiagTrackLogs=C:\ProgramData\Microsoft\Diagnosis\ETLLogs=true
+WindowsWindowsUpdateLogs=C:\Windows\Logs\WindowsUpdate=true
+WindowsProvisioningPackages=C:\Windows\Provisioning\Packages=true
+WindowsLiveTilesCache=C:\Users\{##}\AppData\Local\Microsoft\Windows\CloudStore\Cache\Cache.dat=false
+WindowsRecycleBin=C:\$Recycle.Bin=true
+WindowsOfflineWebPages=C:\Users\{##}\AppData\Local\Microsoft\Windows\INetCache\IE=true
+WindowsSystemRestoreCache=C:\System Volume Information\_restore=false
+WindowsTemporaryInternetFiles=C:\Users\{##}\AppData\Local\Microsoft\Windows\INetCache=true
+WindowsInternetCacheLow=C:\Users\{##}\AppData\LocalLow\Microsoft\Internet Explorer\IECompatCache=false
+WindowsSetupTemp=C:\Windows\Temp\Setup=true
+WindowsSoftwareDistributionData=C:\Windows\SoftwareDistribution\DataStore=true
+WindowsSoftwareDistributionEventLogs=C:\Windows\SoftwareDistribution\EventCache=false
+WindowsSysWOW64Temp=C:\Windows\SysWOW64\Temp=false
+WindowsSystem32Spool=C:\Windows\System32\spool\PRINTERS=true
+WindowsPerformanceLogs=C:\Windows\Performance\WinSAT\Datastore=true
+WindowsDiagnosticsPerformanceLogs=C:\Windows\Performance\Diagnostics\PerfLogs=false
+WindowsSystem32Tasks=C:\Windows\System32\Tasks=true
+WindowsSystem32WDI=C:\Windows\System32\WDI=true
+WindowsSystemTempLowLevel=C:\Windows\System32\config\systemprofile\AppData\Local\Temp=false
+DumpFiles=C:\Windows\MEMORY.DMP=false
+WindowsSearchTemp=C:\ProgramData\Microsoft\Search\Data\Temp=true
+LiveKernelReports=C:\Windows\LiveKernelReports=true
+AppdataLocalCrashDumps=C:\Users\{##}\AppData\Local\CrashDumps=true
+AppDataPackageCache=C:\Users\{##}\AppData\Local\Package Cache=false
+IconCache=C:\Users\{##}\AppData\Local\Microsoft\Windows\Explorer=true
+SystemPagefile=C:\pagefile.sys=false
+SystemHiberFile=C:\hiberfil.sys=false
+}
+{=MicrosoftVisualStudio
+MSVisualStudioPackages=C:\ProgramData\Microsoft\VisualStudio\Packages=false
+MSVisualStudioTemp=C:\Users\{##}\AppData\Local\Temp\VisualStudio=true
+MSVisualStudioCache=C:\Users\{##}\AppData\Local\Microsoft\VisualStudio\Cache=false
+MSVisualStudioLogs=C:\Users\{##}\AppData\Local\Microsoft\VisualStudio\Logs=false
+MSVisualStudioComponentModelCache=C:\Users\{##}\AppData\Local\Microsoft\VisualStudio\ComponentModelCache=false
+}
+{=JetBrains
+JetBrainsCache=C:\Users\{##}\AppData\Local\JetBrains\Cache=false
+JetBrainsLogs=C:\Users\{##}\AppData\Local\JetBrains\Log=false
+JetBrainsTemp=C:\Users\{##}\AppData\Local\JetBrains\Temp=false
+JetBrainsUpdaterCache=C:\Users\{##}\AppData\Local\JetBrains\UpdaterCache=false
+}
+{=UnityEditor
+UnityCache=C:\Users\{##}\AppData\Local\Unity\cache=false
+UnityLogs=C:\Users\{##}\AppData\Local\Unity\Editor=false
+UnityTempProjects=C:\Users\{##}\AppData\Local\Temp\UnityTempFileCache=true
+}
+{=Element Desktop Client
+Element Cache=C:\Users\{##}\AppData\Roaming\Element\Cache=false
+Element Code Cache=C:\Users\{##}\AppData\Roaming\Element\Code Cache=false
+Element GPU Cache=C:\Users\{##}\AppData\Roaming\Element\GPUCache=false
+Element Dawn Graphite Cache=C:\Users\{##}\AppData\Roaming\Element\DawnGraphiteCache=false 
+Element Dawn Web GPU Cache=C:\Users\{##}\AppData\Roaming\Element\DawnWebGPUCache=false
+Element IndexedDB Folder=C:\Users\{##}\AppData\Roaming\Element\IndexedDB=false
+}
+{=AMD
+AMDOldInstallationFiles=C:\AMD=false
+AMDDXCache=C:\Users\{##}\AppData\Local\AMD\DxCache=false
+AMDDXCCache=C:\Users\{##}\AppData\Local\AMD\DxcCache=false
+AMDOGLCache=C:\Users\{##}\AppData\Local\AMD\OglCache=false
+AMDVKCache=C:\Users\{##}\AppData\Local\AMD\VkCache=false
+AMDLogs=C:\ProgramData\AMD\PCLogging=false
+AMDInstallerTemp=C:\Users\{##}\AppData\Local\Temp\AMDInstaller=true
+AMDChipsetInstallerLogs=C:\ProgramData\AMD\Chipset_IODrivers\Logs=false
+AMDRadeonSoftwareTemp=C:\Users\{##}\AppData\Local\Temp\AMDRadeonSoftware=true
+AMDCrashReports=C:\ProgramData\AMD\ErrorLogs=false
+AMDCrashDump=C:\ProgramData\AMD\CrashDump=false
+AMDCommonCache=C:\ProgramData\AMD\Cache=false
+AMDGPULogs=C:\Users\{##}\AppData\Local\AMD\CN\gpusniffer_logs=false
+AMDAdrenalinTelemetry=C:\ProgramData\AMD\PerformanceProfileClient=false
+AMDAdrenalinCache=C:\Users\{##}\AppData\Local\AMD\CN\Cache=false
+}
+{=MozillaThunderbird
+#profile#=C:\Users\{##}\AppData\Local\Thunderbird\Profiles\=true
+ThunderbirdCache=C:\Users\{##}\AppData\Local\Thunderbird\Cache=false
+ThunderbirdOfflineCache=C:\Users\{##}\AppData\Local\Thunderbird\OfflineCache=false
+ThunderbirdCrashReports=C:\Users\{##}\AppData\Local\Thunderbird\Crash Reports=false
+ThunderbirdLogs=C:\Users\{##}\AppData\Roaming\Thunderbird\Logs=false
+ThunderbirdProfiles=#profileget#=\=false
+ThunderbirdPrefs=#profileget#=\prefs.js=false
+ThunderbirdMailData=#profileget#=\Mail\Local Folders=false
+ThunderbirdCache=#profileget#=\cache=true
+ThunderbirdTemp=C:\Users\{##}\AppData\Local\Temp\Thunderbird=true
+}
+{=Helium Browser
+#profile#=C:\Users\{##}\AppData\Local\imput\Helium\User Data\=true
+HeliumCache=#profileget#=\Cache=true
+HeliumCodeCache=#profileget#=\Code Cache=true
+HeliumGPUCache=#profileget#=\GPUCache=true
+HeliumMediaCache=#profileget#=\Media Cache=true
+HeliumShaderCache=#profileget#=\Shader Cache=true
+HeliumServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+HeliumIndexedDB=#profileget#=\IndexedDB=false
+HeliumLocalStorage=#profileget#=\Local Storage=false
+HeliumSessionStorage=#profileget#=\Session Storage=false
+HeliumCookies=#profileget#=\Network\Cookies=false
+HeliumHistory=#profileget#=\History=false
+HeliumHistoryBackup=#profileget#=\History Provider Cache=false
+HeliumTopSites=#profileget#=\Top Sites=false
+HeliumVisitedLinks=#profileget#=\Visited Links=false
+HeliumNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+HeliumExtensionState=#profileget#=\Extension State=false
+HeliumPreferences=#profileget#=\Preferences=false
+HeliumSessions=#profileget#=\Sessions=false
+HeliumWebSQL=#profileget#=\databases=true
+}
+{=NVIDIA
+NvidiaDownloader=C:\ProgramData\NVIDIA Corporation\Downloader=false
+NVIDIAAppCefCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\NVIDIA App\CefCache\Cache=false
+NVIDIAAppCodeCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\NVIDIA App\CefCache\Code Cache=false
+NVIDIAAppGPUCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\NVIDIA App\CefCache\GPUCache=false
+NVIDIAAppLogs=C:\Users\{##}\AppData\Local\NVIDIA Corporation\NVIDIA App\logs=false
+NVIDIAAppCrashDumps=C:\Users\{##}\AppData\Local\NVIDIA Corporation\NVIDIA App\CrashDumps=false
+NVIDIAComputeCache=C:\Users\{##}\AppData\Roaming\NVIDIA\ComputeCache=false
+NVIDIADXCache=C:\Users\{##}\AppData\Local\NVIDIA\DXCache=false
+NVIDIAGLCache=C:\Users\{##}\AppData\Local\NVIDIA\GLCache=false
+NVIDIAInstallerTemp=C:\Users\{##}\AppData\Local\Temp\NVIDIA=true
+NVIDIAProgramDataTemp=C:\ProgramData\NVIDIA Corporation\NetService=false
+NVIDIAShadowPlayTemp=C:\Users\{##}\AppData\Local\Temp\NVIDIA Corporation\ShadowPlay=true
+NVIDIAOverlayCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\GeForce Experience\CefCache=false
+NVIDIAOverlayCodeCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\GeForce Experience\CefCache\Code Cache=false
+NVIDIAOverlayGPUCache=C:\Users\{##}\AppData\Local\NVIDIA Corporation\GeForce Experience\CefCache\GPUCache=false
+NVIDIAGeForceLogs=C:\ProgramData\NVIDIA Corporation\GeForce Experience\logs=false
+NVIDIASetupLogs=C:\Program Files\NVIDIA Corporation\Installer2\InstallerCore\setup.log=false
+}
+{=Claude AI
+ClaudeCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Cache=true
+ClaudeCodeCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Code Cache=true
+ClaudeGPUCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\GPUCache=true
+ClaudeMediaCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Media Cache=false
+ClaudeShaderCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Shader Cache=false
+ClaudeServiceWorkerCache=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Service Worker\CacheStorage=false
+ClaudeIndexedDB=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\IndexedDB=false
+ClaudeLocalStorage=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Local Storage=false
+ClaudeSessionStorage=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Session Storage=false
+ClaudeCookies=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Network\Cookies=false
+ClaudeNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+ClaudeExtensionState=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Extension State=false
+ClaudePreferences=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Preferences=false
+ClaudeSessions=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\Sessions=false
+ClaudeWebSQL=C:\Users\{##}\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\databases=false
+}
+{=Chromium
+#profile#=C:\Users\{##}\AppData\Local\Chromium\User Data\=true
+ChromiumCache=#profileget#=\Cache=true
+ChromiumCodeCache=#profileget#=\Code Cache=true
+ChromiumGPUCache=#profileget#=\GPUCache=true
+ChromiumMediaCache=#profileget#=\Media Cache=true
+ChromiumShaderCache=#profileget#=\Shader Cache=true
+ChromiumServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+ChromiumIndexedDB=#profileget#=\IndexedDB=false
+ChromiumLocalStorage=#profileget#=\Local Storage=false
+ChromiumSessionStorage=#profileget#=\Session Storage=false
+ChromiumCookies=#profileget#=\Network\Cookies=false
+ChromiumHistory=#profileget#=\History=false
+ChromiumHistoryBackup=#profileget#=\History Provider Cache=false
+ChromiumTopSites=#profileget#=\Top Sites=false
+ChromiumVisitedLinks=#profileget#=\Visited Links=false
+ChromiumNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+ChromiumExtensionState=#profileget#=\Extension State=false
+ChromiumPreferences=#profileget#=\Preferences=false
+ChromiumSessions=#profileget#=\Sessions=false
+ChromiumWebSQL=#profileget#=\databases=true
+}
+{=Yandex
+#profile#=C:\Users\{##}\AppData\Local\Yandex\YandexBrowser\User Data\=true
+YandexCache=#profileget#=\Cache=true
+YandexCodeCache=#profileget#=\Code Cache=true
+YandexGPUCache=#profileget#=\GPUCache=true
+YandexMediaCache=#profileget#=\Media Cache=true
+YandexShaderCache=#profileget#=\Shader Cache=true
+YandexServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+YandexIndexedDB=#profileget#=\IndexedDB=false
+YandexLocalStorage=#profileget#=\Local Storage=false
+YandexSessionStorage=#profileget#=\Session Storage=false
+YandexCookies=#profileget#=\Network\Cookies=false
+YandexHistory=#profileget#=\History=false
+YandexHistoryBackup=#profileget#=\History Provider Cache=false
+YandexTopSites=#profileget#=\Top Sites=false
+YandexVisitedLinks=#profileget#=\Visited Links=false
+YandexNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+YandexExtensionState=#profileget#=\Extension State=false
+YandexPreferences=#profileget#=\Preferences=false
+YandexSessions=#profileget#=\Sessions=false
+YandexWebSQL=#profileget#=\databases=true
+}
+{=Brave
+#profile#=C:\Users\{##}\AppData\Local\BraveSoftware\Brave-Browser\User Data\=true
+BraveCache=#profileget#=\Cache=true
+BraveCodeCache=#profileget#=\Code Cache=true
+BraveGPUCache=#profileget#=\GPUCache=true
+BraveMediaCache=#profileget#=\Media Cache=true
+BraveShaderCache=#profileget#=\Shader Cache=true
+BraveServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+BraveIndexedDB=#profileget#=\IndexedDB=false
+BraveLocalStorage=#profileget#=\Local Storage=false
+BraveSessionStorage=#profileget#=\Session Storage=false
+BraveCookies=#profileget#=\Network\Cookies=false
+BraveHistory=#profileget#=\History=false
+BraveHistoryBackup=#profileget#=\History Provider Cache=false
+BraveTopSites=#profileget#=\Top Sites=false
+BraveVisitedLinks=#profileget#=\Visited Links=false
+BraveNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+BraveExtensionState=#profileget#=\Extension State=false
+BravePreferences=#profileget#=\Preferences=false
+BraveSessions=#profileget#=\Sessions=false
+BraveWebSQL=#profileget#=\databases=true
+}
+{=LibreOffice
+#profile#=C:\Users\{##}\AppData\Roaming\LibreOffice\=true
+LibreOfficeUserConfig=#profileget#=\user=false
+LibreOfficeUserCache=#profileget#=\cache=true
+LibreOfficeUserExtensions=#profileget#=\extensions=false
+LibreOfficeUserLogs=#profileget#=\logs=false
+LibreOfficeBackup=#profileget#=\backup=false
+LibreOfficeCrashReports=C:\Users\{##}\AppData\Local\LibreOffice\CrashReports=false
+LibreOfficeRegistryCache=C:\Users\{##}\AppData\Local\LibreOffice\registrycache=false
+LibreOfficeOfflineStorage=C:\Users\{##}\AppData\Local\LibreOffice\offline_storage=false
+}
+{=Zen Browser Roaming
+#profile#=C:\Users\{##}\AppData\Roaming\zen\Profiles\=true
+ZenHistory=#profileget#=\places.sqlite=false
+ZenCookies=#profileget#=\Cookies.sqlite=false
+ZenStorage=#profileget#=\storage\default=false
+ZenFormHistory=#profileget#=\formhistory.sqlite=false
+ZenSitePreferences=#profileget#=\sitePreferences.sqlite=false
+ZenSessionstore=#profileget#=\sessionstore-backups=false
+ZenPermissions=#profileget#=\permissions.sqlite=false
+ZenContentPrefs=#profileget#=\content-prefs.sqlite=false
+ZenCrashReports=#profileget#=\crashes=false
+}
+{=Zen Browser Local
+#profile#=C:\Users\{##}\AppData\Local\zen\Profiles\=true
+ZenCache=#profileget#=\cache2=true
+ZenJumpListCache=#profileget#=\jumpListCache=true
+ZenStartupCache=#profileget#=\startupCache=true
+ZenOfflineCache=#profileget#=\OfflineCache=true
+ZenThumbnails=#profileget#=\thumbnails=false
+}
+{=Firefox Local
+#profile#=C:\Users\{##}\AppData\Local\Mozilla\Firefox\Profiles\=true
+FirefoxCache=#profileget#=\cache2=true
+FirefoxJumpListCache=#profileget#=\jumpListCache=true
+FirefoxStartupCache=#profileget#=\startupCache=true
+FirefoxOfflineCache=#profileget#=\OfflineCache=true
+FirefoxSafebrowsing=#profileget#=\safebrowsing=true
+FirefoxWebExtStore=#profileget#=\webext-store=true
+FirefoxSiteSecurityState=#profileget#=\siteSecurityServiceState.txt=true
+FirefoxContainers=#profileget#=\containers.json=true
+FirefoxPermissionsLocal=#profileget#=\permissions.sqlite=true
+}
+{=Firefox Roaming
+#profile#=C:\Users\{##}\AppData\Roaming\Mozilla\Firefox\Profiles\=true
+FirefoxHistory=#profileget#=\places.sqlite=false
+FirefoxHistoryShm=#profileget#=\places.sqlite-shm=false
+FirefoxHistoryWal=#profileget#=\places.sqlite-wal=false
+FirefoxCookies=#profileget#=\Cookies.sqlite=false
+FirefoxCookiesShm=#profileget#=\Cookies.sqlite-shm=false
+FirefoxCookiesWal=#profileget#=\Cookies.sqlite-wal=false
+FirefoxStorage=#profileget#=\storage\default=false
+FirefoxFormHistory=#profileget#=\formhistory.sqlite=false
+FirefoxSitePreferences=#profileget#=\sitePreferences.sqlite=false
+FirefoxSessionstore=#profileget#=\sessionstore-backups=false
+FirefoxSessionstoreBackup=#profileget#=\sessionstore-backups=false
+FirefoxPermissions=#profileget#=\permissions.sqlite=false
+FirefoxContentPrefs=#profileget#=\content-prefs.sqlite=false
+FirefoxCrashReports=#profileget#=\crashes=false
+FirefoxTelemetry=#profileget#=\telemetry=false
+}
+{=Opera
+#profile#=C:\Users\{##}\AppData\Roaming\Opera Software\Opera Stable\User Data\=true
+OperaCache=#profileget#=\Cache=true
+OperaCodeCache=#profileget#=\Code Cache=true
+OperaGPUCache=#profileget#=\GPUCache=true
+OperaMediaCache=#profileget#=\Media Cache=true
+OperaShaderCache=#profileget#=\Shader Cache=true
+OperaServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+OperaIndexedDB=#profileget#=\IndexedDB=false
+OperaLocalStorage=#profileget#=\Local Storage=false
+OperaSessionStorage=#profileget#=\Session Storage=false
+OperaCookies=#profileget#=\Cookies=false
+OperaHistory=#profileget#=\History=false
+OperaTopSites=#profileget#=\Top Sites=false
+OperaVisitedLinks=#profileget#=\Visited Links=false
+OperaNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+OperaExtensionState=#profileget#=\Extension State=false
+OperaPreferences=#profileget#=\Preferences=false
+OperaSessions=#profileget#=\Sessions=false
+OperaWebSQL=#profileget#=\databases=true
+}
+{=OperaGX
+#profile#=C:\Users\{##}\AppData\Roaming\Opera Software\Opera GX\User Data\=true
+OperaGXCache=#profileget#=\Cache=true
+OperaGXCodeCache=#profileget#=\Code Cache=true
+OperaGXGPUCache=#profileget#=\GPUCache=true
+OperaGXMediaCache=#profileget#=\Media Cache=true
+OperaGXShaderCache=#profileget#=\Shader Cache=true
+OperaGXServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+OperaGXIndexedDB=#profileget#=\IndexedDB=false
+OperaGXLocalStorage=#profileget#=\Local Storage=false
+OperaGXSessionStorage=#profileget#=\Session Storage=false
+OperaGXCookies=#profileget#=\Network\Cookies=false
+OperaGXHistory=#profileget#=\History=false
+OperaGXTopSites=#profileget#=\Top Sites=false
+OperaGXVisitedLinks=#profileget#=\Visited Links=false
+OperaGXNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+OperaGXExtensionState=#profileget#=\Extension State=false
+OperaGXPreferences=#profileget#=\Preferences=false
+OperaGXSessions=#profileget#=\Sessions=false
+OperaGXWebSQL=#profileget#=\databases=true
+}
+{=MicrosoftEdge
+#profile#=C:\Users\{##}\AppData\Local\Microsoft\Edge\User Data\=true
+EdgeCache=#profileget#=\Cache=true
+EdgeCodeCache=#profileget#=\Code Cache=true
+EdgeVisitedLinks=#profileget#=\Visited Links=false
+EdgeTopSites=#profileget#=\Top Sites=false
+EdgeNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+EdgeHistory=#profileget#=\History=false
+EdgeSessions=#profileget#=\Sessions=false
+EdgeIndexedDB=#profileget#=\IndexedDB=false
+EdgeSessionStorage=#profileget#=\Session Storage=false
+EdgeExtensionState=#profileget#=\Extension State=false
+EdgeGPUCache=#profileget#=\GPUCache=false
+EdgeMediaCache=#profileget#=\Media Cache=true
+}
+{=InternetExplorer
+IECache=C:\Users\{##}\AppData\Local\Microsoft\Windows\INetCache=true
+IECookies=C:\Users\{##}\AppData\Roaming\Microsoft\Windows\Cookies=false
+IEHistory=C:\Users\{##}\AppData\Local\Microsoft\Windows\History=false
+IECacheLow=C:\Users\{##}\AppData\LocalLow\Microsoft\Internet Explorer\IECompatCache=false
+}
+{=Steam
+SteamAppCache=C:\Program Files (x86)\Steam\appcache=true
+SteamDepotCache=C:\Program Files (x86)\Steam\depotcache=true
+SteamHtmlCache=C:\Program Files (x86)\Steam\config\htmlcache=false
+SteamLogs=C:\Program Files (x86)\Steam\logs=true
+SteamTemp=C:\Users\{##}\AppData\Local\Temp\Steam=true
+SteamShaderCache=C:\Users\{##}\AppData\Local\Steam\shadercache=false
+SteamCrashDumps=C:\Program Files (x86)\Steam\dumps=true
+SteamBrowserCache=C:\Users\{##}\AppData\Local\Steam\htmlcache=true
+SteamOverlayCache=C:\Users\{##}\AppData\Local\Steam\overlaycache=false
+SteamCache=C:\Users\{##}\AppData\Local\Steam\cache=false
+SteamWebHelperCache=C:\Program Files (x86)\Steam\steamui\webcache=false
+SteamWebHelperCodeCache=C:\Program Files (x86)\Steam\steamui\webcache\Code Cache=false
+SteamWebHelperGPUCache=C:\Program Files (x86)\Steam\steamui\webcache\GPUCache=false
+}
+{=EpicGames
+EpicGamesWebCache=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\webcache=false
+EpicGamesWebCacheBackup=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\webcache_4430=true
+EpicGamesTemp=C:\Users\{##}\AppData\Local\Temp\EpicGamesLauncher=true
+EpicGamesLogs=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\Logs=true
+EpicGamesShaderCache=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\ShaderCache=false
+EpicGamesCrashReports=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\Crashes=false
+EpicGamesInstallerTemp=C:\ProgramData\Epic\UnrealEngineLauncher\InstallerData\temp=false
+EpicGamesDerivedDataCache=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\DerivedDataCache=false
+EpicGamesBackupCache=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Backup=false
+EpicGamesConfigTemp=C:\Users\{##}\AppData\Local\EpicGamesLauncher\Saved\Config\WindowsTemp=false
+EpicGamesEngineLogs=C:\Users\{##}\AppData\Local\UnrealEngine\Common\DerivedDataCache\EngineLogs=false
+EpicGamesProjectLogs=C:\Users\{##}\AppData\Local\UnrealEngine\Common\DerivedDataCache\ProjectLogs=false
+EpicGamesEditorTemp=C:\Users\{##}\AppData\Local\UnrealEditor\Temp=false
+EpicGamesEditorLogs=C:\Users\{##}\AppData\Local\UnrealEditor\Saved\Logs=false
+EpicGamesBuildCache=C:\ProgramData\Epic\UnrealEngineLauncher\BuildCache=false
+EpicGamesBinariesTemp=C:\Users\{##}\AppData\Local\UnrealEngine\Binaries\Temp=false
+EpicGamesCookedTemp=C:\Users\{##}\AppData\Local\UnrealEngine\Saved\CookedTemp=false
+}
+{=BattleNet
+BattleNetCache=C:\Users\{##}\AppData\Local\Battle.net\Cache=false
+BattleNetTemp=C:\Users\{##}\AppData\Local\Temp\BattleNet=true
+BattleNetLogs=C:\Users\{##}\AppData\Local\Battle.net\Logs=false
+BattleNetCrashReports=C:\Users\{##}\AppData\Local\Battle.net\CrashReport=false
+BattleNetShaderCache=C:\Users\{##}\AppData\Local\Blizzard Entertainment\ShaderCache=false
+}
+{=Origin
+OriginCache=C:\Users\{##}\AppData\Local\Origin\Cache=false
+OriginTemp=C:\Users\{##}\AppData\Local\Temp\Origin=true
+OriginLogs=C:\Users\{##}\AppData\Roaming\Origin\Logs=false
+OriginCrashDumps=C:\Users\{##}\AppData\Roaming\Origin\CrashDumps=false
+OriginDownloadCache=C:\ProgramData\Origin\DownloadCache=false
+OriginInstallerTemp=C:\ProgramData\Origin\SelfUpdate\temp=false
+}
+{=UbisoftConnect
+UbisoftCache=C:\Users\{##}\AppData\Local\Ubisoft Game Launcher\cache=false
+UbisoftTemp=C:\Users\{##}\AppData\Local\Temp\UbisoftGameLauncher=true
+UbisoftLogs=C:\Users\{##}\AppData\Local\Ubisoft Game Launcher\logs=false
+UbisoftCrashDumps=C:\Users\{##}\AppData\Local\Ubisoft Game Launcher\crashes=false
+UbisoftInstallerTemp=C:\ProgramData\Ubisoft\InstallerCache=false
+UbisoftShaderCache=C:\Users\{##}\AppData\Local\Ubisoft Game Launcher\shadercache=false
+}
+{=Tor Browser
+TorCache=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\cache2=false
+TorStartupCache=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\startupCache=false
+TorSafebrowsing=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\safebrowsing=false
+TorThumbnails=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\thumbnails=false
+TorCookies=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\cookies.sqlite=false
+TorHistory=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\places.sqlite=false
+TorFormHistory=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\formhistory.sqlite=false
+TorPermissions=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\permissions.sqlite=false
+TorContentPrefs=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\content-prefs.sqlite=false
+TorSession=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\sessionstore.jsonlz4=false
+TorRecovery=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default\sessionstore-backups=false
+TorTemp=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Temp=false
+TorTorData=C:\Users\{##}\Desktop\Tor Browser\Browser\TorBrowser\Data\Tor=false
+}
+{=Adobe
+AdobeCache=C:\Users\{##}\AppData\Local\Adobe\Cache=false
+AdobeTemp=C:\Users\{##}\AppData\Local\Temp\Adobe=true
+AdobeLogs=C:\Users\{##}\AppData\Local\Adobe\Logs=false
+AdobeCrashReports=C:\Users\{##}\AppData\Local\Adobe\CrashReports=false
+AdobePhotoshopCache=C:\Users\{##}\AppData\Local\Adobe\Photoshop\Cache=false
+AdobePhotoshopTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\Photoshop=true
+AdobePhotoshopLogs=C:\Users\{##}\AppData\Local\Adobe\Photoshop\Logs=false
+AdobeIllustratorCache=C:\Users\{##}\AppData\Local\Adobe\Illustrator\Cache=false
+AdobeIllustratorTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\Illustrator=true
+AdobeIllustratorLogs=C:\Users\{##}\AppData\Local\Adobe\Illustrator\Logs=false
+AdobePremiereCache=C:\Users\{##}\AppData\Local\Adobe\Premiere Pro\Cache=false
+AdobePremiereTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\Premiere Pro=true
+AdobePremiereLogs=C:\Users\{##}\AppData\Local\Adobe\Premiere Pro\Logs=false
+AdobeAfterEffectsCache=C:\Users\{##}\AppData\Local\Adobe\After Effects\Cache=false
+AdobeAfterEffectsTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\After Effects=true
+AdobeAfterEffectsLogs=C:\Users\{##}\AppData\Local\Adobe\After Effects\Logs=false
+AdobeAcrobatCache=C:\Users\{##}\AppData\Local\Adobe\Acrobat\Cache=false
+AdobeAcrobatTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\Acrobat=true
+AdobeAcrobatLogs=C:\Users\{##}\AppData\Local\Adobe\Acrobat\Logs=false
+AdobeLightroomCache=C:\Users\{##}\AppData\Local\Adobe\Lightroom\Cache=false
+AdobeLightroomTemp=C:\Users\{##}\AppData\Local\Temp\Adobe\Lightroom=true
+AdobeLightroomLogs=C:\Users\{##}\AppData\Local\Adobe\Lightroom\Logs=false
+}
+{=VisualStudioCode
+VSCodeCache=C:\Users\{##}\AppData\Roaming\Code\Cache=true
+VSCodeGPUCache=C:\Users\{##}\AppData\Roaming\Code\GPUCache=true
+VSCodeUserData=C:\Users\{##}\AppData\Roaming\Code\User=false
+VSCodeLogs=C:\Users\{##}\AppData\Roaming\Code\logs=false
+VSCodeCrashReports=C:\Users\{##}\AppData\Roaming\Code\Crashpad\reports=false
+VSCodeExtensions=C:\Users\{##}\.vscode\extensions=false
+VSCodeBackups=C:\Users\{##}\AppData\Roaming\Code\Backups=false
+VSCodeCachedExtensions=C:\Users\{##}\AppData\Roaming\Code\CachedExtensions=true
+VSCodeCachedData=C:\Users\{##}\AppData\Roaming\Code\CachedData=false
+VSCodeUserSettings=C:\Users\{##}\AppData\Roaming\Code\User\settings.json=false
+VSCodeKeybindings=C:\Users\{##}\AppData\Roaming\Code\User\keybindings.json=false
+VSCodeSnippets=C:\Users\{##}\AppData\Roaming\Code\User\snippets=false
+VSCodeWorkspaceStorage=C:\Users\{##}\AppData\Roaming\Code\User\workspaceStorage=false
+VSCodeUserState=C:\Users\{##}\AppData\Roaming\Code\User\globalStorage=false
+VSCodeLogsOld=C:\Users\{##}\AppData\Roaming\Code\logs\old=false
+}
+{=VMwareWorkstation
+VMwareCache=C:\Users\{##}\AppData\Roaming\VMware\Cache=false
+VMwareLogs=C:\Users\{##}\AppData\Roaming\VMware\Logs=false
+VMwareSettings=C:\Users\{##}\AppData\Roaming\VMware\preferences.ini=false
+}
+{=MicrosoftOffice
+OfficeCache=C:\Users\{##}\AppData\Local\Microsoft\Office\Cache=false
+OfficeTemp=C:\Users\{##}\AppData\Local\Temp\Microsoft\Office=true
+OfficeLogs=C:\Users\{##}\AppData\Local\Microsoft\Office\Logs=false
+OfficeTelemetry=C:\Users\{##}\AppData\Local\Microsoft\Office\Telemetry=false
+OfficeCrashReports=C:\Users\{##}\AppData\Local\Microsoft\Office\CrashReports=false
+}
+{=Zoom
+ZoomLogs=C:\Users\{##}\AppData\Roaming\Zoom\logs=false
+ZoomData=C:\Users\{##}\AppData\Roaming\Zoom\data=false
+ZoomTemp=C:\Users\{##}\AppData\Local\Temp\Zoom=true
+}
+{=MicrosoftTeamsClassic
+TeamsCache=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Cache=false
+TeamsGPUCache=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\GPUCache=false
+TeamsBlobStorage=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\blob_storage=false
+TeamsIndexedDB=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\IndexedDB=false
+TeamsLocalStorage=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Local Storage=false
+TeamsSessionStorage=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Session Storage=false
+TeamsTmp=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\tmp=false
+TeamsDatabases=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\databases=false
+TeamsCodeCache=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Code Cache=false
+TeamsApplicationCache=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Application Cache=false
+TeamsServiceWorker=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Service Worker\CacheStorage=false
+TeamsLogs=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\logs.txt=false
+TeamsMediaStackLogs=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\Media-Stack=false
+TeamsNetworkLogs=C:\Users\{##}\AppData\Roaming\Microsoft\Teams\network_logs=false
+TeamsTempLocal=C:\Users\{##}\AppData\Local\Microsoft\Teams\tmp=false
+TeamsMeetingAddinLogs=C:\Users\{##}\AppData\Local\SquirrelTemp\TeamsMeetingAddinLogs=false
+}
+{=MicrosoftTeamsNew
+#profile#=C:\Users\{##}\AppData\Local\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams=true
+NewTeamsCache=#profileget#=\EBWebView\Default\Cache=true
+NewTeamsCodeCache=#profileget#=\EBWebView\Default\Code Cache=true
+NewTeamsGPUCache=#profileget#=\EBWebView\Default\GPUCache=true
+NewTeamsIndexedDB=#profileget#=\EBWebView\Default\IndexedDB=false
+NewTeamsLocalStorage=#profileget#=\EBWebView\Default\Local Storage=false
+NewTeamsSessionStorage=#profileget#=\EBWebView\Default\Session Storage=false
+NewTeamsServiceWorker=#profileget#=\EBWebView\Default\Service Worker\CacheStorage=true
+NewTeamsWebViewLogs=#profileget#=\EBWebView\Default\Logs=true
+NewTeamsLogs=#profileget#=\Logs=true
+}
+{=WindowsDefender
+WindowsDefenderTemp=C:\ProgramData\Microsoft\Windows Defender\Scans\History\Cache=false
+WindowsDefenderQuarantine=C:\ProgramData\Microsoft\Windows Defender\Quarantine=false
+WindowsDefenderLogs=C:\ProgramData\Microsoft\Windows Defender\Support=false
+}
+{=Avast
+AvastTemp=C:\ProgramData\Avast Software\Avast\temp=false
+AvastLogs=C:\ProgramData\Avast Software\Avast\log=false
+AvastQuarantine=C:\ProgramData\Avast Software\Avast\defs\quarantine=false
+}
+{=AVG
+AVGTemp=C:\ProgramData\AVG\Antivirus\temp=false
+AVGLogs=C:\ProgramData\AVG\Antivirus\log=false
+AVGQuarantine=C:\ProgramData\AVG\Antivirus\quarantine=false
+}
+{=Bitdefender
+BitdefenderTemp=C:\ProgramData\Bitdefender\Desktop\Temp=true
+BitdefenderLogs=C:\ProgramData\Bitdefender\Desktop\Logs=false
+BitdefenderQuarantine=C:\ProgramData\Bitdefender\Desktop\Quarantine=false
+}
+{=ESET
+ESETTemp=C:\ProgramData\ESET\ESET Security\cache=false
+ESETScanCache=C:\ProgramData\ESET\ESET Security\ScanCache=false
+ESETLogs=C:\ProgramData\ESET\ESET Security\Logs=false
+ESETQuarantine=C:\ProgramData\ESET\ESET Security\Quarantine=false
+}
+{=Norton
+NortonTemp=C:\ProgramData\Norton\Norton Security\Temp=false
+NortonLogs=C:\ProgramData\Norton\Norton Security\Logs=false
+NortonQuarantine=C:\ProgramData\Norton\Norton Security\Quarantine=false
+}
+{=TrendMicro
+TrendMicroTemp=C:\ProgramData\Trend Micro\InstallHelper\Temp=false
+TrendMicroLogs=C:\ProgramData\Trend Micro\Logs=false
+TrendMicroQuarantine=C:\ProgramData\Trend Micro\Quarantine=false
+}
+{=BraveBeta
+#profile#=C:\Users\{##}\AppData\Local\BraveSoftware\Brave-Browser-Beta\User Data\=true
+BraveBetaCache=#profileget#=\Cache=true
+BraveBetaCodeCache=#profileget#=\Code Cache=true
+BraveBetaGPUCache=#profileget#=\GPUCache=true
+BraveBetaMediaCache=#profileget#=\Media Cache=true
+BraveBetaShaderCache=#profileget#=\Shader Cache=false
+BraveBetaServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=false
+BraveBetaIndexedDB=#profileget#=\IndexedDB=false
+BraveBetaLocalStorage=#profileget#=\Local Storage=false
+BraveBetaSessionStorage=#profileget#=\Session Storage=false
+BraveBetaCookies=#profileget#=\Network\Cookies=false
+BraveBetaHistory=#profileget#=\History=false
+BraveBetaHistoryBackup=#profileget#=\History Provider Cache=false
+BraveBetaTopSites=#profileget#=\Top Sites=false
+BraveBetaVisitedLinks=#profileget#=\Visited Links=false
+BraveBetaNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+BraveBetaExtensionState=#profileget#=\Extension State=false
+BraveBetaPreferences=#profileget#=\Preferences=false
+BraveBetaSessions=#profileget#=\Sessions=false
+BraveBetaWebSQL=#profileget#=\databases=false
+BraveBetaCrashReports=C:\Users\{##}\AppData\Local\BraveSoftware\Brave-Browser-Beta\User Data\Crashpad\reports=false
+}
+{=GoogleChrome
+#profile#=C:\Users\{##}\AppData\Local\Google\Chrome\User Data\=true
+ChromeCache=#profileget#=\Cache=true
+ChromeCodeCache=#profileget#=\Code Cache=true
+ChromeGPUCache=#profileget#=\GPUCache=true
+ChromeMediaCache=#profileget#=\Media Cache=true
+ChromeShaderCache=#profileget#=\ShaderCache=true
+ChromeServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+ChromeIndexedDB=#profileget#=\IndexedDB=false
+ChromeLocalStorage=#profileget#=\Local Storage=false
+ChromeSessionStorage=#profileget#=\Session Storage=false
+ChromeCookies=#profileget#=\Network\Cookies=false
+ChromeHistory=#profileget#=\History=false
+ChromeHistoryBackup=#profileget#=\History Provider Cache=false
+ChromeTopSites=#profileget#=\Top Sites=false
+ChromeVisitedLinks=#profileget#=\Visited Links=false
+ChromeNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+ChromeExtensionState=#profileget#=\Extension State=false
+ChromePreferences=#profileget#=\Preferences=false
+ChromeSessions=#profileget#=\Sessions=false
+ChromeWebSQL=#profileget#=\databases=false
+ChromeCrashReports=C:\Users\{##}\AppData\Local\Google\Chrome\User Data\Crashpad\reports=false
+}
+{=GoogleChromeBeta
+#profile#=C:\Users\{##}\AppData\Local\Google\Chrome Beta\User Data\=true
+ChromeBetaCache=#profileget#=\Cache=true
+ChromeBetaCodeCache=#profileget#=\Code Cache=true
+ChromeBetaGPUCache=#profileget#=\GPUCache=true
+ChromeBetaMediaCache=#profileget#=\Media Cache=true
+ChromeBetaShaderCache=#profileget#=\Shader Cache=false
+ChromeBetaServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=false
+ChromeBetaIndexedDB=#profileget#=\IndexedDB=false
+ChromeBetaLocalStorage=#profileget#=\Local Storage=false
+ChromeBetaSessionStorage=#profileget#=\Session Storage=false
+ChromeBetaCookies=#profileget#=\Network\Cookies=false
+ChromeBetaHistory=#profileget#=\History=false
+ChromeBetaHistoryBackup=#profileget#=\History Provider Cache=false
+ChromeBetaTopSites=#profileget#=\Top Sites=false
+ChromeBetaVisitedLinks=#profileget#=\Visited Links=false
+ChromeBetaNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+ChromeBetaExtensionState=#profileget#=\Extension State=false
+ChromeBetaPreferences=#profileget#=\Preferences=false
+ChromeBetaSessions=#profileget#=\Sessions=false
+ChromeBetaWebSQL=#profileget#=\databases=false
+ChromeBetaCrashReports=C:\Users\{##}\AppData\Local\Google\Chrome Beta\User Data\Crashpad\reports=false
+}
+{=Vivaldi
+#profile#=C:\Users\{##}\AppData\Local\Vivaldi\User Data\=true
+VivaldiCache=#profileget#=\Cache=true
+VivaldiCodeCache=#profileget#=\Code Cache=true
+VivaldiGPUCache=#profileget#=\GPUCache=true
+VivaldiMediaCache=#profileget#=\Media Cache=true
+VivaldiShaderCache=#profileget#=\Shader Cache=true
+VivaldiServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+VivaldiIndexedDB=#profileget#=\IndexedDB=false
+VivaldiLocalStorage=#profileget#=\Local Storage=false
+VivaldiSessionStorage=#profileget#=\Session Storage=false
+VivaldiCookies=#profileget#=\Network\Cookies=false
+VivaldiHistory=#profileget#=\History=false
+VivaldiTopSites=#profileget#=\Top Sites=false
+VivaldiExtensionState=#profileget#=\Extension State=false
+VivaldiPreferences=#profileget#=\Preferences=false
+VivaldiSyncData=#profileget#=\Sync Data=false
+}
+{=Waterfox
+#profile#=C:\Users\{##}\AppData\Roaming\Waterfox\Profiles\=true
+WaterfoxCache=#profileget#=\cache2=true
+WaterfoxOfflineCache=#profileget#=\OfflineCache=true
+WaterfoxJumpListCache=#profileget#=\jumpListCache=true
+WaterfoxStartupCache=#profileget#=\startupCache=true
+WaterfoxCookies=#profileget#=\Cookies.sqlite=false
+WaterfoxCookiesShm=#profileget#=\Cookies.sqlite-shm=false
+WaterfoxCookiesWal=#profileget#=\Cookies.sqlite-wal=false
+WaterfoxHistory=#profileget#=\places.sqlite=false
+WaterfoxHistoryShm=#profileget#=\places.sqlite-shm=false
+WaterfoxHistoryWal=#profileget#=\places.sqlite-wal=false
+WaterfoxFormHistory=#profileget#=\formhistory.sqlite=false
+WaterfoxSitePreferences=#profileget#=\sitePreferences.sqlite=false
+WaterfoxSessionstore=#profileget#=\sessionstore-backups=false
+WaterfoxTelemetry=#profileget#=\telemetry=false
+}
+{=PaleMoon
+#profile#=C:\Users\{##}\AppData\Roaming\PaleMoon\Profiles\=true
+PaleMoonCache=#profileget#=\cache2=true
+PaleMoonOfflineCache=#profileget#=\OfflineCache=true
+PaleMoonJumpListCache=#profileget#=\jumpListCache=true
+PaleMoonStartupCache=#profileget#=\startupCache=true
+PaleMoonCookies=#profileget#=\Cookies.sqlite=false
+PaleMoonCookiesShm=#profileget#=\Cookies.sqlite-shm=false
+PaleMoonCookiesWal=#profileget#=\Cookies.sqlite-wal=false
+PaleMoonHistory=#profileget#=\places.sqlite=false
+PaleMoonHistoryShm=#profileget#=\places.sqlite-shm=false
+PaleMoonHistoryWal=#profileget#=\places.sqlite-wal=false
+PaleMoonFormHistory=#profileget#=\formhistory.sqlite=false
+PaleMoonSitePreferences=#profileget#=\sitePreferences.sqlite=false
+PaleMoonSessionstore=#profileget#=\sessionstore-backups=false
+PaleMoonTelemetry=#profileget#=\telemetry=false
+}
+{=SRWareIron
+#profile#=C:\Users\{##}\AppData\Local\SRWare Iron\User Data\=true
+IronCache=#profileget#=\Cache=true
+IronCodeCache=#profileget#=\Code Cache=true
+IronGPUCache=#profileget#=\GPUCache=true
+IronMediaCache=#profileget#=\Media Cache=true
+IronShaderCache=#profileget#=\Shader Cache=true
+IronServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+IronIndexedDB=#profileget#=\IndexedDB=false
+IronLocalStorage=#profileget#=\Local Storage=false
+IronSessionStorage=#profileget#=\Session Storage=false
+IronCookies=#profileget#=\Network\Cookies=false
+IronHistory=#profileget#=\History=false
+IronHistoryBackup=#profileget#=\History Provider Cache=false
+IronTopSites=#profileget#=\Top Sites=false
+IronVisitedLinks=#profileget#=\Visited Links=false
+IronNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+IronExtensionState=#profileget#=\Extension State=false
+IronPreferences=#profileget#=\Preferences=false
+IronSessions=#profileget#=\Sessions=false
+IronWebSQL=#profileget#=\databases=true
+}
+{=Maxthon
+#profile#=C:\Users\{##}\AppData\Roaming\Maxthon3\Users\=true
+MaxthonCache=#profileget#=\Cache=true
+MaxthonCookies=#profileget#=\Network\Cookies=false
+MaxthonHistory=#profileget#=\History=false
+MaxthonLocalStorage=#profileget#=\Local Storage=false
+MaxthonIndexedDB=#profileget#=\IndexedDB=false
+MaxthonSessionStorage=#profileget#=\Session Storage=false
+MaxthonCrashReports=#profileget#=\Crash Reports=true
+MaxthonLogs=#profileget#=\Logs=true
+MaxthonTemp=#profileget#=\Temp=true
+MaxthonExtensions=#profileget#=\Extensions=false
+}
+{=HPSupportAssistant
+HPSupportAssistantCache=C:\ProgramData\Hewlett-Packard\HP Support Framework\Cache=false
+HPSupportAssistantLogs=C:\ProgramData\Hewlett-Packard\HP Support Framework\Logs=false
+HPSupportAssistantTemp=C:\Users\{##}\AppData\Local\Temp\HPSupportAssistant=true
+}
+{=HPJumpStart
+HPJumpStartCache=C:\ProgramData\HP\HP JumpStart\Cache=false
+HPJumpStartLogs=C:\ProgramData\HP\HP JumpStart\Logs=false
+HPJumpStartTemp=C:\Users\{##}\AppData\Local\Temp\HPJumpStart=true
+}
+{=HPPerformanceTuneUp
+HPPerformanceTuneUpCache=C:\ProgramData\HP\HP Performance Tune Up\Cache=false
+HPPerformanceTuneUpLogs=C:\ProgramData\HP\HP Performance Tune Up\Logs=false
+}
+{=HPQuickDrop
+HPQuickDropCache=C:\Users\{##}\AppData\Local\Packages\AD2F1837.HPQuickDrop_qmba6cd70vzyy\LocalCache=false
+HPQuickDropTemp=C:\Users\{##}\AppData\Local\Packages\AD2F1837.HPQuickDrop_qmba6cd70vzyy\TempState=false
+}
+{=HPPrivacySettings
+HPPrivacyCache=C:\ProgramData\HP\HPPrivacySettings\Cache=false
+HPPrivacyLogs=C:\ProgramData\HP\HPPrivacySettings\Logs=false
+}
+{=HPRegistrationService
+HPRegistrationCache=C:\ProgramData\HP\HP Registration Service\Cache=false
+HPRegistrationTemp=C:\Users\{##}\AppData\Local\Temp\HPRegistrationService=true
+}
+{=HPAppHelper
+HPAppHelperCache=C:\ProgramData\HP\AppHelper\Cache=false
+HPAppHelperLogs=C:\ProgramData\HP\AppHelper\Logs=false
+}
+{=HPSmart
+HPSmartCache=C:\Users\{##}\AppData\Local\Packages\AD2F1837.HPSmart_qmba6cd70vzyy\LocalCache=false
+HPSmartTemp=C:\Users\{##}\AppData\Local\Packages\AD2F1837.HPSmart_qmba6cd70vzyy\TempState=false
+}
+{=HPAudioControl
+HPAudioControlCache=C:\ProgramData\HP\HPAudioControl\Cache=false
+HPAudioControlLogs=C:\ProgramData\HP\HPAudioControl\Logs=false
+}
+{=ASUSArmouryCrate
+ArmouryCrateCache=C:\ProgramData\ASUS\ArmouryDevice\Cache=false
+ArmouryCrateLogs=C:\ProgramData\ASUS\ArmouryDevice\Log=false
+ArmouryCrateTemp=C:\Users\{##}\AppData\Local\Temp\ArmouryCrate=true
+}
+{=ASUSAura
+AuraCache=C:\ProgramData\ASUS\Aura\Cache=false
+AuraLogs=C:\ProgramData\ASUS\Aura\Log=false
+AuraTemp=C:\Users\{##}\AppData\Local\Temp\ASUSAura=true
+}
+{=ASUSLiveUpdate
+ASUSLiveUpdateCache=C:\ProgramData\ASUS\ASUS Live Update\Cache=false
+ASUSLiveUpdateLogs=C:\ProgramData\ASUS\ASUS Live Update\Log=false
+ASUSLiveUpdateTemp=C:\Users\{##}\AppData\Local\Temp\ASUSLiveUpdate=true
+}
+{=ASUSSmartGesture
+SmartGestureCache=C:\ProgramData\ASUS\ASUS Smart Gesture\Cache=false
+SmartGestureLogs=C:\ProgramData\ASUS\ASUS Smart Gesture\Log=false
+}
+{=ASUSSplendid
+SplendidCache=C:\ProgramData\ASUS\ASUS Splendid\Cache=false
+SplendidTemp=C:\Users\{##}\AppData\Local\Temp\ASUSSplendid=true
+}
+{=ASUSBatteryHealthCharging
+BatteryHealthCache=C:\ProgramData\ASUS\ASUS Battery Health Charging\Cache=false
+BatteryHealthLogs=C:\ProgramData\ASUS\ASUS Battery Health Charging\Log=false
+}
+{=ASUSScreenXpert
+ScreenXpertCache=C:\Users\{##}\AppData\Local\Packages\B9ECED6F.ScreenXpert3_qmba6cd70vzyy\LocalCache=false
+ScreenXpertTemp=C:\Users\{##}\AppData\Local\Packages\B9ECED6F.ScreenXpert3_qmba6cd70vzyy\TempState=false
+}
+{=ASUSOptimization
+MyASUSOptimizerCache=C:\ProgramData\ASUS\ASUS Optimization\Cache=false
+MyASUSOptimizerTemp=C:\Users\{##}\AppData\Local\Temp\ASUSOptimization=true
+}
+{=LenovoVantage
+VantageCache=C:\ProgramData\Lenovo\ImController\Plugins\LenovoSystemUpdatePlugin\x64\Cache=false
+VantageLogs=C:\ProgramData\Lenovo\ImController\Logs=false
+VantageTemp=C:\Users\{##}\AppData\Local\Temp\LenovoVantage=true
+}
+{=LenovoSystemUpdate
+SystemUpdateCache=C:\ProgramData\Lenovo\SystemUpdate\Cache=false
+SystemUpdateLogs=C:\ProgramData\Lenovo\SystemUpdate\Logs=false
+}
+{=LenovoServiceBridge
+LSBCache=C:\Users\{##}\AppData\Local\Lenovo\LSB\Cache=false
+LSBLogs=C:\Users\{##}\AppData\Local\Lenovo\LSB\Log=false
+}
+{=MSICenter
+MSICenterCache=C:\ProgramData\MSI\MSI Center\Cache=false
+MSICenterLogs=C:\ProgramData\MSI\MSI Center\Log=false
+MSICenterTemp=C:\Users\{##}\AppData\Local\Temp\MSICenter=true
+}
+{=MSIDragonCenter
+DragonCenterCache=C:\ProgramData\MSI\Dragon Center\Cache=false
+DragonCenterLogs=C:\ProgramData\MSI\Dragon Center\Log=false
+DragonCenterTemp=C:\Users\{##}\AppData\Local\Temp\DragonCenter=true
+}
+{=DellSupportAssist
+SupportAssistCache=C:\ProgramData\Dell\SupportAssist\Cache=false
+SupportAssistLogs=C:\ProgramData\Dell\SupportAssist\Log=false
+SupportAssistTemp=C:\Users\{##}\AppData\Local\Temp\DellSupportAssist=true
+}
+{=DellUpdate
+DellUpdateCache=C:\ProgramData\Dell\UpdateService\Temp=false
+DellUpdateLogs=C:\ProgramData\Dell\UpdateService\Log=false
+}
+{=GigabyteAppCenter
+AppCenterCache=C:\ProgramData\GIGABYTE\AppCenter\Cache=false
+AppCenterLogs=C:\ProgramData\GIGABYTE\AppCenter\Log=false
+AppCenterTemp=C:\Users\{##}\AppData\Local\Temp\GigabyteAppCenter=true
+}
+{=GigabyteRGBFusion
+RGBFusionCache=C:\ProgramData\GIGABYTE\RGBFusion\Cache=false
+RGBFusionLogs=C:\ProgramData\GIGABYTE\RGBFusion\Log=false
+}
+{=TelegramDesktop
+TelegramCache=C:\Users\{##}\AppData\Roaming\Telegram Desktop\tdata\cache=false
+TelegramTemp=C:\Users\{##}\AppData\Local\Temp\Telegram Desktop=true
+TelegramLogs=C:\Users\{##}\AppData\Roaming\Telegram Desktop\logs=false
+}
+{=VLCMediaPlayer
+VLCCache=C:\Users\{##}\AppData\Roaming\vlc\cache=false
+VLCHistory=C:\Users\{##}\AppData\Roaming\vlc\ml.xspf=false
+VLCLogs=C:\Users\{##}\AppData\Roaming\vlc\logs=false
+VLCConfig=C:\Users\{##}\AppData\Roaming\vlc\vlcrc=false
+VLCPlaylists=C:\Users\{##}\AppData\Roaming\vlc\playlists=false
+VLCMediaLibrary=C:\Users\{##}\AppData\Roaming\vlc\ml.xspf=false
+VLCSkinsCache=C:\Users\{##}\AppData\Roaming\vlc\skins3=false
+VLCSessions=C:\Users\{##}\AppData\Roaming\vlc\sessions=false
+}
+{=NotepadPlusPlus
+NppCache=C:\Users\{##}\AppData\Roaming\Notepad++\Cache=false
+NppSession=C:\Users\{##}\AppData\Roaming\Notepad++\session=false
+NppLogs=C:\Users\{##}\AppData\Roaming\Notepad++\Logs=false
+NppBackup=C:\Users\{##}\AppData\Roaming\Notepad++\backup=false
+NppPluginsConfig=C:\Users\{##}\AppData\Roaming\Notepad++\plugins\Config=false
+NppPluginsData=C:\Users\{##}\AppData\Roaming\Notepad++\plugins\data=false
+NppThemes=C:\Users\{##}\AppData\Roaming\Notepad++\themes=false
+NppConfigFile=C:\Users\{##}\AppData\Roaming\Notepad++\config.xml=false
+NppRecentFiles=C:\Users\{##}\AppData\Roaming\Notepad++\recentFiles.xml=false
+NppShortcuts=C:\Users\{##}\AppData\Roaming\Notepad++\shortcuts.xml=false
+NppStylers=C:\Users\{##}\AppData\Roaming\Notepad++\stylers.xml=false
+NppFunctionList=C:\Users\{##}\AppData\Roaming\Notepad++\functionList.xml=false
+}
+{=Skype
+SkypeCache=C:\Users\{##}\AppData\Roaming\Skype\Cache=false
+SkypeTemp=C:\Users\{##}\AppData\Local\Temp\Skype=true
+SkypeLogs=C:\Users\{##}\AppData\Roaming\Skype\Logs=false
+SkypeCookies=C:\Users\{##}\AppData\Roaming\Skype\Cookies=false
+SkypeConfig=C:\Users\{##}\AppData\Roaming\Skype\config.xml=false
+SkypeAvatars=C:\Users\{##}\AppData\Roaming\Skype\avatars=false
+SkypeChats=C:\Users\{##}\AppData\Roaming\Skype\chatsync=false
+SkypeEmoticons=C:\Users\{##}\AppData\Roaming\Skype\emoticons=false
+SkypeCallHistory=C:\Users\{##}\AppData\Roaming\Skype\callhistory.db=false
+SkypeMediaCache=C:\Users\{##}\AppData\Roaming\Skype\media_cache=false
+}
+{=WinRAR
+WinRARTemp=C:\Users\{##}\AppData\Local\Temp\WinRAR=true
+WinRARCache=C:\Users\{##}\AppData\Roaming\WinRAR\Cache=false
+WinRARLogs=C:\Users\{##}\AppData\Roaming\WinRAR\Logs=false
+WinRARSettings=C:\Users\{##}\AppData\Roaming\WinRAR\rar.ini=false
+}
+{=TeamViewer
+TeamViewerCache=C:\Users\{##}\AppData\Local\TeamViewer\Cache=false
+TeamViewerLogs=C:\Users\{##}\AppData\Roaming\TeamViewer\Logs=false
+TeamViewerTemp=C:\Users\{##}\AppData\Local\Temp\TeamViewer=true
+}
+{=GoogleDrive
+GoogleDriveCache=C:\Users\{##}\AppData\Local\Google\Drive\user_default\cache=false
+GoogleDriveLogs=C:\Users\{##}\AppData\Local\Google\Drive\user_default\logs=false
+GoogleDriveSettings=C:\Users\{##}\AppData\Local\Google\Drive\user_default\settings.json=false
+}
+{=7-Zip
+7ZipCache=C:\Program Files\7-Zip\Cache=false
+7ZipTemp=C:\Users\{##}\AppData\Local\Temp\7Zip=true
+}
+{=AIMP
+AIMPCache=C:\Users\{##}\AppData\Local\AIMP\Cache=false
+AIMPTemp=C:\Users\{##}\AppData\Local\Temp\AIMP=true
+}
+{=Audacity
+AudacityCache=C:\Users\{##}\AppData\Local\Audacity\Cache=false
+AudacityTemp=C:\Users\{##}\AppData\Local\Temp\Audacity=true
+}
+{=AutoCAD
+AutoCADCache=C:\Users\{##}\AppData\Local\Autodesk\AutoCAD\Cache=false
+AutoCADTemp=C:\Users\{##}\AppData\Local\Temp\AutoCAD=true
+}
+{=Blender
+BlenderCache=C:\Users\{##}\AppData\Roaming\Blender Foundation\Blender\*\cache=false
+BlenderTemp=C:\Users\{##}\AppData\Local\Temp\Blender=true
+BlenderLogs=C:\Users\{##}\AppData\Roaming\Blender Foundation\Blender\*\logs=false
+}
+{=CCleaner
+CCleanerCache=C:\ProgramData\CCleaner\Cache=false
+CCleanerLogs=C:\ProgramData\CCleaner\Logs=false
+CCleanerSettings=C:\ProgramData\CCleaner\Settings.ini=false
+CCleanerBackup=C:\ProgramData\CCleaner\Backup=false
+CCleanerReports=C:\ProgramData\CCleaner\Reports=false
+}
+{=Discord
+DiscordCache=C:\Users\{##}\AppData\Roaming\discord\Cache=true
+DiscordTemp=C:\Users\{##}\AppData\Roaming\discord\Temp=false
+DiscordLogs=C:\Users\{##}\AppData\Roaming\discord\logs=true
+DiscordGPUCache=C:\Users\{##}\AppData\Roaming\discord\GPUCache=true
+DiscordIndexedDB=C:\Users\{##}\AppData\Roaming\discord\IndexedDB=false
+DiscordLocalStorage=C:\Users\{##}\AppData\Roaming\discord\Local Storage=false
+DiscordSessionStorage=C:\Users\{##}\AppData\Roaming\discord\Session Storage=false
+DiscordCookies=C:\Users\{##}\AppData\Roaming\discord\Network\Cookies=false
+DiscordPreferences=C:\Users\{##}\AppData\Roaming\discord\Preferences=false
+DiscordSettings=C:\Users\{##}\AppData\Roaming\discord\settings.json=false
+DiscordStorage=C:\Users\{##}\AppData\Roaming\discord\Storage=false
+DiscordCrashReports=C:\Users\{##}\AppData\Roaming\discord\Crashpad\reports=true
+}
+{=Dropbox
+DropboxCache=C:\Users\{##}\AppData\Local\Dropbox\cache=false
+DropboxLogs=C:\Users\{##}\AppData\Local\Dropbox\logs=false
+DropboxSettings=C:\Users\{##}\AppData\Roaming\Dropbox\config.db=false
+DropboxFileCache=C:\Users\{##}\AppData\Local\Dropbox\db.cache=false
+}
+{=FileZilla
+FileZillaCache=C:\Users\{##}\AppData\Roaming\FileZilla\Cache=false
+FileZillaLogs=C:\Users\{##}\AppData\Roaming\FileZilla\Logs=false
+FileZillaSettings=C:\Users\{##}\AppData\Roaming\FileZilla\filezilla.xml=false
+FileZillaQueue=C:\Users\{##}\AppData\Roaming\FileZilla\sitemanager.xml=false
+}
+{=GitHubDesktop
+GitHubDesktopCache=C:\Users\{##}\AppData\Roaming\GitHub Desktop\Cache=true
+GitHubDesktopLogs=C:\Users\{##}\AppData\Roaming\GitHub Desktop\Logs=true
+GitHubDesktopSettings=C:\Users\{##}\AppData\Roaming\GitHub Desktop\settings.json=false
+}
+{=HandBrake
+HandBrakeCache=C:\Users\{##}\AppData\Local\HandBrake\Cache=false
+}
+{=IrfanView
+IrfanViewCache=C:\Users\{##}\AppData\Local\IrfanView\Cache=false
+}
+{=Paint.NET
+PaintNetCache=C:\Users\{##}\AppData\Local\Paint.NET\Cache=false
+}
+{=Putty
+PuttyCache=C:\Users\{##}\AppData\Local\Putty\Cache=false
+}
+{=RevoUninstaller
+RevoCache=C:\ProgramData\RevoUninstaller\Cache=false
+}
+{=Teamspeak3
+TeamspeakCache=C:\Users\{##}\AppData\Roaming\TS3Client\Cache=false
+}
+{=VLCMediaPlayer
+VLCMediaCache=C:\Users\{##}\AppData\Roaming\vlc\Cache=false
+}
+{=JetBrainsToolbox
+JetBrainsCache=C:\Users\{##}\AppData\Local\JetBrains\Toolbox\Cache=false
+}
+{=Kodi
+KodiCache=C:\Users\{##}\AppData\Roaming\Kodi\cache=false
+KodiLogs=C:\Users\{##}\AppData\Roaming\Kodi\kodi.log=false
+KodiSettings=C:\Users\{##}\AppData\Roaming\Kodi\userdata\guisettings.xml=false
+}
+{=Malwarebytes
+MalwarebytesCache=C:\ProgramData\Malwarebytes\Cache=false
+MalwarebytesLogs=C:\ProgramData\Malwarebytes\Logs=false
+MalwarebytesQuarantine=C:\ProgramData\Malwarebytes\Quarantine=false
+MalwarebytesSettings=C:\ProgramData\Malwarebytes\Configuration=false
+MalwarebytesDatabase=C:\ProgramData\Malwarebytes\MBAMService\Database=false
+MalwarebytesReports=C:\ProgramData\Malwarebytes\Reports=false
+}
+{=MediaMonkey
+MediaMonkeyCache=C:\Users\{##}\AppData\Local\MediaMonkey\Cache=false
+}
+{=OBSStudio
+OBSCache=C:\Users\{##}\AppData\Roaming\obs-studio\Cache=false
+OBSLogs=C:\Users\{##}\AppData\Roaming\obs-studio\logs=true
+OBSSettingsProfiles=C:\Users\{##}\AppData\Roaming\obs-studio\basic\profiles=false
+OBSSceneCollections=C:\Users\{##}\AppData\Roaming\obs-studio\basic\scenes=false
+OBSPlugins=C:\Users\{##}\AppData\Roaming\obs-studio\plugins=false
+OBSServiceConfigs=C:\Users\{##}\AppData\Roaming\obs-studio\service.json=false
+OBSRecordings=C:\Users\{##}\Videos\OBS=false
+OBSSnapshots=C:\Users\{##}\AppData\Roaming\obs-studio\snapshots=false
+OBSCacheFilters=C:\Users\{##}\AppData\Roaming\obs-studio\Cache\filters=false
+OBSCacheShaders=C:\Users\{##}\AppData\Roaming\obs-studio\Cache\shaders=false
+}
+{=Paint.NET
+PaintNetCache=C:\Users\{##}\AppData\Local\Paint.NET\Cache=false
+PaintNetUserFiles=C:\Users\{##}\AppData\Local\Paint.NET\User Files=false
+PaintNetSettings=C:\Users\{##}\AppData\Local\Paint.NET\Settings=false
+PaintNetEffects=C:\Users\{##}\AppData\Local\Paint.NET\Effects=false
+PaintNetShapes=C:\Users\{##}\AppData\Local\Paint.NET\Shapes=false
+PaintNetPalettes=C:\Users\{##}\AppData\Local\Paint.NET\Palettes=false
+PaintNetBrushes=C:\Users\{##}\AppData\Local\Paint.NET\Brushes=false
+PaintNetFonts=C:\Users\{##}\AppData\Local\Paint.NET\Fonts=false
+}
+{=PuTTY
+PuttyCache=C:\Users\{##}\AppData\Local\Putty\Cache=false
+}
+{=qBittorrent
+qBittorrentCache=C:\Users\{##}\AppData\Local\qBittorrent\Cache=true
+qBittorrentConfig=C:\Users\{##}\AppData\Local\qBittorrent\qBittorrent.ini=false
+qBittorrentLogs=C:\Users\{##}\AppData\Local\qBittorrent\logs=true
+qBittorrentBTBackup=C:\Users\{##}\AppData\Local\qBittorrent\BT_backup=true
+qBittorrentTorrentFiles=C:\Users\{##}\AppData\Local\qBittorrent\torrents=false
+}
+{=RevoUninstaller
+RevoCache=C:\ProgramData\RevoUninstaller\Cache=false
+RevoLogs=C:\ProgramData\RevoUninstaller\Logs=false
+RevoBackups=C:\ProgramData\RevoUninstaller\Backups=false
+RevoSettings=C:\ProgramData\RevoUninstaller\Settings=false
+RevoHunterMode=C:\ProgramData\RevoUninstaller\HunterMode=false
+}
+{=Spotify"
+SpotifyCache=C:\Users\{##}\AppData\Local\Spotify\Cache=false
+SpotifyStorage=C:\Users\{##}\AppData\Local\Spotify\Storage=false
+SpotifySettings=C:\Users\{##}\AppData\Local\Spotify\Settings=false
+SpotifyBrowser=C:\Users\{##}\AppData\Local\Spotify\Browser=false
+SpotifyLogs=C:\Users\{##}\AppData\Local\Spotify\Logs=false
+SpotifyRoamingCache=C:\Users\{##}\AppData\Roaming\Spotify\Cache=false
+SpotifyRoamingSettings=C:\Users\{##}\AppData\Roaming\Spotify\Settings=false
+}
+{=TeamSpeak3
+TeamSpeakCache=C:\Users\{##}\AppData\Roaming\TS3Client\cache=false
+TeamSpeakLogs=C:\Users\{##}\AppData\Roaming\TS3Client\logs=false
+TeamSpeakConfig=C:\Users\{##}\AppData\Roaming\TS3Client\config=false
+TeamSpeakPlugins=C:\Users\{##}\AppData\Roaming\TS3Client\plugins=false
+TeamSpeakSound=C:\Users\{##}\AppData\Roaming\TS3Client\sound=false
+}
+{=Thunderbird
+ThunderbirdCache=C:\Users\{##}\AppData\Local\Thunderbird\Profiles\{profile}\cache2=false
+ThunderbirdMail=C:\Users\{##}\AppData\Roaming\Thunderbird\Profiles\{profile}\Mail=false
+ThunderbirdLogs=C:\Users\{##}\AppData\Roaming\Thunderbird\Logs=false
+ThunderbirdPrefs=C:\Users\{##}\AppData\Roaming\Thunderbird\Profiles\{profile}\prefs.js=false
+}
+{=VLCMediaPlayer
+VLCCache=C:\Users\{##}\AppData\Roaming\vlc\cache=false
+VLCLogs=C:\Users\{##}\AppData\Roaming\vlc\logs=false
+VLCMLHistory=C:\Users\{##}\AppData\Roaming\vlc\ml.xspf=false
+}
+{=AcronisTrueImage
+AcronisCache=C:\ProgramData\Acronis\TrueImage\Cache=false
+AcronisLogs=C:\ProgramData\Acronis\TrueImage\Logs=false
+AcronisTemp=C:\Users\{##}\AppData\Local\Temp\Acronis=true
+}
+{=AdvancedSystemCare
+ASCcache=C:\ProgramData\IObit\Advanced SystemCare\Cache=false
+ASCLogs=C:\ProgramData\IObit\Advanced SystemCare\Log=false
+ASCBackup=C:\ProgramData\IObit\Advanced SystemCare\Backup=false
+}
+{=AIMP
+AIMPCache=C:\Users\{##}\AppData\Local\AIMP\Cache=false
+AIMPLogs=C:\Users\{##}\AppData\Roaming\AIMP\Log=false
+AIMPSettings=C:\Users\{##}\AppData\Roaming\AIMP\Config=false
+}
+{=Audacity
+AudacityCache=C:\Users\{##}\AppData\Roaming\Audacity\Cache=false
+AudacityLogs=C:\Users\{##}\AppData\Roaming\Audacity\logs=false
+AudacityTemp=C:\Users\{##}\AppData\Local\Temp\audacity=true
+}
+{=BitTorrent
+BitTorrentCache=C:\Users\{##}\AppData\Local\BitTorrent\Cache=false
+BitTorrentLogs=C:\Users\{##}\AppData\Local\BitTorrent\Logs=false
+BitTorrentResumeData=C:\Users\{##}\AppData\Local\BitTorrent\Resume Data=false
+}
+{=BlueStacks
+BlueStacksCache=C:\ProgramData\BlueStacks\Cache=false
+BlueStacksLogs=C:\ProgramData\BlueStacks\Logs=false
+}
+{=Calibre
+CalibreCache=C:\Users\{##}\AppData\Local\calibre\Cache=false
+CalibreLogs=C:\Users\{##}\AppData\Local\calibre\Logs=false
+CalibreSettings=C:\Users\{##}\AppData\Roaming\calibre\config=false
+}
+{=CyberLinkPowerDVD
+PowerDVDCache=C:\Users\{##}\AppData\Local\CyberLink\PowerDVD\Cache=false
+PowerDVDLogs=C:\Users\{##}\AppData\Local\CyberLink\PowerDVD\Logs=false
+}
+{=DaemonTools
+DaemonToolsCache=C:\Users\{##}\AppData\Local\DTSoft\Cache=false
+DaemonToolsLogs=C:\Users\{##}\AppData\Local\DTSoft\Logs=false
+}
+{=Wireshark
+WiresharkCache=C:\Users\{##}\AppData\Local\Wireshark\Cache=false
+WiresharkTemp=C:\Users\{##}\AppData\Local\Temp\Wireshark=true
+WiresharkLogs=C:\Users\{##}\AppData\Roaming\Wireshark\Logs=false
+}
+{=WinSCP
+WinSCPCache=C:\Users\{##}\AppData\Local\WinSCP\Cache=false
+WinSCPLogs=C:\Users\{##}\AppData\Local\WinSCP\Logs=false
+WinSCPSettings=C:\Users\{##}\AppData\Roaming\WinSCP.ini=false
+}
+{=DiskDigger
+DiskDiggerCache=C:\Users\{##}\AppData\Local\DiskDigger\Cache=false
+DiskDiggerTemp=C:\Users\{##}\AppData\Local\Temp\DiskDigger=true
+}
+{=EagleGet
+EagleGetCache=C:\Users\{##}\AppData\Local\EagleGet\Cache=false
+EagleGetLogs=C:\Users\{##}\AppData\Local\EagleGet\Logs=false
+EagleGetTemp=C:\Users\{##}\AppData\Local\Temp\EagleGet=true
+}
+{=FreeDownloadManager
+FDMCache=C:\Users\{##}\AppData\Local\Free Download Manager\Cache=false
+FDMLoadLogs=C:\Users\{##}\AppData\Local\Free Download Manager\Logs=false
+FDMSettings=C:\Users\{##}\AppData\Roaming\Free Download Manager\settings.json=false
+}
+{=GOGGalaxy
+GOGGalaxyCache=C:\ProgramData\GOG.com\Galaxy\Cache=false
+GOGGalaxyLogs=C:\ProgramData\GOG.com\Galaxy\Logs=false
+GOGGalaxyTemp=C:\Users\{##}\AppData\Local\Temp\GOGGalaxy=true
+}
+{=HandBrakeCLI
+HandBrakeCLICache=C:\Users\{##}\AppData\Local\HandBrake\Cache=false
+HandBrakeCLILogs=C:\Users\{##}\AppData\Local\HandBrake\Logs=false
+}
+{=IINA
+IINACache=C:\Users\{##}\AppData\Local\IINA\Cache=false
+IINALogs=C:\Users\{##}\AppData\Local\IINA\Logs=false
+}
+{=IObitUninstaller
+IObitCache=C:\ProgramData\IObit\IObit Uninstaller\Cache=false
+IObitLogs=C:\ProgramData\IObit\IObit Uninstaller\Logs=false
+}
+{=Krita
+KritaCache=C:\Users\{##}\AppData\Local\krita\Cache=false
+KritaLogs=C:\Users\{##}\AppData\Local\krita\Logs=false
+KritaTemp=C:\Users\{##}\AppData\Local\Temp\krita=true
+}
+{=Launchy
+LaunchyCache=C:\Users\{##}\AppData\Local\Launchy\Cache=false
+LaunchyLogs=C:\Users\{##}\AppData\Local\Launchy\Logs=false
+}
+{=Lightworks
+LightworksCache=C:\Users\{##}\AppData\Local\Lightworks\Cache=false
+LightworksLogs=C:\Users\{##}\AppData\Local\Lightworks\Logs=false
+LightworksSettings=C:\Users\{##}\AppData\Local\Lightworks\Preferences=false
+}
+{=MediaInfo
+MediaInfoCache=C:\Users\{##}\AppData\Local\MediaInfo\Cache=false
+MediaInfoLogs=C:\Users\{##}\AppData\Local\MediaInfo\Logs=false
+}
+{=MPC-HC
+MPCHCCache=C:\Users\{##}\AppData\Local\MPC-HC\Cache=false
+MPCHCLogs=C:\Users\{##}\AppData\Local\MPC-HC\Logs=false
+MPCHCSettings=C:\Users\{##}\AppData\Roaming\MPC-HC\mpc-hc.ini=false
+}
+{=MusicBee
+MusicBeeCache=C:\Users\{##}\AppData\Local\MusicBee\Cache=false
+MusicBeeLogs=C:\Users\{##}\AppData\Roaming\MusicBee\Logs=false
+}
+{=NetLimiter
+NetLimiterCache=C:\ProgramData\NetLimiter\Cache=false
+NetLimiterLogs=C:\ProgramData\NetLimiter\Logs=false
+}
+{=Notion
+NotionCache=C:\Users\{##}\AppData\Local\Notion\Cache=false
+NotionGPUCache=C:\Users\{##}\AppData\Local\Notion\GPUCache=false
+NotionCodeCache=C:\Users\{##}\AppData\Local\Notion\Code Cache=false
+NotionIndexedDB=C:\Users\{##}\AppData\Local\Notion\IndexedDB=false
+NotionLocalStorage=C:\Users\{##}\AppData\Local\Notion\Local Storage=false
+NotionSessionStorage=C:\Users\{##}\AppData\Local\Notion\Session Storage=false
+NotionLogs=C:\Users\{##}\AppData\Roaming\Notion\logs=false
+NotionSettings=C:\Users\{##}\AppData\Roaming\Notion\settings.json=false
+}
+{=OBSClassic
+OBSClassicCache=C:\Users\{##}\AppData\Roaming\OBS\Cache=false
+}
+{=OneDrive
+OneDriveCache=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\cache=false
+OneDriveLogs=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\logs=true
+OneDriveTemp=C:\OneDriveTemp=false
+OneDriveSettings=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\settings\Personal=false
+OneDriveBusinessSettings=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\settings\Business1=false
+OneDriveDatabase=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\SyncEngine\Database=false
+OneDriveTelemetry=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\Telemetry=false
+OneDriveFileSyncStatus=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\logs\Business1\SyncDiagnostics\current=true
+OneDriveConfigJSON=C:\Users\{##}\AppData\Local\Microsoft\OneDrive\settings\Business1\ClientPolicy.json=false
+}
+{=OperaVPN
+OperaVPNCache=C:\Users\{##}\AppData\Local\OperaVPN\Cache=false
+}
+{=PaintToolSAI
+PaintToolSAICache=C:\Users\{##}\AppData\Local\PaintTool SAI\Cache=false
+}
+{=Pandora
+PandoraCache=C:\Users\{##}\AppData\Local\Pandora\Cache=false
+}
+{=Parallels
+ParallelsCache=C:\Users\{##}\AppData\Local\Parallels\Cache=false
+}
+{=PeaZip
+PeaZipCache=C:\Users\{##}\AppData\Local\PeaZip\Cache=false
+}
+{=Pidgin
+PidginCache=C:\Users\{##}\AppData\Roaming\.purple\cache=false
+}
+{=PotPlayer
+PotPlayerCache=C:\Users\{##}\AppData\Roaming\PotPlayer\Cache=false
+}
+{=Prezi
+PreziCache=C:\Users\{##}\AppData\Local\Prezi\Cache=false
+}
+{=qTox
+qToxCache=C:\Users\{##}\AppData\Local\qTox\Cache=false
+}
+{=DiscordPTB
+#profile#=C:\Users\{##}\AppData\Roaming\discordptb\=true
+DiscordPTBCache=#profileget#=\Cache=true
+DiscordPTBCodeCache=#profileget#=\Code Cache=true
+DiscordPTBGPUCache=#profileget#=\GPUCache=true
+DiscordPTBMediaCache=#profileget#=\Media Cache=true
+DiscordPTBShaderCache=#profileget#=\ShaderCache=true
+DiscordPTBIndexedDB=#profileget#=\IndexedDB=false
+DiscordPTBLocalStorage=#profileget#=\Local Storage=false
+DiscordPTBSessionStorage=#profileget#=\Session Storage=false
+DiscordPTBCookies=#profileget#=\Network\Cookies=false
+DiscordPTBHistory=#profileget#=\History=false
+DiscordPTBNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+DiscordPTBVisitedLinks=#profileget#=\Visited Links=false
+DiscordPTBPreferences=#profileget#=\Preferences=false
+DiscordPTBSessions=#profileget#=\Sessions=false
+DiscordPTBExtensionState=#profileget#=\Extension State=false
+DiscordPTBWebSQL=#profileget#=\databases=true
+DiscordPTBTemp=C:\Users\{##}\AppData\Local\Temp\DiscordPTB=true
+}
+{=Obsidian
+ObsidianCache=C:\Users\{##}\.obsidian\Cache=false
+ObsidianLogs=C:\Users\{##}\.obsidian\logs=false
+}
+{=Trello
+TrelloCache=C:\Users\{##}\AppData\Roaming\Trello\Cache=false
+TrelloGPUCache=C:\Users\{##}\AppData\Roaming\Trello\GPUCache=false
+TrelloCookies=C:\Users\{##}\AppData\Roaming\Trello\Network\Cookies=false
+TrelloIndexedDB=C:\Users\{##}\AppData\Roaming\Trello\IndexedDB=false
+TrelloTemp=C:\Users\{##}\AppData\Local\Temp\Trello=true
+}
+{=Slack
+SlackCache=C:\Users\{##}\AppData\Roaming\Slack\Cache=false
+SlackGPUCache=C:\Users\{##}\AppData\Roaming\Slack\GPUCache=false
+SlackLogs=C:\Users\{##}\AppData\Roaming\Slack\logs=false
+SlackSettings=C:\Users\{##}\AppData\Roaming\Slack\storage\settings.json=false
+SlackCookies=C:\Users\{##}\AppData\Roaming\Slack\Network\Cookies=false
+SlackIndexedDB=C:\Users\{##}\AppData\Roaming\Slack\IndexedDB=false
+}
+{=SlackPTB
+SlackPTBCache=C:\Users\{##}\AppData\Roaming\SlackPTB\Cache=false
+SlackPTBGPUCache=C:\Users\{##}\AppData\Roaming\SlackPTB\GPUCache=false
+SlackPTBIndexedDB=C:\Users\{##}\AppData\Roaming\SlackPTB\IndexedDB=false
+SlackPTBCookies=C:\Users\{##}\AppData\Roaming\SlackPTB\Network\Cookies=false
+SlackPTBLocalStorage=C:\Users\{##}\AppData\Roaming\SlackPTB\Local Storage=false
+SlackPTBTemp=C:\Users\{##}\AppData\Local\Temp\SlackPTB=true
+}
+{=Clipchamp
+ClipchampCache=C:\Users\{##}\AppData\Local\Packages\Clipchamp.Clipchamp_yxz26nhyzhsrt\AC\INetCache=true
+ClipchampTemp=C:\Users\{##}\AppData\Local\Temp\Clipchamp=true
+ClipchampLogs=C:\Users\{##}\AppData\Local\Packages\Clipchamp.Clipchamp_yxz26nhyzhsrt\TempState=true
+ClipchampIndexedDB=C:\Users\{##}\AppData\Local\Packages\Clipchamp.Clipchamp_yxz26nhyzhsrt\IndexedDB=false
+ClipchampLocalStorage=C:\Users\{##}\AppData\Local\Packages\Clipchamp.Clipchamp_yxz26nhyzhsrt\LocalStorage=false
+ClipchampCookies=C:\Users\{##}\AppData\Local\Packages\Clipchamp.Clipchamp_yxz26nhyzhsrt\Cookies=false
+}
+{=DiscordCanary
+DiscordCanaryCache=C:\Users\{##}\AppData\Roaming\discordcanary\Cache=false
+DiscordCanaryCodeCache=C:\Users\{##}\AppData\Roaming\discordcanary\Code Cache=false
+DiscordCanaryGPUCache=C:\Users\{##}\AppData\Roaming\discordcanary\GPUCache=false
+DiscordCanaryLogs=C:\Users\{##}\AppData\Roaming\discordcanary\logs=false
+DiscordCanaryCookies=C:\Users\{##}\AppData\Roaming\discordcanary\Network\Cookies=false
+DiscordCanaryLocalStorage=C:\Users\{##}\AppData\Roaming\discordcanary\Local Storage=false
+DiscordCanaryPreferences=C:\Users\{##}\AppData\Roaming\discordcanary\Preferences=false
+DiscordCanarySessions=C:\Users\{##}\AppData\Roaming\discordcanary\Sessions=false
+DiscordCanaryHistory=C:\Users\{##}\AppData\Roaming\discordcanary\History=false
+}
+{=VivaldiSnapshot
+VivaldiSnapshotCache=C:\Users\{##}\AppData\Local\Vivaldi\Application\Cache=false
+VivaldiSnapshotGPUCache=C:\Users\{##}\AppData\Local\Vivaldi\Application\GPUCache=false
+VivaldiSnapshotMediaCache=C:\Users\{##}\AppData\Local\Vivaldi\Application\Media Cache=false
+VivaldiSnapshotShaderCache=C:\Users\{##}\AppData\Local\Vivaldi\Application\Shader Cache=false
+VivaldiSnapshotServiceWorkerCache=C:\Users\{##}\AppData\Local\Vivaldi\Application\Service Worker\CacheStorage=false
+VivaldiSnapshotIndexedDB=C:\Users\{##}\AppData\Local\Vivaldi\Application\IndexedDB=false
+VivaldiSnapshotLocalStorage=C:\Users\{##}\AppData\Local\Vivaldi\Application\Local Storage=false
+VivaldiSnapshotSessionStorage=C:\Users\{##}\AppData\Local\Vivaldi\Application\Session Storage=false
+VivaldiSnapshotCookies=C:\Users\{##}\AppData\Local\Vivaldi\Application\Network\Cookies=false
+VivaldiSnapshotHistory=C:\Users\{##}\AppData\Local\Vivaldi\Application\History=false
+}
+{=DiscordDevelopment
+DiscordDevCache=C:\Users\{##}\AppData\Roaming\discorddevelopment\Cache=false
+DiscordDevCodeCache=C:\Users\{##}\AppData\Roaming\discorddevelopment\Code Cache=false
+DiscordDevGPUCache=C:\Users\{##}\AppData\Roaming\discorddevelopment\GPUCache=false
+DiscordDevLogs=C:\Users\{##}\AppData\Roaming\discorddevelopment\logs=false
+DiscordDevCookies=C:\Users\{##}\AppData\Roaming\discorddevelopment\Network\Cookies=false
+DiscordDevLocalStorage=C:\Users\{##}\AppData\Roaming\discorddevelopment\Local Storage=false
+DiscordDevPreferences=C:\Users\{##}\AppData\Roaming\discorddevelopment\Preferences=false
+DiscordDevSessions=C:\Users\{##}\AppData\Roaming\discorddevelopment\Sessions=false
+DiscordDevHistory=C:\Users\{##}\AppData\Roaming\discorddevelopment\History=false
+}
+{=FileHippoApp
+FileHippoCache=C:\Users\{##}\AppData\Local\FileHippo\AppCache=false
+FileHippoLogs=C:\Users\{##}\AppData\Local\FileHippo\Logs=false
+FileHippoTemp=C:\Users\{##}\AppData\Local\Temp\FileHippo=true
+FileHippoSettings=C:\Users\{##}\AppData\Local\FileHippo\Settings=false
+FileHippoUpdateCache=C:\Users\{##}\AppData\Local\FileHippo\UpdateCache=false
+FileHippoCrashReports=C:\Users\{##}\AppData\Local\FileHippo\CrashReports=false
+}
+{=DiscordNightly
+DiscordNightlyCache=C:\Users\{##}\AppData\Roaming\discordnightly\Cache=false
+DiscordNightlyCodeCache=C:\Users\{##}\AppData\Roaming\discordnightly\Code Cache=false
+DiscordNightlyGPUCache=C:\Users\{##}\AppData\Roaming\discordnightly\GPUCache=false
+DiscordNightlyLogs=C:\Users\{##}\AppData\Roaming\discordnightly\logs=false
+DiscordNightlyCookies=C:\Users\{##}\AppData\Roaming\discordnightly\Network\Cookies=false
+DiscordNightlyLocalStorage=C:\Users\{##}\AppData\Roaming\discordnightly\Local Storage=false
+DiscordNightlyPreferences=C:\Users\{##}\AppData\Roaming\discordnightly\Preferences=false
+DiscordNightlySessions=C:\Users\{##}\AppData\Roaming\discordnightly\Sessions=false
+DiscordNightlyHistory=C:\Users\{##}\AppData\Roaming\discordnightly\History=false
+}
+{=MicrosoftEdgeBeta
+#profile#=C:\Users\{##}\AppData\Local\Microsoft\Edge Beta\User Data\=true
+EdgeBetaCache=#profileget#=\Cache=true
+EdgeBetaCodeCache=#profileget#=\Code Cache=true
+EdgeBetaGPUCache=#profileget#=\GPUCache=true
+EdgeBetaMediaCache=#profileget#=\Media Cache=true
+EdgeBetaShaderCache=#profileget#=\Shader Cache=true
+EdgeBetaServiceWorkerCache=#profileget#=\Service Worker\CacheStorage=true
+EdgeBetaIndexedDB=#profileget#=\IndexedDB=false
+EdgeBetaLocalStorage=#profileget#=\Local Storage=false
+EdgeBetaSessionStorage=#profileget#=\Session Storage=false
+EdgeBetaCookies=#profileget#=\Network\Cookies=false
+EdgeBetaHistory=#profileget#=\History=false
+EdgeBetaHistoryBackup=#profileget#=\History Provider Cache=false
+EdgeBetaTopSites=#profileget#=\Top Sites=false
+EdgeBetaVisitedLinks=#profileget#=\Visited Links=false
+EdgeBetaNetworkActionPredictor=#profileget#=\Network Action Predictor=false
+EdgeBetaExtensionState=#profileget#=\Extension State=false
+EdgeBetaPreferences=#profileget#=\Preferences=false
+EdgeBetaSessions=#profileget#=\Sessions=false
+EdgeBetaWebSQL=#profileget#=\databases=true
+}
+{=Bitwarden
+BitwardenCache=C:\Users\{##}\AppData\Roaming\Bitwarden\Cache=false
+BitwardenLogs=C:\Users\{##}\AppData\Roaming\Bitwarden\logs=false
+}
+{=ZoomIt
+ZoomItCache=C:\Users\{##}\AppData\Roaming\ZoomIt\Cache=false
+ZoomItLogs=C:\Users\{##}\AppData\Roaming\ZoomIt\logs=false
+}
+{=WhatsAppDesktop
+WhatsAppCache=C:\Users\{##}\AppData\Roaming\WhatsApp\Cache=false
+WhatsAppLogs=C:\Users\{##}\AppData\Roaming\WhatsApp\logs=false
+WhatsAppSettings=C:\Users\{##}\AppData\Roaming\WhatsApp\settings=false
+}
+{=Signal
+SignalData=C:\Users\{##}\AppData\Roaming\Signal=false
+SignalCache=C:\Users\{##}\AppData\Roaming\Signal\Cache=true
+SignalLogs=C:\Users\{##}\AppData\Roaming\Signal\logs=true
+SignalSettings=C:\Users\{##}\AppData\Roaming\Signal\settings=false
+SignalDatabases=C:\Users\{##}\AppData\Roaming\Signal\databases=false
+SignalIndexedDB=C:\Users\{##}\AppData\Roaming\Signal\IndexedDB=false
+SignalLocalStorage=C:\Users\{##}\AppData\Roaming\Signal\Local Storage=false
+SignalSessionStorage=C:\Users\{##}\AppData\Roaming\Signal\Session Storage=false
+SignalCookies=C:\Users\{##}\AppData\Roaming\Signal\Network\Cookies=false
+SignalServiceWorkerCache=C:\Users\{##}\AppData\Roaming\Signal\Service Worker\CacheStorage=false
+SignalGPUCache=C:\Users\{##}\AppData\Roaming\Signal\GPUCache=true
+SignalCrashReports=C:\Users\{##}\AppData\Roaming\Signal\Crashpad\reports=false
+}
+{=NetflixDesktop
+NetflixCache=C:\Users\{##}\AppData\Local\Packages\4DF9E0F8.Netflix_mcm4njqhnhss8\LocalCache=false
+NetflixSettings=C:\Users\{##}\AppData\Local\Packages\4DF9E0F8.Netflix_mcm4njqhnhss8\Settings=false
+}
+{=AdobeIllustrator
+AdobeIllustratorCache=C:\Users\{##}\AppData\Local\Adobe\Illustrator\Cache=false
+AdobeIllustratorLogs=C:\Users\{##}\AppData\Roaming\Adobe\Illustrator\Logs=false
+AdobeIllustratorPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Illustrator\Preferences=false
+AdobeIllustratorAutoRecover=C:\Users\{##}\AppData\Roaming\Adobe\Adobe Illustrator AutoRecover=false
+}
+{=AdobePhotoshop
+PhotoshopCache=C:\Users\{##}\AppData\Roaming\Adobe\Photoshop\Cache=false
+PhotoshopLogs=C:\Users\{##}\AppData\Roaming\Adobe\Photoshop\Logs=false
+PhotoshopPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Photoshop\Preferences=false
+PhotoshopRecentFiles=C:\Users\{##}\AppData\Roaming\Adobe\Photoshop\Recent Files=false
+PhotoshopAutoRecover=C:\Users\{##}\AppData\Roaming\Adobe\Adobe Photoshop AutoRecover=false
+PhotoshopScratchDisks=C:\Users\{##}\AppData\Local\Adobe\Photoshop\Scratch Disks=false
+}
+{=AdobeAfterEffects
+AfterEffectsCache=C:\Users\{##}\AppData\Roaming\Adobe\After Effects\Cache=false
+AfterEffectsLogs=C:\Users\{##}\AppData\Roaming\Adobe\After Effects\Logs=false
+AfterEffectsPreferences=C:\Users\{##}\AppData\Roaming\Adobe\After Effects\Preferences=false
+AfterEffectsRecentProjects=C:\Users\{##}\AppData\Roaming\Adobe\After Effects\Recent Projects=false
+}
+{=AdobePremierePro
+PremiereProCache=C:\Users\{##}\AppData\Roaming\Adobe\Premiere Pro\Cache=false
+PremiereProLogs=C:\Users\{##}\AppData\Roaming\Adobe\Premiere Pro\Logs=false
+PremiereProPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Premiere Pro\Preferences=false
+PremiereProRecentProjects=C:\Users\{##}\AppData\Roaming\Adobe\Premiere Pro\Recent Projects=false
+}
+{=AdobeAudition
+AuditionCache=C:\Users\{##}\AppData\Roaming\Adobe\Audition\Cache=false
+AuditionLogs=C:\Users\{##}\AppData\Roaming\Adobe\Audition\Logs=false
+AuditionPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Audition\Preferences=false
+}
+{=AdobeInDesign
+InDesignCache=C:\Users\{##}\AppData\Roaming\Adobe\InDesign\Cache=false
+InDesignLogs=C:\Users\{##}\AppData\Roaming\Adobe\InDesign\Logs=false
+InDesignPreferences=C:\Users\{##}\AppData\Roaming\Adobe\InDesign\Preferences=false
+InDesignRecentFiles=C:\Users\{##}\AppData\Roaming\Adobe\InDesign\Recent Files=false
+}
+{=AdobeLightroom
+LightroomCache=C:\Users\{##}\AppData\Roaming\Adobe\Lightroom\Cache=false
+LightroomLogs=C:\Users\{##}\AppData\Roaming\Adobe\Lightroom\Logs=false
+LightroomPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Lightroom\Preferences=false
+LightroomCatalog=C:\Users\{##}\Pictures\Lightroom Catalog\CatalogPrev\Cache=false
+}
+{=AdobeXD
+XDCache=C:\Users\{##}\AppData\Roaming\Adobe\Adobe XD\Cache=false
+XDLogs=C:\Users\{##}\AppData\Roaming\Adobe\Adobe XD\Logs=false
+XDPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Adobe XD\Preferences=false
+}
+{=uTorrent
+uTorrentCache=C:\Users\{##}\AppData\Roaming\uTorrent\cache=false
+uTorrentResume=C:\Users\{##}\AppData\Roaming\uTorrent\resume.dat=false
+uTorrentLogs=C:\Users\{##}\AppData\Roaming\uTorrent\logs=false
+uTorrentSettings=C:\Users\{##}\AppData\Roaming\uTorrent\settings.dat=false
+uTorrentStats=C:\Users\{##}\AppData\Roaming\uTorrent\stats.dat=false
+uTorrentTorrentFiles=C:\Users\{##}\AppData\Roaming\uTorrent\torrents=false
+uTorrentTorrentBackups=C:\Users\{##}\AppData\Roaming\uTorrent\torrents.bak=false
+uTorrentDht=C:\Users\{##}\AppData\Roaming\uTorrent\dht.dat=false
+uTorrentPeers=C:\Users\{##}\AppData\Roaming\uTorrent\peers.dat=false
+}
+{=AdobeAnimate
+AnimateCache=C:\Users\{##}\AppData\Roaming\Adobe\Animate\Cache=false
+AnimateLogs=C:\Users\{##}\AppData\Roaming\Adobe\Animate\Logs=false
+AnimatePreferences=C:\Users\{##}\AppData\Roaming\Adobe\Animate\Preferences=false
+}
+{=AdobeDreamweaver
+DreamweaverCache=C:\Users\{##}\AppData\Roaming\Adobe\Dreamweaver\Cache=false
+DreamweaverLogs=C:\Users\{##}\AppData\Roaming\Adobe\Dreamweaver\Logs=false
+DreamweaverPreferences=C:\Users\{##}\AppData\Roaming\Adobe\Dreamweaver\Preferences=false
+}
+{=AdobeBridge
+BridgeCache=C:\Users\{##}\AppData\Roaming\Adobe\Bridge\Cache=false
+BridgeLogs=C:\Users\{##}\AppData\Roaming\Adobe\Bridge\Logs=false
+BridgePreferences=C:\Users\{##}\AppData\Roaming\Adobe\Bridge\Preferences=false
+}
+{=GOGGalaxy
+GOGGalaxyCache=C:\ProgramData\GOG.com\Galaxy\Cache=false
+GOGGalaxyLogs=C:\ProgramData\GOG.com\Galaxy\Logs=false
+GOGGalaxyConfig=C:\ProgramData\GOG.com\Galaxy\config.json=false
+GOGGalaxyDatabase=C:\ProgramData\GOG.com\Galaxy\storage\galaxy-2.db=false
+GOGGalaxyCrashReports=C:\ProgramData\GOG.com\Galaxy\CrashReports=false
+GOGGalaxyTempCache=C:\ProgramData\GOG.com\Galaxy\temp\cache=false
+}
+{=DaVinciResolve
+ResolveCache=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\CacheClip=false
+ResolveLogs=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\logs=false
+ResolveSettings=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Preferences.json=false
+ResolveDatabase=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Support\Resolve Disk Database=false
+ResolveConfig=C:\ProgramData\Blackmagic Design\DaVinci Resolve\Config=false
+ResolveGallery=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\Gallery.db=false
+ResolveCacheTemp=C:\Users\{##}\AppData\Local\Blackmagic Design\DaVinci Resolve\Cache=false
+ResolveUserData=C:\Users\{##}\AppData\Roaming\Blackmagic Design\DaVinci Resolve\User Data=false
+}
+{=Notepad
+NotepadSettings=C:\Users\{##}\AppData\Roaming\Notepad\Settings=false
+NotepadRecentFiles=C:\Users\{##}\AppData\Roaming\Notepad\RecentFiles=false
+NotepadBackup=C:\Users\{##}\AppData\Roaming\Notepad\Backup=false
+}
+{=FileMaker
+FileMakerCache=C:\Users\{##}\AppData\Local\FileMaker\Cache=false
+FileMakerLogs=C:\Users\{##}\AppData\Local\FileMaker\Logs=false
+FileMakerConfig=C:\Users\{##}\AppData\Roaming\FileMaker\Config=false
+FileMakerSettings=C:\Users\{##}\AppData\Roaming\FileMaker\Settings=false
+FileMakerExtensions=C:\Users\{##}\AppData\Roaming\FileMaker\Extensions=false
+}
+{=AutodeskAutoCAD
+AutoCADCache=C:\Users\{##}\AppData\Local\Autodesk\AutoCAD\Cache=false
+AutoCADLogs=C:\Users\{##}\AppData\Local\Autodesk\AutoCAD\Logs=false
+AutoCADSettings=C:\Users\{##}\AppData\Roaming\Autodesk\AutoCAD\Settings=false
+AutoCADTempFiles=C:\Users\{##}\AppData\Local\Autodesk\AutoCAD\Temp=false
+}
+{=SkypeForBusiness
+SkypeBizCache=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\Lync\Tracing=false
+SkypeBizLogs=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\Lync\Logs=false
+SkypeBizSettings=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\Lync\Settings=false
+}
+{=Postman
+PostmanCache=C:\Users\{##}\AppData\Roaming\Postman\Cache=false
+PostmanCodeCache=C:\Users\{##}\AppData\Roaming\Postman\Code Cache=false
+PostmanGPUCache=C:\Users\{##}\AppData\Roaming\Postman\GPUCache=false
+PostmanLogs=C:\Users\{##}\AppData\Roaming\Postman\logs=false
+PostmanSettings=C:\Users\{##}\AppData\Roaming\Postman\settings.json=false
+PostmanStorage=C:\Users\{##}\AppData\Roaming\Postman\IndexedDB=false
+PostmanSessions=C:\Users\{##}\AppData\Roaming\Postman\Session Storage=false
+}
+{=WiseDiskCleaner
+WiseDiskCleanerCache=C:\Users\{##}\AppData\Local\WiseCleaner\WiseDiskCleaner\Cache=false
+WiseDiskCleanerLogs=C:\Users\{##}\AppData\Local\WiseCleaner\WiseDiskCleaner\Logs=false
+WiseDiskCleanerTemp=C:\Users\{##}\AppData\Local\WiseCleaner\WiseDiskCleaner\Temp=false
+WiseDiskCleanerReports=C:\Users\{##}\AppData\Local\WiseCleaner\WiseDiskCleaner\Reports=false
+WiseDiskCleanerSettings=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseDiskCleaner\Settings.dat=false
+WiseDiskCleanerProfiles=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseDiskCleaner\Profiles=false
+}
+{=WiseRegistryCleaner
+WiseRegistryCleanerCache=C:\Users\{##}\AppData\Local\WiseCleaner\WiseRegistryCleaner\Cache=false
+WiseRegistryCleanerLogs=C:\Users\{##}\AppData\Local\WiseCleaner\WiseRegistryCleaner\Logs=false
+WiseRegistryCleanerBackup=C:\Users\{##}\AppData\Local\WiseCleaner\WiseRegistryCleaner\Backup=false
+WiseRegistryCleanerSettings=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseRegistryCleaner\Settings.dat=false
+WiseRegistryCleanerProfiles=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseRegistryCleaner\Profiles=false
+}
+{=WiseCare365
+WiseCareCache=C:\Users\{##}\AppData\Local\WiseCleaner\WiseCare365\Cache=false
+WiseCareLogs=C:\Users\{##}\AppData\Local\WiseCleaner\WiseCare365\Logs=false
+WiseCareTemp=C:\Users\{##}\AppData\Local\WiseCleaner\WiseCare365\Temp=false
+WiseCareBackup=C:\Users\{##}\AppData\Local\WiseCleaner\WiseCare365\Backup=false
+WiseCareSettings=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseCare365\Settings.dat=false
+WiseCareProfiles=C:\Users\{##}\AppData\Roaming\WiseCleaner\WiseCare365\Profiles=false
+}
+{=MicrosoftStore
+MicrosoftStoreCache=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalCache=true
+MicrosoftStoreLogs=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\DiagOutputDir=false
+MicrosoftStoreSettings=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\Settings=false
+MicrosoftStoreDatabase=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\Database=false
+MicrosoftStoreWebCache=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\LocalState\WebCache=false
+MicrosoftStoreCache2=C:\Users\{##}\AppData\Local\Packages\Microsoft.WindowsStore_8wekyb3d8bbwe\Cache\CacheData=false
+}
+{=WiseProgramUninstaller
+WiseEBWebViewCache=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\Cache=false
+WiseEBWebViewCodeCache=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\Code Cache=false
+WiseEBWebViewGPUCache=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\GPUCache=false
+WiseEBWebViewIndexedDB=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\IndexedDB=false
+WiseEBWebViewLocalStorage=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\Local Storage=false
+WiseEBWebViewSessionStorage=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Default\Session Storage=false
+WiseEBWebViewCrashPad=C:\Users\{##}\AppData\Roaming\Wise Utilities\EBWebView\Crashpad=false
+}
+{=ProcessHacker
+ProcessHackerCache=C:\Users\{##}\AppData\Local\ProcessHacker\Cache=false
+ProcessHackerLogs=C:\Users\{##}\AppData\Local\ProcessHacker\Logs=false
+ProcessHackerConfigs=C:\Users\{##}\AppData\Roaming\ProcessHacker\Config.xml=false
+ProcessHackerProfiles=C:\Users\{##}\AppData\Roaming\ProcessHacker\Profiles=false
+ProcessHackerPlugins=C:\Users\{##}\AppData\Roaming\ProcessHacker\Plugins=false
+ProcessHackerDumps=C:\Users\{##}\AppData\Local\ProcessHacker\Dumps=false
+}
+{=RStudio
+RStudioCache=C:\Users\{##}\AppData\Local\RStudio-Desktop\Cache=false
+RStudioLogs=C:\Users\{##}\AppData\Local\RStudio-Desktop\log=false
+RStudioUserData=C:\Users\{##}\AppData\Local\RStudio-Desktop\userdata=false
+RStudioSettings=C:\Users\{##}\AppData\Roaming\RStudio\RStudio-Desktop\settings.json=false
+RStudioPreferences=C:\Users\{##}\AppData\Roaming\RStudio\RStudio-Desktop\preferences.json=false
+RStudioProjects=C:\Users\{##}\Documents\R\Projects=false
+}
+{=Office365
+OfficeCache=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\OfficeFileCache=false
+OfficeLogs=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\Logs=false
+OfficeSettings=C:\Users\{##}\AppData\Roaming\Microsoft\Office\16.0\User Settings\*.xml=false
+OfficeTelemetry=C:\Users\{##}\AppData\Local\Microsoft\Office\16.0\Telemetry\Logs=false
+OfficeAddins=C:\Users\{##}\AppData\Roaming\Microsoft\AddIns=false
+}
+{=OpenVPN
+OpenVPNCache=C:\Users\{##}\AppData\Local\OpenVPN\cache=false
+OpenVPNLogs=C:\Users\{##}\AppData\Local\OpenVPN\log=false
+OpenVPNSettings=C:\Users\{##}\AppData\Roaming\OpenVPN\config=false
+OpenVPNProfiles=C:\Users\{##}\AppData\Roaming\OpenVPN\profiles=false
+OpenVPNCertificates=C:\Users\{##}\AppData\Roaming\OpenVPN\certificates=false
+}
+{=Python
+PythonCache=C:\Users\{##}\AppData\Local\Programs\Python\Cache=false
+PythonBytecode=C:\Users\{##}\AppData\Local\Programs\Python\__pycache__=false
+PythonSettings=C:\Users\{##}\AppData\Local\Programs\Python\Settings.ini=false
+PythonLogs=C:\Users\{##}\AppData\Local\Programs\Python\Logs=false
+PythonScripts=C:\Users\{##}\Documents\Python Scripts=false
+PythonVirtualEnvs=C:\Users\{##}\Envs=false
+}
+{=LogMeIn
+LogMeInCache=C:\Users\{##}\AppData\Local\LogMeIn\Cache=false
+LogMeInLogs=C:\Users\{##}\AppData\Local\LogMeIn\Logs=false
+LogMeInSettingsXML=C:\Users\{##}\AppData\Local\LogMeIn\Settings.xml=false
+LogMeInSettingsJSON=C:\Users\{##}\AppData\Local\LogMeIn\Settings.json=false
+LogMeInSessions=C:\Users\{##}\AppData\Local\LogMeIn\Sessions=false
+LogMeInProfiles=C:\Users\{##}\AppData\Roaming\LogMeIn\Profiles=false
+LogMeInCrashReports=C:\Users\{##}\AppData\Local\LogMeIn\CrashReports=false
+LogMeInDatabase=C:\Users\{##}\AppData\Local\LogMeIn\Database=false
+LogMeInLogsArchive=C:\Users\{##}\AppData\Local\LogMeIn\Logs\Archive=false
+}
+{=Java
+JavaCache=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\cache=false
+JavaLogs=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\log=false
+JavaSettings=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\deployment.properties=false
+JavaSecurity=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\Security\security.config=false
+JavaDeploymentCache=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\cache\deploymentCache=false
+JavaExceptions=C:\Users\{##}\AppData\LocalLow\Sun\Java\Deployment\exception.sites=false
+}
+{=TLauncher
+TLauncherCache=C:\Users\{##}\AppData\Roaming\.tlauncher\cache=false
+TLauncherLogs=C:\Users\{##}\AppData\Roaming\.tlauncher\logs=false
+TLauncherSettings=C:\Users\{##}\AppData\Roaming\.tlauncher\settings.json=false
+TLauncherProfiles=C:\Users\{##}\AppData\Roaming\.tlauncher\profiles=false
+TLauncherVersions=C:\Users\{##}\AppData\Roaming\.tlauncher\versions=false
+}
+{=Git
+GitCache=C:\Users\{##}\AppData\Local\Git\Cache=false
+GitLogs=C:\Users\{##}\AppData\Local\Git\Logs=false
+GitSettings=C:\Users\{##}\AppData\Local\Git\Config=false
+}
+{=IntelGraphicsCommandCenter
+IntelGCCache=C:\Users\{##}\AppData\Local\Intel\IntelGraphicsCommandCenter\Cache=false
+IntelGCLogs=C:\Users\{##}\AppData\Local\Intel\IntelGraphicsCommandCenter\Logs=false
+IntelGCSettings=C:\Users\{##}\AppData\Local\Intel\IntelGraphicsCommandCenter\Settings.json=false
+}
+{=JDownloader
+JDownloaderCache=C:\Users\{##}\AppData\Local\JDownloader\cache=false
+JDownloaderLogs=C:\Users\{##}\AppData\Local\JDownloader\logs=false
+JDownloaderSettings=C:\Users\{##}\AppData\Local\JDownloader\cfg=false
+}
+{=RiotClient
+RiotClientCache=C:\ProgramData\Riot Games\Riot Client\Data\Cache=false
+RiotClientLogs=C:\ProgramData\Riot Games\Riot Client\Logs=false
+RiotClientSettings=C:\Users\{##}\AppData\Local\Riot Games\Riot Client\Config\settings.yaml=false
+RiotClientUserData=C:\Users\{##}\AppData\Local\Riot Games\Riot Client\UserData=false
+}
+{=Foobar2000
+FoobarCache=C:\Users\{##}\AppData\Roaming\foobar2000\Cache=false
+FoobarLogs=C:\Users\{##}\AppData\Roaming\foobar2000\Logs=false
+FoobarSettings=C:\Users\{##}\AppData\Roaming\foobar2000\config.cfg=false
+}
+{=FileHippoAppManager
+FileHippoCache=C:\Users\{##}\AppData\Roaming\FileHippo\AppManager\Cache=false
+FileHippoLogs=C:\Users\{##}\AppData\Roaming\FileHippo\AppManager\Logs=false
+FileHippoSettings=C:\Users\{##}\AppData\Roaming\FileHippo\AppManager\Settings.ini=false
+}

@@ -29,6 +29,25 @@
             </Setter.Value>
         </Setter>
     </Style>
+ 
+    <Style x:Key="ClickableCellStyle" TargetType="DataGridCell">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource ButtonHoverBackground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ClickableTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridCell}, Path=IsMouseOver}" Value="True">
+                <Setter Property="TextDecorations" Value="Underline"/>
+                <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
     <Color x:Key="ToggleOffBackgroundColor">#DDDDDD</Color>
 <Color x:Key="ToggleOnBackgroundColor">#007ACC</Color>
 <Color x:Key="ToggleOnForegroundColor">#FFFFFF</Color>

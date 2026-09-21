@@ -9,458 +9,772 @@
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         AllowsTransparency="True"
-        FontFamily="Inter, Segoe UI, Arial, sans-serif">
-    <Grid Margin="0,0,0,-621">
+        FontFamily="Inter, Segoe UI, Arial, sans-serif"
+        TextElement.Foreground="{DynamicResource TextPrimary}">
+    <Window.Resources>
 
-        <Button Content="✕"
-        Style="{StaticResource DangerButtonStyle}"
-        Width="30" Height="30"
-        FontSize="14"
-        Click="CloseButton_Click"
-        ToolTip="Close"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Top"
-        Margin="12"
-        Cursor="Hand"/>
-        <Border Background="{DynamicResource PanelBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="22" Padding="28"
-                Margin="28,56,28,683">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0" Margin="0,0,0,4">
-                <StackPanel Margin="0,0,10,0">
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+        </Style>
 
-                    <TextBlock Text="Settings" FontSize="28" FontWeight="Bold"
-                               Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"
-                               FontFamily="Inter, Segoe UI, Arial, sans-serif" />
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                        <Button x:Name="SaveButton" Content="Save Settings" 
-            Width="180" Height="42" 
-            Click="SaveSettings_Click"
-            FontFamily="Inter, Segoe UI, Arial, sans-serif"
-            FontWeight="SemiBold"
-            Cursor="Hand" Margin="0,0,10,0"/>
-                        <Button x:Name="RemoveFromStartup" Content="Remove from Startup" 
-            Width="180" Height="42" 
-            Click="RemoveFromStartup_Click"
-            FontFamily="Inter, Segoe UI, Arial, sans-serif"
-            FontWeight="SemiBold"
-            Cursor="Hand" Margin="0,0,10,0"/>
-                        <Button x:Name="AddToStartup" Content="Add to Startup" 
-            Width="180" Height="42" 
-            Click="AddToStartup_Click"
-            FontFamily="Inter, Segoe UI, Arial, sans-serif"
-            FontWeight="SemiBold"
-            Cursor="Hand"/>
-                    </StackPanel>
-                    <GroupBox Header="User Profile Selection" Style="{DynamicResource CustomGroupBoxStyle}">
-                        <StackPanel>
-                            <TextBlock Text="Select user profile to clean:" FontSize="15" FontWeight="Medium"
-                                       Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,8"/>
-                            <ComboBox x:Name="comboBoxUserSelection" Width="697" Height="34"
-                                      Background="{DynamicResource TextBoxBackground}"
-                                      Foreground="{DynamicResource TextBoxForeground}"
-                                      BorderBrush="{DynamicResource BorderBrush}" Padding="8"
-                                      FontSize="15" FontWeight="Medium"
-                                      SelectionChanged="comboBoxUserSelection_SelectionChanged"/>
-                            <Button x:Name="ApplyButton" Content="Apply Selection" Width="120" Height="34" Margin="0,8,0,0"
-                                    Click="ApplyUserSelection_Click"
-                                    FontWeight="SemiBold"
-                                    Cursor="Hand"/>
-                        </StackPanel>
-                    </GroupBox>
-                    
-                    <GroupBox Header="Cleanup Log" Style="{DynamicResource CustomGroupBoxStyle}">
-                        <StackPanel>
-                            <CheckBox x:Name="chkEnableLog" Content="Enable Cleanup Log"
-                  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,12" Checked="chkEnableLog_Checked"/>
-                            <CheckBox x:Name="chkShowLastLog" Content="Show last log in status"
-Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" Checked="chkEnableLog_Checked"/>
-                            <TextBlock Text="Log File Location:" FontSize="13"
-                   Foreground="{DynamicResource TextPrimary}"
-                   FontWeight="SemiBold" Margin="0,0,0,6"/>
-
-                            <Grid Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="105*"/>
-                                    <ColumnDefinition Width="122*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBox x:Name="txtLogPath" Grid.Column="0"
-                     Style="{DynamicResource RoundedTextBox}"
-                     Height="50" FontSize="13"
-                     VerticalContentAlignment="Center"
-                     Margin="0,0,219,0" TextChanged="txtLogPath_TextChanged" Grid.ColumnSpan="2"/>
-
-                                <Button Content="Browse"
-                    Click="BrowseLogPath_Click"
-                    FontWeight="SemiBold"
-                    Cursor="Hand" Margin="158,2,10,2" Grid.Column="1"/>
-                            </Grid>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                                <Button x:Name="btnOpenLog" Content="Open Log File"
-                    Width="150" Height="34"
-                    Click="OpenLogFile_Click"
-                    FontWeight="SemiBold"
-                    Cursor="Hand" Margin="0,0,10,0"/>
-                                <Button x:Name="btnOpenAppFolder" Content="Open Folder"
-                    Width="150" Height="34"
-                    Click="OpenAppFolder_Click"
-                    FontWeight="SemiBold"
-                    Cursor="Hand" Margin="0,0,10,0"/>
-                                <Button x:Name="btnClearLog" Content="Clear Log File"
-                    Width="120" Height="34"
-                    Click="ClearLog_Click"
-                    Style="{DynamicResource CancelButtonStyle}"
-                    FontWeight="SemiBold"
-                    Cursor="Hand" Margin="0,0,10,0"/>
-
-                                <Button x:Name="btnApplyLog" Content="Apply"
-                    Width="120" Height="34"
-                    Click="ApplyLog_Click"
-                    FontWeight="SemiBold"
-                    Cursor="Hand"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Scanner Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,10,0,0" Height="281">
-
-                        <Grid>
-                            <StackPanel Margin="12">
-
-                                <CheckBox x:Name="OldScan"
-                      Content="Enable Scan Only Old Files"
-                      Checked="OldScan_Checked"
-                      Style="{StaticResource CustomCheckBoxStyle}"
-                      FontSize="15"
-                      FontWeight="SemiBold"
-                      Margin="0,0,0,12"/>
-
-                                <CheckBox x:Name="AccessScan"
-                      Content="Enable Scan Only files accessed than"
-                      Checked="AccessScan_Checked"
-                      Style="{StaticResource CustomCheckBoxStyle}"
-                      FontSize="15"
-                      FontWeight="SemiBold"
-                      Margin="0,0,0,20"/>
-
-                                <Grid Margin="0,0,0,14" VerticalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="240"/>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="120"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0"
-                           Text="Scan files accessed than :"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center"
-                           Foreground="{DynamicResource TextPrimary}" />
-
-                                    <ComboBox x:Name="cmbAccessPreset"
-                          Grid.Column="1"
-                          Width="200"
-                          Height="32"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                          FontSize="14"
-                          Padding="8,0"
-                          IsEnabled="{Binding IsChecked, ElementName=AccessScan}">
-                                        <ComboBoxItem Content="7 days" Tag="7"/>
-                                        <ComboBoxItem Content="30 days (1 month)" Tag="30" IsSelected="True"/>
-                                        <ComboBoxItem Content="90 days (3 months)" Tag="90"/>
-                                        <ComboBoxItem Content="Custom" Tag="0"/>
-                                    </ComboBox>
-
-                                    <TextBox x:Name="txtCustomAccess"
-                         Grid.Column="2"
-                         Width="100"
-                         Height="32"
-                         VerticalAlignment="Center"
-                         VerticalContentAlignment="Center"
-                         FontSize="14"
-                         Padding="8,0"
-                         Margin="8,0,0,0"
-                         Text="32"
-                         IsEnabled="{Binding IsChecked, ElementName=AccessScan}">
-                                        <TextBox.Style>
-                                            <Style TargetType="TextBox" BasedOn="{StaticResource RoundedTextBox}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAccessPreset}" Value="3">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBox.Style>
-                                    </TextBox>
-
-                                    <TextBlock Grid.Column="3"
-                           VerticalAlignment="Center"
-                           Margin="10,0,0,0"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           Text="days">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAccessPreset}" Value="3">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-
-
-                                <Grid VerticalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="240"/>
-                                        <ColumnDefinition Width="200"/>
-                                        <ColumnDefinition Width="120"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0"
-                           Text="Scan files older than:"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center"
-                           Foreground="{DynamicResource TextPrimary}" />
-
-                                    <ComboBox x:Name="cmbAgePreset"
-                          Grid.Column="1"
-                          Width="200"
-                          Height="32"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                          FontSize="14"
-                          Padding="8,0"
-                          IsEnabled="{Binding IsChecked, ElementName=OldScan}">
-                                        <ComboBoxItem Content="7 days" Tag="7"/>
-                                        <ComboBoxItem Content="30 days (1 month)" Tag="30" IsSelected="True"/>
-                                        <ComboBoxItem Content="90 days (3 months)" Tag="90"/>
-                                        <ComboBoxItem Content="Custom" Tag="0"/>
-                                    </ComboBox>
-
-                                    <TextBox x:Name="txtCustomDay"
-                         Grid.Column="2"
-                         Width="100"
-                         Height="32"
-                         VerticalAlignment="Center"
-                         VerticalContentAlignment="Center"
-                         FontSize="14"
-                         Padding="8,0"
-                         Margin="8,0,0,0"
-                         Text="32"
-                         IsEnabled="{Binding IsChecked, ElementName=OldScan}">
-                                        <TextBox.Style>
-                                            <Style TargetType="TextBox" BasedOn="{StaticResource RoundedTextBox}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAgePreset}" Value="3">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBox.Style>
-                                    </TextBox>
-
-                                    <TextBlock Grid.Column="3"
-                           VerticalAlignment="Center"
-                           Margin="10,0,0,0"
-                           FontSize="15"
-                           FontWeight="SemiBold"
-                           Text="days">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAgePreset}" Value="3">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Grid>
-
-                            </StackPanel>
-
-
-                            <Button x:Name="btnScannerHelp"
-                Content="?"
-                Width="26"
-                Height="26"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Margin="0,0,10,8"
-                FontSize="14"
-                FontWeight="Bold"
-                Cursor="Hand"
-                Click="btnScannerHelp_Click"
-                ToolTip="How does this work?">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
-                                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                                        <Setter Property="BorderThickness" Value="1.5"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="13">
-                                                        <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-
-
-
-
-
-                            <Grid Margin="0,4,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="200"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Deep Log Scanner — File Extensions"
-FontSize="15"
-FontWeight="SemiBold"
-Foreground="{DynamicResource TextPrimary}"
-Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
-                                    <TextBlock.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform AngleY="0.252"/>
-                                            <RotateTransform/>
-                                            <TranslateTransform Y="0.44"/>
-                                        </TransformGroup>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                                <TextBox x:Name="txtNewExtension"
-             Grid.Column="0"
-             Height="32"
-             VerticalContentAlignment="Center"
-             FontSize="14"
-             Padding="8,0"
-             Style="{StaticResource RoundedTextBox}"
-             Text=".log.etl.dmp.trace.tmp.temp.bak.swp"
-             ToolTip="Example: .crash" Margin="10,184,30,10" RenderTransformOrigin="0.508,0.572" Grid.ColumnSpan="3"/>
-
-                                <Button Grid.Column="2"
-            Content="Add"
-            Width="70"
-            Height="32"
-            Margin="138,184,-54,10"
-            Click="AddExtension_Click"
-            Style="{DynamicResource AccentButtonStyle}"/>
-
-                                <Button Grid.Column="2"
-            Content="Reset"
-            Width="70"
-            Height="32"
-            Margin="220,184,-139,10"
-            Click="ResetExtensions_Click"
-            Style="{DynamicResource CancelButtonStyle}"/>
-                            </Grid>
+        <Style x:Key="ModernScrollBarThumb" TargetType="Thumb">
+            <Setter Property="IsHitTestVisible" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="thumbBorder" CornerRadius="4" Background="{DynamicResource TextPrimary}" Opacity="0.25" Margin="2,0,2,0"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Opacity" Value="0.55"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbBorder" Property="Opacity" Value="0.80"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ModernScrollBarThumb}"/>
+                                </Track.Thumb>
+                            </Track>
                         </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
 
-                    </GroupBox>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageLeftCommand" Opacity="0" Focusable="False"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="False"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb>
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Border x:Name="thumbBorderH" CornerRadius="4" Background="{DynamicResource TextPrimary}" Opacity="0.25" Margin="0,2,0,2"/>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="thumbBorderH" Property="Opacity" Value="0.55"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsDragging" Value="True">
+                                                                <Setter TargetName="thumbBorderH" Property="Opacity" Value="0.80"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DropShadowEffect x:Key="DropShadowSoft" Color="Black" BlurRadius="20" ShadowDepth="6" Opacity="0.28" />
 
-                    <GroupBox Header="Startup &amp; Notify Settings" Style="{DynamicResource CustomGroupBoxStyle}">
-                        <StackPanel>
-                             <CheckBox x:Name="chkEnableStartupScan" 
-                             Content="Enable Startup Scan"
-                             Style="{DynamicResource CustomCheckBoxStyle}" 
-                             Margin="0,0,0,12" />
-                            
-                            <CheckBox x:Name="chkEnableStartupClean" 
-                              Content="Enable Startup Cleaning"
-                              Style="{DynamicResource CustomCheckBoxStyle}" 
-                              Margin="0,0,0,12" />
-                            
-                            <CheckBox x:Name="chkEnableNotifyScan" 
-                              Content="Send notification all scan operation in background" 
-                              Style="{DynamicResource CustomCheckBoxStyle}" 
-                              Margin="0,0,0,14"   />
-                            <CheckBox x:Name="chkEnableNotifyClean" 
-                              Content="Send notification all clean operation in background" 
-                              Style="{DynamicResource CustomCheckBoxStyle}" 
-                              Margin="0,0,0,14"   />
-                        
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource ButtonHoverBackground}" />
+                                <Setter Property="Foreground" Value="{DynamicResource ButtonHoverForeground}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource ButtonPressedBackground}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-               
+        <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Background" Value="#FF0078D4" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FF106EBE" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FF005A9E" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                            <Grid Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="105*"/>
-                                    <ColumnDefinition Width="122*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
- 
+        <Style x:Key="CancelButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Background" Value="#FFFF8C00" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFFFA500" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFDC7633" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
+        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Background" Value="#FFB33A3A" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" Effect="{StaticResource DropShadowSoft}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFE05555" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFAA3A3A" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CustomGroupBoxStyle" TargetType="GroupBox">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="18,4,18,16" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Border Background="{DynamicResource TextBoxBackground}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="{TemplateBinding Header}"
+                                           FontSize="15" FontWeight="Bold"
+                                           Margin="18,14,18,10"/>
+                                <ContentPresenter Grid.Row="1" Margin="{TemplateBinding Padding}"/>
                             </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CustomCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="box" Width="20" Height="20" CornerRadius="5"
+                                    Background="{DynamicResource TextBoxBackground}"
+                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1.5"
+                                    VerticalAlignment="Center">
+                                <Path x:Name="checkMark" Data="M2,7 L6,11 L13,3" Stroke="White" StrokeThickness="2"
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                      Visibility="Collapsed" Stretch="Uniform" Margin="3"/>
+                            </Border>
+                            <ContentPresenter Content="{TemplateBinding Content}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Automatic Cleaning" Style="{DynamicResource CustomGroupBoxStyle}">
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="box" Property="Background" Value="#FF0078D4"/>
+                                <Setter TargetName="box" Property="BorderBrush" Value="#FF0078D4"/>
+                                <Setter TargetName="checkMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="box" Property="BorderBrush" Value="#FF0078D4"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style x:Key="RoundedTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="{DynamicResource TextBoxBackground}" />
+
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource TextPrimary}" />
+
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#FF0078D4" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource RoundedTextBox}"/>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="itemBorder" Background="Transparent" Padding="{TemplateBinding Padding}" CornerRadius="4" Margin="2">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="itemBorder" Property="Background" Value="#FF0078D4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource TextBoxBackground}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
                         <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Focusable="False" ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="24"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Path Grid.Column="1" Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource TextPrimary}" StrokeThickness="1.6" HorizontalAlignment="Center" VerticalAlignment="Center" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center" HorizontalAlignment="Left"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                            <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" Background="Transparent" Focusable="True" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Border x:Name="DropDownBorder" Background="{DynamicResource TextBoxBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="220" Margin="0,4,0,0">
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Border Background="{DynamicResource PanelBackground}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1" CornerRadius="22"
+                Margin="24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="28,22,20,14">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Settings" FontSize="26" FontWeight="Bold" />
+                        <TextBlock Text="Manage cleaning, scanning, startup and notification preferences"
+                                   FontSize="13" Opacity="0.6"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <Button Content="✕"
+                            Style="{DynamicResource DangerButtonStyle}"
+                            Width="30" Height="30" FontSize="14"
+                            Click="CloseButton_Click"
+                            ToolTip="Close"
+                            HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Cursor="Hand" Margin="0,0,0,26"/>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0">
+                    <StackPanel Margin="28,0,20,24">
+
+                        <Border Background="{DynamicResource TextBoxBackground}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                CornerRadius="14" Padding="14" Margin="0,0,0,20">
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="SaveButton" Content="Save Settings"
+                                        Width="180" Height="42"
+                                        Click="SaveSettings_Click"
+                                        Style="{DynamicResource AccentButtonStyle}"
+                                        FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                                <Button x:Name="RemoveFromStartup" Content="Remove from Startup"
+                                        Width="180" Height="42"
+                                        Click="RemoveFromStartup_Click"
+                                        Style="{DynamicResource ModernButtonStyle}"
+                                        FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                                <Button x:Name="AddToStartup" Content="Add to Startup"
+                                        Width="180" Height="42"
+                                        Click="AddToStartup_Click"
+                                        Style="{DynamicResource ModernButtonStyle}"
+                                        FontWeight="SemiBold" Cursor="Hand"/>
+                            </StackPanel>
+                        </Border>
+
+                        <GroupBox Header="User Profile Selection" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Choose which Windows user profile the cleaner should target:"
+                                           FontSize="14" Opacity="0.75"
+                                           Margin="0,0,0,8" TextWrapping="Wrap"/>
+                                <ComboBox x:Name="comboBoxUserSelection" Height="34"
+                                          HorizontalAlignment="Stretch"
+                                          Style="{DynamicResource ModernComboBoxStyle}"
+                                          Padding="8"
+                                          FontSize="15" FontWeight="Medium" />
+                                <Button x:Name="ApplyButton" Content="Apply Selection" Width="140" Height="34" Margin="0,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        Click="ApplyUserSelection_Click"
+                                        Style="{DynamicResource AccentButtonStyle}"
+                                        FontWeight="SemiBold" Cursor="Hand"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Cleanup Log" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
                             <StackPanel>
 
-                                 
-                                <CheckBox Content="Enable Automatic Cleaning" x:Name="chkAutoClean"
-                      Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14"
-                      Checked="chkAutoClean_Checked"/>
-                                <CheckBox x:Name="SkipBattery" Content="Skip if battery is below 30%" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" />
-                                <CheckBox x:Name="RunIfInactive" Content="Run only if user is inactive for 15 min" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" />
-                                <CheckBox x:Name="OnlyBattery" Content="Run only the battery is plugged." Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" />
-                                <CheckBox x:Name="OnlyLowCPU" Content="Run only if CPU usage is below 30%" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,14" />
-                                <StackPanel>
-                                    <TextBlock Text="After Cleaning" FontSize="15" 
-                                    Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"
-                                    FontWeight="Medium" />
-                                    <ComboBox x:Name="cmbPostCleanupAction" Width="240" Margin="0,0,0,14" FontSize="15"
-             Background="{DynamicResource TextBoxBackground}"
-             Foreground="{DynamicResource TextBoxForeground}"
-             BorderBrush="{DynamicResource BorderBrush}"
-             FontWeight="Medium">
+                                <CheckBox x:Name="chkEnableLog" Content="Keep a cleanup log"
+                                          Style="{DynamicResource CustomCheckBoxStyle}" />
+                                <TextBlock Text="Records every cleaning operation performed by the app."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,12"/>
+
+                                <CheckBox x:Name="chkShowLastLog" Content="Show the last log entry in the status bar"
+                                          Style="{DynamicResource CustomCheckBoxStyle}" />
+                                <TextBlock Text="Displays the most recent log line without opening the log file."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,16"/>
+
+                                <TextBlock Text="Log file location" FontSize="13"
+                                           FontWeight="SemiBold" Margin="0,0,0,6"/>
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtLogPath" Grid.Column="0"
+                                             Style="{DynamicResource RoundedTextBox}"
+                                             Height="40" FontSize="13"
+                                             VerticalContentAlignment="Center"
+                                             Margin="0,0,10,0"
+                                            />
+                                    <Button Content="Browse" Grid.Column="1"
+                                            Width="90" Height="40"
+                                            Click="BrowseLogPath_Click"
+                                            Style="{DynamicResource ModernButtonStyle}"
+                                            FontWeight="SemiBold" Cursor="Hand"/>
+                                </Grid>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="btnOpenLog" Content="Open Log File"
+                                            Width="150" Height="34"
+                                            Click="OpenLogFile_Click"
+                                            Style="{DynamicResource ModernButtonStyle}"
+                                            FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                                    <Button x:Name="btnOpenAppFolder" Content="Open Folder"
+                                            Width="150" Height="34"
+                                            Click="OpenAppFolder_Click"
+                                            Style="{DynamicResource ModernButtonStyle}"
+                                            FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                                    <Button x:Name="btnClearLog" Content="Clear Log File"
+                                            Width="120" Height="34"
+                                            Click="ClearLog_Click"
+                                            Style="{DynamicResource CancelButtonStyle}"
+                                            FontWeight="SemiBold" Cursor="Hand" Margin="0,0,10,0"/>
+                                    <Button x:Name="btnApplyLog" Content="Apply"
+                                            Width="120" Height="34"
+                                            Click="ApplyLog_Click"
+                                            Style="{DynamicResource AccentButtonStyle}"
+                                            FontWeight="SemiBold" Cursor="Hand"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Scanner Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <Grid>
+                                <StackPanel Margin="0,0,36,0">
+
+                                    <TextBlock Text="Limit what the scanner looks at, so it only flags files that actually matter."
+                                               FontSize="13" Opacity="0.6"
+                                               TextWrapping="Wrap" Margin="0,0,0,14"/>
+
+                                    <Border Background="{DynamicResource TextBoxBackground}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="12" Padding="14" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <CheckBox x:Name="OldScan"
+                                                      Content="Only scan files older than a set number of days"
+                                                      Checked="OldScan_Checked"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}"
+                                                      FontSize="15" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                            <Grid VerticalAlignment="Center">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="200"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox x:Name="cmbAgePreset" Grid.Column="0"
+                                                          Height="32" Padding="8,0" FontSize="14"
+                                                          VerticalContentAlignment="Center"
+                                                          Margin="0,0,10,0"
+                                                          Style="{DynamicResource ModernComboBoxStyle}"
+                                                          IsEnabled="{Binding IsChecked, ElementName=OldScan}">
+                                                    <ComboBoxItem Content="7 days" Tag="7"/>
+                                                    <ComboBoxItem Content="30 days (1 month)" Tag="30" IsSelected="True"/>
+                                                    <ComboBoxItem Content="90 days (3 months)" Tag="90"/>
+                                                    <ComboBoxItem Content="Custom" Tag="0"/>
+                                                </ComboBox>
+                                                <TextBox x:Name="txtCustomDay" Grid.Column="1"
+                                                         Height="32" Padding="8,0" FontSize="14"
+                                                         VerticalContentAlignment="Center"
+                                                         Text="32"
+                                                         IsEnabled="{Binding IsChecked, ElementName=OldScan}">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox" BasedOn="{StaticResource RoundedTextBox}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAgePreset}" Value="3">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                                <TextBlock Grid.Column="2" Text="days" VerticalAlignment="Center"
+                                                           Margin="10,0,0,0" FontSize="14" FontWeight="SemiBold">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAgePreset}" Value="3">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Background="{DynamicResource TextBoxBackground}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="12" Padding="14" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <CheckBox x:Name="AccessScan"
+                                                      Content="Only scan files that haven't been opened recently"
+                                                      Checked="AccessScan_Checked"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}"
+                                                      FontSize="15" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                            <Grid VerticalAlignment="Center">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="200"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ComboBox x:Name="cmbAccessPreset" Grid.Column="0"
+                                                          Height="32" Padding="8,0" FontSize="14"
+                                                          VerticalContentAlignment="Center"
+                                                          Margin="0,0,10,0"
+                                                          Style="{DynamicResource ModernComboBoxStyle}"
+                                                          IsEnabled="{Binding IsChecked, ElementName=AccessScan}">
+                                                    <ComboBoxItem Content="7 days" Tag="7"/>
+                                                    <ComboBoxItem Content="30 days (1 month)" Tag="30" IsSelected="True"/>
+                                                    <ComboBoxItem Content="90 days (3 months)" Tag="90"/>
+                                                    <ComboBoxItem Content="Custom" Tag="0"/>
+                                                </ComboBox>
+                                                <TextBox x:Name="txtCustomAccess" Grid.Column="1"
+                                                         Height="32" Padding="8,0" FontSize="14"
+                                                         VerticalContentAlignment="Center"
+                                                         Text="32"
+                                                         IsEnabled="{Binding IsChecked, ElementName=AccessScan}">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox" BasedOn="{StaticResource RoundedTextBox}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAccessPreset}" Value="3">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                                <TextBlock Grid.Column="2" Text="days ago" VerticalAlignment="Center"
+                                                           Margin="10,0,0,0" FontSize="14" FontWeight="SemiBold">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbAccessPreset}" Value="3">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <TextBlock Text="Deep Log Scanner — File Extensions" FontSize="15" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock Text="Extra extensions the deep scan should also treat as log/temp files."
+                                               FontSize="12" Opacity="0.55"
+                                               Margin="0,0,0,8" TextWrapping="Wrap"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="txtNewExtension" Grid.Column="0"
+                                                 Height="34" VerticalContentAlignment="Center" FontSize="14" Padding="8,0"
+                                                 Style="{DynamicResource RoundedTextBox}"
+                                                 Text=".log.etl.dmp.trace.tmp.temp.bak.swp"
+                                                 ToolTip="Example: .crash"
+                                                 Margin="0,0,10,0"/>
+                                        <Button Grid.Column="1" Content="Add" Width="70" Height="34"
+                                                Click="AddExtension_Click"
+                                                Style="{DynamicResource AccentButtonStyle}" Margin="0,0,10,0"/>
+                                        <Button Grid.Column="2" Content="Reset" Width="70" Height="34"
+                                                Click="ResetExtensions_Click"
+                                                Style="{DynamicResource CancelButtonStyle}"/>
+                                    </Grid>
+                                </StackPanel>
+
+                                <Button x:Name="btnScannerHelp"
+                                        Content="?" Width="26" Height="26"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        FontSize="14" FontWeight="Bold"
+                                        Cursor="Hand"
+                                        Click="btnScannerHelp_Click"
+                                        ToolTip="How does this work?">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1.5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="13">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+                        </GroupBox>
+
+
+                        <GroupBox Header="Startup &amp; Notify Settings" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+
+                                <CheckBox x:Name="chkEnableStartupScan" Content="Automatically scan when the app starts"
+                                          Style="{DynamicResource CustomCheckBoxStyle}"/>
+                                <TextBlock Text="Runs a scan every time Multron Cleaner launches."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,12"/>
+
+                                <CheckBox x:Name="chkEnableStartupClean" Content="Automatically clean when the app starts"
+                                          Style="{DynamicResource CustomCheckBoxStyle}"/>
+                                <TextBlock Text="Runs a cleanup after scan."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,12"/>
+
+                                <CheckBox x:Name="chkEnableNotifyScan" Content="Notify me after a background scan finishes"
+                                          Style="{DynamicResource CustomCheckBoxStyle}"/>
+                                <TextBlock Text="Shows a toast notification once a background scan completes."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,12"/>
+
+                                <CheckBox x:Name="chkEnableNotifyClean" Content="Notify me after a background cleanup finishes"
+                                          Style="{DynamicResource CustomCheckBoxStyle}"/>
+                                <TextBlock Text="Shows a toast notification once a background cleanup completes."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Automatic Cleaning" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <Grid>
+                                <StackPanel Margin="0,0,36,0">
+
+                                    <CheckBox Content="Enable automatic cleaning" x:Name="chkAutoClean"
+                                              Style="{DynamicResource CustomCheckBoxStyle}"
+                                              FontSize="15" FontWeight="SemiBold"
+                                              Margin="0,0,0,4"/>
+                                    <TextBlock Text="Runs cleaning automatically based on the schedule and conditions below."
+                                               FontSize="12" Opacity="0.55"
+                                               Margin="26,0,0,14" TextWrapping="Wrap"/>
+
+                                    <Border Background="{DynamicResource TextBoxBackground}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="12" Padding="14" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <TextBlock Text="Run only when:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                            <CheckBox x:Name="SkipBattery" Content="Battery is above 30%"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,10"/>
+                                            <CheckBox x:Name="RunIfInactive" Content="User has been inactive for at least 15 minutes"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,10"/>
+                                            <CheckBox x:Name="OnlyBattery" Content="Device is plugged in and charging"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,10"/>
+                                            <CheckBox x:Name="OnlyLowCPU" Content="CPU usage is below 30%"
+                                                      Style="{DynamicResource CustomCheckBoxStyle}"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <TextBlock Text="After cleaning" FontSize="14" FontWeight="Medium" Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="cmbPostCleanupAction" Width="240" Height="34" HorizontalAlignment="Left"
+                                              Margin="0,0,0,16" FontSize="14" FontWeight="Medium" SelectedIndex="0"
+                                              Style="{DynamicResource ModernComboBoxStyle}">
                                         <ComboBoxItem Content="Do Nothing"/>
                                         <ComboBoxItem Content="Shutdown"/>
                                         <ComboBoxItem Content="Restart"/>
-                                        <ComboBoxItem Content="LogOff"/>
+                                        <ComboBoxItem Content="Log Off"/>
                                     </ComboBox>
-                                    <TextBlock Text="Auto Cleaning Delay" Margin="0,0,0,14" FontSize="15" 
-    Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
-                                    <ComboBox x:Name="cmbScheduleType" Width="220" Margin="0,0,0,14" FontSize="15"
-                          Background="{DynamicResource TextBoxBackground}" 
-                          Foreground="{DynamicResource TextBoxForeground}"
-                          FontWeight="Medium">
-                                        <ComboBoxItem Content="Only Minutes"/>
+
+                                    <TextBlock Text="Run schedule" FontSize="14" FontWeight="Medium" Margin="0,0,0,6"/>
+                                    <ComboBox x:Name="cmbScheduleType" Width="220" Height="34" HorizontalAlignment="Left"
+                                              Margin="0,0,0,14" FontSize="14" FontWeight="Medium" SelectedIndex="1"
+                                              Style="{DynamicResource ModernComboBoxStyle}">
+                                        <ComboBoxItem Content="Every X minutes"/>
                                         <ComboBoxItem Content="Daily"/>
                                         <ComboBoxItem Content="Weekly"/>
                                         <ComboBoxItem Content="Custom Days"/>
+
                                     </ComboBox>
 
                                     <WrapPanel Margin="0,0,0,14" HorizontalAlignment="Left">
@@ -474,13 +788,13 @@ Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
                                                 </Style.Triggers>
                                             </Style>
                                         </WrapPanel.Style>
-                                        <CheckBox x:Name="Day7" Content="Monday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day6" Content="Tuesday"   Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day5" Content="Wednesday" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day4" Content="Thursday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day3" Content="Friday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day2" Content="Saturday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
-                                        <CheckBox x:Name="Day1" Content="Sunday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,10,6"/>
+                                        <CheckBox x:Name="Day7" Content="Monday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day6" Content="Tuesday"   Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day5" Content="Wednesday" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day4" Content="Thursday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day3" Content="Friday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day2" Content="Saturday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        <CheckBox x:Name="Day1" Content="Sunday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
                                     </WrapPanel>
 
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
@@ -497,12 +811,12 @@ Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
                                                 </Style.Triggers>
                                             </Style>
                                         </StackPanel.Style>
-                                        <TextBlock Text="Cleaning Interval (min):" FontSize="15" 
-                               Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"
-                               FontWeight="Medium" />
+                                        <TextBlock Text="Cleaning interval (minutes):" FontSize="14"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Medium"/>
                                         <TextBox x:Name="txtCleaningInterval" Width="100" Text="60"
-                             Style="{DynamicResource RoundedTextBox}"
-                             PreviewTextInput="txtCleaningInterval_PreviewTextInput" Margin="12,0,0,0"/>
+                                                 Style="{DynamicResource RoundedTextBox}"
+                                                 PreviewTextInput="txtCleaningInterval_PreviewTextInput" Margin="12,0,0,0"/>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
@@ -522,115 +836,109 @@ Margin="12,167,44,13" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="3">
                                                 </Style.Triggers>
                                             </Style>
                                         </StackPanel.Style>
-                                        <TextBlock Text="Allowed Time Range:" FontSize="15" 
-                               Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"
-                               FontWeight="Medium" />
-                                        <TextBox x:Name="txtStartTime" Width="100" Text="08:00" 
-                             Style="{DynamicResource RoundedTextBox}" Margin="12,0,0,0"/>
-                                        <TextBlock Text="-" FontSize="15" Margin="6,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="Allowed time range:" FontSize="14"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Medium"/>
+                                        <TextBox x:Name="txtStartTime" Width="100" Text="08:00"
+                                                 Style="{DynamicResource RoundedTextBox}" Margin="12,0,0,0"/>
+                                        <TextBlock Text="–" FontSize="14" Margin="8,0" VerticalAlignment="Center"/>
                                         <TextBox x:Name="txtEndTime" Width="100" Text="22:00"
-                             Style="{DynamicResource RoundedTextBox}"/>
+                                                 Style="{DynamicResource RoundedTextBox}"/>
                                     </StackPanel>
 
-                                    <TextBlock x:Name="txtStat" FontSize="15" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimary}" Text="Status: 00:00"/>
-
+                                    <TextBlock x:Name="txtStat" FontSize="14" FontWeight="SemiBold"
+                                               Opacity="0.7"
+                                               Text="Status: 00:00"/>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <Button x:Name="btnAutoCleanHelp"
-                Content="?"
-                Width="26"
-                Height="26"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Margin="0,0,10,8"
-                FontSize="14"
-                FontWeight="Bold"
-                Cursor="Hand"
-                Click="btnAutoCleanHelp_Click"
-                ToolTip="How does this work?">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
-                                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                                        <Setter Property="BorderThickness" Value="1.5"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="13">
-                                                        <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-
-                        </Grid>
-                    </GroupBox>
-
-
-
-                    <GroupBox Header="System Tray" Style="{DynamicResource CustomGroupBoxStyle}">
-                        <CheckBox x:Name="chkTrayIcon" Content="Enable System Tray Icon"
-                                  Style="{DynamicResource CustomCheckBoxStyle}" Checked="chkTrayIcon_Checked"/>
-                    </GroupBox>
-
-                    <GroupBox Header="Exceptions" Style="{DynamicResource CustomGroupBoxStyle}">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1.6*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="txtExceptionPath" Style="{DynamicResource ModernTextBoxStyle}"
-                                         Height="34" Margin="0,0,8,0" VerticalAlignment="Center" Grid.Column="0"/>
-                                <Button Content="Add" Width="64" Height="34" Grid.Column="1"
-                                        Background="{DynamicResource ButtonHoverBackground}"
-                                        Foreground="{DynamicResource ButtonForeground}"
-                                        Click="AddException_Click" Margin="0,0,8,0"
-                                        FontWeight="SemiBold"
-                                        Cursor="Hand"/>
-                                <Button Content="Remove" Width="75" Height="34" Grid.Column="2"
-                                        Background="{DynamicResource ButtonHoverBackground}"
-                                        Foreground="{DynamicResource ButtonForeground}"
-                                        Click="RemoveException_Click" Margin="0,0,8,0"
-                                        FontWeight="SemiBold"
-                                        Cursor="Hand"/>
-                                <Button Content="Remove All" Width="90" Height="34" Grid.Column="3"
-                                        Background="{DynamicResource ButtonHoverBackground}"
-                                        Foreground="{DynamicResource ButtonForeground}"
-                                        Click="RemoveExceptionAll_Click"
-                                        FontWeight="SemiBold"
-                                        Cursor="Hand"/>
+                                <Button x:Name="btnAutoCleanHelp"
+                                        Content="?" Width="26" Height="26"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        FontSize="14" FontWeight="Bold"
+                                        Cursor="Hand"
+                                        Click="btnAutoCleanHelp_Click"
+                                        ToolTip="How does this work?">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                            <Setter Property="BorderThickness" Value="1.5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="13">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
                             </Grid>
-                            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="10"
-                                    Background="{DynamicResource TextBoxBackground}" Padding="8">
-                                <ListBox x:Name="lstExceptions" Height="145" FontSize="15"
-                                         Background="{DynamicResource TextBoxBackground}"
-                                         Foreground="{DynamicResource TextPrimary}"
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         FontFamily="Inter, Segoe UI, Arial, sans-serif"/>
-                            </Border>
-                        </StackPanel>
-                    </GroupBox>
+                        </GroupBox>
 
-                </StackPanel>
-            </ScrollViewer>
+                        <GroupBox Header="System Tray" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <CheckBox x:Name="chkTrayIcon" Content="Show a tray icon for quick access"
+                                          Style="{DynamicResource CustomCheckBoxStyle}"
+                                          />
+                                <TextBlock Text="Lets you open, pause or exit Multron Cleaner from the system tray."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="26,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Exceptions" Style="{DynamicResource CustomGroupBoxStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Files and folders listed here will never be touched by the cleaner."
+                                           FontSize="12" Opacity="0.55"
+                                           Margin="0,0,0,10" TextWrapping="Wrap"/>
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtExceptionPath" Grid.Column="0"
+                                             Style="{DynamicResource ModernTextBoxStyle}"
+                                             Height="34" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                    <Button Content="Add" Grid.Column="1" Width="64" Height="34"
+                                            Style="{DynamicResource AccentButtonStyle}"
+                                            Click="AddException_Click" Margin="0,0,8,0"
+                                            FontWeight="SemiBold" Cursor="Hand"/>
+                                    <Button Content="Remove" Grid.Column="2" Width="75" Height="34"
+                                            Style="{DynamicResource ModernButtonStyle}"
+                                            Click="RemoveException_Click" Margin="0,0,8,0"
+                                            FontWeight="SemiBold" Cursor="Hand"/>
+                                    <Button Content="Remove All" Grid.Column="3" Width="90" Height="34"
+                                            Style="{DynamicResource CancelButtonStyle}"
+                                            Click="RemoveExceptionAll_Click"
+                                            FontWeight="SemiBold" Cursor="Hand"/>
+                                </Grid>
+                                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="10"
+                                        Background="{DynamicResource TextBoxBackground}" Padding="8">
+                                    <ListBox x:Name="lstExceptions" Height="145" FontSize="15"
+                                             Background="{DynamicResource TextBoxBackground}"
+                                             Foreground="{DynamicResource TextPrimary}"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                                </Border>
+                            </StackPanel>
+                        </GroupBox>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
         </Border>
     </Grid>
 </Window>

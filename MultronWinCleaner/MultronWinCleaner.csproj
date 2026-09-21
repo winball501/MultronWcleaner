@@ -28,6 +28,7 @@
     <None Remove="Assets\frame09.png" />
     <None Remove="Assets\frame10.png" />
     <None Remove="Assets\frame11.png" />
+    <None Remove="Assets\mwc_utilities.ico" />
     <None Remove="Assets\TrayFrames\frame00.ico" />
     <None Remove="Assets\TrayFrames\frame01.ico" />
     <None Remove="Assets\TrayFrames\frame02.ico" />
@@ -83,6 +84,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\mwc_icon.ico" />
+    <Resource Include="Assets\mwc_utilities.ico" />
     <Resource Include="Assets\TrayFrames\frame00.ico" />
     <Resource Include="Assets\TrayFrames\frame01.ico" />
     <Resource Include="Assets\TrayFrames\frame02.ico" />
@@ -98,6 +100,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Lang\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

@@ -1,25 +1,20 @@
 ﻿using Microsoft.VisualBasic.Devices;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using static MultronWinCleaner.MemCleaner.NativeMethods;
+using Microsoft.Win32;
 
 namespace MultronWinCleaner
 {
@@ -28,104 +23,78 @@ namespace MultronWinCleaner
     /// </summary>
     public partial class MemoryMon : Window
     {
-        MemCleaner memcleaner;
-        private bool processesVisible = false;
-        private ObservableCollection<ProcessItem> processes = new ObservableCollection<ProcessItem>();
-        private DispatcherTimer updateTimer;
+        private readonly MemCleaner _memcleaner;
+        private bool _processesVisible = false;
+        private readonly ObservableCollection<ProcessItem> _processes = new ObservableCollection<ProcessItem>();
+        private readonly DispatcherTimer _updateTimer;
+        private bool _isUpdatingProcesses = false;
+
       
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+
+        private readonly Dictionary<int, TimeSpan> _lastCpuTimes = new Dictionary<int, TimeSpan>();
+        private DateTime _lastCpuCheckTime = DateTime.Now;
+        private readonly Dictionary<string, ImageSource> _iconCache = new Dictionary<string, ImageSource>();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool DestroyIcon(IntPtr hIcon);
 
         public MemoryMon(MemCleaner memcleaner)
         {
             InitializeComponent();
-            this.Loaded += MemoryMon_Loaded;
-            this.memcleaner = memcleaner;
-            var ramupdater = new ramstatus(this);
-            _ = Task.Run(() => ramupdater.Run());
-            var cpuupdater = new cpustatus(this);
-            _ = Task.Run(() => cpuupdater.Run());
-            ProcessesListView.ItemsSource = processes;
+            _memcleaner = memcleaner;
 
-            updateTimer = new DispatcherTimer();
-            updateTimer.Interval = TimeSpan.FromSeconds(2);
-            updateTimer.Tick += UpdateTimer_Tick;
+            Loaded += MemoryMon_Loaded;
+            Closed += MemoryMon_Closed;
 
-            if (memcleaner.chkTopMostMonitor.IsEnabled == true)
+            ProcessesListView.ItemsSource = _processes;
+             
+            var statusMonitor = new SystemStatusMonitor(this, _cts.Token);
+            _ = Task.Run(() => statusMonitor.RunAsync());
+
+            _updateTimer = new DispatcherTimer
             {
-                this.Topmost = false;
-            }
-            else
-            {
-                this.Topmost = true;
-            }
+                Interval = TimeSpan.FromSeconds(2)
+            };
+            _updateTimer.Tick += UpdateTimer_Tick;
 
-         
+            Topmost = !_memcleaner.chkTopMostMonitor.IsEnabled;
         }
-        public class ramstatus
+
+        public class ProcessItem
         {
-            MemoryMon memorymon;
-            private double lastRamPercent = -1;
-            public ramstatus(dynamic memorymon)
-            {
-                this.memorymon = memorymon;
-            }
-            public async Task Run()
-            {
-                var computerInfo = new ComputerInfo();
-                while (true)
-                {
-                    ulong totalMemory = computerInfo.TotalPhysicalMemory;
-                    ulong availableMemory = computerInfo.AvailablePhysicalMemory;
-                    ulong usedMemory = totalMemory - availableMemory;
-                    double ramPercent = Math.Round((usedMemory * 100.0) / totalMemory, 1);
-
-
- 
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-
-                        if (Math.Abs(ramPercent - lastRamPercent) > 0.1)
-                        {
-                            memorymon.RamBar.Minimum = 0;
-                            memorymon.RamBar.Maximum = 100;
-                            memorymon.RamBar.Value = ramPercent;
-                            memorymon.RamPercentText.Text = $"{ramPercent:F1}%";
-                            lastRamPercent = ramPercent;
-                        }
-
-
-                      
-                    });
-                    await Task.Delay(100);
-                }
-            }
+            public ImageSource Icon { get; set; }
+            public string Name { get; set; }
+            public string Cpu { get; set; }
+            public string Ram { get; set; }
         }
-        public class cpustatus
+
+        public class SystemStatusMonitor
         {
-            private readonly dynamic memorymon;
+            private readonly MemoryMon _window;
+            private readonly CancellationToken _cancellationToken;
+            private double _lastRamPercent = -1;
+            private int _lastCpuValue = -1;
 
-            private double lastRamPercent = -1;
-            private int lastCpuValue = -1;
-
-            private ulong prevIdleTime = 0;
-            private ulong prevKernelTime = 0;
-            private ulong prevUserTime = 0;
+            private ulong _prevIdleTime = 0;
+            private ulong _prevKernelTime = 0;
+            private ulong _prevUserTime = 0;
 
             [StructLayout(LayoutKind.Sequential)]
-            struct FILETIME
+            private struct FILETIME
             {
                 public uint dwLowDateTime;
                 public uint dwHighDateTime;
             }
 
             [DllImport("kernel32.dll", SetLastError = true)]
-            static extern bool GetSystemTimes(out FILETIME idleTime, out FILETIME kernelTime, out FILETIME userTime);
+            private static extern bool GetSystemTimes(out FILETIME idleTime, out FILETIME kernelTime, out FILETIME userTime);
 
-            public cpustatus(dynamic memorymon)
+            public SystemStatusMonitor(MemoryMon window, CancellationToken cancellationToken)
             {
-                this.memorymon = memorymon;
-
-             
-                UpdateCpuTimes(out prevIdleTime, out prevKernelTime, out prevUserTime);
+                _window = window;
+                _cancellationToken = cancellationToken;
+                UpdateCpuTimes(out _prevIdleTime, out _prevKernelTime, out _prevUserTime);
             }
 
             private void UpdateCpuTimes(out ulong idleTime, out ulong kernelTime, out ulong userTime)
@@ -140,34 +109,33 @@ namespace MultronWinCleaner
             {
                 UpdateCpuTimes(out ulong idleTime, out ulong kernelTime, out ulong userTime);
 
-                ulong sysIdle = idleTime - prevIdleTime;
-                ulong sysKernel = kernelTime - prevKernelTime;
-                ulong sysUser = userTime - prevUserTime;
-
+                ulong sysIdle = idleTime - _prevIdleTime;
+                ulong sysKernel = kernelTime - _prevKernelTime;
+                ulong sysUser = userTime - _prevUserTime;
                 ulong sysTotal = sysKernel + sysUser;
 
-                prevIdleTime = idleTime;
-                prevKernelTime = kernelTime;
-                prevUserTime = userTime;
+                _prevIdleTime = idleTime;
+                _prevKernelTime = kernelTime;
+                _prevUserTime = userTime;
 
-                if (sysTotal == 0)
-                    return 0;
+                if (sysTotal == 0) return 0;
 
                 ulong sysUsed = sysTotal - sysIdle;
-
                 double cpuUsage = (sysUsed * 100.0) / sysTotal;
-
-                return (int)Math.Round(cpuUsage);
+                return (int)Math.Round(Math.Max(0, Math.Min(100, cpuUsage)));
             }
 
-            public async Task Run()
+            public async Task RunAsync()
             {
-                var computerInfo = new Microsoft.VisualBasic.Devices.ComputerInfo();
+                var computerInfo = new ComputerInfo();
 
-                while (true)
+                while (!_cancellationToken.IsCancellationRequested)
                 {
                     try
                     {
+                        if (_window.Dispatcher.HasShutdownStarted || _window.Dispatcher.HasShutdownFinished)
+                            break;
+
                         ulong totalMemory = computerInfo.TotalPhysicalMemory;
                         ulong availableMemory = computerInfo.AvailablePhysicalMemory;
                         ulong usedMemory = totalMemory - availableMemory;
@@ -175,107 +143,295 @@ namespace MultronWinCleaner
 
                         int cpuValue = CalculateCpuUsage();
 
-                        await Application.Current.Dispatcher.InvokeAsync(() =>
+                        if (_window.Dispatcher.HasShutdownStarted || _window.Dispatcher.HasShutdownFinished)
+                            break;
+
+                        await _window.Dispatcher.InvokeAsync(() =>
                         {
-                            if (Math.Abs(ramPercent - lastRamPercent) > 0.1)
+                            if (Math.Abs(ramPercent - _lastRamPercent) > 0.1)
                             {
-                                memorymon.RamBar.Minimum = 0;
-                                memorymon.RamBar.Maximum = 100;
-                                memorymon.RamBar.Value = ramPercent;
-                                memorymon.RamPercentText.Text = $"{ramPercent:F1}%";
-                                lastRamPercent = ramPercent;
+                                _window.RamBar.Minimum = 0;
+                                _window.RamBar.Maximum = 100;
+                                _window.RamBar.Value = ramPercent;
+                                _window.RamPercentText.Text = $"{ramPercent:F1}%";
+                                _lastRamPercent = ramPercent;
                             }
 
-                            if (cpuValue != lastCpuValue)
+                            if (cpuValue != _lastCpuValue)
                             {
-                                memorymon.CpuBar.Minimum = 0;
-                                memorymon.CpuBar.Maximum = 100;
-                                memorymon.CpuBar.Value = cpuValue;
-                                memorymon.CpuPercentText.Text = $"{cpuValue}%";
-                                lastCpuValue = cpuValue;
+                                _window.CpuBar.Minimum = 0;
+                                _window.CpuBar.Maximum = 100;
+                                _window.CpuBar.Value = cpuValue;
+                                _window.CpuPercentText.Text = $"{cpuValue}%";
+                                _lastCpuValue = cpuValue;
                             }
                         });
 
-                        await Task.Delay(100);
+                        await Task.Delay(200, _cancellationToken);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        break;
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine($"[cpustatus] error: {ex.Message}");
+                        Debug.WriteLine($"[SystemStatusMonitor] Hata: {ex.Message}");
+                        await Task.Delay(1000, _cancellationToken);
                     }
                 }
             }
         }
 
-
         private void MemoryMon_Loaded(object sender, RoutedEventArgs e)
         {
-      
-            var workingArea = System.Windows.SystemParameters.WorkArea;
-             
-            this.Left = workingArea.Right - this.Width - 10;
-            this.Top = workingArea.Bottom - this.Height - 10;
+            LoadSavedLocation();
         }
 
-        private async void CleanMemory_Click(object sender, RoutedEventArgs e)
+        private void LoadSavedLocation()
         {
-           await memcleaner.cleanmemory();
-        }
-        private void Window_DragMove(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            bool locationLoaded = false;
+            try
             {
-                this.DragMove();
-            }
-        }
-        private void SlowProcesses_Click(object sender, RoutedEventArgs e)
-        {
-            if (!processesVisible)
-            {
-                ProcessesListView.Visibility = Visibility.Visible;
-                this.Height = 220;
+                using (var key = Registry.CurrentUser.OpenSubKey(@"Software\MultronWinCleaner"))
+                {
+                    if (key != null)
+                    {
+                        var leftValue = key.GetValue("MemMonLeft");
+                        var topValue = key.GetValue("MemMonTop");
 
-                processesVisible = true;
-                updateTimer.Start();
+                        if (leftValue != null && topValue != null)
+                        { 
+                            if (double.TryParse(leftValue.ToString(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double left) &&
+                                double.TryParse(topValue.ToString(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double top))
+                            { 
+                                var workArea = SystemParameters.WorkArea;
+                                if (left + 50 < workArea.Right && top + 50 < workArea.Bottom)
+                                {
+                                    Left = left;
+                                    Top = top;
+                                    locationLoaded = true;
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            else
-            {
-                updateTimer.Stop();
-                ProcessesListView.Visibility = Visibility.Collapsed;
-                this.Height = 120;
+            catch { }
 
-                processesVisible = false;
+            if (!locationLoaded)
+            {
+                var workingArea = SystemParameters.WorkArea;
+                 
+                double currentWidth = double.IsNaN(Width) ? ActualWidth : Width;
+                double currentHeight = double.IsNaN(Height) ? ActualHeight : Height;
+
+                Left = (workingArea.Width - currentWidth) / 2 + workingArea.Left;
+                Top = (workingArea.Height - currentHeight) / 2 + workingArea.Top;
             }
         }
-        public class ProcessItem
-        {
-            public string Name { get; set; }
-            public string Ram { get; set; }
-        }
-        
-        private void UpdateTimer_Tick(object sender, EventArgs e)
+
+        private void SaveCurrentLocation()
         {
             try
             {
-                var currentProcesses = Process.GetProcesses()
-                    .OrderByDescending(p => p.WorkingSet64)
-                    .Take(15)
-                    .Select(p => new ProcessItem
-                    {
-                        Name = p.ProcessName,
-                        Ram = $"{p.WorkingSet64 / 1024 / 1024} MB"
-                    }).ToList();
-
-                processes.Clear();
-                foreach (var proc in currentProcesses)
-                    processes.Add(proc);
+                using (var key = Registry.CurrentUser.CreateSubKey(@"Software\MultronWinCleaner"))
+                { 
+                    key.SetValue("MemMonLeft", Left.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    key.SetValue("MemMonTop", Top.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
             }
             catch { }
         }
 
+        private async void CleanMemory_Click(object sender, RoutedEventArgs e)
+        {
+            if (_memcleaner != null)
+            {
+                await _memcleaner.cleanmemory();
+            }
+        }
+
+        private void Window_DragMove(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+                SaveCurrentLocation();
+            }
+        }
+
+        private void SlowProcesses_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_processesVisible)
+            {
+                ProcessesListView.Visibility = Visibility.Collapsed;
+                LoadingBorder.Visibility = Visibility.Visible;
+
+                _processesVisible = true;
+                _updateTimer.Start();
+                UpdateTimer_Tick(null, null);
+            }
+            else
+            {
+                _updateTimer.Stop();
+                ProcessesListView.Visibility = Visibility.Collapsed;
+                LoadingBorder.Visibility = Visibility.Collapsed;
+                _processesVisible = false;
+            }
+        }
+
+        private async void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (_isUpdatingProcesses || Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished) return;
+            _isUpdatingProcesses = true;
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var now = DateTime.Now;
+                    var timeDifference = now - _lastCpuCheckTime;
+                    if (timeDifference.TotalMilliseconds <= 0) return;
+
+                    var topProcs = Process.GetProcesses()
+                        .OrderByDescending(p => p.WorkingSet64)
+                        .Take(15)
+                        .ToList();
+
+                    var processList = new List<ProcessItem>();
+
+                    foreach (var p in topProcs)
+                    {
+                        double cpuUsage = 0;
+                        string processName = p.ProcessName;
+                        long ramUsage = 0;
+
+                        try { ramUsage = p.WorkingSet64; } catch { }
+
+                        try
+                        {
+                            var cpuTime = p.TotalProcessorTime;
+                            if (_lastCpuTimes.TryGetValue(p.Id, out var prevCpuTime))
+                            {
+                                var diff = cpuTime - prevCpuTime;
+                                cpuUsage = (diff.TotalMilliseconds / timeDifference.TotalMilliseconds) / Environment.ProcessorCount * 100;
+                            }
+                            _lastCpuTimes[p.Id] = cpuTime;
+                        }
+                        catch { }
+
+                        ImageSource icon = GetProcessIcon(p, processName);
+
+                        processList.Add(new ProcessItem
+                        {
+                            Icon = icon,
+                            Name = processName,
+                            Cpu = $"{Math.Max(0, Math.Round(cpuUsage, 1))}%",
+                            Ram = $"{ramUsage / 1024 / 1024} MB"
+                        });
+                    }
+
+                    _lastCpuCheckTime = now;
+
+                    var currentIds = topProcs.Select(x => x.Id).ToHashSet();
+                    var keysToRemove = _lastCpuTimes.Keys.Where(k => !currentIds.Contains(k)).ToList();
+                    foreach (var k in keysToRemove) _lastCpuTimes.Remove(k);
+
+                    if (Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished) return;
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        _processes.Clear();
+                        foreach (var item in processList)
+                        {
+                            _processes.Add(item);
+                        }
+
+                        LoadingBorder.Visibility = Visibility.Collapsed;
+                        ProcessesListView.Visibility = Visibility.Visible;
+                    });
+                });
+            }
+            catch { }
+            finally
+            {
+                _isUpdatingProcesses = false;
+            }
+        }
+
+        private ImageSource GetProcessIcon(Process p, string processName)
+        {
+            if (_iconCache.TryGetValue(processName, out var cachedIcon))
+            {
+                return cachedIcon;
+            }
+
+            string path = null;
+            try { path = p.MainModule?.FileName; } catch { }
+
+            ImageSource iconSource = null;
+
+            try
+            {
+                System.Drawing.Icon ico = null;
+
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                {
+                    try { ico = System.Drawing.Icon.ExtractAssociatedIcon(path); } catch { }
+                }
+
+                if (ico == null)
+                {
+                    string defaultPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+                    try { ico = System.Drawing.Icon.ExtractAssociatedIcon(defaultPath); } catch { }
+                }
+
+                if (ico != null)
+                {
+                    IntPtr hIcon = ico.Handle;
+                    var bmpSource = Imaging.CreateBitmapSourceFromHIcon(
+                        hIcon,
+                        Int32Rect.Empty,
+                        BitmapSizeOptions.FromEmptyOptions());
+
+                    bmpSource.Freeze();
+                    DestroyIcon(hIcon);
+                    ico.Dispose();
+
+                    iconSource = bmpSource;
+                }
+            }
+            catch { }
+
+            if (iconSource != null)
+            {
+                _iconCache[processName] = iconSource;
+            }
+
+            return iconSource;
+        }
+
+        
+        private void MemoryMon_Closed(object sender, EventArgs e)
+        {
+            _cts?.Cancel();
+
+            if (_updateTimer != null)
+            {
+                _updateTimer.Stop();
+                _updateTimer.Tick -= UpdateTimer_Tick; 
+            }
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
-            memcleaner.chkSmartRAM.IsChecked = false;
+            _updateTimer?.Stop();
+            Close();
+
+            if (_memcleaner?.chkSmartRAM != null)
+            {
+                _memcleaner.chkSmartRAM.IsChecked = false;
+            }
         }
     }
 }
