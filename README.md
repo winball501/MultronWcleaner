@@ -31,8 +31,8 @@
 ## Previews
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/0d9d6f64-b99a-409b-b546-5732afad7990" width="48%" alt="Multron Win Cleaner Interface 1" />
-  <img src="https://github.com/user-attachments/assets/68915da3-9a77-4fb3-bc20-899287092890" width="48%" alt="Multron Win Cleaner Interface 2" />
+ <img width="788" height="563" alt="{2A6FD3AA-AA81-4414-87B3-2C2AC09A897D}" src="https://github.com/user-attachments/assets/760ce3c4-c907-48c5-947c-c07d8e791cfd" />
+ <img width="788" height="563" alt="{BC7D7B0F-1472-420B-AA6E-C8707D5E47E7}" src="https://github.com/user-attachments/assets/9304bafa-a0e4-477f-bfb2-2fde6c995a42" />
 </div>
 
 ---
