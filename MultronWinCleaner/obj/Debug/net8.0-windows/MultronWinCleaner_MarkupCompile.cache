@@ -1,5 +1,5 @@
 ﻿MultronWinCleaner
-1.0.0.0
+
 
 winexe
 C#
@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR
 C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\App.xaml
 18-1776095515
 1157652452
-30905482127
+281332400870
 2192117131742
 AddBootOperationWindow.xaml;AddStartup.xaml;Configure.xaml;Duplicate File Finder.xaml;FolderDuplicatesWindow.xaml;LargeFileFinder.xaml;MainWindow.xaml;MatchingFilesWindow.xaml;MemCleaner.xaml;MemoryMon.xaml;NewStartupItemDetected.xaml;Notify.xaml;RotatingCleanIcon.xaml;Settings.xaml;StartupManager.xaml;Themes\Dark.xaml;Themes\Light.xaml;Utilities.xaml;
 
-True
+False
 

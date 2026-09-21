@@ -608,9 +608,8 @@ namespace MultronWinCleaner
                 window.settings = new Settings(memcleaner, window.utilities, window, startupmanager);
                 window.settings.Show();
                 window.settings.Hide();
-            
+            }
             startupmanager.Show();
         }
-      }
     }
 }
