@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [ beta, main ]
+  pull_request:
+    branches: [ beta, main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./MultronWinCleaner
+
+    steps:
+    - name: Kodu Çek
+      uses: actions/checkout@v4
+
+    - name: .NET SDK Kurulumu
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: MSBuild Kurulumu
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Bağımlılıkları Geri Yükle
+      run: dotnet restore
+
+    - name: Çözümü Derle
+      run: msbuild MultronWinCleaner.csproj /p:Configuration=Release
+
+- name: Derleme Çıktısını Arşivle
+      uses: actions/upload-artifact@v4
+      with:
+        name: MultronWinCleaner-beta-build
+        path: MultronWinCleaner/bin/Release/

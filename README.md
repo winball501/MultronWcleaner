@@ -17,6 +17,9 @@
       <img src="https://img.shields.io/badge/Database-Community%20Driven-059669?style=for-the-badge&logo=github&logoColor=white" alt="Database Repo" />
     </a>
     <img src="https://img.shields.io/github/license/winball501/MultronWcleaner?style=for-the-badge&color=15803d" alt="License" />
+    <a href="https://github.com/winball501/MultronWcleaner/actions/workflows/build.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/winball501/MultronWcleaner/build.yml?branch=beta&style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status"/>
+  </a>
   </p>
 
   [Download Release](https://github.com/winball501/MultronWcleaner/releases/latest) • [Database Repo](https://github.com/winball501/MultronWcleaner-Database) • [Report Issue](https://github.com/winball501/MultronWcleaner/issues)
