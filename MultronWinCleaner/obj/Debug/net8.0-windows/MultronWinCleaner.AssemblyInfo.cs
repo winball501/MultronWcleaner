@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultronWinCleaner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8516b117ad6a6bb8c575bf03b2499c75ff14c634")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b3eb5146c3432b30f8153b2f3aad0d32095677c8")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultronWinCleaner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultronWinCleaner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
