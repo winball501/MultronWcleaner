@@ -276,7 +276,83 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="CustomRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
+
+                            <Ellipse x:Name="OuterRing"
+                       Width="18"
+                       Height="18"
+                       Stroke="#0078D7"
+                       StrokeThickness="2"
+                       Fill="Transparent"
+                       VerticalAlignment="Center"/>
+
+                            <Ellipse x:Name="InnerDot"
+                       Width="10"
+                       Height="10"
+                       Fill="#0078D7"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="DotScale" ScaleX="0" ScaleY="0"/>
+                                </Ellipse.RenderTransform>
+                                <Ellipse.RenderTransformOrigin>
+                                    <Point X="0.5" Y="0.5"/>
+                                </Ellipse.RenderTransformOrigin>
+                            </Ellipse>
+
+                            <ContentPresenter Grid.Column="1"
+                                Margin="{TemplateBinding Padding}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalAlignment="Left"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleX" To="0" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetName="DotScale" Storyboard.TargetProperty="ScaleY" To="0" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="OuterRing" Property="Stroke" Value="#2B88D8"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="RoundedTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="{DynamicResource TextBoxBackground}" />
@@ -435,18 +511,47 @@
                         <GroupBox Header="User Profile Selection" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
                             <StackPanel>
                                 <TextBlock Text="Choose which Windows user profile the cleaner should target:"
-                                           FontSize="14" Opacity="0.75"
-                                           Margin="0,0,0,8" TextWrapping="Wrap"/>
+                   FontSize="14" Opacity="0.75"
+                   Margin="0,0,0,8" TextWrapping="Wrap"/>
+
+                                <RadioButton x:Name="rbCleanAllUsers" 
+             Content="Clean all user profiles" 
+             IsChecked="True" 
+             FontSize="14" 
+             Foreground="{DynamicResource TextPrimary}" 
+             Style="{DynamicResource CustomRadioButtonStyle}" 
+             Margin="0,0,0,10" 
+             Cursor="Hand"/>
+                                <RadioButton x:Name="rbCleanSelectedUsers" 
+Content="Clean selected user profiles" 
+IsChecked="False" 
+FontSize="14" 
+Foreground="{DynamicResource TextPrimary}" 
+Style="{DynamicResource CustomRadioButtonStyle}" 
+Margin="0,0,0,10" 
+Cursor="Hand"/>
+
                                 <ComboBox x:Name="comboBoxUserSelection" Height="34"
-                                          HorizontalAlignment="Stretch"
-                                          Style="{DynamicResource ModernComboBoxStyle}"
-                                          Padding="8"
-                                          FontSize="15" FontWeight="Medium" />
-                                <Button x:Name="ApplyButton" Content="Apply Selection" Width="140" Height="34" Margin="0,10,0,0"
-                                        HorizontalAlignment="Left"
-                                        Click="ApplyUserSelection_Click"
-                                        Style="{DynamicResource AccentButtonStyle}"
-                                        FontWeight="SemiBold" Cursor="Hand"/>
+                  HorizontalAlignment="Stretch"
+                  Padding="8"
+                  FontSize="15" FontWeight="Medium">
+                                    <ComboBox.Style> 
+                                        <Style TargetType="ComboBox" BasedOn="{StaticResource ModernComboBoxStyle}">
+                                            <Style.Triggers> 
+                                                <DataTrigger Binding="{Binding IsChecked, ElementName=chkCleanAllUsers}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ComboBox.Style>
+                                </ComboBox>
+
+                                <Button x:Name="ApplyButton" Content="Apply Selection" Width="140" Height="34" Margin="0,12,0,0"
+                HorizontalAlignment="Left"
+                Click="ApplyUserSelection_Click"
+                Style="{DynamicResource AccentButtonStyle}"
+                FontWeight="SemiBold" Cursor="Hand"/>
                             </StackPanel>
                         </GroupBox>
 

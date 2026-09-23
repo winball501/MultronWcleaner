@@ -280,9 +280,7 @@ namespace Multron_Win_Cleaner
             settings.Hide();
             dataGridGroups.Visibility = Visibility.Hidden;
             Datagridscroll.Visibility = Visibility.Hidden;
-
-            await loadothers();
-            await loadothers2();
+ 
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
             {
 
@@ -2186,7 +2184,7 @@ namespace Multron_Win_Cleaner
             expanders.Clear();
             stackpanels.Clear();
             database.Clear();
-            loadothers();
+          
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
             {
 

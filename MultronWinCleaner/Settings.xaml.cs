@@ -208,6 +208,13 @@ namespace MultronWinCleaner
             chkEnableStartupClean.IsChecked = GetBool("startupclean");
             chkEnableNotifyScan.IsChecked = GetBool("startupnotifyscan");
             chkEnableNotifyClean.IsChecked = GetBool("startupnotifyclean");
+            if(GetBool("cleanallusers") == true && GetBool("cleanallusers") != null)
+            {
+                 rbCleanAllUsers.IsChecked = GetBool("cleanallusers");
+            } 
+          
+            rbCleanSelectedUsers.IsChecked = GetBool("cleanselectedusers");
+ 
 
             AccessScan.IsChecked = GetBool("access_scan");
             OnlyBattery.IsChecked = GetBool("pluggedin");
@@ -265,7 +272,14 @@ namespace MultronWinCleaner
             {
                 defaultloglocation();
             }
- 
+            if (rbCleanAllUsers.IsChecked == true)
+            {
+                comboBoxUserSelection.IsEnabled = false;
+            }
+            else
+            {
+                comboBoxUserSelection.IsEnabled = true;
+            }
             SetComboBoxSelection(memcleaner.cbCleanInterval, GetString("mcminutes"));
             SetComboBoxSelection(cmbAccessPreset, GetString("accessscanindex"));
             SetComboBoxSelection(cmbAgePreset, GetString("oldscanindex"));
@@ -306,12 +320,16 @@ namespace MultronWinCleaner
                 Upsert("enablelog", chkEnableLog.IsChecked == true ? "1" : "0");
                 Upsert("showlastlog", chkShowLastLog.IsChecked == true ? "1" : "0");
                 Upsert("logpath", logfilepath);
-
+                Upsert("cleanallusers", rbCleanAllUsers.IsChecked == true ? "1" : "0");
+                Upsert("cleanselectedusers", rbCleanSelectedUsers.IsChecked == true ? "1" : "0");
                 Upsert("startupscan", chkEnableStartupScan.IsChecked == true ? "1" : "0");
                 Upsert("startupclean", chkEnableStartupClean.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyscan", chkEnableNotifyScan.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyclean", chkEnableNotifyClean.IsChecked == true ? "1" : "0");
-
+                if (comboBoxUserSelection != null)
+                {
+                    comboBoxUserSelection.IsEnabled = rbCleanAllUsers.IsChecked != true;
+                }
                 if (cmbAccessPreset.SelectedItem is ComboBoxItem selectedaccess)
                     Upsert("accessscanindex", selectedaccess.Content.ToString());
 
@@ -342,7 +360,21 @@ namespace MultronWinCleaner
           
         }
 
+        private void chkCleanAllUsers_Checked(object sender, RoutedEventArgs e)
+        { 
+            if (comboBoxUserSelection != null)
+            {
+                comboBoxUserSelection.IsEnabled = false;
+            }
+        }
 
+        private void chkCleanAllUsers_Unchecked(object sender, RoutedEventArgs e)
+        { 
+            if (comboBoxUserSelection != null)
+            {
+                comboBoxUserSelection.IsEnabled = true;
+            }
+        }
 
         private void txtCleaningInterval_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
@@ -443,10 +475,8 @@ namespace MultronWinCleaner
 
         private async void ApplyUserSelection_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.database.Clear();
-            mainWindow.wrapPanel1.Children.Clear();
-            var load = new MultronWinCleaner.Processes.Load(mainWindow);
-            await Task.Run(() => load.RunAsync());
+     
+            mainWindow.ReloadDb.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
         }
 
 
