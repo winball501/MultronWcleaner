@@ -5,11 +5,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MultronWinCleaner;
+
 namespace MultronWinCleaner.Processes
 {
     public class Load
@@ -18,12 +20,14 @@ namespace MultronWinCleaner.Processes
         CancellationTokenSource cts = new CancellationTokenSource();
         string currentid = null;
         int comboid = 0;
+        string getline = null;
+
         public Load(MainWindow main)
         {
             this.main = main;
-
         }
-        public async Task ScandotsAsync(string text, CancellationToken cancellationToken)
+
+        public async System.Threading.Tasks.Task ScandotsAsync(string text, CancellationToken cancellationToken)
         {
             try
             {
@@ -31,34 +35,34 @@ namespace MultronWinCleaner.Processes
                 {
                     await main.Dispatcher.InvokeAsync(() => {
                         main.StatusLoad.Text = text + ".";
-                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));  
+                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
                     });
 
-                    await Task.Delay(1000, cancellationToken);
+                    await System.Threading.Tasks.Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
                         main.StatusLoad.Text = text + "..";
                     });
 
-                    await Task.Delay(1000, cancellationToken);
+                    await System.Threading.Tasks.Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
                         main.StatusLoad.Text = text + "...";
                     });
 
-                    await Task.Delay(1000, cancellationToken);
+                    await System.Threading.Tasks.Task.Delay(1000, cancellationToken);
                 }
             }
             catch (TaskCanceledException)
             {
-
             }
         }
+
         private void Profilelist_SelectionChanged(object sender, SelectionChangedEventArgs e, int comboid)
         {
             try
             {
-                ComboBox comboBox = sender as ComboBox;
+                System.Windows.Controls.ComboBox comboBox = sender as System.Windows.Controls.ComboBox;
                 if (comboBox == null) return;
 
                 string newText = (comboBox.SelectedItem?.ToString() ?? "").Trim();
@@ -67,12 +71,12 @@ namespace MultronWinCleaner.Processes
                 {
                     string oldText = oldItem?.ToString()?.Trim() ?? "";
 
-
                     Expander parentExpander = FindParent<Expander>(comboBox);
-                    string expanderName = parentExpander.Header?.ToString()?.Trim() ?? "";
                     if (parentExpander == null) return;
 
-                    var checkBoxes = FindChildren<CheckBox>(parentExpander);
+                    string expanderName = parentExpander.Header?.ToString()?.Trim() ?? "";
+
+                    var checkBoxes = FindChildren<System.Windows.Controls.CheckBox>(parentExpander);
                     foreach (var box in checkBoxes)
                     {
                         string contentText = box.Content?.ToString() ?? "";
@@ -84,7 +88,6 @@ namespace MultronWinCleaner.Processes
 
                             for (int i = 0; i < main.database.Count; i++)
                             {
-
                                 if (main.database[i].Contains(expanderName))
                                 {
                                     string key = main.stringtokenizer(main.database[i], "=", 0);
@@ -100,9 +103,10 @@ namespace MultronWinCleaner.Processes
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Hata: " + ex.Message + "\n" + ex.StackTrace);
+                System.Windows.MessageBox.Show("Hata: " + ex.Message + "\n" + ex.StackTrace);
             }
         }
+
         public static IEnumerable<T> FindChildren<T>(DependencyObject parent) where T : DependencyObject
         {
             if (parent == null) yield break;
@@ -119,6 +123,7 @@ namespace MultronWinCleaner.Processes
                     yield return descendant;
             }
         }
+
         public static T FindParent<T>(DependencyObject child) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(child);
@@ -131,10 +136,10 @@ namespace MultronWinCleaner.Processes
             }
             return null;
         }
+
         private Expander FindExpanderFromScrollViewer(ScrollViewer scrollViewer)
         {
             DependencyObject current = scrollViewer;
-
             while (current != null)
             {
                 if (current is Expander expander)
@@ -142,15 +147,12 @@ namespace MultronWinCleaner.Processes
 
                 current = VisualTreeHelper.GetParent(current);
             }
-
             return null;
         }
+
         private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             var scrollViewer = sender as ScrollViewer;
-
-
-
 
             double verticalOffset = scrollViewer.VerticalOffset;
             double viewportHeight = scrollViewer.ViewportHeight;
@@ -159,12 +161,9 @@ namespace MultronWinCleaner.Processes
             if (extentHeight <= 0 || viewportHeight <= 0) return;
 
             const double threshold = 20.0;
-
-
             bool isAtBottom = (extentHeight - (verticalOffset + viewportHeight)) <= threshold;
 
             if (!isAtBottom) return;
-
 
             var listbox = FindListBoxFromScrollViewer(scrollViewer);
             var expander = FindExpanderFromScrollViewer(scrollViewer);
@@ -173,13 +172,10 @@ namespace MultronWinCleaner.Processes
             {
                 string groupid = expander.Name;
                 await LoadMoreItemsForListBox_ByGroup(listbox, groupid);
-
-
-
             }
-
         }
-        private ListBox FindListBoxFromScrollViewer(ScrollViewer sv)
+
+        private System.Windows.Controls.ListBox FindListBoxFromScrollViewer(ScrollViewer sv)
         {
             foreach (var lb in main.listboxes)
             {
@@ -196,39 +192,30 @@ namespace MultronWinCleaner.Processes
             }
             return null;
         }
-        private async Task LoadMoreItemsForListBox_ByGroup(ListBox listbox, string groupid)
+
+        private async System.Threading.Tasks.Task LoadMoreItemsForListBox_ByGroup(System.Windows.Controls.ListBox listbox, string groupid)
         {
             var allCheckboxes = main.checkboxes2
                 .Where(cb => cb?.Name != null && cb.Name.ToString() == groupid)
                 .ToList();
 
-            var existingBoxes = listbox.Items
-                .OfType<CheckBox>()
-                .ToList();
-
-
+            var existingBoxes = listbox.Items.OfType<System.Windows.Controls.CheckBox>().ToList();
             int startIndex = 0;
 
             if (existingBoxes.Any())
             {
                 var lastBox = existingBoxes.Last();
-
-
                 startIndex = allCheckboxes.FindLastIndex(cb => cb.Name == lastBox.Name && Equals(cb.Content, lastBox.Content)) + 1;
-
-
-
                 if (startIndex < 0) startIndex = 0;
             }
 
             var nextBatch = allCheckboxes.Skip(startIndex).Take(3).ToList();
 
-
             await main.Dispatcher.InvokeAsync(() =>
             {
                 nextBatch.ForEach(originalBox =>
                 {
-                    var newBox = new CheckBox
+                    var newBox = new System.Windows.Controls.CheckBox
                     {
                         Name = originalBox.Name,
                         Content = originalBox.Content,
@@ -248,42 +235,36 @@ namespace MultronWinCleaner.Processes
                     newBox.Unchecked += main.CheckBox_Unchecked;
 
                     listbox.Items.Add(newBox);
-
-
                 });
             });
-
-
         }
+
         public string CreateRandomId(int length = 8)
         {
             const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
             Random rnd = new Random();
-
-
             char firstChar = letters[rnd.Next(letters.Length)];
-
-
             string rest = new string(Enumerable.Repeat(chars, length - 1)
                 .Select(s => s[rnd.Next(s.Length)]).ToArray());
 
             return firstChar + rest;
         }
-        string getline = null;
-       public async Task RunAsync()
+
+        public async System.Threading.Tasks.Task RunAsync()
         {
             try
-            { 
+            {
                 await main.Dispatcher.InvokeAsync(async () =>
                 {
                     await main.loadothers();
                     await main.loadothers2();
                 });
-                string filePath = Environment.CurrentDirectory + "\\" + "database.txt";
+
+                string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.txt");
                 if (System.IO.File.Exists(filePath))
-                { 
+                {
                     List<string> targetUsers = new List<string>();
                     await main.Dispatcher.InvokeAsync(() =>
                     {
@@ -307,9 +288,8 @@ namespace MultronWinCleaner.Processes
 
                     if (targetUsers.Count == 0) return;
 
-               
                     List<string> originalLines = System.IO.File.ReadAllLines(filePath).ToList();
-                    
+
                     List<string> globalStandalone = new List<string>();
                     List<List<string>> globalBlocks = new List<List<string>>();
                     Dictionary<string, List<string>> userStandalone = new Dictionary<string, List<string>>();
@@ -339,16 +319,18 @@ namespace MultronWinCleaner.Processes
                         else if (trim.StartsWith("}"))
                         {
                             inGroup = false;
-                             
+
                             List<string> globalBufferLines = new List<string>();
                             List<string> userBufferLines = new List<string>();
 
                             foreach (var l in currentBuffer)
                             {
-                                bool isUserSpecific = l.Contains("{##}") || 
-                                                      l.Contains("AppData", StringComparison.OrdinalIgnoreCase) || 
+                                bool isUserSpecific = l.Contains("{##}") ||
+                                                      l.Contains("AppData", StringComparison.OrdinalIgnoreCase) ||
                                                       l.Contains("LocalSettings", StringComparison.OrdinalIgnoreCase) ||
-                                                      l.Contains("C:\\Users\\", StringComparison.OrdinalIgnoreCase);
+                                                      l.Contains("C:\\Users\\", StringComparison.OrdinalIgnoreCase) ||
+                                                      l.Contains("#profileget#", StringComparison.OrdinalIgnoreCase) ||
+                                                      l.Contains("#profile#", StringComparison.OrdinalIgnoreCase);
 
                                 bool isProgramData = l.Contains("ProgramData", StringComparison.OrdinalIgnoreCase);
 
@@ -361,7 +343,7 @@ namespace MultronWinCleaner.Processes
                                     globalBufferLines.Add(l);
                                 }
                             }
-                             
+
                             if (globalBufferLines.Count > 0)
                             {
                                 var gBlock = new List<string> { blockHeader };
@@ -369,7 +351,7 @@ namespace MultronWinCleaner.Processes
                                 gBlock.Add("}");
                                 globalBlocks.Add(gBlock);
                             }
-                             
+
                             if (userBufferLines.Count > 0)
                             {
                                 foreach (var user in targetUsers)
@@ -385,9 +367,9 @@ namespace MultronWinCleaner.Processes
                                         else
                                         {
                                             processedLine = System.Text.RegularExpressions.Regex.Replace(
-                                                processedLine, 
-                                                @"C:\\Users\\[^\\]+", 
-                                                user, 
+                                                processedLine,
+                                                @"C:\\Users\\[^\\]+",
+                                                user,
                                                 System.Text.RegularExpressions.RegexOptions.IgnoreCase
                                             );
                                         }
@@ -397,7 +379,6 @@ namespace MultronWinCleaner.Processes
                                     userBlocks[user].Add(uBlock);
                                 }
                             }
-
                             currentBuffer.Clear();
                         }
                         else if (inGroup)
@@ -408,7 +389,7 @@ namespace MultronWinCleaner.Processes
                         {
                             if (trim.Contains("{##}") || trim.Contains("AppData", StringComparison.OrdinalIgnoreCase))
                             {
-                                foreach (var user in targetUsers) 
+                                foreach (var user in targetUsers)
                                 {
                                     string processed = trim.Contains("{##}") ? trim.Replace("{##}", user) : System.Text.RegularExpressions.Regex.Replace(trim, @"C:\\Users\\[^\\]+", user, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                                     userStandalone[user].Add(processed);
@@ -420,10 +401,9 @@ namespace MultronWinCleaner.Processes
                             }
                         }
                     }
-                     
+
                     List<string> linesToProcess = new List<string>();
-                    
-                  
+
                     linesToProcess.Add("USER_START=💻 System & Global Tools");
                     if (globalStandalone.Count > 0)
                     {
@@ -433,7 +413,7 @@ namespace MultronWinCleaner.Processes
                     }
                     foreach (var block in globalBlocks) linesToProcess.AddRange(block);
                     linesToProcess.Add("USER_END");
-                     
+
                     foreach (var user in targetUsers)
                     {
                         bool hasContent = userBlocks[user].Count > 0 || userStandalone[user].Count > 0;
@@ -441,7 +421,7 @@ namespace MultronWinCleaner.Processes
                         {
                             string userName = new DirectoryInfo(user).Name;
                             linesToProcess.Add($"USER_START=👤 {userName}");
-                            
+
                             if (userStandalone[user].Count > 0)
                             {
                                 linesToProcess.Add("{=User Specific Files");
@@ -449,11 +429,11 @@ namespace MultronWinCleaner.Processes
                                 linesToProcess.Add("}");
                             }
                             foreach (var block in userBlocks[user]) linesToProcess.AddRange(block);
-                            
+
                             linesToProcess.Add("USER_END");
                         }
                     }
-                     
+
                     int totalLines = linesToProcess.Count;
                     int currentLine = 0;
 
@@ -467,9 +447,9 @@ namespace MultronWinCleaner.Processes
                     int created = 0;
                     int profileget = 0;
                     string groupboxcontent = "";
-                    ListBox groupBoxContent = null;
+                    System.Windows.Controls.ListBox groupBoxContent = null;
                     Expander newExpander = null;
-                    ComboBox profilelist = null;
+                    System.Windows.Controls.ComboBox profilelist = null;
                     string profile = "";
 
                     Expander currentUserExpander = null;
@@ -484,25 +464,26 @@ namespace MultronWinCleaner.Processes
                         {
                             string uName = line.Substring(11);
                             await main.Dispatcher.InvokeAsync(() => {
-                                currentUserPanel = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5) };
-                                currentUserExpander = new Expander {
+                                currentUserPanel = new WrapPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(5) };
+                                currentUserExpander = new Expander
+                                {
                                     Header = uName,
                                     Margin = new Thickness(5, 10, 5, 5),
                                     Foreground = main.brush,
                                     BorderBrush = main.brush,
                                     BorderThickness = new Thickness(1),
                                     Padding = new Thickness(5, 5, 5, 10),
-                                    Content = currentUserPanel,
-                                    IsExpanded = true, 
+                                    IsExpanded = true,
                                     FontSize = 15,
-                                    FontWeight = FontWeights.Bold
+                                    FontWeight = FontWeights.Bold,
+                                    Content = currentUserPanel
                                 };
                                 main.wrapPanel1.Children.Add(currentUserExpander);
                             });
                             await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
                             continue;
                         }
-                        
+
                         if (line == "USER_END")
                         {
                             await main.Dispatcher.InvokeAsync(() => {
@@ -511,7 +492,7 @@ namespace MultronWinCleaner.Processes
                                     main.wrapPanel1.Children.Remove(currentUserExpander);
                                 }
                             });
-                            
+
                             currentUserExpander = null;
                             currentUserPanel = null;
                             await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
@@ -522,7 +503,7 @@ namespace MultronWinCleaner.Processes
                         string name = main.stringtokenizer(line, "=", 0);
                         string path = main.stringtokenizer(line, "=", 1);
                         if (path == null) path = "";
-                        
+
                         getline = line.Trim();
                         bool recommended = false;
 
@@ -544,6 +525,7 @@ namespace MultronWinCleaner.Processes
                             linecontains = 1;
                             groupboxmode = 0;
                             created = 0;
+                            profileget = 0;
                         }
                         else
                         {
@@ -556,18 +538,19 @@ namespace MultronWinCleaner.Processes
                         string haswarning = main.stringtokenizer(line, "=", 3);
                         if (haswarning == "true" || haswarning == "false") haswarning = null;
 
-                        if (line.Contains("#profile#="))
+                        if (line.StartsWith("#profile#="))
                         {
                             path = main.stringtokenizer(line, "=", 1);
                             if (Directory.Exists(path))
                             {
-                                await main.Dispatcher.InvokeAsync(async () =>
+                                await main.Dispatcher.InvokeAsync(() =>
                                 {
-                                    profilelist = new ComboBox {
+                                    profilelist = new System.Windows.Controls.ComboBox
+                                    {
                                         Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
                                         FontSize = 14,
                                         Margin = new Thickness(5),
-                                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                                        HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                                         VerticalAlignment = VerticalAlignment.Top
                                     };
                                     comboid++;
@@ -584,7 +567,7 @@ namespace MultronWinCleaner.Processes
                                     {
                                         if (folderName.EndsWith("(release)") || folderName.StartsWith("Profile") || folderName.Contains("Default") || folderName.EndsWith(".default-release"))
                                             selectedindex = i;
-                                        
+
                                         i++;
                                         profilelist.Items.Add(folderName);
                                     });
@@ -595,6 +578,10 @@ namespace MultronWinCleaner.Processes
                                 if (profilelist != null && profilelist.Items.Count > 0)
                                 {
                                     await main.Dispatcher.InvokeAsync(() => { profile = path + profilelist.Items[selectedindex]; });
+                                }
+                                else
+                                {
+                                    await main.Dispatcher.InvokeAsync(() => { profile = ""; });
                                 }
                                 profileget = 1;
                             }
@@ -608,26 +595,21 @@ namespace MultronWinCleaner.Processes
                             });
                         }
 
-                        if (!line.Contains("#profile#") && !line.StartsWith("{") && !line.StartsWith("}"))
+                        if (!line.StartsWith("#profile#=") && !line.StartsWith("{") && !line.StartsWith("}"))
                         {
-                            string matchingUser = targetUsers.FirstOrDefault(u => path.StartsWith(u, StringComparison.OrdinalIgnoreCase));
-                            bool isUserPath = matchingUser != null;
+                            string checkPath = path;
+                            if (checkPath.Contains("*"))
+                            {
+                                checkPath = checkPath.Substring(0, checkPath.IndexOf('*'));
+                            }
 
-                            bool isValidItem = false;
-                            if (isUserPath)
-                            {
-                                isValidItem = Directory.Exists(matchingUser);
-                            }
-                            else
-                            {
-                                isValidItem = Directory.Exists(path) || System.IO.File.Exists(path);
-                            }
+                            bool isValidItem = Directory.Exists(checkPath) || System.IO.File.Exists(checkPath);
 
                             if (isValidItem)
                             {
                                 Debug.WriteLine(line);
                                 if (recommended) main.database.Add(name + "=" + path);
-                                
+
                                 await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
 
                                 if (linecontains == 0)
@@ -639,10 +621,11 @@ namespace MultronWinCleaner.Processes
                                             if (created == 0)
                                             {
                                                 this.currentid = CreateRandomId(8);
-                                                groupBoxContent = new ListBox {
+                                                groupBoxContent = new System.Windows.Controls.ListBox
+                                                {
                                                     ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(VirtualizingStackPanel))),
                                                     VerticalAlignment = VerticalAlignment.Stretch,
-                                                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                                                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                                                     Margin = new Thickness(5),
                                                     Background = System.Windows.Media.Brushes.Transparent,
                                                     BorderThickness = new Thickness(0),
@@ -652,13 +635,14 @@ namespace MultronWinCleaner.Processes
                                                 };
 
                                                 groupBoxContent.Loaded += (s, e) => {
-                                                    var listBox = s as ListBox;
+                                                    var listBox = s as System.Windows.Controls.ListBox;
                                                     if (listBox == null) return;
                                                     var sv = main.FindVisualChild<ScrollViewer>(listBox);
                                                     if (sv != null) sv.ScrollChanged += ScrollViewer_ScrollChanged;
                                                 };
 
-                                                newExpander = new Expander {
+                                                newExpander = new Expander
+                                                {
                                                     Name = currentid,
                                                     Header = groupboxcontent,
                                                     Margin = new Thickness(5),
@@ -668,7 +652,7 @@ namespace MultronWinCleaner.Processes
                                                     BorderThickness = new Thickness(2),
                                                     FontSize = 13,
                                                     FontWeight = FontWeights.SemiBold,
-                                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
                                                     VerticalAlignment = VerticalAlignment.Top,
                                                     Content = groupBoxContent
                                                 };
@@ -676,7 +660,8 @@ namespace MultronWinCleaner.Processes
                                                 created = 1;
                                             }
 
-                                            CheckBox newCheckBox = new CheckBox {
+                                            System.Windows.Controls.CheckBox newCheckBox = new System.Windows.Controls.CheckBox
+                                            {
                                                 Name = currentid,
                                                 Content = name + "=" + path,
                                                 Margin = new Thickness(10),
@@ -715,10 +700,12 @@ namespace MultronWinCleaner.Processes
                                                 newExpander.Content = groupBoxContent;
                                                 try
                                                 {
-                                                    if (currentUserPanel != null) {
+                                                    if (currentUserPanel != null)
+                                                    {
                                                         if (!currentUserPanel.Children.Contains(newExpander)) currentUserPanel.Children.Add(newExpander);
                                                     }
-                                                    else {
+                                                    else
+                                                    {
                                                         if (main.wrapPanel1.Children.Count != 100 && !main.wrapPanel1.Children.Contains(newExpander)) main.wrapPanel1.Children.Add(newExpander);
                                                     }
                                                 }
@@ -730,7 +717,8 @@ namespace MultronWinCleaner.Processes
                                     {
                                         await main.Dispatcher.InvokeAsync(() =>
                                         {
-                                            CheckBox newCheckBox = new CheckBox {
+                                            System.Windows.Controls.CheckBox newCheckBox = new System.Windows.Controls.CheckBox
+                                            {
                                                 Name = currentid,
                                                 Content = name + "=" + path,
                                                 Margin = new Thickness(5),
@@ -743,10 +731,10 @@ namespace MultronWinCleaner.Processes
                                                 Padding = new Thickness(10)
                                             };
                                             main.checkboxes2.Add(newCheckBox);
-                                            
+
                                             if (currentUserPanel != null) currentUserPanel.Children.Add(newCheckBox);
                                             else main.wrapPanel1.Children.Add(newCheckBox);
-                                                
+
                                             newCheckBox.Checked += main.CheckBox_Checked;
                                             newCheckBox.Unchecked += main.CheckBox_Unchecked;
                                         });
@@ -764,7 +752,7 @@ namespace MultronWinCleaner.Processes
 
                         if (lastLine != null && main.settings.chkShowLastLog.IsChecked == true) main.label1_Copy.Text = lastLine;
                         else main.label1_Copy.Text = "Ready to scan";
-                        
+
                         main.buttonStartScan.IsEnabled = true;
                         main.progressBar1.Value = 0;
                         main.UpdateArc(main.progressBar1.Value);
@@ -774,7 +762,7 @@ namespace MultronWinCleaner.Processes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + " in Load.cs\n" + ex.StackTrace + "\nLine: " + getline, "database.txt error");
+                System.Windows.MessageBox.Show(ex.Message + " in Load.cs\n" + ex.StackTrace + "\nLine: " + getline, "database.txt error");
             }
         }
     }

@@ -376,46 +376,57 @@ namespace MultronWinCleaner.Processes
 
                     try
                     {
-                        var statusBlock = await AddStatusTextBlock($"Cleaning: {name}");
-                        await main.Dispatcher.InvokeAsync(() =>
+                        try
                         {
-                            if (iscleaned == 0)
+                       
+                            var statusBlock = await AddStatusTextBlock($"Cleaning: {name}: {path}");
+
+                            await main.Dispatcher.InvokeAsync(() =>
                             {
-                                statusBlock.Text = $"Ignored: {name}";
-                                statusBlock.Foreground = GREEN;
-                            }
-                            else if (iscleaned == 2)
+                                if (iscleaned == 0)
+                                {
+                                    statusBlock.Text = $"Ignored: {name}: {path}";
+                                    statusBlock.Foreground = GREEN;
+                                }
+                                else if (iscleaned == 2)
+                                {
+                                    statusBlock.Text = $"Folder Empty: {name}: {path}";
+                                    statusBlock.Foreground = Brushes.Goldenrod;
+                                }
+                                else if (name.Contains("Dism.exe"))
+                                { 
+                                    statusBlock.Text = $"{name} Operation Done. Log files in current directory of mwc.";
+                                }
+                                else if (iscleaned == 1)
+                                {
+                                    statusBlock.Text = $"Cleaned: {name}: {path}";
+                                    statusBlock.Foreground = BLUE;
+                                }
+                                else if (iscleaned == 3)
+                                {
+                                    statusBlock.Text = $"Execute Done: {name}: {path}";
+                                    statusBlock.Foreground = BLUE;
+                                }
+                                else if (iscleaned == 4)
+                                {
+                                    statusBlock.Text = $"Does not exist: {name}: {path}";
+                                    statusBlock.Foreground = Brushes.Red;
+                                }
+                                else if (iscleaned == 5)
+                                {
+                                    statusBlock.Text = $"Locked: {name}: {path}";
+                                    statusBlock.Foreground = Brushes.Red;
+                                    iscleaned = 4;
+                                }
+                            });
+                        }
+                        catch (Exception Ex)
+                        {
+                            if (File.Exists(path))
                             {
-                                statusBlock.Text = $"Folder Empty: {name}";
-                                statusBlock.Foreground = Brushes.Goldenrod;
+                                catchlockedfile(Ex, path, name);
                             }
-                            else if (name.Contains("Dism.exe"))
-                            {
-                                statusBlock.Text = $"{name} Operation Done. Log files in current directory of mwc.";
-                            }
-                            else if (iscleaned == 1)
-                            {
-                                statusBlock.Text = $"Cleaned: {name}";
-                                statusBlock.Foreground = BLUE;
-                             
-                            }
-                            else if (iscleaned == 3)
-                            {
-                                statusBlock.Text = $"Execute Done: {name}";
-                                statusBlock.Foreground = BLUE;
-                            }
-                            else if (iscleaned == 4)
-                            {
-                                statusBlock.Text = $"Does not exist: {name}";
-                                statusBlock.Foreground = Brushes.Red;
-                            }
-                            else if (iscleaned == 5)
-                            {
-                                statusBlock.Text = $"Locked: {name}";
-                                statusBlock.Foreground = Brushes.Red;
-                                iscleaned = 4;
-                            }
-                        });
+                        }
                     }
                     catch (Exception Ex)
                     {

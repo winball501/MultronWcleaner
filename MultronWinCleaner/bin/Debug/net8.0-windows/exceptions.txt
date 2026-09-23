@@ -1,0 +1,2 @@
+The process cannot access the file 'C:\Users\winball_501\AppData\Local\Spotify\Browser\Cache\No_Vary_Search\journal.baj' because it is being used by another process.    at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MultronWinCleaner.Processes.Clean.CleanDirectory(String path, String name) in C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\Processes\Clean.cs:line 570

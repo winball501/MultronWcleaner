@@ -704,7 +704,7 @@ namespace MultronWinCleaner.Processes
                     }
                     else
                     {
-                        dropscanmessage("Scanning: " + name, "#0078d7");
+                        dropscanmessage("Scanning: " + name + ": " + path, "#0078d7");
                         if (System.IO.File.Exists(path) && !main.settings.excludedfiles.Contains(path))
                         {
                             await addtocheckbox(path, name, "Direct Files");
