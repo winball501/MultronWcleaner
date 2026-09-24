@@ -801,7 +801,7 @@ namespace MultronWinCleaner.Processes
                             main.label1_Copy.Text = $"Startup scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
                             main.Dispatcher.Invoke(() =>
                             {
-                                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
+                                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden || main.Visibility == Visibility.Collapsed || main.WindowState == WindowState.Minimized)
                                 {
                                     Notify notify = new Notify("Scan Information", $"Your startup system scan done!\r\n", $"{main.formatsize(totalsize)}");
                                     notify.Show();

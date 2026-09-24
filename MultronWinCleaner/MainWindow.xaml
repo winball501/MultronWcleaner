@@ -405,7 +405,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="MULTRON WIN CLEANER" FontSize="15" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                                 <Border Background="#200078D4" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="v1.24.2 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
+                                    <TextBlock Text="v1.24.3 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">

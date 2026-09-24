@@ -673,7 +673,7 @@ namespace MultronWinCleaner.Processes
                 main.buttonStartScan.IsEnabled = false;
                 main.buttonReset.Visibility = Visibility.Visible;
 
-                if (main.settings.chkEnableNotifyClean.IsChecked == true && main.Visibility == Visibility.Hidden)
+                if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden || main.Visibility == Visibility.Collapsed || main.WindowState == WindowState.Minimized)
                 {
                     Notify notify = new Notify("Clean Information", $"Your system cleaned!\r\n", $"{main.formatsize(freedSpace)}");
                     notify.Show();

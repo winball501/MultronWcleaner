@@ -266,27 +266,38 @@ namespace MultronWinCleaner.Processes
                 if (System.IO.File.Exists(filePath))
                 {
                     List<string> targetUsers = new List<string>();
+
                     await main.Dispatcher.InvokeAsync(() =>
                     {
                         targetUsers.Clear();
-                        if (main.settings != null && main.settings.rbCleanAllUsers != null && main.settings.rbCleanAllUsers.IsChecked == true && main.settings.rbCleanSelectedUsers.IsChecked == false)
+
+                      
+                        try
                         {
-                            foreach (var item in main.settings.comboBoxUserSelection.Items)
+                            if (main.settings != null && main.settings.rbCleanAllUsers != null && main.settings.rbCleanAllUsers.IsChecked == true && main.settings.rbCleanSelectedUsers.IsChecked == false)
                             {
-                                targetUsers.Add(item.ToString());
+                                foreach (var item in main.settings.comboBoxUserSelection.Items)
+                                {
+                                    targetUsers.Add(item.ToString());
+                                }
+                            }
+                            else if (main.settings != null && main.settings.comboBoxUserSelection != null && main.settings.comboBoxUserSelection.SelectedItem != null)
+                            {
+                                targetUsers.Add(main.settings.comboBoxUserSelection.SelectedItem.ToString());
                             }
                         }
-                        else if (main.settings != null && main.settings.comboBoxUserSelection.SelectedItem != null)
+                        catch (Exception)
                         {
-                            targetUsers.Add(main.settings.comboBoxUserSelection.SelectedItem.ToString());
+                           
                         }
-                        else
+                         
+                        if (targetUsers.Count == 0)
                         {
                             targetUsers.Add(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
                         }
                     });
 
-                    if (targetUsers.Count == 0) return;
+         
 
                     List<string> originalLines = System.IO.File.ReadAllLines(filePath).ToList();
 

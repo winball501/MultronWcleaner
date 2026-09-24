@@ -212,29 +212,31 @@ namespace Multron_Win_Cleaner
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-          
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Windows başlangıcında (System32 dizininde) başlatılma ihtimaline karşı 
+            // çalışma dizinini uygulamanın ana klasörüne sabitliyoruz.
+            Environment.CurrentDirectory = baseDirectory;
+
             if (App.LaunchedFromStartup)
             {
-                await this.Dispatcher.InvokeAsync(() =>
-                {
-                    this.Visibility = Visibility.Hidden;
-                    this.Hide();
-              
-              
-                });
+                this.Visibility = Visibility.Collapsed;
             }
-          
+
             LoadingOverlay.Visibility = Visibility.Visible;
-           
+
             MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
             await Task.Run(() => updater.run());
-            string updaterfile = Environment.CurrentDirectory + "\\Update\\mwc\\Updater.exe";
-            string updatesfolder = Environment.CurrentDirectory + "\\Update\\mwc";
+
+            string updaterfile = System.IO.Path.Combine(baseDirectory, "Update", "mwc", "Updater.exe");
+            string updatesfolder = System.IO.Path.Combine(baseDirectory, "Update", "mwc");
+            string targetUpdater = System.IO.Path.Combine(baseDirectory, "Updater.exe");
 
             if (System.IO.File.Exists(updaterfile))
             {
-                System.IO.File.Copy(updaterfile, Environment.CurrentDirectory + "\\Updater.exe", overwrite: true);
+                System.IO.File.Copy(updaterfile, targetUpdater, overwrite: true);
             }
+
             if (Directory.Exists(updatesfolder))
             {
                 foreach (string file in Directory.GetFiles(updatesfolder))
@@ -243,66 +245,64 @@ namespace Multron_Win_Cleaner
                     {
                         System.IO.File.Delete(file);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-
                     }
-
                 }
+
                 if (Directory.Exists(updatesfolder))
                 {
                     try
                     {
                         Directory.Delete(updatesfolder);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-
                     }
-
                 }
             }
+
             utilities = new Utilities(this);
-
-
-     
-          
-
-          
 
             progressBar1.ValueChanged += ProgressBar1_ValueChanged;
             settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
 
-        
             utilities.Show();
             utilities.Hide();
             settings.Show();
             settings.Hide();
-            dataGridGroups.Visibility = Visibility.Hidden;
-            Datagridscroll.Visibility = Visibility.Hidden;
- 
-            if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
-            {
 
-                wrapPanelDirectories.Visibility = Visibility.Hidden;
-                ScrollViewerDirectories.Visibility = Visibility.Hidden;
+            // UI bileşenlerinin yüklenmesini bekliyor ve başlangıç yoğunluğu için 1.5 saniye gecikme (delay) ekliyoruz.
+            await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            await Task.Delay(1500);
+
+            await this.Dispatcher.InvokeAsync(() =>
+            {
+                dataGridGroups.Visibility = Visibility.Hidden;
+                Datagridscroll.Visibility = Visibility.Hidden;
+            });
+
+            string databasePath = System.IO.Path.Combine(baseDirectory, "database.txt");
+
+            if (System.IO.File.Exists(databasePath))
+            {
+                await this.Dispatcher.InvokeAsync(() =>
+                {
+                    wrapPanelDirectories.Visibility = Visibility.Hidden;
+                    ScrollViewerDirectories.Visibility = Visibility.Hidden;
+                });
+
                 var load = new MultronWinCleaner.Processes.Load(this);
                 await Task.Run(() => load.RunAsync());
-
 
                 this.previousWidth = this.Width;
                 this.previousHeight = this.Height;
                 this.previousLeft = this.Left;
                 this.previousTop = this.Top;
-
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show("The database.txt file could not be found. This may be due to an internet connectivity issue, as the program attempts to download the latest database.txt file from GitHub but was unable to do so.\n\nWould you like to be redirected to the GitHub page to manually download the latest database.txt file?",
-       "Multron Windows Cleaner",
-       MessageBoxButton.YesNo,
-       MessageBoxImage.Question
-   );
+                MessageBoxResult result = MessageBox.Show("The database.txt file could not be found. This may be due to an internet connectivity issue, as the program attempts to download the latest database.txt file from GitHub but was unable to do so.\n\nWould you like to be redirected to the GitHub page to manually download the latest database.txt file?", "Multron Windows Cleaner", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -312,7 +312,6 @@ namespace Multron_Win_Cleaner
                         UseShellExecute = true
                     });
                 }
-
             }
 
             TrayIconWindow trayiconwindow = new TrayIconWindow(this);
@@ -321,12 +320,10 @@ namespace Multron_Win_Cleaner
             traythread.Start();
 
             TrayIcon.TrayMouseDoubleClick += TrayIcon_MouseDoubleClick;
-        
-            LoadingOverlay.Visibility = Visibility.Collapsed;
-            
-            await startup();
-        
 
+            LoadingOverlay.Visibility = Visibility.Collapsed;
+
+            await startup();
         }
 
         public async Task loadothers2()
@@ -627,10 +624,12 @@ namespace Multron_Win_Cleaner
             {
                 this.Show();
                 this.WindowState = WindowState.Normal;
+                this.Visibility = Visibility.Visible;
             }
             else
             {
                 this.WindowState = WindowState.Normal;
+                this.Visibility = Visibility.Visible;
             }
 
             this.Activate();
