@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.TextFormatting;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
@@ -871,6 +872,7 @@ namespace MultronWinCleaner.Processes
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
+                File.AppendAllText(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "load_error.log"),   $"{DateTime.Now}: {ex.Message}\n{ex.StackTrace}\n\n");
             }
         }
 

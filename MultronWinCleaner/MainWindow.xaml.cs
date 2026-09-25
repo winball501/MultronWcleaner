@@ -212,19 +212,28 @@ namespace Multron_Win_Cleaner
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-            // Windows başlangıcında (System32 dizininde) başlatılma ihtimaline karşı 
-            // çalışma dizinini uygulamanın ana klasörüne sabitliyoruz.
-            Environment.CurrentDirectory = baseDirectory;
-
+            utilities = new Utilities(this);
+            settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
+            utilities.Show();
+            utilities.Hide();
+            settings.Show();
+            settings.Hide();
             if (App.LaunchedFromStartup)
             {
-                this.Visibility = Visibility.Collapsed;
+                this.Visibility = Visibility.Hidden;
+                for (int i = 0; i < 15 && !System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable(); i++)
+                {
+                    await Task.Delay(5000);
+                }
             }
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+             
+            Environment.CurrentDirectory = baseDirectory;
+
+          
 
             LoadingOverlay.Visibility = Visibility.Visible;
-
+          
             MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
             await Task.Run(() => updater.run());
 
@@ -261,18 +270,7 @@ namespace Multron_Win_Cleaner
                     }
                 }
             }
-
-            utilities = new Utilities(this);
-
-            progressBar1.ValueChanged += ProgressBar1_ValueChanged;
-            settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
-
-            utilities.Show();
-            utilities.Hide();
-            settings.Show();
-            settings.Hide();
-
-            // UI bileşenlerinin yüklenmesini bekliyor ve başlangıç yoğunluğu için 1.5 saniye gecikme (delay) ekliyoruz.
+             
             await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             await Task.Delay(1500);
 
@@ -291,7 +289,8 @@ namespace Multron_Win_Cleaner
                     wrapPanelDirectories.Visibility = Visibility.Hidden;
                     ScrollViewerDirectories.Visibility = Visibility.Hidden;
                 });
-
+                await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                await Task.Delay(2000);
                 var load = new MultronWinCleaner.Processes.Load(this);
                 await Task.Run(() => load.RunAsync());
 
