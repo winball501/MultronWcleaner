@@ -218,59 +218,77 @@ namespace Multron_Win_Cleaner
             utilities.Hide();
             settings.Show();
             settings.Hide();
+            await Task.Run(() => { var trayIconTask = new OpenTrayIcon(this).run();  });
             if (App.LaunchedFromStartup)
             {
                 this.Visibility = Visibility.Hidden;
-                for (int i = 0; i < 15 && !System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable(); i++)
-                {
-                    await Task.Delay(5000);
-                }
             }
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                {
+                    this.Visibility = Visibility.Visible;
+                    LoadingOverlay.Visibility = Visibility.Visible;
+
+                    const int networkTimeoutSeconds = 10;
+                    for (int remaining = networkTimeoutSeconds; remaining > 0 && !System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable(); remaining--)
+                    {
+                        StatusLoad.Text = $"Waiting for internet connection... ({remaining}s)";
+                        await Task.Delay(1000);
+                    }
+
+                    StatusLoad.Text = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()
+                        ? "Connected, loading..."
+                        : "No internet connection, continuing offline...";
+                }
+         
+            bool isOnline = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-             
+
             Environment.CurrentDirectory = baseDirectory;
 
-          
+
 
             LoadingOverlay.Visibility = Visibility.Visible;
-          
-            MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
-            await Task.Run(() => updater.run());
 
-            string updaterfile = System.IO.Path.Combine(baseDirectory, "Update", "mwc", "Updater.exe");
-            string updatesfolder = System.IO.Path.Combine(baseDirectory, "Update", "mwc");
-            string targetUpdater = System.IO.Path.Combine(baseDirectory, "Updater.exe");
-
-            if (System.IO.File.Exists(updaterfile))
+            if (isOnline)
             {
-                System.IO.File.Copy(updaterfile, targetUpdater, overwrite: true);
-            }
+                MultronWinCleaner.Processes.Updater updater = new MultronWinCleaner.Processes.Updater(this);
+                await Task.Run(() => updater.run());
 
-            if (Directory.Exists(updatesfolder))
-            {
-                foreach (string file in Directory.GetFiles(updatesfolder))
+                string updaterfile = System.IO.Path.Combine(baseDirectory, "Update", "mwc", "Updater.exe");
+                string updatesfolder = System.IO.Path.Combine(baseDirectory, "Update", "mwc");
+                string targetUpdater = System.IO.Path.Combine(baseDirectory, "Updater.exe");
+
+                if (System.IO.File.Exists(updaterfile))
                 {
-                    try
-                    {
-                        System.IO.File.Delete(file);
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    System.IO.File.Copy(updaterfile, targetUpdater, overwrite: true);
                 }
 
                 if (Directory.Exists(updatesfolder))
                 {
-                    try
+                    foreach (string file in Directory.GetFiles(updatesfolder))
                     {
-                        Directory.Delete(updatesfolder);
+                        try
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
-                    catch (Exception)
+
+                    if (Directory.Exists(updatesfolder))
                     {
+                        try
+                        {
+                            Directory.Delete(updatesfolder);
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }
-             
+
             await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             await Task.Delay(1500);
 
@@ -312,18 +330,47 @@ namespace Multron_Win_Cleaner
                     });
                 }
             }
-
-            TrayIconWindow trayiconwindow = new TrayIconWindow(this);
-
-            Thread traythread = new Thread(trayiconwindow.run);
-            traythread.Start();
-
+       
+       
             TrayIcon.TrayMouseDoubleClick += TrayIcon_MouseDoubleClick;
 
             LoadingOverlay.Visibility = Visibility.Collapsed;
 
             await startup();
+
+         
+
+
         }
+        public class OpenTrayIcon
+        {
+            MainWindow main;
+            public OpenTrayIcon(MainWindow mainWindow) { 
+                main = mainWindow;
+            }
+            public async Task run()
+            {
+                while(true)
+                {
+                    await main.Dispatcher.InvokeAsync(() => {
+
+                        if (main.settings.chkTrayIcon.IsChecked == true && main.TrayIcon.Visibility != Visibility.Visible)
+                        {
+
+                            main.TrayIcon.Visibility = Visibility.Visible;
+                        }
+                        else if (main.settings.chkTrayIcon.IsChecked == false && main.TrayIcon.Visibility == Visibility.Visible)
+                        {
+                            main.TrayIcon.Visibility = Visibility.Hidden;
+                        }
+
+                    });
+                  
+                    await Task.Delay(1250);  
+                }
+            }
+        }
+
 
         public async Task loadothers2()
         {
@@ -670,42 +717,7 @@ namespace Multron_Win_Cleaner
         public static int scanstatus = 0;
         public CancellationTokenSource cancelstatus = new CancellationTokenSource();
 
-        public class TrayIconWindow
-        {
-            MainWindow main;
-            public TrayIconWindow(MainWindow main)
-            {
-                this.main = main;
-            }
-            public async void run()
-            {
-                try
-                {
-                    while (true)
-                    {
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            if (main.settings.chkTrayIcon.IsChecked == true && main.TrayIcon.Visibility != Visibility.Visible)
-                            {
-
-                                main.TrayIcon.Visibility = Visibility.Visible;
-                            }
-                            else if (main.settings.chkTrayIcon.IsChecked == false && main.TrayIcon.Visibility == Visibility.Visible)
-                            {
-                                main.TrayIcon.Visibility = Visibility.Hidden;
-                            }
-
-                        });
-                        Thread.Sleep(1000);
-                    }
-                }
-                catch (Exception e)
-                {
-
-                }
-
-            }
-        }
+  
 
         public string formatsize(long size)
         {

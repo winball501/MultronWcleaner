@@ -224,12 +224,12 @@ namespace MultronWinCleaner.Processes
                         BorderThickness = new Thickness(0),
                         BorderBrush = new SolidColorBrush(Colors.Transparent),
                         Background = new SolidColorBrush(Colors.White),
-                        Foreground = main.brush,
                         FontSize = 12,
                         FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
                         FontWeight = FontWeights.Regular,
                         FontStyle = FontStyles.Normal,
                     };
+                    newBox.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
 
                     newBox.Checked += main.CheckBox_Checked;
                     newBox.Unchecked += main.CheckBox_Unchecked;
@@ -480,8 +480,6 @@ namespace MultronWinCleaner.Processes
                                 {
                                     Header = uName,
                                     Margin = new Thickness(5, 10, 5, 5),
-                                    Foreground = main.brush,
-                                    BorderBrush = main.brush,
                                     BorderThickness = new Thickness(1),
                                     Padding = new Thickness(5, 5, 5, 10),
                                     IsExpanded = true,
@@ -489,6 +487,8 @@ namespace MultronWinCleaner.Processes
                                     FontWeight = FontWeights.Bold,
                                     Content = currentUserPanel
                                 };
+                                currentUserExpander.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
+                                currentUserExpander.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "Text");
                                 main.wrapPanel1.Children.Add(currentUserExpander);
                             });
                             await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });

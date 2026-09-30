@@ -328,7 +328,7 @@
             </Grid.Background>
 
             <Grid Background="#14000000">
-                <tb:TaskbarIcon x:Name="TrayIcon" ToolTipText="Multron Win Cleaner" MenuActivation="RightClick" IconSource="pack://application:,,,/MultronWinCleaner;component/Assets/mwc_icon.ico" ContextMenu="{StaticResource TrayMenu}" />
+                <tb:TaskbarIcon x:Name="TrayIcon" ToolTipText="Multron Win Cleaner" Visibility="Hidden" MenuActivation="RightClick" IconSource="pack://application:,,,/MultronWinCleaner;component/Assets/mwc_icon.ico" ContextMenu="{StaticResource TrayMenu}" />
                 <local:RotatingCleanIcon x:Name="cleanIcon" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="9998" IsHitTestVisible="False" />
 
                 <Grid x:Name="CustomDialogOverlay" Background="#A0000000" Panel.ZIndex="10000" Visibility="Collapsed">
@@ -405,7 +405,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="MULTRON WIN CLEANER" FontSize="15" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                                 <Border Background="#200078D4" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="v1.24.4 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
+                                    <TextBlock Text="v1.24.5 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
