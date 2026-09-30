@@ -46,7 +46,7 @@
 ## Key Features
 
 ### 🧹 Deep System Cleanup
-* **250+ Application Rules:** Continuously updated definitions for third-party software, browser caches, and temporary data.
+* **Application Rules:** Continuously updated definitions for third-party software, browser caches, and temporary data.
 * **Modular Rule Database:** Cleanup targets are governed by a modular [`database.txt`](https://github.com/winball501/MultronWcleaner-Database) repository, allowing instant community contributions without altering core application binaries.
 * **WinSxS Optimization:** Integrated component store analysis and image reduction utilizing native `DISM.exe` commands.
 * **Deep Log Tracing:** Configurable detection and wiping of `.log`, `.etl`, `.dmp`, `.tmp`, and `.bak` files across target directories.
