@@ -36,7 +36,6 @@ namespace MultronWinCleaner
         }
 
         private bool _isLoading = false;
-        private DispatcherTimer? _realTimeWatcher;
         private HashSet<string> _knownItems = new();
         private bool _notificationsEnabled = false;
 
@@ -48,16 +47,26 @@ namespace MultronWinCleaner
             this.utilities = utilities;
             tglShowNotifications.IsChecked = _notificationsEnabled;
 
-            Loaded += async (s, e) =>
-            {
-                await LoadStartupAppsFastAsync(isSilentRefresh: false);
+            Loaded += async (s, e) => await LoadStartupAppsFastAsync(isSilentRefresh: false);
 
-                _realTimeWatcher = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
-                _realTimeWatcher.Tick += async (s, ev) => await LoadStartupAppsFastAsync(isSilentRefresh: true);
-                _realTimeWatcher.Start();
+            // Refresh when the window is shown; the background monitor only runs while it is visible
+            // or new-item notifications are on.
+            IsVisibleChanged += async (s, e) =>
+            {
+                _isShown = IsVisible;
+                if (IsVisible && IsLoaded)
+                    await LoadStartupAppsFastAsync(isSilentRefresh: true);
             };
             StartRealTimeMonitoring();
         }
+
+        private volatile bool _isShown;
+
+        // Enumerating every scheduled task over COM is by far the most expensive part of a refresh,
+        // so silent refreshes reuse the last task list for this long.
+        private static readonly TimeSpan TaskSchedulerRefreshInterval = TimeSpan.FromSeconds(60);
+        private DateTime _lastTaskSchedulerScan = DateTime.MinValue;
+        private List<StartupApp> _cachedTaskApps = new();
 
         private CancellationTokenSource _monitoringCts;
         protected override void OnClosed(EventArgs e)
@@ -77,7 +86,8 @@ namespace MultronWinCleaner
                 {
                     try
                     {
-                        await LoadStartupAppsFastAsync(true);
+                        if (_isShown || _notificationsEnabled)
+                            await LoadStartupAppsFastAsync(true);
                         await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5), token);
                     }
                     catch (TaskCanceledException) { break; }
@@ -107,7 +117,17 @@ namespace MultronWinCleaner
                         {
                             GetWinlogonEntries(allApps);
                             GetRegistryStartupApps(allApps);
-                            GetTaskSchedulerApps(allApps);
+
+                            if (!isSilentRefresh || DateTime.UtcNow - _lastTaskSchedulerScan > TaskSchedulerRefreshInterval)
+                            {
+                                var taskApps = new ConcurrentBag<StartupApp>();
+                                GetTaskSchedulerApps(taskApps);
+                                _cachedTaskApps = taskApps.ToList();
+                                _lastTaskSchedulerScan = DateTime.UtcNow;
+                            }
+                            foreach (var taskApp in _cachedTaskApps)
+                                allApps.Add(taskApp);
+
                             GetStartupFolderApps(allApps);
                             tcs.SetResult(true);
                         }
@@ -372,6 +392,9 @@ namespace MultronWinCleaner
         private const int StabilityRetries = 3;
         private const int StabilityDelayMs = 150;
 
+        private static readonly ConcurrentDictionary<string, ((DateTime, long) Stamp, string Impact)> ImpactCache =
+            new(StringComparer.OrdinalIgnoreCase);
+
         private string CalculateImpactAutomatically(string path, string appName)
         {
             if (string.IsNullOrWhiteSpace(path)) return "Low";
@@ -401,10 +424,16 @@ namespace MultronWinCleaner
                 if (fullPathNormalized.StartsWith(winDirNormalized, StringComparison.OrdinalIgnoreCase))
                     return "Low";
 
-                long weight = GetStableImportWeight(fullPathNormalized);
+                // Parsing the PE imports (3 passes, 150 ms apart) is costly: reuse the answer until the file changes.
+                var info = new FileInfo(fullPathNormalized);
+                var stamp = (info.LastWriteTimeUtc, info.Length);
+                if (ImpactCache.TryGetValue(fullPathNormalized, out var cached) && cached.Stamp == stamp)
+                    return cached.Impact;
 
-                if (weight > HighThresholdBytes) return "High";
-                if (weight > MediumThresholdBytes) return "Medium";
+                long weight = GetStableImportWeight(fullPathNormalized);
+                string impact = weight > HighThresholdBytes ? "High" : weight > MediumThresholdBytes ? "Medium" : "Low";
+                ImpactCache[fullPathNormalized] = (stamp, impact);
+                return impact;
             }
             catch { }
 

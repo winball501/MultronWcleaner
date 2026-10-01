@@ -1,4 +1,0 @@
-minutes:0
-autoclean:0
-trayicon:0
-themes:0

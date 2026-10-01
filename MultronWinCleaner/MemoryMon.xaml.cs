@@ -136,6 +136,13 @@ namespace MultronWinCleaner
                         if (_window.Dispatcher.HasShutdownStarted || _window.Dispatcher.HasShutdownFinished)
                             break;
 
+                        bool shown = await _window.Dispatcher.InvokeAsync(() => _window.IsVisible && _window.WindowState != WindowState.Minimized);
+                        if (!shown)
+                        {
+                            await Task.Delay(2000, _cancellationToken);
+                            continue;
+                        }
+
                         ulong totalMemory = computerInfo.TotalPhysicalMemory;
                         ulong availableMemory = computerInfo.AvailablePhysicalMemory;
                         ulong usedMemory = totalMemory - availableMemory;
@@ -167,7 +174,7 @@ namespace MultronWinCleaner
                             }
                         });
 
-                        await Task.Delay(200, _cancellationToken);
+                        await Task.Delay(1000, _cancellationToken);
                     }
                     catch (TaskCanceledException)
                     {

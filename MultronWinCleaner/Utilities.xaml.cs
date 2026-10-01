@@ -78,6 +78,7 @@ namespace MultronWinCleaner
                     {
                         await Dispatcher.InvokeAsync(() =>
                         {
+                            if (!IsVisible) return; // nothing to show while Utilities is hidden
                             try
                             {
                                 bool isLargeFile = IsToolRunning(largefilefinder);
@@ -104,7 +105,7 @@ namespace MultronWinCleaner
                             }
                         });
 
-                        await Task.Delay(500);
+                        await Task.Delay(1000);
                     }
                 }
                 catch (TaskCanceledException)

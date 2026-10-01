@@ -96,10 +96,24 @@ namespace MultronWinCleaner
         }
 
  
+        // Utilities closes and recreates this window; a loop that never ends would keep every old copy alive.
+        private bool isClosed;
+
+        protected override void OnClosed(EventArgs e)
+        {
+            isClosed = true;
+            base.OnClosed(e);
+        }
+
         private async Task StatusUpdateLoop()
         {
-            while (true)
+            while (!isClosed)
             {
+                if (!IsVisible)
+                {
+                    await Task.Delay(1000);
+                    continue;
+                }
                 DateTime time = DateTime.Now;
                 switch (cmbScheduleType.SelectedIndex)
                 {
@@ -201,6 +215,9 @@ namespace MultronWinCleaner
 
             chkAutoClean.IsChecked = GetBool("autoclean");
             chkTrayIcon.IsChecked = GetBool("trayicon");
+            offlineModeLoading = true;
+            chkOfflineMode.IsChecked = GetBool(MainWindow.OfflineModeSettingKey);
+            offlineModeLoading = false;
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
             RunIfInactive.IsChecked = GetBool("runifactive");
             SkipBattery.IsChecked = GetBool("batterylow");
@@ -287,6 +304,30 @@ namespace MultronWinCleaner
             SetComboBoxSelection(cmbPostCleanupAction, GetString("postaction"));
         }
 
+        private bool offlineModeLoading;
+
+        // Saved right away (not only on "Save") so the next startup always sees the choice.
+        private void chkOfflineMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (offlineModeLoading) return;
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                var lines = System.IO.File.Exists(path) ? System.IO.File.ReadAllLines(path).ToList() : new List<string>();
+                string entry = $"{MainWindow.OfflineModeSettingKey}:{(chkOfflineMode.IsChecked == true ? "1" : "0")}";
+                int index = lines.FindIndex(l => l.StartsWith(MainWindow.OfflineModeSettingKey + ":", StringComparison.OrdinalIgnoreCase));
+                if (index != -1)
+                    lines[index] = entry;
+                else
+                    lines.Add(entry);
+                System.IO.File.WriteAllLines(path, lines);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not save offline mode: " + ex.Message, "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
         private async void SaveSettings_Click(object sender, RoutedEventArgs e)
         {
             SaveButton.IsEnabled = false;
@@ -311,6 +352,7 @@ namespace MultronWinCleaner
                 Upsert("loglocation", txtLogPath.Text.Trim());
                 Upsert("autoclean", chkAutoClean.IsChecked == true ? "1" : "0");
                 Upsert("trayicon", chkTrayIcon.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.OfflineModeSettingKey, chkOfflineMode.IsChecked == true ? "1" : "0");
                 Upsert("oldscan", OldScan.IsChecked == true ? "1" : "0");
                 Upsert("access_scan", AccessScan.IsChecked == true ? "1" : "0");
                 Upsert("onlylowcpu", OnlyLowCPU.IsChecked == true ? "1" : "0");

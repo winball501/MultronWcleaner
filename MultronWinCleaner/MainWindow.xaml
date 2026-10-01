@@ -352,7 +352,7 @@
                     </Border>
                 </Grid>
 
-                <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown">
+                <Grid x:Name="LoadingOverlay" Background="{DynamicResource WindowBackground}" Panel.ZIndex="9999" Visibility="Visible" MouseLeftButtonDown="LoadingOverlay_MouseLeftButtonDown" IsVisibleChanged="LoadingOverlay_IsVisibleChanged">
                     <Grid Background="#14000000">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Grid Width="64" Height="64" Margin="0,0,0,25">
@@ -365,31 +365,12 @@
                                         </LinearGradientBrush>
                                     </Path.Stroke>
                                     <Path.RenderTransform>
-                                        <RotateTransform Angle="0"/>
+                                        <RotateTransform x:Name="LoadingSpinnerRotation" Angle="0"/>
                                     </Path.RenderTransform>
-                                    <Path.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:0.8" RepeatBehavior="Forever"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Path.Triggers>
                                 </Path>
                             </Grid>
                             <TextBlock Text="MULTRON WIN CLEANER" Foreground="{DynamicResource TextPrimary}" FontSize="14" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Margin="0,0,0,8" HorizontalAlignment="Center"/>
-                            <TextBlock Name="StatusLoad" Text="Loading, please wait..." Foreground="{DynamicResource TextSecondary}" FontSize="13" HorizontalAlignment="Center" FontWeight="Medium">
-                                <TextBlock.Triggers>
-                                    <EventTrigger RoutedEvent="Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.3" Duration="0:0:0.8" AutoReverse="True" RepeatBehavior="Forever"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </TextBlock.Triggers>
-                            </TextBlock>
+                            <TextBlock Name="StatusLoad" Text="Loading, please wait..." Foreground="{DynamicResource TextSecondary}" FontSize="13" HorizontalAlignment="Center" FontWeight="Medium"/>
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -405,7 +386,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="MULTRON WIN CLEANER" FontSize="15" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                                 <Border Background="#200078D4" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="v1.24.5 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
+                                    <TextBlock Text="v1.24.6 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -446,7 +427,7 @@
                                     </Grid.RowDefinitions>
 
                                     <Grid Grid.Row="0" Width="220" Height="220" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0">
-                                        <ProgressBar x:Name="progressBar1" Minimum="0" Maximum="100" Value="0" Width="220" Height="220" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource CircularProgressBarStyle}" />
+                                        <ProgressBar x:Name="progressBar1" Minimum="0" Maximum="100" Value="0" Width="220" Height="220" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Style="{StaticResource CircularProgressBarStyle}" ValueChanged="ProgressBar1_ValueChanged" />
                                         <Button x:Name="buttonStartScan" Style="{StaticResource RoundScanButtonStyle}" Content="Scan" Click="ButtonStartScan_Click" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Grid>
 

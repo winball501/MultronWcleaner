@@ -992,6 +992,17 @@ Cursor="Hand"/>
                             </Grid>
                         </GroupBox>
 
+                        <GroupBox Header="Network" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <CheckBox x:Name="chkOfflineMode" Content="Offline mode"
+                                          Style="{DynamicResource CustomCheckBoxStyle}" IsChecked="false"
+                                          Checked="chkOfflineMode_Changed" Unchecked="chkOfflineMode_Changed"/>
+                                <TextBlock Text="Skips waiting for an internet connection and the update / database download at startup. Takes effect the next time the app starts."
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="26,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
                         <GroupBox Header="System Tray" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
                             <StackPanel>
                                 <CheckBox x:Name="chkTrayIcon" Content="Show a tray icon for quick access"

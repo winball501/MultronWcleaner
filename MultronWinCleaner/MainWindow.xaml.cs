@@ -104,13 +104,20 @@ namespace Multron_Win_Cleaner
                 Source = new Uri(themePath, UriKind.Relative)
             };
             brush = (SolidColorBrush)resourceDictionary["Text"];
-            diskModel = GetDiskModel("C:\\");
             Window.GetWindow(this)?.DragMove();
 
             label1_Copy.Text = "Ready for the scan";
-             
+
+       
+            string systemDrive = System.IO.Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
+            _ = Task.Run(() => GetDiskModel(systemDrive)).ContinueWith(t =>
+            {
+                diskModel = t.Result;
+                Dispatcher.BeginInvoke(new Action(UpdateDiskSpace));
+            }, TaskScheduler.Default);
+
             diskSpaceTimer = new DispatcherTimer();
-            diskSpaceTimer.Interval = TimeSpan.FromSeconds(2);  
+            diskSpaceTimer.Interval = TimeSpan.FromSeconds(5);
             diskSpaceTimer.Tick += DiskSpaceTimer_Tick;
             diskSpaceTimer.Start();
              
@@ -156,20 +163,16 @@ namespace Multron_Win_Cleaner
         {
             try
             {
-                string driveLetter = System.IO.Path.GetPathRoot(Environment.SystemDirectory); 
+                string driveLetter = System.IO.Path.GetPathRoot(Environment.SystemDirectory);
                 DriveInfo drive = new DriveInfo(driveLetter);
-                 
-                if (string.IsNullOrEmpty(diskModel) || diskModel == "Disk")
-                {
-                    diskModel = GetDiskModel(driveLetter);
-                }
 
                 if (drive.IsReady)
                 {
                     double freeSpaceGB = drive.AvailableFreeSpace / (1024.0 * 1024 * 1024);
                     double totalSizeGB = drive.TotalSize / (1024.0 * 1024 * 1024);
 
-                    labelDiskSize.Text = $"[{diskModel}] Drive {driveLetter} Free: {freeSpaceGB:F2} GB / Total: {totalSizeGB:F2} GB";
+                    string model = string.IsNullOrEmpty(diskModel) ? "Disk" : diskModel;
+                    labelDiskSize.Text = $"[{model}] Drive {driveLetter} Free: {freeSpaceGB:F2} GB / Total: {totalSizeGB:F2} GB";
                 }
             }
             catch (Exception)
@@ -184,7 +187,23 @@ namespace Multron_Win_Cleaner
                 FileName = "https://github.com/winball501",
                 UseShellExecute = true
             });
+        } 
+        private void LoadingOverlay_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (LoadingOverlay.IsVisible)
+            {
+                LoadingSpinnerRotation.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty,
+                    new System.Windows.Media.Animation.DoubleAnimation(0, 360, TimeSpan.FromSeconds(0.8)) { RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever });
+                StatusLoad.BeginAnimation(UIElement.OpacityProperty,
+                    new System.Windows.Media.Animation.DoubleAnimation(1.0, 0.3, TimeSpan.FromSeconds(0.8)) { AutoReverse = true, RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever });
+            }
+            else
+            {
+                LoadingSpinnerRotation.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, null);
+                StatusLoad.BeginAnimation(UIElement.OpacityProperty, null);
+            }
         }
+
         private void LoadingOverlay_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         { 
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -210,6 +229,23 @@ namespace Multron_Win_Cleaner
             });
         }
 
+        public const string OfflineModeSettingKey = "offlinemode";
+         
+        public static bool IsOfflineModeEnabled()
+        {
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                if (!System.IO.File.Exists(path)) return false;
+                return System.IO.File.ReadAllLines(path)
+                    .Any(line => line.Trim().Equals(OfflineModeSettingKey + ":1", StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             utilities = new Utilities(this);
@@ -223,7 +259,13 @@ namespace Multron_Win_Cleaner
             {
                 this.Visibility = Visibility.Hidden;
             }
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+             
+            bool offlineMode = IsOfflineModeEnabled();
+            if (offlineMode)
+            {
+                StatusLoad.Text = "Offline mode, skipping online checks...";
+            }
+            else if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
                 {
                     this.Visibility = Visibility.Visible;
                     LoadingOverlay.Visibility = Visibility.Visible;
@@ -240,7 +282,7 @@ namespace Multron_Win_Cleaner
                         : "No internet connection, continuing offline...";
                 }
          
-            bool isOnline = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+            bool isOnline = !offlineMode && System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             Environment.CurrentDirectory = baseDirectory;
@@ -316,6 +358,10 @@ namespace Multron_Win_Cleaner
                 this.previousHeight = this.Height;
                 this.previousLeft = this.Left;
                 this.previousTop = this.Top;
+            }
+            else if (offlineMode)
+            { 
+                label1_Copy.Text = "You are running in offline mode and the database could not be found.";
             }
             else
             {
