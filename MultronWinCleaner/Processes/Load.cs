@@ -19,7 +19,6 @@ namespace MultronWinCleaner.Processes
         MainWindow main;
         CancellationTokenSource cts = new CancellationTokenSource();
         string currentid = null;
-        int comboid = 0;
         string getline = null;
 
         public Load(MainWindow main)
@@ -58,53 +57,65 @@ namespace MultronWinCleaner.Processes
             }
         }
 
-        private void Profilelist_SelectionChanged(object sender, SelectionChangedEventArgs e, int comboid)
+        private void Profilelist_SelectionChanged(System.Windows.Controls.ComboBox comboBox, LoadGroup group, System.Windows.Controls.ListBox listBox, string groupId)
         {
             try
             {
-                System.Windows.Controls.ComboBox comboBox = sender as System.Windows.Controls.ComboBox;
-                if (comboBox == null) return;
+                if (comboBox.SelectedItem is not string folder) return;
 
-                string newText = (comboBox.SelectedItem?.ToString() ?? "").Trim();
-
-                foreach (var oldItem in e.RemovedItems)
+                foreach (System.Windows.Controls.CheckBox oldBox in group.ProfileCheckBoxes)
                 {
-                    string oldText = oldItem?.ToString()?.Trim() ?? "";
+                    string content = oldBox.Content?.ToString() ?? "";
+                    main.database.Remove(main.stringtokenizer(content, "=", 0) + "=" + main.stringtokenizer(content, "=", 1));
+                    main.checkboxes2.Remove(oldBox);
+                    listBox.Items.Remove(oldBox);
+                }
+                group.ProfileCheckBoxes.Clear();
 
-                    Expander parentExpander = FindParent<Expander>(comboBox);
-                    if (parentExpander == null) return;
+                int insertAt = listBox.Items.IndexOf(comboBox);
+                if (insertAt < 0) insertAt = listBox.Items.Count;
 
-                    string expanderName = parentExpander.Header?.ToString()?.Trim() ?? "";
+                foreach (ProfileLine line in group.ProfileLines)
+                {
+                    string path = group.ProfileRoot + folder + line.SubPath;
+                    if (!PathExists(path)) continue;
 
-                    var checkBoxes = FindChildren<System.Windows.Controls.CheckBox>(parentExpander);
-                    foreach (var box in checkBoxes)
-                    {
-                        string contentText = box.Content?.ToString() ?? "";
-
-                        if (contentText.Contains(oldText))
-                        {
-                            string updatedContent = contentText.Replace(oldText, newText);
-                            box.Content = updatedContent;
-
-                            for (int i = 0; i < main.database.Count; i++)
-                            {
-                                if (main.database[i].Contains(expanderName))
-                                {
-                                    string key = main.stringtokenizer(main.database[i], "=", 0);
-                                    string newValue = main.stringtokenizer(updatedContent, "=", 1);
-                                    string newEntry = key + "=" + newValue;
-
-                                    main.database[i] = newEntry;
-                                }
-                            }
-                        }
-                    }
+                    System.Windows.Controls.CheckBox box = CreateEntryCheckBox(new LoadEntry { Name = line.Name, Path = path, Recommended = line.Recommended, IsProfile = true }, groupId);
+                    group.ProfileCheckBoxes.Add(box);
+                    listBox.Items.Insert(insertAt++, box);
                 }
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Hata: " + ex.Message + "\n" + ex.StackTrace);
+                Debug.WriteLine("Could not switch browser profile in " + group.Header + ": " + ex.Message);
             }
+        }
+
+        private static bool PathExists(string path)
+        {
+            string checkPath = path.Contains('*') ? path.Substring(0, path.IndexOf('*')) : path;
+            return Directory.Exists(checkPath) || File.Exists(checkPath);
+        }
+
+        private static List<string> GetProfileFolders(string root)
+        {
+            List<string> folders = Directory.GetDirectories(root).Select(f => new DirectoryInfo(f).Name).ToList();
+            if (root.TrimEnd('\\').EndsWith("Profiles", StringComparison.OrdinalIgnoreCase)) return folders;
+
+            List<string> profiles = folders.Where(name =>
+                name.Equals("Default", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("Profile ", StringComparison.OrdinalIgnoreCase) ||
+                File.Exists(System.IO.Path.Combine(root, name, "Preferences")) ||
+                File.Exists(System.IO.Path.Combine(root, name, "prefs.js"))).ToList();
+
+            return profiles.Count > 0 ? profiles : folders;
+        }
+
+        private static int PickDefaultProfile(List<string> folders)
+        {
+            int index = folders.FindIndex(f => f.Equals("Default", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".default-release", StringComparison.OrdinalIgnoreCase) || f.EndsWith("(release)", StringComparison.OrdinalIgnoreCase));
+            if (index < 0) index = folders.FindIndex(f => f.StartsWith("Profile", StringComparison.OrdinalIgnoreCase) || f.Contains("default", StringComparison.OrdinalIgnoreCase));
+            return Math.Max(0, index);
         }
 
         public static IEnumerable<T> FindChildren<T>(DependencyObject parent) where T : DependencyObject
@@ -200,14 +211,7 @@ namespace MultronWinCleaner.Processes
                 .ToList();
 
             var existingBoxes = listbox.Items.OfType<System.Windows.Controls.CheckBox>().ToList();
-            int startIndex = 0;
-
-            if (existingBoxes.Any())
-            {
-                var lastBox = existingBoxes.Last();
-                startIndex = allCheckboxes.FindLastIndex(cb => cb.Name == lastBox.Name && Equals(cb.Content, lastBox.Content)) + 1;
-                if (startIndex < 0) startIndex = 0;
-            }
+            int startIndex = existingBoxes.Any() ? allCheckboxes.IndexOf(existingBoxes.Last()) + 1 : 0;
 
             var nextBatch = allCheckboxes.Skip(startIndex).Take(3).ToList();
 
@@ -215,26 +219,7 @@ namespace MultronWinCleaner.Processes
             {
                 nextBatch.ForEach(originalBox =>
                 {
-                    var newBox = new System.Windows.Controls.CheckBox
-                    {
-                        Name = originalBox.Name,
-                        Content = originalBox.Content,
-                        IsChecked = originalBox.IsChecked,
-                        Margin = originalBox.Margin,
-                        BorderThickness = new Thickness(0),
-                        BorderBrush = new SolidColorBrush(Colors.Transparent),
-                        Background = new SolidColorBrush(Colors.White),
-                        FontSize = 12,
-                        FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
-                        FontWeight = FontWeights.Regular,
-                        FontStyle = FontStyles.Normal,
-                    };
-                    newBox.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
-
-                    newBox.Checked += main.CheckBox_Checked;
-                    newBox.Unchecked += main.CheckBox_Unchecked;
-
-                    listbox.Items.Add(newBox);
+                    if (originalBox.Parent == null) listbox.Items.Add(originalBox);
                 });
             });
         }
@@ -250,6 +235,76 @@ namespace MultronWinCleaner.Processes
                 .Select(s => s[rnd.Next(s.Length)]).ToArray());
 
             return firstChar + rest;
+        }
+
+        private sealed class LoadEntry
+        {
+            public string Name;
+            public string Path;
+            public bool Recommended;
+            public string Warning;
+            public bool IsProfile;
+        }
+
+        private sealed class ProfileLine
+        {
+            public string Name;
+            public string SubPath;
+            public bool Recommended;
+        }
+
+        private sealed class LoadGroup
+        {
+            public string Header;
+            public List<LoadEntry> Entries = new List<LoadEntry>();
+            public string ProfileRoot;
+            public List<string> ProfileFolders;
+            public int ProfileIndex;
+            public List<ProfileLine> ProfileLines = new List<ProfileLine>();
+            public List<System.Windows.Controls.CheckBox> ProfileCheckBoxes = new List<System.Windows.Controls.CheckBox>();
+        }
+
+        private readonly bool allBrowserProfiles = MainWindow.IsCleanAllBrowserProfilesEnabled();
+
+        private sealed class LoadSection
+        {
+            public string Title;
+            public List<LoadGroup> Groups = new List<LoadGroup>();
+        }
+
+        private Dictionary<string, bool> selections = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
+        public static string SelectionsPath => System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "selections.txt");
+
+        public static Dictionary<string, bool> ReadSelections()
+        {
+            var result = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                if (File.Exists(SelectionsPath))
+                {
+                    foreach (string line in File.ReadAllLines(SelectionsPath))
+                    {
+                        int separator = line.LastIndexOf('=');
+                        if (separator > 0 && bool.TryParse(line.Substring(separator + 1), out bool value))
+                        {
+                            result[line.Substring(0, separator)] = value;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Could not read selections.txt: " + ex.Message);
+            }
+            return result;
+        }
+
+        public static void WriteSelections(Dictionary<string, bool> selections)
+        {
+            string tempPath = SelectionsPath + ".tmp";
+            File.WriteAllLines(tempPath, selections.Select(s => s.Key + "=" + (s.Value ? "true" : "false")));
+            File.Move(tempPath, SelectionsPath, overwrite: true);
         }
 
         public async System.Threading.Tasks.Task RunAsync()
@@ -271,7 +326,7 @@ namespace MultronWinCleaner.Processes
                     {
                         targetUsers.Clear();
 
-                      
+
                         try
                         {
                             if (main.settings != null && main.settings.rbCleanAllUsers != null && main.settings.rbCleanAllUsers.IsChecked == true && main.settings.rbCleanSelectedUsers.IsChecked == false)
@@ -288,165 +343,18 @@ namespace MultronWinCleaner.Processes
                         }
                         catch (Exception)
                         {
-                           
+
                         }
-                         
+
                         if (targetUsers.Count == 0)
                         {
-                            targetUsers.Add(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                            targetUsers.Add(Environment.UserName);
                         }
                     });
 
-         
-
                     List<string> originalLines = System.IO.File.ReadAllLines(filePath).ToList();
-
-                    List<string> globalStandalone = new List<string>();
-                    List<List<string>> globalBlocks = new List<List<string>>();
-                    Dictionary<string, List<string>> userStandalone = new Dictionary<string, List<string>>();
-                    Dictionary<string, List<List<string>>> userBlocks = new Dictionary<string, List<List<string>>>();
-
-                    foreach (var user in targetUsers)
-                    {
-                        userStandalone[user] = new List<string>();
-                        userBlocks[user] = new List<List<string>>();
-                    }
-
-                    bool inGroup = false;
-                    string blockHeader = "";
-                    List<string> currentBuffer = new List<string>();
-
-                    foreach (var line in originalLines)
-                    {
-                        string trim = line.Trim();
-                        if (string.IsNullOrWhiteSpace(trim)) continue;
-
-                        if (trim.StartsWith("{"))
-                        {
-                            inGroup = true;
-                            blockHeader = trim;
-                            currentBuffer.Clear();
-                        }
-                        else if (trim.StartsWith("}"))
-                        {
-                            inGroup = false;
-
-                            List<string> globalBufferLines = new List<string>();
-                            List<string> userBufferLines = new List<string>();
-
-                            foreach (var l in currentBuffer)
-                            {
-                                bool isUserSpecific = l.Contains("{##}") ||
-                                                      l.Contains("AppData", StringComparison.OrdinalIgnoreCase) ||
-                                                      l.Contains("LocalSettings", StringComparison.OrdinalIgnoreCase) ||
-                                                      l.Contains("C:\\Users\\", StringComparison.OrdinalIgnoreCase) ||
-                                                      l.Contains("#profileget#", StringComparison.OrdinalIgnoreCase) ||
-                                                      l.Contains("#profile#", StringComparison.OrdinalIgnoreCase);
-
-                                bool isProgramData = l.Contains("ProgramData", StringComparison.OrdinalIgnoreCase);
-
-                                if (isUserSpecific && !isProgramData)
-                                {
-                                    userBufferLines.Add(l);
-                                }
-                                else
-                                {
-                                    globalBufferLines.Add(l);
-                                }
-                            }
-
-                            if (globalBufferLines.Count > 0)
-                            {
-                                var gBlock = new List<string> { blockHeader };
-                                gBlock.AddRange(globalBufferLines);
-                                gBlock.Add("}");
-                                globalBlocks.Add(gBlock);
-                            }
-
-                            if (userBufferLines.Count > 0)
-                            {
-                                foreach (var user in targetUsers)
-                                {
-                                    var uBlock = new List<string> { blockHeader };
-                                    foreach (var l in userBufferLines)
-                                    {
-                                        string processedLine = l;
-                                        if (processedLine.Contains("{##}"))
-                                        {
-                                            processedLine = processedLine.Replace("{##}", user);
-                                        }
-                                        else
-                                        {
-                                            processedLine = System.Text.RegularExpressions.Regex.Replace(
-                                                processedLine,
-                                                @"C:\\Users\\[^\\]+",
-                                                user,
-                                                System.Text.RegularExpressions.RegexOptions.IgnoreCase
-                                            );
-                                        }
-                                        uBlock.Add(processedLine);
-                                    }
-                                    uBlock.Add("}");
-                                    userBlocks[user].Add(uBlock);
-                                }
-                            }
-                            currentBuffer.Clear();
-                        }
-                        else if (inGroup)
-                        {
-                            currentBuffer.Add(trim);
-                        }
-                        else
-                        {
-                            if (trim.Contains("{##}") || trim.Contains("AppData", StringComparison.OrdinalIgnoreCase))
-                            {
-                                foreach (var user in targetUsers)
-                                {
-                                    string processed = trim.Contains("{##}") ? trim.Replace("{##}", user) : System.Text.RegularExpressions.Regex.Replace(trim, @"C:\\Users\\[^\\]+", user, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                                    userStandalone[user].Add(processed);
-                                }
-                            }
-                            else
-                            {
-                                globalStandalone.Add(trim);
-                            }
-                        }
-                    }
-
-                    List<string> linesToProcess = new List<string>();
-
-                    linesToProcess.Add("USER_START=💻 System & Global Tools");
-                    if (globalStandalone.Count > 0)
-                    {
-                        linesToProcess.Add("{=General Tools");
-                        linesToProcess.AddRange(globalStandalone);
-                        linesToProcess.Add("}");
-                    }
-                    foreach (var block in globalBlocks) linesToProcess.AddRange(block);
-                    linesToProcess.Add("USER_END");
-
-                    foreach (var user in targetUsers)
-                    {
-                        bool hasContent = userBlocks[user].Count > 0 || userStandalone[user].Count > 0;
-                        if (hasContent)
-                        {
-                            string userName = new DirectoryInfo(user).Name;
-                            linesToProcess.Add($"USER_START=👤 {userName}");
-
-                            if (userStandalone[user].Count > 0)
-                            {
-                                linesToProcess.Add("{=User Specific Files");
-                                linesToProcess.AddRange(userStandalone[user]);
-                                linesToProcess.Add("}");
-                            }
-                            foreach (var block in userBlocks[user]) linesToProcess.AddRange(block);
-
-                            linesToProcess.Add("USER_END");
-                        }
-                    }
-
-                    int totalLines = linesToProcess.Count;
-                    int currentLine = 0;
+                    List<string> linesToProcess = BuildLinesToProcess(originalLines, targetUsers);
+                    selections = ReadSelections();
 
                     await main.Dispatcher.InvokeAsync(() =>
                     {
@@ -454,304 +362,66 @@ namespace MultronWinCleaner.Processes
                         main.buttonStartScan.IsEnabled = false;
                     });
 
-                    int groupboxmode = 0;
-                    int created = 0;
-                    int profileget = 0;
-                    string groupboxcontent = "";
-                    System.Windows.Controls.ListBox groupBoxContent = null;
-                    Expander newExpander = null;
-                    System.Windows.Controls.ComboBox profilelist = null;
-                    string profile = "";
+                    List<LoadSection> sections = await System.Threading.Tasks.Task.Run(() => ResolveSections(linesToProcess));
 
-                    Expander currentUserExpander = null;
-                    WrapPanel currentUserPanel = null;
+                    int totalGroups = Math.Max(1, sections.Sum(s => s.Groups.Count));
+                    int doneGroups = 0;
 
-                    foreach (string line in linesToProcess)
+                    foreach (LoadSection section in sections)
                     {
-                        currentLine++;
-                        double progress = (double)currentLine / totalLines * 100;
+                        WrapPanel sectionPanel = null;
+                        Expander sectionExpander = null;
 
-                        if (line.StartsWith("USER_START="))
+                        if (section.Title != null)
                         {
-                            string uName = line.Substring(11);
-                            await main.Dispatcher.InvokeAsync(() => {
-                                currentUserPanel = new WrapPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(5) };
-                                currentUserExpander = new Expander
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                sectionPanel = new WrapPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(5) };
+                                sectionExpander = new Expander
                                 {
-                                    Header = uName,
+                                    Header = section.Title,
                                     Margin = new Thickness(5, 10, 5, 5),
                                     BorderThickness = new Thickness(1),
                                     Padding = new Thickness(5, 5, 5, 10),
                                     IsExpanded = true,
                                     FontSize = 15,
                                     FontWeight = FontWeights.Bold,
-                                    Content = currentUserPanel
+                                    Content = sectionPanel
                                 };
-                                currentUserExpander.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
-                                currentUserExpander.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "Text");
-                                main.wrapPanel1.Children.Add(currentUserExpander);
+                                sectionExpander.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
+                                sectionExpander.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "Text");
+                                main.wrapPanel1.Children.Add(sectionExpander);
                             });
-                            await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
-                            continue;
                         }
 
-                        if (line == "USER_END")
+                        foreach (LoadGroup group in section.Groups)
                         {
-                            await main.Dispatcher.InvokeAsync(() => {
-                                if (currentUserPanel != null && currentUserPanel.Children.Count == 0 && currentUserExpander != null)
-                                {
-                                    main.wrapPanel1.Children.Remove(currentUserExpander);
-                                }
-                            });
+                            doneGroups++;
+                            double progress = (double)doneGroups / totalGroups * 100;
 
-                            currentUserExpander = null;
-                            currentUserPanel = null;
-                            await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
-                            continue;
-                        }
-
-                        int linecontains = 0;
-                        string name = main.stringtokenizer(line, "=", 0);
-                        string path = main.stringtokenizer(line, "=", 1);
-                        if (path == null) path = "";
-
-                        getline = line.Trim();
-                        bool recommended = false;
-
-                        if (line.StartsWith("{"))
-                        {
-                            groupboxmode = 1;
-                            linecontains = 1;
-                            groupboxcontent = main.stringtokenizer(line, "=", 1);
-                        }
-                        else if (line.StartsWith("}"))
-                        {
-                            if (profilelist != null && groupBoxContent != null)
+                            await main.Dispatcher.InvokeAsync(() =>
                             {
-                                await main.Dispatcher.InvokeAsync(() => { groupBoxContent.Items.Add(profilelist); });
-                            }
-                            profile = "";
-                            profilelist = null;
-                            groupBoxContent = null;
-                            linecontains = 1;
-                            groupboxmode = 0;
-                            created = 0;
-                            profileget = 0;
-                        }
-                        else
-                        {
-                            if (line.Contains("#profileget#"))
-                                recommended = bool.Parse(main.stringtokenizer(line, "=", 3));
-                            else if (!line.StartsWith("#profile#"))
-                                recommended = bool.Parse(main.stringtokenizer(line, "=", 2));
+                                try
+                                {
+                                    BuildGroup(group, sectionPanel);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine("Could not build group " + group.Header + ": " + ex.Message);
+                                }
+                                main.progressBar1.Value = progress;
+                            }, System.Windows.Threading.DispatcherPriority.Background);
                         }
 
-                        string haswarning = main.stringtokenizer(line, "=", 3);
-                        if (haswarning == "true" || haswarning == "false") haswarning = null;
-
-                        if (line.StartsWith("#profile#="))
-                        {
-                            path = main.stringtokenizer(line, "=", 1);
-                            if (Directory.Exists(path))
-                            {
-                                await main.Dispatcher.InvokeAsync(() =>
-                                {
-                                    profilelist = new System.Windows.Controls.ComboBox
-                                    {
-                                        Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
-                                        FontSize = 14,
-                                        Margin = new Thickness(5),
-                                        HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                                        VerticalAlignment = VerticalAlignment.Top
-                                    };
-                                    comboid++;
-                                    profilelist.SelectionChanged += (s, e) => Profilelist_SelectionChanged(s, e, comboid);
-                                });
-
-                                string[] profileFolders = Directory.GetDirectories(path);
-                                int i = 0;
-                                int selectedindex = 0;
-                                foreach (string profileFolder in profileFolders)
-                                {
-                                    string folderName = new DirectoryInfo(profileFolder).Name;
-                                    await main.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        if (folderName.EndsWith("(release)") || folderName.StartsWith("Profile") || folderName.Contains("Default") || folderName.EndsWith(".default-release"))
-                                            selectedindex = i;
-
-                                        i++;
-                                        profilelist.Items.Add(folderName);
-                                    });
-                                }
-                                main.comboboxlist.Add(profilelist);
-
-                                await main.Dispatcher.InvokeAsync(() => { profilelist.SelectedIndex = selectedindex; });
-                                if (profilelist != null && profilelist.Items.Count > 0)
-                                {
-                                    await main.Dispatcher.InvokeAsync(() => { profile = path + profilelist.Items[selectedindex]; });
-                                }
-                                else
-                                {
-                                    await main.Dispatcher.InvokeAsync(() => { profile = ""; });
-                                }
-                                profileget = 1;
-                            }
-                        }
-                        else if (line.Contains("#profileget#") && profileget == 1)
+                        if (sectionExpander != null)
                         {
                             await main.Dispatcher.InvokeAsync(() =>
                             {
-                                string dir = main.stringtokenizer(line, "=", 2);
-                                path = profile + dir;
-                            });
-                        }
-
-                        if (!line.StartsWith("#profile#=") && !line.StartsWith("{") && !line.StartsWith("}"))
-                        {
-                            string checkPath = path;
-                            if (checkPath.Contains("*"))
-                            {
-                                checkPath = checkPath.Substring(0, checkPath.IndexOf('*'));
-                            }
-
-                            bool isValidItem = Directory.Exists(checkPath) || System.IO.File.Exists(checkPath);
-
-                            if (isValidItem)
-                            {
-                                Debug.WriteLine(line);
-                                if (recommended) main.database.Add(name + "=" + path);
-
-                                await main.progressBar1.Dispatcher.InvokeAsync(() => { main.progressBar1.Value = progress; });
-
-                                if (linecontains == 0)
+                                if (sectionPanel.Children.Count == 0)
                                 {
-                                    if (groupboxmode == 1)
-                                    {
-                                        await main.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            if (created == 0)
-                                            {
-                                                this.currentid = CreateRandomId(8);
-                                                groupBoxContent = new System.Windows.Controls.ListBox
-                                                {
-                                                    ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(VirtualizingStackPanel))),
-                                                    VerticalAlignment = VerticalAlignment.Stretch,
-                                                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                                                    Margin = new Thickness(5),
-                                                    Background = System.Windows.Media.Brushes.Transparent,
-                                                    BorderThickness = new Thickness(0),
-                                                    Foreground = main.brush,
-                                                    MaxHeight = SystemParameters.WorkArea.Height,
-                                                    MaxWidth = SystemParameters.WorkArea.Width
-                                                };
-
-                                                groupBoxContent.Loaded += (s, e) => {
-                                                    var listBox = s as System.Windows.Controls.ListBox;
-                                                    if (listBox == null) return;
-                                                    var sv = main.FindVisualChild<ScrollViewer>(listBox);
-                                                    if (sv != null) sv.ScrollChanged += ScrollViewer_ScrollChanged;
-                                                };
-
-                                                newExpander = new Expander
-                                                {
-                                                    Name = currentid,
-                                                    Header = groupboxcontent,
-                                                    Margin = new Thickness(5),
-                                                    Background = new SolidColorBrush(Colors.Transparent),
-                                                    Foreground = main.brush,
-                                                    BorderBrush = new SolidColorBrush(Colors.Transparent),
-                                                    BorderThickness = new Thickness(2),
-                                                    FontSize = 13,
-                                                    FontWeight = FontWeights.SemiBold,
-                                                    HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
-                                                    VerticalAlignment = VerticalAlignment.Top,
-                                                    Content = groupBoxContent
-                                                };
-
-                                                created = 1;
-                                            }
-
-                                            System.Windows.Controls.CheckBox newCheckBox = new System.Windows.Controls.CheckBox
-                                            {
-                                                Name = currentid,
-                                                Content = name + "=" + path,
-                                                Margin = new Thickness(10),
-                                                IsChecked = recommended,
-                                                BorderThickness = new Thickness(0),
-                                                BorderBrush = new SolidColorBrush(Colors.Transparent),
-                                                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
-                                                Foreground = main.brush,
-                                                FontSize = 12,
-                                                FontFamily = new System.Windows.Media.FontFamily("Segoe UI")
-                                            };
-                                            main.checkboxes2.Add(newCheckBox);
-
-                                            if (haswarning != null) newCheckBox.Content = name + "=" + path + "=warning(" + haswarning + ")";
-
-                                            newCheckBox.ContextMenu = new ContextMenu();
-                                            newCheckBox.ContextMenu.Items.Add(new MenuItem { Header = "Open directory" });
-                                            newCheckBox.ContextMenu.Items.Add(new MenuItem { Header = "Open location" });
-                                            newCheckBox.ContextMenu.Items.Add(new MenuItem { Header = "Copy path" });
-                                            ((MenuItem)newCheckBox.ContextMenu.Items[0]).Click += main.OpenDirectory_MainMenu_Click;
-                                            ((MenuItem)newCheckBox.ContextMenu.Items[1]).Click += main.OpenFileLocation_MainMenu_Click;
-                                            ((MenuItem)newCheckBox.ContextMenu.Items[2]).Click += main.CopyPath_MainMenu_Click;
-                                            newCheckBox.PreviewMouseRightButtonUp += (s, ev) => {
-                                                newCheckBox.ContextMenu.PlacementTarget = newCheckBox;
-                                                newCheckBox.ContextMenu.IsOpen = true;
-                                                ev.Handled = true;
-                                            };
-                                            newCheckBox.Checked += main.CheckBox_Checked;
-                                            newCheckBox.Unchecked += main.CheckBox_Unchecked;
-                                            main.listboxes.Add(groupBoxContent);
-                                            main.expanders.Add(newExpander);
-
-                                            if (groupBoxContent.Items.Count != 100)
-                                            {
-                                                groupBoxContent.Items.Add(newCheckBox);
-                                                newExpander.Content = groupBoxContent;
-                                                try
-                                                {
-                                                    if (currentUserPanel != null)
-                                                    {
-                                                        if (!currentUserPanel.Children.Contains(newExpander)) currentUserPanel.Children.Add(newExpander);
-                                                    }
-                                                    else
-                                                    {
-                                                        if (main.wrapPanel1.Children.Count != 100 && !main.wrapPanel1.Children.Contains(newExpander)) main.wrapPanel1.Children.Add(newExpander);
-                                                    }
-                                                }
-                                                catch (Exception) { }
-                                            }
-                                        });
-                                    }
-                                    else
-                                    {
-                                        await main.Dispatcher.InvokeAsync(() =>
-                                        {
-                                            System.Windows.Controls.CheckBox newCheckBox = new System.Windows.Controls.CheckBox
-                                            {
-                                                Name = currentid,
-                                                Content = name + "=" + path,
-                                                Margin = new Thickness(5),
-                                                IsChecked = recommended,
-                                                BorderThickness = new Thickness(0),
-                                                Foreground = main.brush,
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                FontSize = 12,
-                                                FontWeight = FontWeights.Bold,
-                                                Padding = new Thickness(10)
-                                            };
-                                            main.checkboxes2.Add(newCheckBox);
-
-                                            if (currentUserPanel != null) currentUserPanel.Children.Add(newCheckBox);
-                                            else main.wrapPanel1.Children.Add(newCheckBox);
-
-                                            newCheckBox.Checked += main.CheckBox_Checked;
-                                            newCheckBox.Unchecked += main.CheckBox_Unchecked;
-                                        });
-                                    }
+                                    main.wrapPanel1.Children.Remove(sectionExpander);
                                 }
-                            }
+                            });
                         }
                     }
 
@@ -775,6 +445,415 @@ namespace MultronWinCleaner.Processes
             {
                 System.Windows.MessageBox.Show(ex.Message + " in Load.cs\n" + ex.StackTrace + "\nLine: " + getline, "database.txt error");
             }
+        }
+
+        private List<string> BuildLinesToProcess(List<string> originalLines, List<string> targetUsers)
+        {
+            List<string> globalStandalone = new List<string>();
+            List<List<string>> globalBlocks = new List<List<string>>();
+            Dictionary<string, List<string>> userStandalone = new Dictionary<string, List<string>>();
+            Dictionary<string, List<List<string>>> userBlocks = new Dictionary<string, List<List<string>>>();
+
+            foreach (var user in targetUsers)
+            {
+                userStandalone[user] = new List<string>();
+                userBlocks[user] = new List<List<string>>();
+            }
+
+            bool inGroup = false;
+            string blockHeader = "";
+            List<string> currentBuffer = new List<string>();
+
+            foreach (var line in originalLines)
+            {
+                string trim = line.Trim();
+                if (string.IsNullOrWhiteSpace(trim)) continue;
+
+                if (trim.StartsWith("{"))
+                {
+                    inGroup = true;
+                    blockHeader = trim;
+                    currentBuffer.Clear();
+                }
+                else if (trim.StartsWith("}"))
+                {
+                    inGroup = false;
+
+                    List<string> globalBufferLines = new List<string>();
+                    List<string> userBufferLines = new List<string>();
+
+                    foreach (var l in currentBuffer)
+                    {
+                        bool isUserSpecific = l.Contains("{##}") ||
+                                              l.Contains("AppData", StringComparison.OrdinalIgnoreCase) ||
+                                              l.Contains("LocalSettings", StringComparison.OrdinalIgnoreCase) ||
+                                              l.Contains("C:\\Users\\", StringComparison.OrdinalIgnoreCase) ||
+                                              l.Contains("#profileget#", StringComparison.OrdinalIgnoreCase) ||
+                                              l.Contains("#profile#", StringComparison.OrdinalIgnoreCase);
+
+                        bool isProgramData = l.Contains("ProgramData", StringComparison.OrdinalIgnoreCase);
+
+                        if (isUserSpecific && !isProgramData)
+                        {
+                            userBufferLines.Add(l);
+                        }
+                        else
+                        {
+                            globalBufferLines.Add(l);
+                        }
+                    }
+
+                    if (globalBufferLines.Count > 0)
+                    {
+                        var gBlock = new List<string> { blockHeader };
+                        gBlock.AddRange(globalBufferLines);
+                        gBlock.Add("}");
+                        globalBlocks.Add(gBlock);
+                    }
+
+                    if (userBufferLines.Count > 0)
+                    {
+                        foreach (var user in targetUsers)
+                        {
+                            var uBlock = new List<string> { blockHeader };
+                            foreach (var l in userBufferLines)
+                            {
+                                uBlock.Add(ForUser(l, user));
+                            }
+                            uBlock.Add("}");
+                            userBlocks[user].Add(uBlock);
+                        }
+                    }
+                    currentBuffer.Clear();
+                }
+                else if (inGroup)
+                {
+                    currentBuffer.Add(trim);
+                }
+                else
+                {
+                    if (trim.Contains("{##}") || trim.Contains("AppData", StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach (var user in targetUsers)
+                        {
+                            userStandalone[user].Add(ForUser(trim, user));
+                        }
+                    }
+                    else
+                    {
+                        globalStandalone.Add(trim);
+                    }
+                }
+            }
+
+            List<string> linesToProcess = new List<string>();
+
+            linesToProcess.Add("USER_START=💻 System & Global Tools");
+            if (globalStandalone.Count > 0)
+            {
+                linesToProcess.Add("{=General Tools");
+                linesToProcess.AddRange(globalStandalone);
+                linesToProcess.Add("}");
+            }
+            foreach (var block in globalBlocks) linesToProcess.AddRange(block);
+            linesToProcess.Add("USER_END");
+
+            foreach (var user in targetUsers)
+            {
+                bool hasContent = userBlocks[user].Count > 0 || userStandalone[user].Count > 0;
+                if (hasContent)
+                {
+                    string userName = new DirectoryInfo(user).Name;
+                    linesToProcess.Add($"USER_START=👤 {userName}");
+
+                    if (userStandalone[user].Count > 0)
+                    {
+                        linesToProcess.Add("{=User Specific Files");
+                        linesToProcess.AddRange(userStandalone[user]);
+                        linesToProcess.Add("}");
+                    }
+                    foreach (var block in userBlocks[user]) linesToProcess.AddRange(block);
+
+                    linesToProcess.Add("USER_END");
+                }
+            }
+
+            return linesToProcess;
+        }
+
+        private static string ForUser(string line, string user)
+        {
+            if (line.Contains("{##}"))
+            {
+                return line.Replace("{##}", user);
+            }
+
+            string profileRoot = System.IO.Path.Combine("C:\\Users", user).Replace("$", "$$");
+            return System.Text.RegularExpressions.Regex.Replace(line, @"C:\\Users\\[^\\]+", profileRoot, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        }
+
+        private List<LoadSection> ResolveSections(List<string> lines)
+        {
+            var sections = new List<LoadSection>();
+            var pending = new List<(LoadGroup Group, LoadEntry Entry, string CheckPath)>();
+
+            LoadSection section = null;
+            LoadGroup group = null;
+            List<string> profileTargets = null;
+
+            foreach (string line in lines)
+            {
+                getline = line.Trim();
+
+                if (line.StartsWith("USER_START="))
+                {
+                    section = new LoadSection { Title = line.Substring(11) };
+                    sections.Add(section);
+                    continue;
+                }
+
+                if (line == "USER_END")
+                {
+                    section = null;
+                    continue;
+                }
+
+                if (line.StartsWith("{"))
+                {
+                    if (section == null)
+                    {
+                        section = new LoadSection();
+                        sections.Add(section);
+                    }
+                    group = new LoadGroup { Header = main.stringtokenizer(line, "=", 1) ?? "" };
+                    section.Groups.Add(group);
+                    profileTargets = null;
+                    continue;
+                }
+
+                if (line.StartsWith("}"))
+                {
+                    group = null;
+                    profileTargets = null;
+                    continue;
+                }
+
+                if (group == null) continue;
+
+                try
+                {
+                    if (line.StartsWith("#profile#="))
+                    {
+                        string root = main.stringtokenizer(line, "=", 1) ?? "";
+                        if (Directory.Exists(root))
+                        {
+                            List<string> folders = GetProfileFolders(root);
+                            if (folders.Count > 0)
+                            {
+                                group.ProfileRoot = root;
+                                group.ProfileFolders = folders;
+                                group.ProfileIndex = PickDefaultProfile(folders);
+                                profileTargets = allBrowserProfiles ? folders : new List<string> { folders[group.ProfileIndex] };
+                            }
+                        }
+                        continue;
+                    }
+
+                    string name = main.stringtokenizer(line, "=", 0);
+                    string path;
+                    string state;
+                    string warning = null;
+
+                    if (line.Contains("#profileget#"))
+                    {
+                        if (profileTargets == null) continue;
+                        string subPath = main.stringtokenizer(line, "=", 2);
+                        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(subPath) || !bool.TryParse(main.stringtokenizer(line, "=", 3), out bool profileRecommended))
+                        {
+                            Debug.WriteLine("Skipped invalid database line: " + line);
+                            continue;
+                        }
+
+                        group.ProfileLines.Add(new ProfileLine { Name = name, SubPath = subPath, Recommended = profileRecommended });
+                        foreach (string folder in profileTargets)
+                        {
+                            string profilePath = group.ProfileRoot + folder + subPath;
+                            pending.Add((group, new LoadEntry { Name = name, Path = profilePath, Recommended = profileRecommended, IsProfile = true }, profilePath));
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        path = main.stringtokenizer(line, "=", 1);
+                        state = main.stringtokenizer(line, "=", 2);
+                        warning = main.stringtokenizer(line, "=", 3);
+                        if (warning == "true" || warning == "false") warning = null;
+                    }
+
+                    if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(path) || !bool.TryParse(state, out bool recommended))
+                    {
+                        Debug.WriteLine("Skipped invalid database line: " + line);
+                        continue;
+                    }
+
+                    pending.Add((group, new LoadEntry { Name = name, Path = path, Recommended = recommended, Warning = warning }, path));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Skipped database line: " + line + " (" + ex.Message + ")");
+                }
+            }
+
+            bool[] exists = new bool[pending.Count];
+            Parallel.For(0, pending.Count, new ParallelOptions { MaxDegreeOfParallelism = Math.Max(2, Environment.ProcessorCount) }, i =>
+            {
+                exists[i] = PathExists(pending[i].CheckPath);
+            });
+
+            for (int i = 0; i < pending.Count; i++)
+            {
+                if (exists[i]) pending[i].Group.Entries.Add(pending[i].Entry);
+            }
+
+            return sections;
+        }
+
+        private System.Windows.Controls.CheckBox CreateEntryCheckBox(LoadEntry entry, string groupId)
+        {
+            bool isChecked = selections.TryGetValue(entry.Path, out bool saved) ? saved : entry.Recommended;
+            main.databaseDefaults[entry.Path] = entry.Recommended;
+            if (isChecked) main.database.Add(entry.Name + "=" + entry.Path);
+
+            System.Windows.Controls.CheckBox newCheckBox = new System.Windows.Controls.CheckBox
+            {
+                Name = groupId,
+                Content = entry.Warning != null ? entry.Name + "=" + entry.Path + "=warning(" + entry.Warning + ")" : entry.Name + "=" + entry.Path,
+                Margin = new Thickness(10),
+                IsChecked = isChecked,
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                Foreground = main.brush,
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI")
+            };
+            newCheckBox.PreviewMouseRightButtonUp += EntryCheckBox_PreviewMouseRightButtonUp;
+            newCheckBox.Checked += main.CheckBox_Checked;
+            newCheckBox.Unchecked += main.CheckBox_Unchecked;
+            main.checkboxes2.Add(newCheckBox);
+            return newCheckBox;
+        }
+
+        private void BuildGroup(LoadGroup group, WrapPanel sectionPanel)
+        {
+            bool showProfileList = !allBrowserProfiles && group.ProfileFolders != null && group.ProfileFolders.Count > 1;
+            if (group.Entries.Count == 0 && !showProfileList) return;
+
+            this.currentid = CreateRandomId(8);
+            string groupId = currentid;
+            var groupBoxContent = new System.Windows.Controls.ListBox
+            {
+                ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(VirtualizingStackPanel))),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
+                Margin = new Thickness(5),
+                Background = System.Windows.Media.Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Foreground = main.brush,
+                MaxHeight = SystemParameters.WorkArea.Height,
+                MaxWidth = SystemParameters.WorkArea.Width
+            };
+
+            groupBoxContent.Loaded += (s, e) => {
+                var listBox = s as System.Windows.Controls.ListBox;
+                if (listBox == null) return;
+                var sv = main.FindVisualChild<ScrollViewer>(listBox);
+                if (sv != null) sv.ScrollChanged += ScrollViewer_ScrollChanged;
+            };
+
+            var newExpander = new Expander
+            {
+                Name = currentid,
+                Header = group.Header,
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Colors.Transparent),
+                Foreground = main.brush,
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                BorderThickness = new Thickness(2),
+                FontSize = 13,
+                FontWeight = FontWeights.SemiBold,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Content = groupBoxContent
+            };
+
+            main.listboxes.Add(groupBoxContent);
+            main.expanders.Add(newExpander);
+
+            foreach (LoadEntry entry in group.Entries)
+            {
+                System.Windows.Controls.CheckBox newCheckBox = CreateEntryCheckBox(entry, groupId);
+                if (entry.IsProfile) group.ProfileCheckBoxes.Add(newCheckBox);
+
+                if (groupBoxContent.Items.Count < 100)
+                {
+                    groupBoxContent.Items.Add(newCheckBox);
+                }
+            }
+
+            if (sectionPanel != null)
+            {
+                sectionPanel.Children.Add(newExpander);
+            }
+            else if (main.wrapPanel1.Children.Count != 100)
+            {
+                main.wrapPanel1.Children.Add(newExpander);
+            }
+
+            if (showProfileList)
+            {
+                var profilelist = new System.Windows.Controls.ComboBox
+                {
+                    Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
+                    FontSize = 14,
+                    Margin = new Thickness(5),
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    ToolTip = "Browser profile to clean"
+                };
+                foreach (string folder in group.ProfileFolders)
+                {
+                    profilelist.Items.Add(folder);
+                }
+                profilelist.SelectedIndex = group.ProfileIndex;
+                profilelist.SelectionChanged += (s, e) => Profilelist_SelectionChanged(profilelist, group, groupBoxContent, groupId);
+                main.comboboxlist.Add(profilelist);
+                groupBoxContent.Items.Add(profilelist);
+            }
+        }
+
+        private void EntryCheckBox_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is not System.Windows.Controls.CheckBox box) return;
+
+            if (box.ContextMenu == null)
+            {
+                var menu = new ContextMenu();
+                var openDirectory = new MenuItem { Header = "Open directory" };
+                var openLocation = new MenuItem { Header = "Open location" };
+                var copyPath = new MenuItem { Header = "Copy path" };
+                openDirectory.Click += main.OpenDirectory_MainMenu_Click;
+                openLocation.Click += main.OpenFileLocation_MainMenu_Click;
+                copyPath.Click += main.CopyPath_MainMenu_Click;
+                menu.Items.Add(openDirectory);
+                menu.Items.Add(openLocation);
+                menu.Items.Add(copyPath);
+                box.ContextMenu = menu;
+            }
+
+            box.ContextMenu.PlacementTarget = box;
+            box.ContextMenu.IsOpen = true;
+            e.Handled = true;
         }
     }
 }

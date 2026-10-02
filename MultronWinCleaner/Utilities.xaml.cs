@@ -196,8 +196,10 @@ namespace MultronWinCleaner
                 contextMenu.Items.Add("Hide Utilities", null, (s, e) => { this.Hide(); });
 
                 trayIcon.ContextMenuStrip = contextMenu;
-                trayIcon.Visible = true;
+                AppDomain.CurrentDomain.ProcessExit += (s, e) => trayIcon?.Dispose();
             }
+
+            trayIcon.Visible = true;
         }
 
         private void LoadSettings()

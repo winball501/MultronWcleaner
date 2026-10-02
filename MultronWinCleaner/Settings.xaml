@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="MultronWinCleaner.Settings"
-        Title="Settings" Height="750" Width="850"
+        Title="Settings" Height="750" Width="850" Icon="pack://application:,,,/Assets/mwc_icon.ico"
         WindowStyle="None" ResizeMode="NoResize"
         Background="{DynamicResource WindowBackground}"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
@@ -998,6 +998,28 @@ Cursor="Hand"/>
                                           Style="{DynamicResource CustomCheckBoxStyle}" IsChecked="false"
                                           Checked="chkOfflineMode_Changed" Unchecked="chkOfflineMode_Changed"/>
                                 <TextBlock Text="Skips waiting for an internet connection and the update / database download at startup. Takes effect the next time the app starts."
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="26,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Selections" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <CheckBox x:Name="chkAutoSaveSelections" Content="Save selections automatically"
+                                          Style="{DynamicResource CustomCheckBoxStyle}" IsChecked="true"
+                                          Checked="chkAutoSaveSelections_Changed" Unchecked="chkAutoSaveSelections_Changed"/>
+                                <TextBlock Text="Saves your checkbox choices to selections.txt as soon as you change them. The Save Selections button is hidden while this is on."
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="26,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Browsers" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <CheckBox x:Name="chkCleanAllBrowserProfiles" Content="Clean all browser profiles"
+                                          Style="{DynamicResource CustomCheckBoxStyle}" IsChecked="true"
+                                          Checked="chkCleanAllBrowserProfiles_Changed" Unchecked="chkCleanAllBrowserProfiles_Changed"/>
+                                <TextBlock Text="Adds every profile of each browser to the cleaning list. Turn this off to choose one profile per browser from a list inside its group. The cleaning list reloads when you change this."
                                            FontSize="12" Opacity="0.55" TextWrapping="Wrap"
                                            Margin="26,2,0,0"/>
                             </StackPanel>

@@ -93,3 +93,13 @@ C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\obj\Debu
 C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\obj\Debug\net8.0-windows\MultronWinCleaner.pdb
 C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\obj\Debug\net8.0-windows\MultronWinCleaner.genruntimeconfig.cache
 C:\Users\winball_501\Documents\GitHub\MultronWcleaner\MultronWinCleaner\obj\Debug\net8.0-windows\ref\MultronWinCleaner.dll
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_github\MultronWinCleaner.exe
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_github\MultronWinCleaner.deps.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_github\MultronWinCleaner.runtimeconfig.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_github\MultronWinCleaner.dll
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_github\MultronWinCleaner.pdb
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.exe
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.deps.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.runtimeconfig.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.dll
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.pdb

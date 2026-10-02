@@ -64,6 +64,7 @@ namespace Multron_Win_Cleaner
         public List<Expander> expanders = new List<Expander>();
         public List<ListBox> listboxes = new List<ListBox>();
         public List<ComboBox> comboboxlist = new List<ComboBox>();
+        public Dictionary<string, bool> databaseDefaults = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         public List<string> paths = new List<string>();
         public CancellationTokenSource dismcancel = new CancellationTokenSource();
         public Utilities utilities;
@@ -246,8 +247,104 @@ namespace Multron_Win_Cleaner
             }
         }
 
+        public const string AutoSaveSelectionsSettingKey = "autosaveselections";
+        private bool autoSaveSelections = IsAutoSaveSelectionsEnabled();
+
+        public void SetAutoSaveSelections(bool enabled)
+        {
+            autoSaveSelections = enabled;
+            SaveSettings.Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
+        }
+        private readonly Dictionary<string, bool?> pendingSelections = new Dictionary<string, bool?>(StringComparer.OrdinalIgnoreCase);
+        private readonly object selectionsFileLock = new object();
+        private DispatcherTimer selectionsAutoSaveTimer;
+
+        public const string AllBrowserProfilesSettingKey = "allbrowserprofiles";
+
+        public static bool IsAutoSaveSelectionsEnabled() => IsSettingOnByDefault(AutoSaveSelectionsSettingKey);
+
+        public static bool IsCleanAllBrowserProfilesEnabled() => IsSettingOnByDefault(AllBrowserProfilesSettingKey);
+
+        private static bool IsSettingOnByDefault(string key)
+        {
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                if (!System.IO.File.Exists(path)) return true;
+                return !System.IO.File.ReadAllLines(path)
+                    .Any(line => line.Trim().Equals(key + ":0", StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        public void ReloadDatabaseIfIdle()
+        {
+            if (ReloadDb.IsEnabled && buttonStartScan.IsEnabled)
+                ReloadDatabase_Click(ReloadDb, new RoutedEventArgs());
+        }
+
+        private void QueueSelectionAutoSave(CheckBox checkBox, string path)
+        {
+            if (!autoSaveSelections || path == null || !databaseDefaults.TryGetValue(path, out bool databaseDefault)) return;
+
+            bool isChecked = checkBox.IsChecked == true;
+            lock (pendingSelections)
+            {
+                pendingSelections[path] = isChecked == databaseDefault ? null : isChecked;
+            }
+
+            if (selectionsAutoSaveTimer == null)
+            {
+                selectionsAutoSaveTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher) { Interval = TimeSpan.FromMilliseconds(500) };
+                selectionsAutoSaveTimer.Tick += async (s, e) =>
+                {
+                    selectionsAutoSaveTimer.Stop();
+                    try
+                    {
+                        await Task.Run(FlushPendingSelections);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Auto-save of selections failed: " + ex.Message);
+                    }
+                };
+            }
+            selectionsAutoSaveTimer.Stop();
+            selectionsAutoSaveTimer.Start();
+        }
+
+        private void FlushPendingSelections()
+        {
+            Dictionary<string, bool?> changes;
+            lock (pendingSelections)
+            {
+                if (pendingSelections.Count == 0) return;
+                changes = new Dictionary<string, bool?>(pendingSelections, StringComparer.OrdinalIgnoreCase);
+                pendingSelections.Clear();
+            }
+
+            lock (selectionsFileLock)
+            {
+                Dictionary<string, bool> selections = MultronWinCleaner.Processes.Load.ReadSelections();
+                foreach (var change in changes)
+                {
+                    if (change.Value.HasValue) selections[change.Key] = change.Value.Value;
+                    else selections.Remove(change.Key);
+                }
+                MultronWinCleaner.Processes.Load.WriteSelections(selections);
+            }
+        }
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            AppDomain.CurrentDomain.ProcessExit += (s, args) =>
+            {
+                try { FlushPendingSelections(); } catch { }
+            };
+            SetAutoSaveSelections(autoSaveSelections);
             utilities = new Utilities(this);
             settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
             utilities.Show();
@@ -332,7 +429,6 @@ namespace Multron_Win_Cleaner
             }
 
             await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
-            await Task.Delay(1500);
 
             await this.Dispatcher.InvokeAsync(() =>
             {
@@ -350,7 +446,6 @@ namespace Multron_Win_Cleaner
                     ScrollViewerDirectories.Visibility = Visibility.Hidden;
                 });
                 await this.Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
-                await Task.Delay(2000);
                 var load = new MultronWinCleaner.Processes.Load(this);
                 await Task.Run(() => load.RunAsync());
 
@@ -879,8 +974,8 @@ namespace Multron_Win_Cleaner
                string path = stringtokenizer(content, "=", 1);
 
                database.Add(name + "=" + path);
+               QueueSelectionAutoSave(checkBox, path);
 
-              
 
             }
         }
@@ -893,7 +988,7 @@ namespace Multron_Win_Cleaner
                 string name = stringtokenizer(content, "=", 0);
                 string path = stringtokenizer(content, "=", 1);
                 database.Remove(name + "=" + path);
- 
+                QueueSelectionAutoSave(checkBox, path);
            }
 
 
@@ -922,7 +1017,7 @@ namespace Multron_Win_Cleaner
 
             foreach (Expander expander in expanders)
             {
-                if (!wrapPanel1.Children.Contains(expander))
+                if (expander.Parent == null && !wrapPanel1.Children.Contains(expander))
                 {
                     wrapPanel1.Children.Add(expander);
                     break;
@@ -2232,6 +2327,8 @@ namespace Multron_Win_Cleaner
         private async void ReloadDatabase_Click(object sender, RoutedEventArgs e)
         {
             ReloadDb.IsEnabled = false;
+            selectionsAutoSaveTimer?.Stop();
+            await Task.Run(FlushPendingSelections);
             wrapPanel1.Children.Clear();
             wrapPanelDirectories.Children.Clear();
             ScrollViewerDirectories.Content = null;
@@ -2239,6 +2336,8 @@ namespace Multron_Win_Cleaner
             listboxes.Clear();
             expanders.Clear();
             stackpanels.Clear();
+            comboboxlist.Clear();
+            databaseDefaults.Clear();
             database.Clear();
           
             if (System.IO.File.Exists(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\database.txt") == true)
@@ -2260,104 +2359,45 @@ namespace Multron_Win_Cleaner
                 Environment.Exit(0);
             }
         }
-        public async Task savetodatabase()
+        public async Task savetodatabase(bool showMessage = true)
         {
             Dictionary<string, bool> checkBoxStates = null;
 
 
             await Dispatcher.InvokeAsync(() =>
             {
-                checkBoxStates = new Dictionary<string, bool>();
+                checkBoxStates = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
                 foreach (CheckBox box in checkboxes2)
                 {
-
-                    string path = stringtokenizer(box.Content.ToString(), "=", 1);
-                    checkBoxStates[path] = box.IsChecked == true;
+                    string path = stringtokenizer(box.Content?.ToString() ?? "", "=", 1);
+                    if (path != null) checkBoxStates[path] = box.IsChecked == true;
                 }
             });
 
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
-                string filePath = System.IO.Path.Combine(Environment.CurrentDirectory, "database.txt");
-                List<string> lines = System.IO.File.ReadAllLines(filePath).ToList();
-
-                string profile = "";
-                int profilemode = 0;
-
-                for (int i = 0; i < lines.Count; i++)
+                lock (selectionsFileLock)
                 {
-                    string lin = lines[i];
-                    if (lin.Contains("}")) profilemode = 0;
-                    if (lin.StartsWith("#profile#"))
-                    {
-                        profile = stringtokenizer(lin, "=", 1);
-                        profilemode = 1;
-                    }
+                    Dictionary<string, bool> selections = MultronWinCleaner.Processes.Load.ReadSelections();
+
                     foreach (var kvp in checkBoxStates)
                     {
-                        string path = kvp.Key;
-                        bool isChecked = kvp.Value;
-                        if (profilemode == 1)
-                        {
-                            if (lin.Contains("#profileget#"))
-                            {
-                                string pat = profile;
+                        if (!databaseDefaults.TryGetValue(kvp.Key, out bool databaseDefault)) continue;
 
-                                pat = pat.Replace("\\\\", "\\");
-                                pat = pat.Replace("{##}", Environment.UserName);
-                                string fullpath = "";
-
-
-                                await this.Dispatcher.InvokeAsync(() => {
-                                    foreach (ComboBox box in comboboxlist)
-                                    {
-
-
-                                        fullpath = pat + box.SelectedItem.ToString() + stringtokenizer(lin, "=", 2);
-                                        if (System.IO.File.Exists(fullpath) || System.IO.Directory.Exists(fullpath))
-                                        {
-                                            break;
-                                        }
-                                    }
-                                });
-
-
-                                if (path.Contains(fullpath))
-                                {
-
-                                    lines[i] = isChecked
-                                        ? lines[i].Replace("=false", "=true")
-                                        : lines[i].Replace("=true", "=false");
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            if (lin.Contains("{##}"))
-                            {
-                                lin = lin.Replace("{##}", Environment.UserName);
-                            }
-                            if (lin.Contains(path))
-                            {
-                                lines[i] = isChecked
-                                    ? lines[i].Replace("=false", "=true")
-                                    : lines[i].Replace("=true", "=false");
-                            }
-                        }
-
+                        if (kvp.Value == databaseDefault) selections.Remove(kvp.Key);
+                        else selections[kvp.Key] = kvp.Value;
                     }
-                }
 
-                System.IO.File.WriteAllLines(filePath, lines);
+                    MultronWinCleaner.Processes.Load.WriteSelections(selections);
+                }
             });
 
             await Dispatcher.InvokeAsync(() =>
             {
-                MessageBox.Show("Settings saved to database sucessfully.");
+                if (showMessage) MessageBox.Show("Selections saved successfully.");
                 SaveSettings.IsEnabled = true;
-                SaveSettings.Content = "Save Settings to Database";
+                SaveSettings.Content = "Save Selections";
             });
         }
         private async void SaveSettings_Click(object sender, RoutedEventArgs e)
@@ -2365,6 +2405,91 @@ namespace Multron_Win_Cleaner
             SaveSettings.IsEnabled = false;
             SaveSettings.Content = "Saving...";
             await savetodatabase();
+        }
+
+        private async void ApplySelectionsToDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult answer = MessageBox.Show(
+                "This writes your saved selections into database.txt.\n\n" +
+                "Selections written into database.txt are lost when a newer database is downloaded. " +
+                "Selections kept in selections.txt are not.\n\n" +
+                "Continue?",
+                "Multron Windows Cleaner", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes) return;
+
+            ApplySelections.IsEnabled = false;
+            try
+            {
+                SaveSettings.IsEnabled = false;
+                await savetodatabase(showMessage: false);
+
+                int applied = await Task.Run(() =>
+                {
+                    Dictionary<string, bool> selections = MultronWinCleaner.Processes.Load.ReadSelections();
+                    if (selections.Count == 0) return 0;
+
+                    string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.txt");
+                    string[] lines = System.IO.File.ReadAllLines(filePath);
+                    var appliedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    string profileRoot = null;
+                    List<string> profileFolders = null;
+
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        string line = lines[i];
+                        if (line.StartsWith("{") || line.StartsWith("}"))
+                        {
+                            profileRoot = null;
+                            profileFolders = null;
+                            continue;
+                        }
+                        if (line.StartsWith("#profile#="))
+                        {
+                            profileRoot = (stringtokenizer(line, "=", 1) ?? "").Replace("{##}", Environment.UserName);
+                            profileFolders = Directory.Exists(profileRoot)
+                                ? Directory.GetDirectories(profileRoot).Select(System.IO.Path.GetFileName).ToList()
+                                : new List<string>();
+                            continue;
+                        }
+
+                        string path = null;
+                        if (line.Contains("#profileget#"))
+                        {
+                            if (profileRoot == null) continue;
+                            string subPath = stringtokenizer(line, "=", 2);
+                            path = profileFolders.Select(folder => profileRoot + folder + subPath).FirstOrDefault(selections.ContainsKey);
+                        }
+                        else
+                        {
+                            string linePath = stringtokenizer(line.Replace("{##}", Environment.UserName), "=", 1);
+                            if (linePath != null && selections.ContainsKey(linePath)) path = linePath;
+                        }
+                        if (path == null) continue;
+
+                        lines[i] = selections[path] ? line.Replace("=false", "=true") : line.Replace("=true", "=false");
+                        appliedPaths.Add(path);
+                    }
+
+                    string tempPath = filePath + ".tmp";
+                    System.IO.File.WriteAllLines(tempPath, lines);
+                    System.IO.File.Move(tempPath, filePath, overwrite: true);
+
+                    foreach (string path in appliedPaths) selections.Remove(path);
+                    MultronWinCleaner.Processes.Load.WriteSelections(selections);
+                    return appliedPaths.Count;
+                });
+
+                MessageBox.Show(applied + " selections were written to database.txt.", "Multron Windows Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (applied > 0) ReloadDatabase_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Could not write the selections to database.txt: " + ex.Message, "Multron Windows Cleaner", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                ApplySelections.IsEnabled = true;
+            }
         }
 
         private void UnselectAll_Click(object sender, RoutedEventArgs e)

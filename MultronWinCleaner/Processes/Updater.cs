@@ -65,27 +65,39 @@ namespace MultronWinCleaner.Processes
                 var client = new GitHubClient(new ProductHeaderValue("MultronWcleaner-Database"));
                 var releases = await client.Repository.Release.GetAll(owner, repo);
                 var latest = releases[0];
+                string versionFile = Environment.CurrentDirectory + "\\databaseversion.txt";
+                string databaseFile = Environment.CurrentDirectory + "\\database.txt";
                 string getversion = "1.0";
-                if (File.Exists(Environment.CurrentDirectory + "\\databaseversion.txt"))
+                if (File.Exists(versionFile))
                 {
-                    getversion = await File.ReadAllTextAsync(Environment.CurrentDirectory + "\\databaseversion.txt");
+                    getversion = (await File.ReadAllTextAsync(versionFile)).Trim();
                 }
                 string releaseName = latest.Name;
 
-                var match = Regex.Match(releaseName, @"\d+\.\d+(\.\d+)?");
+                var match = Regex.Match(releaseName ?? "", @"\d+\.\d+(\.\d+)?");
                 if (!match.Success)
-                {
-                    return;
-                }
-                Version latestVersion = new Version(match.Value);
-                Version currentVersion = new Version(getversion);
-                if (latestVersion == currentVersion)
                 {
                     await cts.CancelAsync();
                     return;
                 }
-                await File.WriteAllTextAsync(Environment.CurrentDirectory + "\\databaseversion.txt", latestVersion.ToString());
+                Version latestVersion = new Version(match.Value);
+                if (!Version.TryParse(getversion, out Version currentVersion))
+                {
+                    currentVersion = new Version(1, 0);
+                }
+
+                
+                if (latestVersion <= currentVersion && File.Exists(databaseFile))
+                {
+                    await cts.CancelAsync();
+                    return;
+                }
                 var asset = latest.Assets.FirstOrDefault(a => a.Name.EndsWith(".txt"));
+                if (asset == null)
+                {
+                    await cts.CancelAsync();
+                    return;
+                }
                 var downloadFolder = Environment.CurrentDirectory + "\\Update";
                 Directory.CreateDirectory(downloadFolder);
                 var filePath = Path.Combine(downloadFolder, asset.Name);
@@ -129,8 +141,17 @@ namespace MultronWinCleaner.Processes
 
 
                     }
-                    System.IO.File.Copy(downloadFolder + "\\database.txt", Environment.CurrentDirectory + "\\database.txt", overwrite: true);
                 }
+                 
+                string downloaded = await File.ReadAllTextAsync(filePath);
+                if (!downloaded.Contains("{=") || !downloaded.Contains("}"))
+                {
+                    throw new InvalidDataException("The downloaded database is incomplete.");
+                }
+                string tempDatabase = databaseFile + ".tmp";
+                File.Copy(filePath, tempDatabase, overwrite: true);
+                File.Move(tempDatabase, databaseFile, overwrite: true);
+                await File.WriteAllTextAsync(versionFile, latestVersion.ToString());
             } catch (Exception ex)
             {
 
@@ -163,9 +184,9 @@ namespace MultronWinCleaner.Processes
                 }
 
                 Version latestVersion = new Version(match.Value);
-                Version currentVersion = new Version("1.24.6");
+                Version currentVersion = new Version("1.24.7");
 
-                if (latestVersion == currentVersion)
+                if (latestVersion <= currentVersion)
                 {
 
                     await cts.CancelAsync();

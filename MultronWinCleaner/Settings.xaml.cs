@@ -218,6 +218,12 @@ namespace MultronWinCleaner
             offlineModeLoading = true;
             chkOfflineMode.IsChecked = GetBool(MainWindow.OfflineModeSettingKey);
             offlineModeLoading = false;
+            autoSaveSelectionsLoading = true;
+            chkAutoSaveSelections.IsChecked = GetString(MainWindow.AutoSaveSelectionsSettingKey, "1") != "0";
+            autoSaveSelectionsLoading = false;
+            allBrowserProfilesLoading = true;
+            chkCleanAllBrowserProfiles.IsChecked = GetString(MainWindow.AllBrowserProfilesSettingKey, "1") != "0";
+            allBrowserProfilesLoading = false;
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
             RunIfInactive.IsChecked = GetBool("runifactive");
             SkipBattery.IsChecked = GetBool("batterylow");
@@ -310,12 +316,36 @@ namespace MultronWinCleaner
         private void chkOfflineMode_Changed(object sender, RoutedEventArgs e)
         {
             if (offlineModeLoading) return;
+            SaveSettingNow(MainWindow.OfflineModeSettingKey, chkOfflineMode.IsChecked == true, "offline mode");
+        }
+
+        private bool autoSaveSelectionsLoading;
+
+        private void chkAutoSaveSelections_Changed(object sender, RoutedEventArgs e)
+        {
+            if (autoSaveSelectionsLoading) return;
+            bool enabled = chkAutoSaveSelections.IsChecked == true;
+            mainWindow?.SetAutoSaveSelections(enabled);
+            SaveSettingNow(MainWindow.AutoSaveSelectionsSettingKey, enabled, "auto-save selections");
+        }
+
+        private bool allBrowserProfilesLoading;
+
+        private void chkCleanAllBrowserProfiles_Changed(object sender, RoutedEventArgs e)
+        {
+            if (allBrowserProfilesLoading) return;
+            SaveSettingNow(MainWindow.AllBrowserProfilesSettingKey, chkCleanAllBrowserProfiles.IsChecked == true, "browser profiles");
+            mainWindow?.ReloadDatabaseIfIdle();
+        }
+
+        private void SaveSettingNow(string key, bool enabled, string displayName)
+        {
             try
             {
                 string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
                 var lines = System.IO.File.Exists(path) ? System.IO.File.ReadAllLines(path).ToList() : new List<string>();
-                string entry = $"{MainWindow.OfflineModeSettingKey}:{(chkOfflineMode.IsChecked == true ? "1" : "0")}";
-                int index = lines.FindIndex(l => l.StartsWith(MainWindow.OfflineModeSettingKey + ":", StringComparison.OrdinalIgnoreCase));
+                string entry = $"{key}:{(enabled ? "1" : "0")}";
+                int index = lines.FindIndex(l => l.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase));
                 if (index != -1)
                     lines[index] = entry;
                 else
@@ -324,7 +354,7 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not save offline mode: " + ex.Message, "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Could not save " + displayName + ": " + ex.Message, "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -353,6 +383,8 @@ namespace MultronWinCleaner
                 Upsert("autoclean", chkAutoClean.IsChecked == true ? "1" : "0");
                 Upsert("trayicon", chkTrayIcon.IsChecked == true ? "1" : "0");
                 Upsert(MainWindow.OfflineModeSettingKey, chkOfflineMode.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.AutoSaveSelectionsSettingKey, chkAutoSaveSelections.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.AllBrowserProfilesSettingKey, chkCleanAllBrowserProfiles.IsChecked == true ? "1" : "0");
                 Upsert("oldscan", OldScan.IsChecked == true ? "1" : "0");
                 Upsert("access_scan", AccessScan.IsChecked == true ? "1" : "0");
                 Upsert("onlylowcpu", OnlyLowCPU.IsChecked == true ? "1" : "0");
