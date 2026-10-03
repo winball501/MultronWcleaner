@@ -147,5 +147,57 @@ namespace MFK
 
             return processes;
         }
+
+        public static List<(int Id, string Name)> GetLockers(string path)
+        {
+            var lockers = new List<(int Id, string Name)>();
+            try
+            {
+                foreach (Process process in WhoIsLocking(path))
+                {
+                    using (process)
+                    {
+                        try
+                        {
+                            lockers.Add((process.Id, process.ProcessName));
+                        }
+                        catch (InvalidOperationException) { }
+                    }
+                }
+            }
+            catch (Exception) { }
+            return lockers;
+        }
+
+        static readonly HashSet<string> CriticalProcessNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "System", "Idle", "Registry", "Memory Compression", "smss", "csrss", "wininit", "winlogon", "services",
+            "lsass", "lsaiso", "svchost", "fontdrvhost", "dwm", "explorer", "sihost", "taskhostw", "ctfmon",
+            "spoolsv", "MsMpEng", "NisSrv", "SecurityHealthService", "audiodg", "conhost", "RuntimeBroker", "StartMenuExperienceHost"
+        };
+
+        public static bool IsProtectedProcess(int id, string name)
+        {
+            if (id <= 4 || id == Environment.ProcessId)
+                return true;
+            if (!CriticalProcessNames.Contains(name))
+                return false;
+
+            try
+            {
+                using (Process process = Process.GetProcessById(id))
+                {
+                    string file = process.MainModule?.FileName;
+                    string windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+                    return string.IsNullOrEmpty(file) || file.StartsWith(windows + "\\", StringComparison.OrdinalIgnoreCase)
+                        || file.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Windows Defender", StringComparison.OrdinalIgnoreCase)
+                        || file.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Microsoft\\Windows Defender", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
     }
 }

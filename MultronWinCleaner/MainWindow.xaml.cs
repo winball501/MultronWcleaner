@@ -1181,142 +1181,88 @@ namespace Multron_Win_Cleaner
                 var dotsTask = ScandotsAsync("Killing", cts);
                 int progress = 0;
                 int killed = 0;
-                for (int i = 0; i < main.paths.Count; i++)
+                int deleted = 0;
+                List<string> lockedPaths = await main.Dispatcher.InvokeAsync(() =>
+                    main.paths.Select(p => main.stringtokenizer(p, "=", 0)).Where(p => p.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList());
+
+                for (int i = 0; i < lockedPaths.Count; i++)
                 {
                     if (main.cancelstatus.IsCancellationRequested) break;
 
-                    string path = main.stringtokenizer(main.paths[i], "=", 0);
+                    string path = lockedPaths[i];
 
                     if (System.IO.File.Exists(path))
                     {
-                        var procs = whousef.WhoIsLocking(path);
-                        if (procs != null && procs.Count > 0)
+                        foreach (var locker in whousef.GetLockers(path))
                         {
-                            foreach (Process proc in procs)
+                            if (whousef.IsProtectedProcess(locker.Id, locker.Name))
                             {
-                                try
-                                {
-                                    await main.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        main.wrapPanelDirectories.Children.Add(new TextBlock
-                                        {
-                                            Text = $"Killing: {proc.ProcessName} (PID {proc.Id}) for {path}",
-                                            Foreground = System.Windows.Media.Brushes.Red,
-                                            FontSize = 16,
-                                            Margin = new Thickness(5)
-                                        });
-                                    });
-
-                                    proc.Kill();
-                                    proc.WaitForExit();
-                                }
-                                catch (Exception ex)
-                                {
-                                    await main.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        main.wrapPanelDirectories.Children.Add(new TextBlock
-                                        {
-                                            Text = $"Cannot Kill: {proc.ProcessName} (PID {proc.Id}) - {ex.Message}",
-                                            Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                            FontSize = 16,
-                                            Margin = new Thickness(5)
-                                        });
-                                    });
-                                }
+                                await AddKillMessage($"Skipped system process: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Goldenrod);
+                                continue;
                             }
-
 
                             try
                             {
-                                if (System.IO.File.Exists(path))
+                                await AddKillMessage($"Killing: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Red);
+                                using (Process proc = Process.GetProcessById(locker.Id))
                                 {
-                                    FileInfo info = new FileInfo(path);
-                                    long fileSize = info.Length;
-                                    System.IO.File.Delete(path);
-                                    killed++;
-                                    totalsize += fileSize;
-
-                                    await main.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        main.wrapPanelDirectories.Children.Add(new TextBlock
-                                        {
-                                            Text = $"Deleted: {path} ({main.formatsize(fileSize)})",
-                                            Foreground = System.Windows.Media.Brushes.Green,
-                                            FontSize = 16,
-                                            Margin = new Thickness(5)
-                                        });
-                                    });
+                                    proc.Kill();
+                                    proc.WaitForExit(5000);
                                 }
+                                killed++;
+                            }
+                            catch (ArgumentException)
+                            {
                             }
                             catch (Exception ex)
                             {
-                                await main.Dispatcher.InvokeAsync(() =>
-                                {
-                                    main.wrapPanelDirectories.Children.Add(new TextBlock
-                                    {
-                                        Text = $"Cannot Delete: {path} - {ex.Message}",
-                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                        FontSize = 16,
-                                        Margin = new Thickness(5)
-                                    });
-                                });
+                                await AddKillMessage($"Cannot Kill: {locker.Name} (PID {locker.Id}) - {ex.Message}", System.Windows.Media.Brushes.Goldenrod);
                             }
                         }
-                        else
-                        {
 
+                        string error = null;
+                        long fileSize = 0;
+                        for (int attempt = 0; attempt < 3; attempt++)
+                        {
                             try
                             {
                                 FileInfo info = new FileInfo(path);
-                                long fileSize = info.Length;
-                                System.IO.File.Delete(path);
-                                killed++;
-                                totalsize += fileSize;
-
-                                await main.Dispatcher.InvokeAsync(() =>
-                                {
-                                    main.wrapPanelDirectories.Children.Add(new TextBlock
-                                    {
-                                        Text = $"Deleted (no longer locked): {path} ({main.formatsize(fileSize)})",
-                                        Foreground = System.Windows.Media.Brushes.Green,
-                                        FontSize = 16,
-                                        Margin = new Thickness(5)
-                                    });
-                                });
+                                if (!info.Exists)
+                                    break;
+                                fileSize = info.Length;
+                                if (info.IsReadOnly)
+                                    info.IsReadOnly = false;
+                                info.Delete();
+                                error = null;
+                                break;
                             }
                             catch (Exception ex)
                             {
-                                await main.Dispatcher.InvokeAsync(() =>
-                                {
-                                    main.wrapPanelDirectories.Children.Add(new TextBlock
-                                    {
-                                        Text = $"Cannot Delete: {path} - {ex.Message}",
-                                        Foreground = System.Windows.Media.Brushes.Goldenrod,
-                                        FontSize = 16,
-                                        Margin = new Thickness(5)
-                                    });
-                                });
+                                error = ex.Message;
+                                await Task.Delay(300);
                             }
+                        }
+
+                        if (error == null)
+                        {
+                            deleted++;
+                            totalsize += fileSize;
+                            await AddKillMessage($"Deleted: {path} ({main.formatsize(fileSize)})", System.Windows.Media.Brushes.Green);
+                        }
+                        else
+                        {
+                            await AddKillMessage($"Cannot Delete: {path} - {error}", System.Windows.Media.Brushes.Goldenrod);
                         }
                     }
                     else
                     {
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            main.wrapPanelDirectories.Children.Add(new TextBlock
-                            {
-                                Text = $"File no longer exists: {path}",
-                                Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
-                                FontSize = 16,
-                                Margin = new Thickness(5)
-                            });
-                        });
+                        await AddKillMessage($"File no longer exists: {path}", new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")));
                     }
 
                     progress++;
-                    main.Dispatcher.Invoke(() =>
+                    await main.Dispatcher.InvokeAsync(() =>
                     {
-                        double percent = (progress * 100.0) / main.paths.Count;
+                        double percent = (progress * 100.0) / lockedPaths.Count;
                         main.progressBar1.Value = percent;
                         main.UpdateArc(percent);
                     });
@@ -1332,12 +1278,12 @@ namespace Multron_Win_Cleaner
 
                     if (main.cancelstatus.IsCancellationRequested)
                     {
-                        message = $"Killing Canceled. {killed} Process Killed. Freed Space: {main.formatsize(totalsize)}";
+                        message = $"Killing Canceled. {killed} Process Killed, {deleted} Files Deleted. Freed Space: {main.formatsize(totalsize)}";
                         labelColor = System.Windows.Media.Brushes.Goldenrod;
                     }
                     else
                     {
-                        message = $"Killing Done! {killed} Process Killed. Freed Space: {main.formatsize(totalsize)}";
+                        message = $"Killing Done! {killed} Process Killed, {deleted} Files Deleted. Freed Space: {main.formatsize(totalsize)}";
                         labelColor = System.Windows.Media.Brushes.Red;
                     }
 
@@ -1345,6 +1291,20 @@ namespace Multron_Win_Cleaner
                     main.label1_Copy.Foreground = labelColor;
                     main.buttonReset.Visibility = Visibility.Visible;
                     main.paths.Clear();
+                });
+            }
+
+            private async Task AddKillMessage(string text, System.Windows.Media.Brush brush)
+            {
+                await main.Dispatcher.InvokeAsync(() =>
+                {
+                    main.wrapPanelDirectories.Children.Add(new TextBlock
+                    {
+                        Text = text,
+                        Foreground = brush,
+                        FontSize = 16,
+                        Margin = new Thickness(5)
+                    });
                 });
             }
         }
@@ -1652,175 +1612,115 @@ namespace Multron_Win_Cleaner
                 this.main = main;
             }
 
-            public async Task CheckWhoUsesMultipleAsync(IEnumerable<string> paths, IProgress<(int current, int total)>? progress = null)
+            private sealed class LockedFileInfo
             {
-                var results = new ConcurrentBag<LockedFileGroupViewModel>();
-                var pathList = paths.ToList();
-                int total = pathList.Count;
-                int processedCount = 0;
+                public string Path;
+                public string GroupName;
+                public string SizeText;
+                public List<(string Id, string Name)> Processes;
+            }
 
+            private async Task<List<LockedFileInfo>> CheckWhoUsesMultipleAsync(List<string> entries)
+            {
                 await main.Dispatcher.InvokeAsync(() =>
                 {
                     main.label1_Copy.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
                 });
 
-                var processed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                for (int i = 0; i < pathList.Count; i++)
+                var files = new Dictionary<string, (string Id, string Name, string Group)>(StringComparer.OrdinalIgnoreCase);
+                foreach (string entry in entries)
                 {
-                    string path = main.stringtokenizer(pathList[i], "=", 0);
-                    string savedId = main.stringtokenizer(pathList[i], "=", 1);
-                    string savedName = main.stringtokenizer(pathList[i], "=", 2);
-                    string groupName = main.stringtokenizer(pathList[i], "=", 3);
+                    string path = main.stringtokenizer(entry, "=", 0);
+                    if (path.Length > 0 && !files.ContainsKey(path))
+                        files[path] = (main.stringtokenizer(entry, "=", 1), main.stringtokenizer(entry, "=", 2), main.stringtokenizer(entry, "=", 3));
+                }
 
-                    if (processed.Contains(path))
+                var results = new ConcurrentBag<LockedFileInfo>();
+                int total = files.Count;
+                int processedCount = 0;
+                var reportTimer = Stopwatch.StartNew();
+
+                await Task.Run(() => Parallel.ForEach(files, new ParallelOptions { MaxDegreeOfParallelism = 8 }, file =>
+                {
+                    try
                     {
-                        Interlocked.Increment(ref processedCount);
-                        progress?.Report((processedCount, total));
-                        continue;
-                    }
-                    processed.Add(path);
+                        var info = new FileInfo(file.Key);
+                        if (!info.Exists)
+                            return;
 
-                    if (!System.IO.File.Exists(path))
-                    {
-                        Interlocked.Increment(ref processedCount);
-                        progress?.Report((processedCount, total));
-                        continue;
-                    }
+                        var processes = whousef.GetLockers(file.Key).Select(p => (p.Id.ToString(), p.Name)).ToList();
+                        if (processes.Count == 0)
+                            processes.Add((file.Value.Id, file.Value.Name));
 
-                    var processes = whousef.WhoIsLocking(path);
-
-                    if (processes == null || processes.Count == 0)
-                    {
-                        results.Add(new LockedFileGroupViewModel
+                        results.Add(new LockedFileInfo
                         {
-                            FilePath = path,
-                            GroupName = groupName,
-                            Processes = new ObservableCollection<LockedProcessViewModel>(
-                                new[] { new LockedProcessViewModel
-                    {
-                        DisplayName = savedName + " (PID " + savedId + ")",
-                        Id = savedId,
-                        IsChecked = false
-                    }})
+                            Path = file.Key,
+                            GroupName = file.Value.Group,
+                            SizeText = main.formatsize(info.Length),
+                            Processes = processes
                         });
-
-                        Interlocked.Increment(ref processedCount);
-                        progress?.Report((processedCount, total));
-                        continue;
                     }
-
-                    var processViewModels = new ObservableCollection<LockedProcessViewModel>(
-                        processes.Select(p => new LockedProcessViewModel
+                    catch (Exception) { }
+                    finally
+                    {
+                        int done = Interlocked.Increment(ref processedCount);
+                        if (done == total || reportTimer.ElapsedMilliseconds > 150)
                         {
-                            DisplayName = $"{p.ProcessName} (PID {p.Id})",
-                            Id = p.Id.ToString(),
-                            IsChecked = false
-                        }));
+                            reportTimer.Restart();
+                            main.Dispatcher.InvokeAsync(() => main.label1_Copy.Text = $"Loading locked files: {done}/{total}");
+                        }
+                    }
+                }));
 
-                    results.Add(new LockedFileGroupViewModel
-                    {
-                        FilePath = path,
-                        GroupName = groupName,
-                        Processes = processViewModels
-                    });
-
-                    Interlocked.Increment(ref processedCount);
-                    progress?.Report((processedCount, total));
-                }
-
-                if (System.Windows.Application.Current != null)
-                {
-                    await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        foreach (var item in results)
-                            main.LockedFileGroups.Add(item);
-                    }, DispatcherPriority.Background);
-                }
-                else
-                {
-                    foreach (var item in results)
-                        main.LockedFileGroups.Add(item);
-                }
+                return results.OrderBy(r => r.GroupName).ThenBy(r => r.Path).ToList();
             }
 
             public async Task run()
             {
-                var progress = new Progress<(int current, int total)>(async p =>
+                List<string> entries = await main.Dispatcher.InvokeAsync(() => main.paths.ToList());
+                List<LockedFileInfo> lockedFiles = await CheckWhoUsesMultipleAsync(entries);
+
+                var allItems = new List<LockedProcessViewModel>();
+                var added = new HashSet<string>();
+                foreach (var file in lockedFiles)
                 {
-                    await main.Dispatcher.InvokeAsync(() =>
+                    foreach (var proc in file.Processes)
                     {
-                        main.label1_Copy.Text = $"Loading locked files: {p.current}/{p.total}";
-                    });
-                });
- 
-        string.Join("\n", main.paths.Take(5));
-                await CheckWhoUsesMultipleAsync(main.paths, progress);
+                        if (!added.Add($"{proc.Id}|{file.Path}"))
+                            continue;
+
+                        allItems.Add(new LockedProcessViewModel
+                        {
+                            FilePath = file.Path + " " + file.SizeText,
+                            FilePathWithoutSize = file.Path,
+                            GroupName = file.GroupName,
+                            DisplayName = proc.Id == "0" ? "No locking process found (delete will be retried)" : $"{proc.Name} (PID {proc.Id})",
+                            Id = proc.Id,
+                            IsChecked = true,
+                            OnCheckedChanged = (model, state) =>
+                            {
+                                string key = model.FilePathWithoutSize + "=" + model.Id + "=" + model.DisplayName;
+                                if (state)
+                                {
+                                    if (!main.paths.Contains(key))
+                                        main.paths.Add(key);
+                                }
+                                else
+                                {
+                                    main.paths.RemoveAll(p =>
+                                        main.stringtokenizer(p, "=", 0).Equals(model.FilePathWithoutSize, StringComparison.OrdinalIgnoreCase));
+                                }
+                            }
+                        });
+                    }
+                }
 
                 await main.Dispatcher.InvokeAsync(() =>
                 {
-                    var allItems = new List<LockedProcessViewModel>();
-                    var added = new HashSet<string>();
-
-                    foreach (var g in main.LockedFileGroups)
-                    {
-                        string fullPath = g.FilePath;
-
-                        FileInfo info = null;
-                        string filesize = "0 Byte";
-                        try
-                        {
-                            if (System.IO.File.Exists(fullPath))
-                            {
-                                info = new FileInfo(fullPath);
-                                filesize = main.formatsize(info.Length);
-                            }
-                        }
-                        catch { }
-
-                        if (info == null)
-                            continue;
-
-                        foreach (var proc in g.Processes)
-                        {
-                            string uniqueKey = $"{proc.Id}|{fullPath}";
-
-                            if (!added.Add(uniqueKey))
-                                continue;
-
-                            allItems.Add(new LockedProcessViewModel
-                            {
-                                FilePath = fullPath + " " + filesize,
-                                FilePathWithoutSize = fullPath,
-                                GroupName = g.GroupName,
-                                DisplayName = proc.DisplayName,
-                                Id = proc.Id,
-                                IsChecked = true,
-                                OnCheckedChanged = (model, state) =>
-                                {
-                                    string key = model.FilePathWithoutSize + "=" + model.Id + "=" + model.DisplayName;
-                                    if (state)
-                                    {
-                                        if (!main.paths.Contains(key))
-                                            main.paths.Add(key);
-                                    }
-                                    else
-                                    {
-                                        main.paths.RemoveAll(p =>
-                                            main.stringtokenizer(p, "=", 0).Equals(model.FilePathWithoutSize, StringComparison.OrdinalIgnoreCase));
-                                    }
-                                }
-                            });
-                        }
-                    }
-
+                    main.LockedFileGroups.Clear();
                     main._allLockedFileGroups = allItems;
-                    main.LockedProcesses.Clear();
-
-                    foreach (var item in allItems)
-                        main.LockedProcesses.Add(item);
-
-                    main._itemsLoaded = main.LockedProcesses.Count;
+                    main.LockedProcesses = new ObservableCollection<LockedProcessViewModel>(allItems);
+                    main._itemsLoaded = allItems.Count;
 
                     var cvs = new CollectionViewSource { Source = main.LockedProcesses };
                     cvs.GroupDescriptions.Add(new PropertyGroupDescription(nameof(LockedProcessViewModel.GroupName)));
@@ -1828,11 +1728,7 @@ namespace Multron_Win_Cleaner
                     var view = cvs.View;
                     string search = (main.SearchBox.Text ?? "").Trim().ToLower();
 
-                    if (string.IsNullOrWhiteSpace(search))
-                    {
-                        view.Filter = null;
-                    }
-                    else
+                    if (!string.IsNullOrWhiteSpace(search))
                     {
                         view.Filter = item =>
                         {
@@ -1844,18 +1740,13 @@ namespace Multron_Win_Cleaner
                         };
                     }
 
-                    view.Refresh();
                     main.groupedProcesses = cvs;
                     main.listBoxProcesses.ItemsSource = view;
 
-                    var stillLockedPaths = main.LockedFileGroups
-                        .Select(g => g.FilePath)
-                        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                    var stillLockedPaths = lockedFiles.Select(f => f.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                    main.paths.RemoveAll(p => !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
 
-                    main.paths.RemoveAll(p =>
-                        !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
-
-                    main.label1_Copy.Text = $"Locked Files: {main.LockedFileGroups.Count} files, {allItems.Count} processes";
+                    main.label1_Copy.Text = $"Locked Files: {lockedFiles.Count} files, {allItems.Count} processes";
                 });
             }
         }

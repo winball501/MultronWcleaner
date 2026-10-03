@@ -39,6 +39,11 @@ namespace MultronWinCleaner.Processes
         int logscan = 0;
         int olderindex = 0;
         int accessindex = 0;
+        bool filterByAccess;
+        bool filterByAge;
+        int customAccessDays;
+        int customAgeDays;
+        static readonly EnumerationOptions ScanEnumeration = new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint };
         CancellationTokenSource cts = new CancellationTokenSource();
         List<(string file, long size, string path, int days, string date, string modified)> checkboxData = new List<(string file, long size, string path, int days, string date, string modified)>();
 
@@ -457,8 +462,8 @@ namespace MultronWinCleaner.Processes
 
         
         public static Task<string> RunDismAnalyzeComponentStoreAsync(
-            CancellationToken externalToken, ProgressBar progressBar, int timeoutMinutes = 1)
-            => RunDismCommandWithProgressAsync("/Online /Cleanup-Image /AnalyzeComponentStore /NoRestart", externalToken, progressBar, timeoutMinutes);
+            CancellationToken externalToken, ProgressBar progressBar, int timeoutMinutes = 10)
+            => RunDismCommandWithProgressAsync("/English /Online /Cleanup-Image /AnalyzeComponentStore /NoRestart", externalToken, progressBar, timeoutMinutes);
 
 
         private static readonly Regex ExtraSizeRx = new Regex(
@@ -531,6 +536,11 @@ namespace MultronWinCleaner.Processes
                 {
 
                     olderindex = main.settings.cmbAgePreset.SelectedIndex;
+                    accessindex = main.settings.cmbAccessPreset.SelectedIndex;
+                    filterByAccess = main.settings.AccessScan.IsChecked == true;
+                    filterByAge = main.settings.OldScan.IsChecked == true;
+                    int.TryParse(main.settings.txtCustomAccess.Text, out customAccessDays);
+                    int.TryParse(main.settings.txtCustomDay.Text, out customAgeDays);
                     var task = ScandotsAsync("Scanning", cts.Token);
                     main.wrapPanelDirectories.Visibility = Visibility.Visible;
                     main.ScrollViewerDirectories.Visibility = Visibility.Visible;
@@ -567,6 +577,7 @@ namespace MultronWinCleaner.Processes
                                 await System.IO.File.WriteAllTextAsync(outputPath, output);
 
                                 var sizes = ParseSizes(output);
+                                bool sizesFound = sizes.BackupsAndDisabledFeatures >= 0 || sizes.CacheAndTemporaryData >= 0;
                                 long backups = Math.Max(0, sizes.BackupsAndDisabledFeatures);
                                 long cache = Math.Max(0, sizes.CacheAndTemporaryData);
                                 long total = cache + backups;
@@ -582,7 +593,7 @@ namespace MultronWinCleaner.Processes
                                     else
                                     {
                                         checkboxData.Add(("Dism.exe=", total, "Dism Command: /Online /Cleanup-Image /StartComponentCleanup", 0, "", ""));
-                                        dropscanmessage("Dism.exe scan completed! " + main.formatsize(total), "#107c10");
+                                        dropscanmessage(sizesFound ? "Dism.exe scan completed! " + main.formatsize(total) : "Dism.exe could not read the component store size (see dism_scan.log). The cleanup still runs if it stays ticked.", sizesFound ? "#107c10" : "#D83B01");
                                     }
                                 });
                             }
@@ -603,7 +614,7 @@ namespace MultronWinCleaner.Processes
                             dropscanmessage("Checking component store health (Dism.exe /ScanHealth)...", "#0078d7");
 
                             string output = await RunDismCommandWithProgressAsync(
-                                "/Online /Cleanup-Image /ScanHealth /NoRestart",
+                                "/English /Online /Cleanup-Image /ScanHealth /NoRestart",
                                 main.dismcancel.Token,
                                 main.progressBar1,
                                 timeoutMinutes: 10);
@@ -897,19 +908,10 @@ namespace MultronWinCleaner.Processes
                 double modifiedDays = (DateTime.Now - modifiedDate).TotalDays;
                 double accessDays = (DateTime.Now - accessDate).TotalDays;
                  
-                bool isAccessChecked = false;
-                bool isOldChecked = false;
-                int customAccess = 0;
-                int customOld = 0;
-                 
-                await main.Dispatcher.InvokeAsync(() =>
-                {
-                    isAccessChecked = main.settings.AccessScan.IsChecked == true;
-                    isOldChecked = main.settings.OldScan.IsChecked == true;
-
-                    int.TryParse(main.settings.txtCustomAccess.Text, out customAccess);
-                    int.TryParse(main.settings.txtCustomDay.Text, out customOld);
-                });
+                bool isAccessChecked = filterByAccess;
+                bool isOldChecked = filterByAge;
+                int customAccess = customAccessDays;
+                int customOld = customAgeDays;
 
                 bool shouldAdd = false;
                  
@@ -944,19 +946,16 @@ namespace MultronWinCleaner.Processes
                 } 
                 if (shouldAdd)
                 {
-                    await main.Dispatcher.InvokeAsync(() =>
-                    {
-                        totalsize += fSize;
-                        currentscan += fSize;
+                    totalsize += fSize;
+                    currentscan += fSize;
 
-                        if (process.Contains("Deep Log Scanner Result"))
-                        {
-                            main.logfiles.Add(file);
-                            deeplogscantotal += fSize;
-                        }
-                         
-                        checkboxData.Add((file, fSize, path, (int)modifiedDays, creationTime.ToString(), modifiedDate.ToString()));
-                    });
+                    if (process.Contains("Deep Log Scanner Result"))
+                    {
+                        main.logfiles.Add(file);
+                        deeplogscantotal += fSize;
+                    }
+                     
+                    checkboxData.Add((file, fSize, path, (int)modifiedDays, creationTime.ToString(), modifiedDate.ToString()));
                 }
             }
             catch (Exception ex)
@@ -998,7 +997,7 @@ namespace MultronWinCleaner.Processes
 
                         if (!main.settings.excludedfiles.Contains(file))
                         {
-                            if (main.extensions.Split('.').Any(ext => file.EndsWith($".{ext}")))
+                            if (main.extensions.Split('.').Any(ext => file.EndsWith($".{ext}", StringComparison.OrdinalIgnoreCase)))
                             {
                                 await addtocheckbox(file, path, "Deep Log Scanner Result");
                             }
@@ -1033,7 +1032,7 @@ namespace MultronWinCleaner.Processes
                 if (Directory.Exists(path))
                 {
                      
-                    foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+                    foreach (string file in Directory.EnumerateFiles(path, "*", ScanEnumeration))
                     {
                         if (main.cancelstatus.IsCancellationRequested) break;
                         if (!main.settings.excludedfiles.Contains(file))

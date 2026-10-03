@@ -39,6 +39,19 @@ namespace MultronWinCleaner.Processes
         private int shortcut;
         private long totalsize;
         int winsxs = 0;
+        private volatile string dotsText;
+        private HashSet<string> checkedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> lockedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private string currentItem;
+        private int itemFiles;
+        private long itemBytes;
+        private int itemLocked;
+        private int totalFiles;
+        private long totalBytes;
+        private int totalLocked;
+        private int cleanedItems;
+        private int skippedItems;
+        private readonly Stopwatch cleanTimer = new Stopwatch();
         private static readonly SolidColorBrush BLUE = CreateBrush("#0078d7");
         private static readonly SolidColorBrush GREEN = CreateBrush("#00d700");
 
@@ -64,20 +77,20 @@ namespace MultronWinCleaner.Processes
                         break;
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + ".";
+                        main.label1_Copy.Text = (dotsText ?? text) + ".";
                         main.label1_Copy.Foreground = BLUE;
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "..";
+                        main.label1_Copy.Text = (dotsText ?? text) + "..";
                     });
 
                     await Task.Delay(1000, cancellationToken);
 
                     await main.Dispatcher.InvokeAsync(() => {
-                        main.label1_Copy.Text = text + "...";
+                        main.label1_Copy.Text = (dotsText ?? text) + "...";
                     });
 
                     await Task.Delay(1000, cancellationToken);
@@ -178,8 +191,12 @@ namespace MultronWinCleaner.Processes
                 main.buttonReset.Visibility = Visibility.Hidden;
                 main.progressBar1.Value = 0;
                 main.AnimateIcon(true);
+                checkedPaths = new HashSet<string>(
+                    main.viewModel.Groups.Where(g => g.allFiles != null).SelectMany(g => g.allFiles).Where(f => f.IsChecked).Select(f => f.Path),
+                    StringComparer.OrdinalIgnoreCase);
             });
 
+            cleanTimer.Restart();
             var task = ScandotsAsync("Cleaning", cts.Token);
             main.database.RemoveAll(item => item.EndsWith("=logscan"));
             int totalCount = main.database.Count;
@@ -190,47 +207,26 @@ namespace MultronWinCleaner.Processes
 
             if (main.logfiles.Count > 0)
             {
-                var status = await AddStatusTextBlock("Cleaning: Finded Log Files in C:\\ ");
+                var status = await AddStatusTextBlock($"Cleaning: Found Log Files in C:\\ ({main.logfiles.Count} files)");
                 int current = 0;
+                StartItem("Deep Log Files");
 
                 foreach (string logfile in main.logfiles)
                 {
-                    try
-                    {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
-                        var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, logfile, StringComparison.OrdinalIgnoreCase));
+                    if (main.cancelclean == 2) break;
 
-                        if (fileToDelete != null)
-                        {
-                            if (!main.settings.excludedfiles.Contains(logfile))
-                            {
-                                if (File.Exists(logfile))
-                                {
-                                    File.Delete(logfile);
-                                }
-                            }
-                        }
-
-                        await main.Dispatcher.InvokeAsync(() =>
-                        {
-                            main.label1_Copy.Text = $"Cleaning {current} \\ {main.logfiles.Count}";
-                        });
-
-                        current++;
-                        await UpdateProgress(current, main.logfiles.Count);
-                    }
-                    catch (Exception Ex)
-                    {
-                        if (File.Exists(logfile))
-                        {
-                            catchlockedfile(Ex, logfile, "Deep Log Scan Result");
-                        }
-                    }
+                    TryDeleteFile(logfile, "Deep Log Scan Result");
+                    current++;
+                    dotsText = $"Cleaning: Deep Log Files ({current} / {main.logfiles.Count})";
+                    await UpdateProgress(current, main.logfiles.Count);
                 }
 
+                FinishItem();
                 await main.Dispatcher.InvokeAsync(() =>
                 {
-                    status.Text = $"Cleaned: Finded Log Files in C:\\";
+                    status.Text = $"Cleaned: Found Log Files in C:\\ ({DetailText()})";
+                    if (itemLocked > 0)
+                        status.Foreground = Brushes.Goldenrod;
                 });
             }
 
@@ -263,7 +259,8 @@ namespace MultronWinCleaner.Processes
                     {
                         
                         var restoreGroup = main.viewModel.Groups.FirstOrDefault(g =>
-                            g.Path != null && g.Path.Equals("Dism Command: /Online /Cleanup-Image /RestoreHealth", StringComparison.OrdinalIgnoreCase));
+                            g.Path != null && g.Path.StartsWith("Dism Command: /Online /Cleanup-Image /RestoreHealth", StringComparison.OrdinalIgnoreCase)
+                            && g.Path.Contains("recommended", StringComparison.OrdinalIgnoreCase));
 
                         bool shouldRun = restoreGroup != null
                                           && restoreGroup.allFiles != null
@@ -279,13 +276,43 @@ namespace MultronWinCleaner.Processes
                         }
                         else
                         {
+                            dotsText = "Cleaning: Dism.exe (Restore Health)";
                             await AddStatusTextBlock("Running Dism.exe (Restore Health)");
                             string cmdItem = $"cmd.exe=/c Dism.exe {dismArguments}";
                             await ProcessCommandAsync(cmdItem);
                             iscleaned = 3;
                         }
                     }
-              
+                    else if (winsxs == 0)
+                    {
+                        var cleanupGroup = main.viewModel.Groups.FirstOrDefault(g =>
+                            g.Path != null && g.Path.Equals("Dism Command: /Online /Cleanup-Image /StartComponentCleanup", StringComparison.OrdinalIgnoreCase));
+
+                        bool shouldRun = cleanupGroup != null
+                                          && cleanupGroup.allFiles != null
+                                          && cleanupGroup.allFiles.Any(f => f.IsChecked);
+
+                        if (!shouldRun)
+                        {
+                            var skipBlock = await AddStatusTextBlock("Skipped: Dism.exe StartComponentCleanup (not scanned or unchecked)");
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                skipBlock.Foreground = GREEN;
+                            });
+                        }
+                        else
+                        {
+                            dotsText = "Cleaning: Dism.exe (WinSxS)";
+                            var runBlock = await AddStatusTextBlock($"Cleaning: Dism.exe {dismArguments}");
+                            await ProcessCommandAsync($"cmd.exe=/c Dism.exe {dismArguments}");
+                            await main.Dispatcher.InvokeAsync(() =>
+                            {
+                                runBlock.Text = $"Execute Done: Dism.exe {dismArguments}";
+                            });
+                            iscleaned = 3;
+                        }
+                        winsxs = 1;
+                    }
                 }
                
                 else if (name.Contains("sfc.exe", StringComparison.OrdinalIgnoreCase))
@@ -307,6 +334,7 @@ namespace MultronWinCleaner.Processes
                     }
                     else
                     {
+                        dotsText = "Cleaning: sfc.exe /scannow";
                         await AddStatusTextBlock("Running sfc.exe /scannow (this may take several minutes)");
                         await ProcessShortcutAsync("cmd.exe=/c sfc /scannow");
                         iscleaned = 3;
@@ -314,130 +342,132 @@ namespace MultronWinCleaner.Processes
                 }
                 else if (Directory.Exists(path) || File.Exists(path))
                 {
-                   
+                    dotsText = $"Cleaning: {name}";
+                    var statusBlock = await AddStatusTextBlock($"Cleaning: {name}: {path}");
+                    StartItem(name);
+
                     if (File.Exists(path))
                     {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
-                        var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, path, StringComparison.OrdinalIgnoreCase));
-
-                        if (fileToDelete != null)
+                        if (!checkedPaths.Contains(path) || main.settings.excludedfiles.Contains(path))
                         {
-                            if (!main.settings.excludedfiles.Contains(path))
-                            {
-                                if (File.Exists(path))
-                                {
-                                    try
-                                    {
-                                        File.Delete(path);
-                                        iscleaned = 1;
-                                    }
-                                    catch (Exception Ex)
-                                    {
-                                        if (File.Exists(path))
-                                        {
-                                            catchlockedfile(Ex, path, name);
-                                        }
-                                        iscleaned = 5;
-                                        catchexception(Ex.Message + " " + Ex.StackTrace);
-                                    }
-                                }
-                            }
+                            iscleaned = 0;
                         }
                         else
                         {
-                            iscleaned = 4;  
+                            TryDeleteFile(path, name);
+                            iscleaned = itemLocked > 0 ? 5 : 1;
                         }
                     }
-                    else if (Directory.Exists(path))
+                    else
                     {
-                        var targetGroup = main.viewModel.Groups.FirstOrDefault(g => g.Path != null && g.Path.StartsWith(path, StringComparison.OrdinalIgnoreCase));
+                        var targetGroup = main.viewModel.Groups.FirstOrDefault(g => g.Path != null && g.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 
                         if (targetGroup == null || targetGroup.allFiles == null || targetGroup.allFiles.Count == 0)
                         {
                             iscleaned = 2;
                         }
-                        else
+                        else if (targetGroup.allFiles.Any(f => f.IsChecked))
                         {
-                            bool allUnchecked = targetGroup.allFiles.All(f => !f.IsChecked);
-                           
-
-                            if (!allUnchecked)
-                            {
-                                await CleanDirectory(path, name);
-                                await DeleteEmptyDirectories(path);
-                                iscleaned = 1;
-                            }
+                            await CleanDirectory(path, name);
+                            await DeleteEmptyDirectories(path);
+                            iscleaned = itemLocked > 0 ? 6 : 1;
                         }
-                    }
-                    else
-                    {
-                        iscleaned = 4;
                     }
 
-                    try
-                    {
-                        try
-                        {
-                       
-                            var statusBlock = await AddStatusTextBlock($"Cleaning: {name}: {path}");
+                    FinishItem();
+                    if (iscleaned == 0)
+                        skippedItems++;
+                    string detail = DetailText();
 
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                if (iscleaned == 0)
-                                {
-                                    statusBlock.Text = $"Ignored: {name}: {path}";
-                                    statusBlock.Foreground = GREEN;
-                                }
-                                else if (iscleaned == 2)
-                                {
-                                    statusBlock.Text = $"Folder Empty: {name}: {path}";
-                                    statusBlock.Foreground = Brushes.Goldenrod;
-                                }
-                                else if (name.Contains("Dism.exe"))
-                                { 
-                                    statusBlock.Text = $"{name} Operation Done. Log files in current directory of mwc.";
-                                }
-                                else if (iscleaned == 1)
-                                {
-                                    statusBlock.Text = $"Cleaned: {name}: {path}";
-                                    statusBlock.Foreground = BLUE;
-                                }
-                                else if (iscleaned == 3)
-                                {
-                                    statusBlock.Text = $"Execute Done: {name}: {path}";
-                                    statusBlock.Foreground = BLUE;
-                                }
-                                else if (iscleaned == 4)
-                                {
-                                    statusBlock.Text = $"Does not exist: {name}: {path}";
-                                    statusBlock.Foreground = Brushes.Red;
-                                }
-                                else if (iscleaned == 5)
-                                {
-                                    statusBlock.Text = $"Locked: {name}: {path}";
-                                    statusBlock.Foreground = Brushes.Red;
-                                    iscleaned = 4;
-                                }
-                            });
-                        }
-                        catch (Exception Ex)
-                        {
-                            if (File.Exists(path))
-                            {
-                                catchlockedfile(Ex, path, name);
-                            }
-                        }
-                    }
-                    catch (Exception Ex)
+                    await main.Dispatcher.InvokeAsync(() =>
                     {
-                        if (File.Exists(path))
+                        if (iscleaned == 0)
                         {
-                            catchlockedfile(Ex, path, name);
+                            statusBlock.Text = $"Ignored: {name}: {path}";
+                            statusBlock.Foreground = GREEN;
                         }
-                    }
+                        else if (iscleaned == 2)
+                        {
+                            statusBlock.Text = $"Folder Empty: {name}: {path}";
+                            statusBlock.Foreground = Brushes.Goldenrod;
+                        }
+                        else if (iscleaned == 1)
+                        {
+                            statusBlock.Text = $"Cleaned: {name}: {path} ({detail})";
+                            statusBlock.Foreground = BLUE;
+                        }
+                        else if (iscleaned == 5)
+                        {
+                            statusBlock.Text = $"Locked: {name}: {path}";
+                            statusBlock.Foreground = Brushes.Red;
+                        }
+                        else if (iscleaned == 6)
+                        {
+                            statusBlock.Text = $"Partly Cleaned: {name}: {path} ({detail})";
+                            statusBlock.Foreground = Brushes.Goldenrod;
+                        }
+                    });
                 }
             }
+
+            cleanTimer.Stop();
+            TimeSpan elapsed = cleanTimer.Elapsed;
+            string summaryText = $"{(main.cancelclean == 2 ? "Cleaning canceled" : "Summary")}: {totalFiles} files deleted ({main.formatsize(totalBytes)}) from {cleanedItems} locations, {totalLocked} locked files, {skippedItems} unticked locations skipped. Took {(int)elapsed.TotalMinutes}m {elapsed.Seconds}s";
+            var summaryBlock = await AddStatusTextBlock(summaryText);
+            await main.Dispatcher.InvokeAsync(() =>
+            {
+                summaryBlock.FontWeight = FontWeights.Bold;
+                summaryBlock.Foreground = totalLocked > 0 ? Brushes.Goldenrod : GREEN;
+            });
             await FinalizeCleaning();
+        }
+        private void StartItem(string name)
+        {
+            currentItem = name;
+            itemFiles = 0;
+            itemBytes = 0;
+            itemLocked = 0;
+        }
+        private void FinishItem()
+        {
+            totalFiles += itemFiles;
+            totalBytes += itemBytes;
+            totalLocked += itemLocked;
+            if (itemFiles > 0)
+                cleanedItems++;
+        }
+        private string DetailText()
+        {
+            string text = $"{itemFiles} {(itemFiles == 1 ? "file" : "files")}, {main.formatsize(itemBytes)}";
+            return itemLocked > 0 ? $"{text}, {itemLocked} locked" : text;
+        }
+        private void TryDeleteFile(string file, string groupName)
+        {
+            if (!checkedPaths.Contains(file) || main.settings.excludedfiles.Contains(file))
+                return;
+
+            try
+            {
+                FileInfo info = new FileInfo(file);
+                if (!info.Exists)
+                    return;
+
+                long length = info.Length;
+                info.Delete();
+                itemFiles++;
+                itemBytes += length;
+                if (itemFiles % 50 == 0)
+                    dotsText = $"Cleaning: {currentItem} ({itemFiles} files)";
+            }
+            catch (Exception Ex)
+            {
+                if (File.Exists(file))
+                {
+                    itemLocked++;
+                    catchlockedfile(Ex, file, groupName);
+                }
+                catchexception(Ex.Message + " " + Ex.StackTrace);
+            }
         }
         public void catchlockedfile(Exception ex, string file, string groupName)
         {
@@ -454,25 +484,9 @@ namespace MultronWinCleaner.Processes
                 isLocked = true;
             }
 
-            if (isLocked)
+            if (isLocked && lockedFiles.Add(file))
             {
-                try
-                {
-                    var procs = whousef.WhoIsLocking(file);
-                    if (procs != null && procs.Count > 0)
-                    {
-                        foreach (var proc in procs)
-                            main.paths.Add(file + "=" + proc.Id + "=" + proc.ProcessName + "=" + groupName);
-                    }
-                    else
-                    {
-                        main.paths.Add(file + "=" + "0" + "=" + "Unknown Process" + "=" + groupName);
-                    }
-                }
-                catch
-                {
-                    main.paths.Add(file + "=" + "0" + "=" + "Unknown Process" + "=" + groupName);
-                }
+                main.paths.Add(file + "=" + "0" + "=" + "Unknown Process" + "=" + groupName);
             }
         }
         public void catchexception(string message)
@@ -538,11 +552,11 @@ namespace MultronWinCleaner.Processes
 
         private async Task CleanDirectory(string path, string name)
         {
-
             try
             {
                 foreach (var subDir in Directory.GetDirectories(path))
                 {
+                    if (main.cancelclean == 2) return;
                     await CleanDirectory(subDir, name);
                 }
             }
@@ -554,42 +568,14 @@ namespace MultronWinCleaner.Processes
             {
                 foreach (var file in Directory.GetFiles(path))
                 {
-                    try
-                    {
-                        var checkedFiles = main.viewModel.Groups.SelectMany(g => g.allFiles).Where(f => f.IsChecked).ToList();
-
-
-                        var fileToDelete = checkedFiles.FirstOrDefault(f => string.Equals(f.Path, file, StringComparison.OrdinalIgnoreCase));
-
-                        if (fileToDelete != null)
-                        {
-                            if (!main.settings.excludedfiles.Contains(file))
-                            {
-                                if (File.Exists(file))
-                                {
-                                    File.Delete(file);
-                                }
-                            }
-                        }
-
-                    }
-                    catch (Exception Ex)
-                    {
-                        if (File.Exists(path))
-                            catchlockedfile(Ex, path, name);
-                        catchexception(Ex.Message + " " + Ex.StackTrace);
-                    }
-
+                    if (main.cancelclean == 2) return;
+                    TryDeleteFile(file, name);
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
 
             }
-        
-
-              
-           
-        
         }
         public async Task DeleteEmptyDirectories(string parentPath)
         {
