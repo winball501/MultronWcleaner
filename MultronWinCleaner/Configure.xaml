@@ -1,4 +1,4 @@
-﻿<Window x:Class="MultronWinCleaner.Configure"
+﻿<Window x:Class="MultronWinCleaner.Configure" Icon="pack://application:,,,/Assets/mwc_utilities.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Configure Turbo Boost Services"
@@ -22,7 +22,7 @@
                 </Grid.ColumnDefinitions>
 
              
-                <TextBlock Text="Configure Optimization Services" Foreground="{DynamicResource TitleBarText}" VerticalAlignment="Center" FontWeight="Bold" Margin="12,0,0,0"
+                <TextBlock x:Name="TitleText" Text="Configure Optimization Services" Foreground="{DynamicResource TitleBarText}" VerticalAlignment="Center" FontWeight="Bold" Margin="12,0,0,0"
                            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"/>
 
                
@@ -46,7 +46,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
  
-                <TextBlock Grid.Row="0" Text="Select services to disable during Optimization:" 
+                <TextBlock x:Name="HeaderText" Grid.Row="0" TextWrapping="Wrap" Text="Select the services to pause during optimization:" 
                            FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
 
                
@@ -54,10 +54,13 @@
                     <ItemsControl x:Name="ServicesList" Background="Transparent">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox Content="{Binding ServiceName}" 
-                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" 
-                                          FontSize="14" Foreground="{DynamicResource TextPrimary}" 
-                                          Margin="5,2"/>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="5,4" VerticalContentAlignment="Top">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Title}" FontSize="14" Foreground="{DynamicResource TextPrimary}"/>
+                                        <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" MaxWidth="320" Visibility="{Binding DescriptionVisibility}"/>
+                                    </StackPanel>
+                                </CheckBox>
+
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

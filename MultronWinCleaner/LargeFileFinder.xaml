@@ -178,11 +178,14 @@
                             </DockPanel>
 
                             <WrapPanel Name="CategoryWrapPanel">
-                                <CheckBox x:Name="ChkVideos" Content="Videos (.mp4, .mkv, .avi...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkMusic" Content="Music (.mp3, .wav, .flac...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkPhotos" Content="Photos (.jpg, .png, .gif...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkArchives" Content="Archives (.zip, .rar, .7z...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkDocuments" Content="Documents (.pdf, .docx, .txt...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkVideos" Content="Videos (.mp4, .mkv, .avi, .ts...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkMusic" Content="Music (.mp3, .wav, .flac, .opus...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkPhotos" Content="Photos (.jpg, .png, .heic, .raw...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkArchives" Content="Archives (.zip, .rar, .7z, .zst...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkDocuments" Content="Documents (.pdf, .docx, .epub, .pst...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkPrograms" Content="Programs and Installers (.exe, .msi, .msix, .apk...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkDiskImages" Content="Disk Images and VMs (.iso, .vhdx, .vmdk, .wim...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkBackups" Content="Backups, Dumps and Logs (.bak, .dmp, .log, .db...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
                                 <CheckBox x:Name="ChkOthers" Content="Others (Other extensions)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
                             </WrapPanel>
                         </StackPanel>

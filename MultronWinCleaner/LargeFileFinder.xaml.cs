@@ -23,27 +23,46 @@ namespace MultronWinCleaner
          
         private static readonly HashSet<string> VideoExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".m4v", ".mpg", ".mpeg", ".3gp"
+            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".m4v", ".mpg", ".mpeg", ".3gp", ".ts",
+            ".m2ts", ".mts", ".vob", ".ogv", ".rmvb", ".divx", ".f4v", ".asf"
         };
 
         private static readonly HashSet<string> MusicExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a", ".alac", ".aiff", ".opus"
+            ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a", ".alac", ".aiff", ".opus", ".ape", ".mid",
+            ".midi", ".amr", ".m4b", ".dsf"
         };
 
         private static readonly HashSet<string> PhotoExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff", ".raw", ".ico", ".heic"
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tif", ".tiff", ".raw", ".ico", ".heic",
+            ".heif", ".avif", ".jfif", ".cr2", ".cr3", ".nef", ".arw", ".dng", ".orf", ".rw2", ".psd", ".xcf"
         };
 
         private static readonly HashSet<string> ArchiveExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".zip", ".rar", ".7z", ".tar", ".gz", ".iso", ".cab", ".bz2", ".xz", ".tgz"
+            ".zip", ".rar", ".7z", ".tar", ".gz", ".cab", ".bz2", ".xz", ".tgz", ".zst", ".lz", ".lzma", ".z"
         };
 
         private static readonly HashSet<string> DocumentExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".csv", ".odt", ".ods", ".odp"
+            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".csv", ".odt", ".ods", ".odp",
+            ".epub", ".mobi", ".md", ".xps", ".one", ".pst", ".ost"
+        };
+
+        private static readonly HashSet<string> ProgramExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".exe", ".msi", ".msix", ".msixbundle", ".appx", ".appxbundle", ".msu", ".apk", ".xapk", ".dmg", ".deb", ".rpm", ".jar"
+        };
+
+        private static readonly HashSet<string> DiskImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".iso", ".img", ".vhd", ".vhdx", ".vmdk", ".vdi", ".qcow2", ".ova", ".wim", ".esd", ".swm", ".avhdx"
+        };
+
+        private static readonly HashSet<string> BackupExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".bak", ".backup", ".old", ".tmp", ".dmp", ".mdmp", ".log", ".etl", ".db", ".sqlite", ".mdf", ".ldf", ".sql"
         };
 
         public LargeFileFinder()
@@ -161,9 +180,13 @@ namespace MultronWinCleaner
             bool allowPhotos = ChkPhotos.IsChecked == true;
             bool allowArchives = ChkArchives.IsChecked == true;
             bool allowDocuments = ChkDocuments.IsChecked == true;
+            bool allowPrograms = ChkPrograms.IsChecked == true;
+            bool allowDiskImages = ChkDiskImages.IsChecked == true;
+            bool allowBackups = ChkBackups.IsChecked == true;
             bool allowOthers = ChkOthers.IsChecked == true;
 
-            if (!allowVideos && !allowMusic && !allowPhotos && !allowArchives && !allowDocuments && !allowOthers)
+            if (!allowVideos && !allowMusic && !allowPhotos && !allowArchives && !allowDocuments &&
+                !allowPrograms && !allowDiskImages && !allowBackups && !allowOthers)
             {
                 ScanResultLabel.Text = "Please select at least one file type category to scan.";
                 return;
@@ -250,7 +273,10 @@ namespace MultronWinCleaner
                             bool isPhoto = PhotoExtensions.Contains(ext);
                             bool isArchive = ArchiveExtensions.Contains(ext);
                             bool isDoc = DocumentExtensions.Contains(ext);
-                            bool isOther = !isVideo && !isMusic && !isPhoto && !isArchive && !isDoc;
+                            bool isProgram = ProgramExtensions.Contains(ext);
+                            bool isDiskImage = DiskImageExtensions.Contains(ext);
+                            bool isBackup = BackupExtensions.Contains(ext);
+                            bool isOther = !isVideo && !isMusic && !isPhoto && !isArchive && !isDoc && !isProgram && !isDiskImage && !isBackup;
 
                             bool matchesCategory =
                                 (isVideo && allowVideos) ||
@@ -258,6 +284,9 @@ namespace MultronWinCleaner
                                 (isPhoto && allowPhotos) ||
                                 (isArchive && allowArchives) ||
                                 (isDoc && allowDocuments) ||
+                                (isProgram && allowPrograms) ||
+                                (isDiskImage && allowDiskImages) ||
+                                (isBackup && allowBackups) ||
                                 (isOther && allowOthers);
 
                             if (!matchesCategory)
@@ -511,6 +540,9 @@ namespace MultronWinCleaner
             ChkPhotos.IsChecked = isChecked;
             ChkArchives.IsChecked = isChecked;
             ChkDocuments.IsChecked = isChecked;
+            ChkPrograms.IsChecked = isChecked;
+            ChkDiskImages.IsChecked = isChecked;
+            ChkBackups.IsChecked = isChecked;
             ChkOthers.IsChecked = isChecked;
         }
 

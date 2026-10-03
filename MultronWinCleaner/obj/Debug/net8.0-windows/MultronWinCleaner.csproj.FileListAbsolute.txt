@@ -103,3 +103,8 @@ C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Ch
 C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.runtimeconfig.json
 C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.dll
 C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\b7f647dc-f15b-4c66-92fd-e36d9062bcb4\scratchpad\build_gh\MultronWinCleaner.pdb
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\c4b18ba4-1509-4040-a6f5-612535ed4ccf\scratchpad\build_GitHub\MultronWinCleaner.exe
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\c4b18ba4-1509-4040-a6f5-612535ed4ccf\scratchpad\build_GitHub\MultronWinCleaner.deps.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\c4b18ba4-1509-4040-a6f5-612535ed4ccf\scratchpad\build_GitHub\MultronWinCleaner.runtimeconfig.json
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\c4b18ba4-1509-4040-a6f5-612535ed4ccf\scratchpad\build_GitHub\MultronWinCleaner.dll
+C:\Users\winball_501\AppData\Local\Temp\claude\C--Users-winball-501-Documents-Changes-Offline-MultronWcleaner\c4b18ba4-1509-4040-a6f5-612535ed4ccf\scratchpad\build_GitHub\MultronWinCleaner.pdb

@@ -20,6 +20,22 @@ namespace MultronWinCleaner
     public partial class Notify : Window
     {
         
+        private readonly Action onClick;
+
+        public Notify(string status, string proc, string cleaned, Action onClick) : this(status, proc, cleaned)
+        {
+            this.onClick = onClick;
+            Cursor = Cursors.Hand;
+        }
+
+        private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (onClick == null)
+                return;
+            Close();
+            onClick();
+        }
+
         public Notify(string status, string proc, string cleaned)
         {
             InitializeComponent();

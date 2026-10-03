@@ -901,6 +901,36 @@ Cursor="Hand"/>
                                         <CheckBox x:Name="Day2" Content="Saturday"  Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
                                         <CheckBox x:Name="Day1" Content="Sunday"    Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
                                     </WrapPanel>
+                                    <StackPanel Margin="0,0,0,14" HorizontalAlignment="Left">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedIndex, ElementName=cmbScheduleType}" Value="3">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <CheckBox x:Name="chkLimitWeeks" Content="Only in selected weeks of the month" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,0,8"/>
+                                        <WrapPanel Margin="26,0,0,0">
+                                            <WrapPanel.Style>
+                                                <Style TargetType="WrapPanel">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked, ElementName=chkLimitWeeks}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </WrapPanel.Style>
+                                            <CheckBox x:Name="Week1" Content="1st week (days 1-7)" IsChecked="True" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                            <CheckBox x:Name="Week2" Content="2nd week (days 8-14)" IsChecked="True" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                            <CheckBox x:Name="Week3" Content="3rd week (days 15-21)" IsChecked="True" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                            <CheckBox x:Name="Week4" Content="4th week (days 22-28)" IsChecked="True" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                            <CheckBox x:Name="Week5" Content="5th week (days 29-31)" IsChecked="True" Style="{DynamicResource CustomCheckBoxStyle}" Margin="0,0,14,8"/>
+                                        </WrapPanel>
+                                    </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
                                         <StackPanel.Style>

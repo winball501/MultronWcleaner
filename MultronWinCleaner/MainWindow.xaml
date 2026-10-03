@@ -529,7 +529,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="MULTRON WIN CLEANER" FontSize="15" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                                 <Border Background="#200078D4" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="v1.24.8 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
+                                    <TextBlock Text="v1.25 beta" FontSize="11" FontWeight="Bold" Foreground="#FF0078D4" />
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -588,6 +588,8 @@
                                         <StackPanel HorizontalAlignment="Center">
                                             <TextBlock x:Name="label1_Copy" Text="Ready for the scan" Foreground="{DynamicResource TextPrimary}" FontSize="14" FontWeight="Medium" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,5"/>
                                             <TextBlock x:Name="labelDiskSize" Text="Size on disk: 0 Byte" Foreground="{DynamicResource TextSecondary}" FontSize="13" FontWeight="Normal" TextAlignment="Center" TextWrapping="Wrap" />
+                                            <TextBlock x:Name="labelStartupClean" Foreground="#FF16A34A" FontSize="13" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed" />
+                                            <TextBlock x:Name="labelAutoClean" Foreground="#FF16A34A" FontSize="13" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,4,0,0" Visibility="Collapsed" />
                                         </StackPanel>
                                     </ScrollViewer>
 
@@ -719,6 +721,207 @@
                                     </Grid>
                                     <ScrollViewer x:Name="Datagridscroll" Panel.ZIndex="2" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Background="{DynamicResource PanelBackground}">
                                         <StackPanel Orientation="Vertical">
+                                            <Border x:Name="ComponentStorePanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#660078D4" Background="#140078D4">
+                                                <DockPanel>
+                                                    <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <Ellipse x:Name="ComponentStoreIcon" Fill="#FF0078D4"/>
+                                                        <TextBlock Text="⚙" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <CheckBox x:Name="ComponentStoreRun" DockPanel.Dock="Right" Content="Clean during cleaning" VerticalAlignment="Center" Margin="12,0,0,0" Visibility="Collapsed" Foreground="{DynamicResource TextPrimary}"/>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="Windows Component Store (DISM)" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                        <TextBlock x:Name="ComponentStoreStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+
+                                            <Border x:Name="ComponentHealthPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#660078D4" Background="#140078D4">
+                                                <DockPanel>
+                                                    <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <Ellipse x:Name="ComponentHealthIcon" Fill="#FF0078D4"/>
+                                                        <TextBlock Text="✚" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <CheckBox x:Name="ComponentHealthRun" DockPanel.Dock="Right" Content="Repair during cleaning" VerticalAlignment="Center" Margin="12,0,0,0" Visibility="Collapsed" Foreground="{DynamicResource TextPrimary}"/>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="Component Store Health (DISM)" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                        <TextBlock x:Name="ComponentHealthStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+
+                                            <Border x:Name="SystemFilesPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#660078D4" Background="#140078D4">
+                                                <DockPanel>
+                                                    <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <Ellipse x:Name="SystemFilesIcon" Fill="#FF0078D4"/>
+                                                        <TextBlock Text="✓" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <CheckBox x:Name="SystemFilesRun" DockPanel.Dock="Right" Content="Repair during cleaning" VerticalAlignment="Center" Margin="12,0,0,0" Visibility="Collapsed" Foreground="{DynamicResource TextPrimary}"/>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="Windows System Files (SFC)" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                        <TextBlock x:Name="SystemFilesStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+
+                                            <Border x:Name="FirewallResultsPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#66DC3545" Background="#14DC3545">
+                                                <StackPanel>
+                                                    <DockPanel>
+                                                        <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                            <Ellipse x:Name="FirewallResultsIcon" Fill="#FFDC3545"/>
+                                                            <Path Data="M12,1 L3,5 V11 C3,16.55 6.84,21.74 12,23 C17.16,21.74 21,16.55 21,11 V5 Z"
+                                                                  Fill="White" Stretch="Uniform" Width="13" Height="14"/>
+                                                        </Grid>
+                                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Button x:Name="FirewallStatusButton" Content="Show Status" Style="{StaticResource ResetButtonStyle}" Visibility="Collapsed"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="FirewallStatusButton_Click"/>
+                                                            <Button x:Name="FirewallResultsToggle" Content="Show Rules" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="FirewallResultsToggle_Click"/>
+                                                            <Button x:Name="FirewallRemoveButton" Content="Remove Rules" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Click="FirewallRemoveButton_Click"/>
+                                                            <Button x:Name="FirewallCancelButton" Content="✕" ToolTip="Skip the firewall rule check" Style="{StaticResource ResetButtonStyle}"
+                                                                    Width="32" Height="32" Padding="0" Margin="8,0,0,0" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"
+                                                                    Visibility="Collapsed" Click="ScanStepCancelButton_Click"/>
+                                                        </StackPanel>
+                                                        <StackPanel VerticalAlignment="Center">
+                                                            <TextBlock Text="Firewall Rules" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                            <TextBlock x:Name="FirewallResultsStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                    <ItemsControl x:Name="FirewallRulesList" Margin="42,10,0,0" Visibility="Collapsed">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="{DynamicResource SecondaryPanelBackground}" CornerRadius="6" Padding="10,6" Margin="0,3">
+                                                                    <StackPanel>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimary}" Margin="0,0,8,0"/>
+                                                                            <TextBlock Text="{Binding Direction}" FontSize="12" Foreground="{DynamicResource TextSecondary}"/>
+                                                                        </StackPanel>
+                                                                        <TextBlock Text="{Binding ApplicationPath}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border x:Name="ShortcutResultsPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#660078D4" Background="#140078D4">
+                                                <StackPanel>
+                                                    <DockPanel>
+                                                        <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                            <Ellipse x:Name="ShortcutResultsIcon" Fill="#FF0078D4"/>
+                                                            <TextBlock Text="↗" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
+                                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Button x:Name="ShortcutStatusButton" Content="Show Status" Style="{StaticResource ResetButtonStyle}" Visibility="Collapsed"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="ShortcutStatusButton_Click"/>
+                                                            <Button x:Name="ShortcutResultsToggle" Content="Show Shortcuts" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="ShortcutResultsToggle_Click"/>
+                                                            <Button x:Name="ShortcutFixButton" Content="Fix Shortcuts" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Click="ShortcutFixButton_Click"/>
+                                                            <Button x:Name="ShortcutCancelButton" Content="✕" ToolTip="Skip the shortcut check" Style="{StaticResource ResetButtonStyle}"
+                                                                    Width="32" Height="32" Padding="0" Margin="8,0,0,0" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"
+                                                                    Visibility="Collapsed" Click="ScanStepCancelButton_Click"/>
+                                                        </StackPanel>
+                                                        <StackPanel VerticalAlignment="Center">
+                                                            <TextBlock Text="Shortcuts" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                            <TextBlock x:Name="ShortcutResultsStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                    <ItemsControl x:Name="ShortcutResultsList" Margin="42,10,0,0" Visibility="Collapsed">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="{DynamicResource SecondaryPanelBackground}" CornerRadius="6" Padding="10,6" Margin="0,3">
+                                                                    <StackPanel>
+                                                                        <StackPanel Orientation="Horizontal">
+                                                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimary}" Margin="0,0,8,0"/>
+                                                                            <TextBlock Text="{Binding Location}" FontSize="12" Foreground="{DynamicResource TextSecondary}"/>
+                                                                        </StackPanel>
+                                                                        <TextBlock Text="{Binding TargetPath}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                                                        <TextBlock Text="{Binding Action}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border x:Name="SecurityResultsPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#660078D4" Background="#140078D4">
+                                                <StackPanel>
+                                                    <DockPanel>
+                                                        <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                            <Ellipse x:Name="SecurityResultsIcon" Fill="#FF0078D4"/>
+                                                            <TextBlock Text="🛡" Foreground="White" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
+                                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <Button x:Name="SecurityStatusButton" Content="Show Status" Style="{StaticResource ResetButtonStyle}" Visibility="Collapsed"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="SecurityStatusButton_Click"/>
+                                                            <Button x:Name="SecurityResultsToggle" Content="Show Issues" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Margin="0,0,8,0" Click="SecurityResultsToggle_Click"/>
+                                                            <Button x:Name="SecurityFixButton" Content="Fix Selected" Style="{StaticResource ResetButtonStyle}"
+                                                                    Padding="14,6" FontSize="12" Click="SecurityFixButton_Click"/>
+                                                            <Button x:Name="SecurityCancelButton" Content="✕" ToolTip="Skip the security check" Style="{StaticResource ResetButtonStyle}"
+                                                                    Width="32" Height="32" Padding="0" Margin="8,0,0,0" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"
+                                                                    Visibility="Collapsed" Click="ScanStepCancelButton_Click"/>
+                                                        </StackPanel>
+                                                        <StackPanel VerticalAlignment="Center">
+                                                            <TextBlock Text="Security Settings" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                            <TextBlock x:Name="SecurityResultsStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                    <ItemsControl x:Name="SecurityResultsList" Margin="42,10,0,0" Visibility="Collapsed">
+                                                        <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Background="{DynamicResource SecondaryPanelBackground}" CornerRadius="6" Padding="10,6" Margin="0,3">
+                                                            <DockPanel>
+                                                                <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,2,10,0"
+                                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanFix}"
+                                                                          ToolTip="Fix this setting"/>
+                                                                <StackPanel>
+                                                                    <DockPanel>
+                                                                        <Border Background="{Binding SeverityColor}" CornerRadius="4" Padding="6,1" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0">
+                                                                            <TextBlock Text="{Binding SeverityText}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                                                        </Border>
+                                                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimary}" TextWrapping="Wrap"/>
+                                                                    </DockPanel>
+                                                                    <TextBlock Text="{Binding DetailsText}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                                    <TextBlock Text="{Binding ActionText}" FontSize="11" FontStyle="Italic" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                                </StackPanel>
+                                                            </DockPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border x:Name="DuplicateResultsPanel" Visibility="Collapsed" Margin="0,0,0,20" Padding="16,12"
+                                                    CornerRadius="10" BorderThickness="1" BorderBrush="#66E67E22" Background="#14E67E22">
+                                                <DockPanel>
+                                                    <Grid Width="30" Height="30" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <Ellipse x:Name="DuplicateResultsIcon" Fill="#FFE67E22"/>
+                                                        <TextBlock Text="⧉" Foreground="White" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                    <Button x:Name="DuplicateCancelButton" DockPanel.Dock="Right" Content="✕" ToolTip="Cancel the duplicate file search" Style="{StaticResource ResetButtonStyle}"
+                                                            Width="32" Height="32" Padding="0" Margin="8,0,0,0" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"
+                                                            Visibility="Collapsed" Click="DuplicateCancelButton_Click"/>
+                                                    <Button x:Name="DuplicateResultsButton" DockPanel.Dock="Right" Content="Show Files" Style="{StaticResource ResetButtonStyle}"
+                                                            Padding="14,6" FontSize="12" VerticalAlignment="Center" Click="DuplicateResultsButton_Click"/>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="Duplicate Files" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                        <TextBlock x:Name="DuplicateResultsStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+
                                             <StackPanel Orientation="Horizontal" Margin="0,0,0,20" VerticalAlignment="Center">
                                                 <Label Content="Search for directory:" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextForeground}" VerticalAlignment="Center" Margin="0,0,12,0"/>
                                                 <Grid Margin="0,0,16,0">
@@ -760,6 +963,7 @@
                                                                                         <ContextMenu>
                                                                                             <MenuItem Header="Open file location" Click="OpenFileLocation_Click"/>
                                                                                             <MenuItem Header="Copy path" Click="CopyPath_Click"/>
+                                                                                            <MenuItem Header="Always skip this file (add to Exceptions)" Click="AddToExceptions_Click"/>
                                                                                         </ContextMenu>
                                                                                     </CheckBox.ContextMenu>
                                                                                 </CheckBox>
@@ -790,6 +994,7 @@
                                             <Button x:Name="UnScl" Content="Unselect All" Click="UnselectAll_wpanel_Click" Style="{StaticResource ModernButtonStyle}" Background="Transparent" BorderThickness="1" BorderBrush="Gray" Foreground="{DynamicResource TextForeground}" Margin="0,0,10,10" Padding="16,10" />
                                             <Button x:Name="SaveSettings" Content="Save Selections" Click="SaveSettings_Click" Style="{StaticResource PrimaryButtonStyle}" Background="#FF28A745" Foreground="White" Margin="0,0,10,10" Padding="16,10" ToolTip="Saves your choices to selections.txt. They are kept when the database is updated." />
                                             <Button x:Name="ApplySelections" Content="Write Selections to Database" Click="ApplySelectionsToDatabase_Click" Style="{StaticResource ModernButtonStyle}" Background="Transparent" BorderThickness="1" BorderBrush="Gray" Foreground="{DynamicResource TextForeground}" Margin="0,0,10,10" Padding="16,10" ToolTip="Optional: writes your saved choices into database.txt. They are lost when a newer database is downloaded." />
+                                            <Button x:Name="ResetSelections" Content="Reset Selections" Click="ResetSelections_Click" Style="{StaticResource ModernButtonStyle}" Background="Transparent" BorderThickness="1" BorderBrush="#FFDC3545" Foreground="{DynamicResource TextForeground}" Margin="0,0,10,10" Padding="16,10" ToolTip="Deletes selections.txt so every entry goes back to its default from the database." />
                                             <Button x:Name="ReloadDb" Content="Reload Database" Click="ReloadDatabase_Click" Style="{StaticResource ModernButtonStyle}" Background="{DynamicResource ButtonBackground}" Foreground="{DynamicResource TextForeground}" Margin="0,0,0,10" Padding="16,10" />
                                         </WrapPanel>
 

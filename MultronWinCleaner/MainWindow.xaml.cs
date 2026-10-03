@@ -316,6 +316,25 @@ namespace Multron_Win_Cleaner
             selectionsAutoSaveTimer.Start();
         }
 
+        private void SaveCommandSelection(string key, bool isChecked)
+        {
+            lock (pendingSelections)
+            {
+                pendingSelections[key] = isChecked ? true : null;
+            }
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    FlushPendingSelections();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Could not save the command selection: " + ex.Message);
+                }
+            });
+        }
+
         private void FlushPendingSelections()
         {
             Dictionary<string, bool?> changes;
@@ -477,6 +496,8 @@ namespace Multron_Win_Cleaner
 
             LoadingOverlay.Visibility = Visibility.Collapsed;
 
+            autoCleaner = new AutoClean(this);
+            _ = autoCleaner.RunAsync();
             await startup();
 
          
@@ -587,7 +608,899 @@ namespace Multron_Win_Cleaner
             catch (Exception)
             {
             }
+
+            AddDuplicateScanOption();
+            AddFirewallScanOption();
+            AddShortcutScanOption();
+            AddSecurityScanOption();
           
+        }
+
+        public AutoClean autoCleaner;
+        public string AutoCleanStatus = "";
+
+        public void SetAutoCleanStatus(string text)
+        {
+            AutoCleanStatus = text ?? "";
+            labelAutoClean.Text = AutoCleanStatus;
+            labelAutoClean.Visibility = AutoCleanStatus.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
+
+            bool scan = settings?.chkEnableStartupScan.IsChecked == true;
+            bool clean = settings?.chkEnableStartupClean.IsChecked == true;
+            labelStartupClean.Text = clean ? "Startup Clean is on · scans and cleans when Windows starts"
+                : scan ? "Startup Scan is on · scans when Windows starts" : "";
+            labelStartupClean.Visibility = clean || scan ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public async Task<bool> StartAutoCleanAsync()
+        {
+            if (autoclean != 0 || !Equals(buttonStartScan.Content, "Scan") || LockedFilesWindowOverlay.Visibility == Visibility.Visible)
+                return false;
+            if (!buttonStartScan.IsEnabled)
+            {
+                if (reset != 1)
+                    return false;
+                ButtonReset_Click(this, null);
+            }
+            if (checkboxes2.All(cb => cb.IsChecked != true))
+                return false;
+
+            autoclean = 1;
+            await startscan();
+            return true;
+        }
+
+        public const string DuplicateScanSettingKey = "duplicatescanwithmain";
+        private CheckBox? duplicateScanCheckBox;
+        private bool duplicateReportRunning;
+
+        private void AddDuplicateScanOption()
+        {
+            CheckBox dupscan = new CheckBox
+            {
+                Content = "Find duplicate files after the scan (nothing is deleted automatically)",
+                Margin = new Thickness(10),
+                IsChecked = IsSettingOnByDefault(DuplicateScanSettingKey),
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+                ToolTip = "After a scan you start yourself, identical files in Desktop, Documents, Downloads, Pictures, Videos and Music are searched in the background and shown as a warning above the results."
+            };
+            dupscan.Checked += (s, e) => utilities?.savesettings(DuplicateScanSettingKey + ":1");
+            dupscan.Unchecked += (s, e) => utilities?.savesettings(DuplicateScanSettingKey + ":0");
+            duplicateScanCheckBox = dupscan;
+            dupscan.SetResourceReference(Control.ForegroundProperty, "Text");
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            stackpanels.Add(content);
+            content.Children.Add(dupscan);
+
+            Expander expander = new Expander
+            {
+                Header = "Duplicate Files",
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Colors.Transparent),
+                Foreground = brush,
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                BorderThickness = new Thickness(2),
+                FontSize = 14,
+                FontWeight = FontWeights.Regular,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Content = content
+            };
+            expanders.Add(expander);
+            wrapPanel1.Children.Add(expander);
+        }
+
+        public const string OkColor = "#16A34A";
+        public const string InfoColor = "#0078D4";
+        public const string WarningColor = "#E67E22";
+        public const string ProblemColor = "#DC3545";
+
+        public static void SetResultPanelColor(Border panel, System.Windows.Shapes.Ellipse icon, string hex)
+        {
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex);
+            icon.Fill = new SolidColorBrush(color);
+            panel.BorderBrush = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x66, color.R, color.G, color.B));
+            panel.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x14, color.R, color.G, color.B));
+        }
+
+        private (Border Panel, System.Windows.Shapes.Ellipse Icon, TextBlock Status, CheckBox Run) SystemCheckControls(string id) => id switch
+        {
+            "store" => (ComponentStorePanel, ComponentStoreIcon, ComponentStoreStatus, ComponentStoreRun),
+            "health" => (ComponentHealthPanel, ComponentHealthIcon, ComponentHealthStatus, ComponentHealthRun),
+            _ => (SystemFilesPanel, SystemFilesIcon, SystemFilesStatus, SystemFilesRun)
+        };
+
+        private void SetSystemCheck(string id, string color, string text, bool showRun, bool runChecked)
+        {
+            var c = SystemCheckControls(id);
+            c.Panel.Visibility = Visibility.Visible;
+            SetResultPanelColor(c.Panel, c.Icon, color);
+            c.Status.Text = text;
+            c.Run.Visibility = showRun ? Visibility.Visible : Visibility.Collapsed;
+            c.Run.IsChecked = runChecked;
+        }
+
+        private void HideSystemChecks()
+        {
+            foreach (string id in new[] { "store", "health", "sfc" })
+            {
+                var c = SystemCheckControls(id);
+                c.Panel.Visibility = Visibility.Collapsed;
+                c.Run.IsChecked = false;
+            }
+        }
+
+        public void ShowSystemCheckRunning(string id)
+        {
+            string text = id switch
+            {
+                "store" => "Analyzing the component store...",
+                "health" => "Checking the component store for corruption...",
+                _ => "Checking Windows system files (sfc /verifyonly)..."
+            };
+            SetSystemCheck(id, InfoColor, text, false, false);
+        }
+
+        public void ShowComponentStoreResult(SystemChecks.ComponentStoreInfo info)
+        {
+            if (!info.Parsed)
+            {
+                SetSystemCheck("store", WarningColor, "Dism.exe did not report the component store size. Details are in dism_scan.log. You can still run the cleanup.", true, false);
+                return;
+            }
+
+            var details = new List<string>();
+            if (info.ActualSize >= 0) details.Add("size " + formatsize(info.ActualSize));
+            details.Add($"reclaimable {formatsize(info.Reclaimable)} (backups {formatsize(Math.Max(0, info.Backups))}, cache {formatsize(Math.Max(0, info.Cache))})");
+            details.Add($"{info.ReclaimablePackages} reclaimable {(info.ReclaimablePackages == 1 ? "package" : "packages")}");
+            if (!string.IsNullOrEmpty(info.LastCleanup)) details.Add("last cleanup " + info.LastCleanup);
+            string detailText = string.Join(" · ", details);
+            if (info.RestartPending) detailText += " · a restart is pending";
+
+            bool recommended = info.CleanupRecommended == true || info.ReclaimablePackages > 0;
+            if (recommended)
+                SetSystemCheck("store", WarningColor, "Cleanup is recommended: " + detailText, true, true);
+            else
+                SetSystemCheck("store", OkColor, "No cleanup needed: " + detailText, true, false);
+        }
+
+        public void ShowComponentHealthResult(SystemChecks.HealthState state, string detail)
+        {
+            switch (state)
+            {
+                case SystemChecks.HealthState.Healthy:
+                    SetSystemCheck("health", OkColor, "No component store corruption was found.", false, false);
+                    break;
+                case SystemChecks.HealthState.Repairable:
+                    SetSystemCheck("health", ProblemColor, "Corruption was found. Restore Health can repair it (an internet connection may be needed).", true, true);
+                    break;
+                case SystemChecks.HealthState.NotRepairable:
+                    SetSystemCheck("health", ProblemColor, "Corruption was found that DISM reports as not repairable. Restore Health will try to download fresh files from Windows Update.", true, true);
+                    break;
+                default:
+                    SetSystemCheck("health", WarningColor, "The result could not be read: " + detail + " (details in dism_health.log)", true, false);
+                    break;
+            }
+        }
+
+        public void ShowSystemFilesResult(SystemChecks.SfcState state, string detail)
+        {
+            switch (state)
+            {
+                case SystemChecks.SfcState.Clean:
+                    SetSystemCheck("sfc", OkColor, "Windows Resource Protection found no integrity violations.", false, false);
+                    break;
+                case SystemChecks.SfcState.Unknown:
+                    SetSystemCheck("sfc", WarningColor, "The result could not be read: " + detail + " (details in sfc_verify.log)", true, false);
+                    break;
+                default:
+                    SetSystemCheck("sfc", ProblemColor, "Integrity violations were found in Windows system files. sfc /scannow can repair them.", true, true);
+                    break;
+            }
+        }
+
+        public (bool Cleanup, bool Restore, bool Sfc) GetSystemRepairChoices()
+        {
+            bool Selected(string id)
+            {
+                var c = SystemCheckControls(id);
+                return c.Panel.Visibility == Visibility.Visible && c.Run.Visibility == Visibility.Visible && c.Run.IsChecked == true;
+            }
+            return (Selected("store"), Selected("health"), Selected("sfc"));
+        }
+
+        public const string FirewallScanSettingKey = "firewallscanwithmain";
+        private CheckBox? firewallScanCheckBox;
+        private bool firewallReportRunning;
+        private List<MultronWinCleaner.Processes.FirewallRules.InvalidRule> foundFirewallRules = new List<MultronWinCleaner.Processes.FirewallRules.InvalidRule>();
+
+        private void AddFirewallScanOption()
+        {
+            CheckBox fwscan = new CheckBox
+            {
+                Content = "Find broken firewall rules after the scan",
+                Margin = new Thickness(10),
+                IsChecked = IsSettingOnByDefault(FirewallScanSettingKey),
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+                ToolTip = "After a scan, Windows Firewall rules for programs that no longer exist on this PC are listed above the results. They are only removed when you click Remove Rules."
+            };
+            fwscan.Checked += (s, e) => utilities?.savesettings(FirewallScanSettingKey + ":1");
+            fwscan.Unchecked += (s, e) => utilities?.savesettings(FirewallScanSettingKey + ":0");
+            firewallScanCheckBox = fwscan;
+            fwscan.SetResourceReference(Control.ForegroundProperty, "Text");
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            stackpanels.Add(content);
+            content.Children.Add(fwscan);
+
+            Expander expander = new Expander
+            {
+                Header = "Firewall Rules",
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Colors.Transparent),
+                Foreground = brush,
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                BorderThickness = new Thickness(2),
+                FontSize = 14,
+                FontWeight = FontWeights.Regular,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Content = content
+            };
+            expanders.Add(expander);
+            wrapPanel1.Children.Add(expander);
+        }
+
+        public const string ShortcutScanSettingKey = "shortcutscanwithmain";
+        private CheckBox? shortcutScanCheckBox;
+        private bool shortcutReportRunning;
+        private List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut> foundShortcuts = new List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut>();
+
+        private void AddShortcutScanOption()
+        {
+            CheckBox scscan = new CheckBox
+            {
+                Content = "Find broken shortcuts after the scan",
+                Margin = new Thickness(10),
+                IsChecked = IsSettingOnByDefault(ShortcutScanSettingKey),
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+                ToolTip = "After a scan, Desktop and Start Menu shortcuts whose program no longer exists are listed above the results. They are only changed when you click Fix Shortcuts."
+            };
+            scscan.Checked += (s, e) => utilities?.savesettings(ShortcutScanSettingKey + ":1");
+            scscan.Unchecked += (s, e) => utilities?.savesettings(ShortcutScanSettingKey + ":0");
+            shortcutScanCheckBox = scscan;
+            scscan.SetResourceReference(Control.ForegroundProperty, "Text");
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            stackpanels.Add(content);
+            content.Children.Add(scscan);
+
+            Expander expander = new Expander
+            {
+                Header = "Shortcuts",
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Colors.Transparent),
+                Foreground = brush,
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                BorderThickness = new Thickness(2),
+                FontSize = 14,
+                FontWeight = FontWeights.Regular,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Content = content
+            };
+            expanders.Add(expander);
+            wrapPanel1.Children.Add(expander);
+        }
+
+        public const string SecurityScanSettingKey = "securityscanwithmain";
+        private CheckBox? securityScanCheckBox;
+        private bool securityReportRunning;
+        private List<MultronWinCleaner.Processes.SecurityCheck.Issue> foundSecurityIssues = new List<MultronWinCleaner.Processes.SecurityCheck.Issue>();
+
+        private void AddSecurityScanOption()
+        {
+            CheckBox secscan = new CheckBox
+            {
+                Content = "Check Windows security settings after the scan",
+                Margin = new Thickness(10),
+                IsChecked = IsSettingOnByDefault(SecurityScanSettingKey),
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+                ToolTip = "After a scan, settings that make Windows less secure are listed above the results, for example UAC or Windows Firewall turned off, AutoPlay on for USB drives or Defender turned off by a policy. They are only changed when you click Fix Selected."
+            };
+            secscan.Checked += (s, e) => utilities?.savesettings(SecurityScanSettingKey + ":1");
+            secscan.Unchecked += (s, e) => utilities?.savesettings(SecurityScanSettingKey + ":0");
+            securityScanCheckBox = secscan;
+            secscan.SetResourceReference(Control.ForegroundProperty, "Text");
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            stackpanels.Add(content);
+            content.Children.Add(secscan);
+
+            Expander expander = new Expander
+            {
+                Header = "Security",
+                Margin = new Thickness(5),
+                Background = new SolidColorBrush(Colors.Transparent),
+                Foreground = brush,
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                BorderThickness = new Thickness(2),
+                FontSize = 14,
+                FontWeight = FontWeights.Regular,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Content = content
+            };
+            expanders.Add(expander);
+            wrapPanel1.Children.Add(expander);
+        }
+
+        public static string DescribeSecurityIssues(List<MultronWinCleaner.Processes.SecurityCheck.Issue> issues, out string color)
+        {
+            int high = issues.Count(i => i.Severity == MultronWinCleaner.Processes.SecurityCheck.Level.High);
+            int medium = issues.Count(i => i.Severity == MultronWinCleaner.Processes.SecurityCheck.Level.Medium);
+            int low = issues.Count - high - medium;
+            color = high > 0 ? ProblemColor : medium > 0 ? WarningColor : issues.Count > 0 ? InfoColor : OkColor;
+            if (issues.Count == 0)
+                return "No insecure Windows settings were found.";
+            var parts = new List<string>();
+            if (high > 0) parts.Add($"{high} high");
+            if (medium > 0) parts.Add($"{medium} medium");
+            if (low > 0) parts.Add($"{low} low");
+            return $"{issues.Count} {(issues.Count == 1 ? "setting makes" : "settings make")} Windows less secure ({string.Join(", ", parts)} risk).";
+        }
+
+        private void ShowSecurityIssues(List<MultronWinCleaner.Processes.SecurityCheck.Issue> issues, string suffix)
+        {
+            foundSecurityIssues = issues;
+            SecurityResultsList.ItemsSource = issues;
+            string status = DescribeSecurityIssues(issues, out string color);
+            SecurityResultsStatus.Text = suffix.Length > 0 ? status + " " + suffix : status;
+            SetResultPanelColor(SecurityResultsPanel, SecurityResultsIcon, color);
+            bool any = issues.Count > 0;
+            SecurityResultsToggle.Visibility = any ? Visibility.Visible : Visibility.Collapsed;
+            SecurityFixButton.Visibility = issues.Any(i => i.CanFix) ? Visibility.Visible : Visibility.Collapsed;
+            if (!any)
+                SecurityResultsList.Visibility = Visibility.Collapsed;
+            SecurityResultsToggle.Content = SecurityResultsList.Visibility == Visibility.Visible ? "Hide Issues" : "Show Issues";
+        }
+
+        public async Task RunSecurityReportAsync()
+        {
+            if (securityReportRunning || securityScanCheckBox?.IsChecked != true || cancelstatus.IsCancellationRequested)
+                return;
+
+            bool automatic = autoclean == 1 || startupscan == 1;
+            securityReportRunning = true;
+            SecurityResultsPanel.Visibility = Visibility.Visible;
+            SecurityResultsToggle.Visibility = Visibility.Collapsed;
+            SecurityFixButton.Visibility = Visibility.Collapsed;
+            SecurityResultsList.Visibility = Visibility.Collapsed;
+            SecurityResultsStatus.Text = "Checking Windows security settings...";
+            SetResultPanelColor(SecurityResultsPanel, SecurityResultsIcon, InfoColor);
+            try
+            {
+                var step = await RunScanStepAsync("Checking Windows security settings",
+                    WithFallback(utilities?.RunSecurityReportAsync(), MultronWinCleaner.Processes.SecurityCheck.Scan),
+                    SecurityStatusButton, SecurityCancelButton);
+                if (step.Stopped)
+                {
+                    SecurityResultsStatus.Text = "The security check was skipped.";
+                    SetResultPanelColor(SecurityResultsPanel, SecurityResultsIcon, WarningColor);
+                    return;
+                }
+                var issues = step.Result;
+                ShowSecurityIssues(issues, issues.Count > 0 ? "Nothing was changed." : "");
+                int high = issues.Count(i => i.Severity == MultronWinCleaner.Processes.SecurityCheck.Level.High);
+                if (automatic && high > 0)
+                {
+                    new Notify("Security Warning",
+                        $"{high} high risk Windows {(high == 1 ? "setting" : "settings")} found. Click to review.",
+                        issues.First().Title,
+                        () => utilities?.ShowSecurityCheck()).Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                SecurityResultsStatus.Text = "Could not check the security settings: " + ex.Message;
+                SetResultPanelColor(SecurityResultsPanel, SecurityResultsIcon, WarningColor);
+            }
+            finally
+            {
+                securityReportRunning = false;
+            }
+        }
+
+        private void SecurityResultsToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool show = SecurityResultsList.Visibility != Visibility.Visible;
+            SecurityResultsList.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            SecurityResultsToggle.Content = show ? "Hide Issues" : "Show Issues";
+        }
+
+        private async void SecurityFixButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = foundSecurityIssues.Where(i => i.IsSelected && i.CanFix).ToList();
+            if (selected.Count == 0)
+            {
+                SecurityResultsList.Visibility = Visibility.Visible;
+                SecurityResultsToggle.Content = "Hide Issues";
+                SecurityResultsStatus.Text = "Tick the settings you want to fix.";
+                return;
+            }
+
+            if (!await FixSecurityIssuesAsync(selected, SecurityFixButton, text => SecurityResultsStatus.Text = text))
+                return;
+            var issues = await Task.Run(MultronWinCleaner.Processes.SecurityCheck.Scan);
+            ShowSecurityIssues(issues, lastSecurityFixMessage);
+        }
+
+        private string lastSecurityFixMessage = "";
+
+        public async Task<bool> FixSecurityIssuesAsync(List<MultronWinCleaner.Processes.SecurityCheck.Issue> selected, System.Windows.Controls.Button button, Action<string> setStatus)
+        {
+            string list = string.Join("\n", selected.Take(15).Select(i => "• " + i.Title)) + (selected.Count > 15 ? $"\n• ... and {selected.Count - 15} more" : "");
+            bool restart = selected.Any(i => i.NeedsRestart);
+            var answer = MessageBox.Show($"Fix {selected.Count} security {(selected.Count == 1 ? "setting" : "settings")}?\n\n{list}\n\nThe current values are saved first, so you can undo the changes in Utilities > Security Check." + (restart ? "\n\nSome changes need a restart." : ""),
+                "Security Check", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return false;
+
+            button.IsEnabled = false;
+            setStatus("Fixing the selected settings...");
+            try
+            {
+                var result = await Task.Run(() => MultronWinCleaner.Processes.SecurityCheck.Fix(selected));
+                lastSecurityFixMessage = $"{result.Fixed} fixed" + (result.Failed.Count > 0 ? $", {result.Failed.Count} could not be changed." : ".") + (result.NeedsRestart ? " Restart the PC to finish." : "");
+                setStatus(lastSecurityFixMessage);
+                if (result.Failed.Count > 0)
+                    MessageBox.Show("These settings could not be changed:\n\n" + string.Join("\n", result.Failed.Select(f => "• " + f)), "Security Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                setStatus("Could not fix the settings: " + ex.Message);
+                return false;
+            }
+            finally
+            {
+                button.IsEnabled = true;
+            }
+        }
+
+        private TaskCompletionSource<bool>? scanStepStop;
+
+        private static async Task<T> WithFallback<T>(Task<T?>? primary, Func<T> fallback) where T : class
+        {
+            T? result = primary == null ? null : await primary;
+            return result ?? await Task.Run(fallback);
+        }
+
+        private async Task<(bool Stopped, T Result)> RunScanStepAsync<T>(string label, Task<T> work,
+            System.Windows.Controls.Button statusButton, System.Windows.Controls.Button cancelButton)
+        {
+            var stop = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            scanStepStop = stop;
+            bool owner = Equals(buttonStartScan.Content, "Clean");
+            bool wasEnabled = buttonStartScan.IsEnabled;
+            if (owner)
+            {
+                buttonStartScan.Content = "Cancel";
+                buttonStartScan.IsEnabled = true;
+                buttonStartScan.ToolTip = "Skip this step: " + label.ToLowerInvariant() + ".";
+                label1_Copy.Text = label + "...";
+                label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(InfoColor));
+            }
+            statusButton.Visibility = Visibility.Visible;
+            cancelButton.IsEnabled = true;
+            cancelButton.Visibility = Visibility.Visible;
+            try
+            {
+                var finished = await Task.WhenAny(work, stop.Task);
+                if (finished != work)
+                    return (true, default!);
+                return (false, await work);
+            }
+            finally
+            {
+                statusButton.Visibility = Visibility.Collapsed;
+                cancelButton.Visibility = Visibility.Collapsed;
+                if (scanStepStop == stop)
+                    scanStepStop = null;
+                if (owner)
+                {
+                    buttonStartScan.Content = "Clean";
+                    buttonStartScan.IsEnabled = wasEnabled;
+                    buttonStartScan.ToolTip = null;
+                }
+            }
+        }
+
+        private void StopScanStep()
+        {
+            scanStepStop?.TrySetResult(true);
+        }
+
+        private void ScanStepCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button button)
+                button.IsEnabled = false;
+            StopScanStep();
+        }
+
+        private void FirewallStatusButton_Click(object sender, RoutedEventArgs e) => utilities?.ShowFirewallCard();
+
+        private void ShortcutStatusButton_Click(object sender, RoutedEventArgs e) => utilities?.ShowShortcutCard();
+
+        private void SecurityStatusButton_Click(object sender, RoutedEventArgs e) => utilities?.ShowSecurityCheck();
+
+        public async Task RunShortcutReportAsync()
+        {
+            if (shortcutReportRunning || shortcutScanCheckBox?.IsChecked != true || cancelstatus.IsCancellationRequested)
+                return;
+
+            shortcutReportRunning = true;
+            ShortcutResultsPanel.Visibility = Visibility.Visible;
+            ShortcutResultsToggle.Visibility = Visibility.Collapsed;
+            ShortcutFixButton.Visibility = Visibility.Collapsed;
+            ShortcutResultsList.Visibility = Visibility.Collapsed;
+            ShortcutResultsStatus.Text = "Checking Desktop and Start Menu shortcuts...";
+            SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, InfoColor);
+            try
+            {
+                var step = await RunScanStepAsync("Checking Desktop and Start Menu shortcuts",
+                    WithFallback(utilities?.RunShortcutReportAsync(), MultronWinCleaner.Processes.ShortcutFixer.FindBrokenShortcuts),
+                    ShortcutStatusButton, ShortcutCancelButton);
+                if (step.Stopped)
+                {
+                    ShortcutResultsStatus.Text = "The shortcut check was skipped.";
+                    SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, WarningColor);
+                    return;
+                }
+                foundShortcuts = step.Result;
+                ShortcutResultsList.ItemsSource = foundShortcuts;
+                if (foundShortcuts.Count == 0)
+                {
+                    ShortcutResultsStatus.Text = "No broken shortcuts were found.";
+                    SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, OkColor);
+                }
+                else
+                {
+                    int repairable = foundShortcuts.Count(s => s.RepairTarget != null);
+                    ShortcutResultsStatus.Text = $"{foundShortcuts.Count} {(foundShortcuts.Count == 1 ? "shortcut points" : "shortcuts point")} to programs that no longer exist ({repairable} can be repaired). Nothing was changed.";
+                    ShortcutResultsToggle.Content = "Show Shortcuts";
+                    ShortcutResultsToggle.Visibility = Visibility.Visible;
+                    ShortcutFixButton.Visibility = Visibility.Visible;
+                    SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, WarningColor);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShortcutResultsStatus.Text = "Could not check the shortcuts: " + ex.Message;
+                SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, ProblemColor);
+            }
+            finally
+            {
+                shortcutReportRunning = false;
+            }
+        }
+
+        private void ShortcutResultsToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool show = ShortcutResultsList.Visibility != Visibility.Visible;
+            ShortcutResultsList.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            ShortcutResultsToggle.Content = show ? "Hide Shortcuts" : "Show Shortcuts";
+        }
+
+        private async void ShortcutFixButton_Click(object sender, RoutedEventArgs e)
+        {
+            var items = foundShortcuts;
+            if (items.Count == 0)
+                return;
+
+            var answer = MessageBox.Show($"Fix {items.Count} broken {(items.Count == 1 ? "shortcut" : "shortcuts")}?\n\nShortcuts whose program moved to a new version folder are repaired. The others are moved to the Recycle Bin, so you can restore them.",
+                "Shortcuts", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            ShortcutFixButton.IsEnabled = false;
+            try
+            {
+                var result = await Task.Run(() => MultronWinCleaner.Processes.ShortcutFixer.Fix(items));
+                foundShortcuts = result.Failed;
+                ShortcutResultsList.ItemsSource = foundShortcuts;
+                ShortcutResultsStatus.Text = $"{result.Repaired} repaired, {result.Removed} moved to the Recycle Bin" + (result.Failed.Count > 0 ? $", {result.Failed.Count} could not be changed." : ".");
+                if (result.Failed.Count == 0)
+                {
+                    SetResultPanelColor(ShortcutResultsPanel, ShortcutResultsIcon, OkColor);
+                    ShortcutResultsList.Visibility = Visibility.Collapsed;
+                    ShortcutResultsToggle.Visibility = Visibility.Collapsed;
+                    ShortcutFixButton.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShortcutResultsStatus.Text = "Could not fix the shortcuts: " + ex.Message;
+            }
+            finally
+            {
+                ShortcutFixButton.IsEnabled = true;
+            }
+        }
+
+        public async Task RunFirewallReportAsync()
+        {
+            if (firewallReportRunning || firewallScanCheckBox?.IsChecked != true || cancelstatus.IsCancellationRequested)
+                return;
+
+            firewallReportRunning = true;
+            FirewallResultsPanel.Visibility = Visibility.Visible;
+            FirewallResultsToggle.Visibility = Visibility.Collapsed;
+            FirewallRemoveButton.Visibility = Visibility.Collapsed;
+            FirewallRulesList.Visibility = Visibility.Collapsed;
+            FirewallResultsStatus.Text = "Checking Windows Firewall rules...";
+            SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, InfoColor);
+            try
+            {
+                var step = await RunScanStepAsync("Checking Windows Firewall rules",
+                    WithFallback(utilities?.RunFirewallReportAsync(), MultronWinCleaner.Processes.FirewallRules.FindInvalidRules),
+                    FirewallStatusButton, FirewallCancelButton);
+                if (step.Stopped)
+                {
+                    FirewallResultsStatus.Text = "The firewall rule check was skipped.";
+                    SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, WarningColor);
+                    return;
+                }
+                foundFirewallRules = step.Result;
+                FirewallRulesList.ItemsSource = foundFirewallRules;
+                if (foundFirewallRules.Count == 0)
+                {
+                    FirewallResultsStatus.Text = "No broken firewall rules were found.";
+                    SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, OkColor);
+                }
+                else
+                {
+                    FirewallResultsStatus.Text = $"{foundFirewallRules.Count} firewall {(foundFirewallRules.Count == 1 ? "rule points" : "rules point")} to programs that no longer exist on this PC. Nothing was removed.";
+                    FirewallResultsToggle.Content = "Show Rules";
+                    SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, ProblemColor);
+                    FirewallResultsToggle.Visibility = Visibility.Visible;
+                    FirewallRemoveButton.Visibility = Visibility.Visible;
+                }
+            }
+            catch (Exception ex)
+            {
+                FirewallResultsStatus.Text = "Could not read the firewall rules: " + ex.Message;
+                SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, WarningColor);
+            }
+            finally
+            {
+                firewallReportRunning = false;
+            }
+        }
+
+        private void FirewallResultsToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool show = FirewallRulesList.Visibility != Visibility.Visible;
+            FirewallRulesList.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            FirewallResultsToggle.Content = show ? "Hide Rules" : "Show Rules";
+        }
+
+        private async void FirewallRemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var rules = foundFirewallRules;
+            if (rules.Count == 0)
+                return;
+
+            var answer = MessageBox.Show($"Remove {rules.Count} Windows Firewall {(rules.Count == 1 ? "rule" : "rules")} for programs that no longer exist on this PC?",
+                "Firewall Rules", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            FirewallRemoveButton.IsEnabled = false;
+            try
+            {
+                var result = await Task.Run(() => MultronWinCleaner.Processes.FirewallRules.RemoveRules(rules));
+                foundFirewallRules = result.Failed;
+                FirewallRulesList.ItemsSource = foundFirewallRules;
+                FirewallResultsStatus.Text = result.Failed.Count == 0
+                    ? $"{result.Removed} firewall {(result.Removed == 1 ? "rule" : "rules")} removed."
+                    : $"{result.Removed} firewall {(result.Removed == 1 ? "rule" : "rules")} removed. {result.Failed.Count} could not be removed (they may be managed by your organization).";
+                if (result.Failed.Count == 0)
+                {
+                    SetResultPanelColor(FirewallResultsPanel, FirewallResultsIcon, OkColor);
+                    FirewallRulesList.Visibility = Visibility.Collapsed;
+                    FirewallResultsToggle.Visibility = Visibility.Collapsed;
+                    FirewallRemoveButton.Visibility = Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                FirewallResultsStatus.Text = "Could not remove the firewall rules: " + ex.Message;
+            }
+            finally
+            {
+                FirewallRemoveButton.IsEnabled = true;
+            }
+        }
+
+        public async Task RunDuplicateReportAsync()
+        {
+            if (duplicateReportRunning || duplicateScanCheckBox?.IsChecked != true || cancelstatus.IsCancellationRequested)
+                return;
+            bool automatic = autoclean == 1 || startupscan == 1;
+
+            Duplicate_File_Finder finder = utilities?.GetDuplicateFinder();
+            if (finder == null || finder.IsBusy)
+                return;
+
+            duplicateReportRunning = true;
+            DuplicateResultsPanel.Visibility = Visibility.Visible;
+            DuplicateResultsButton.Content = "Show Status";
+            DuplicateResultsButton.Visibility = Visibility.Visible;
+            DuplicateCancelButton.IsEnabled = true;
+            DuplicateCancelButton.Visibility = Visibility.Visible;
+            DuplicateResultsStatus.Text = "Looking for identical files in your personal folders...";
+            SetResultPanelColor(DuplicateResultsPanel, DuplicateResultsIcon, InfoColor);
+            EnterDuplicateCancelMode();
+            progressBar1.Value = 0;
+            ShowDuplicateProgress(DuplicateResultsStatus.Text);
+
+            var statusTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
+            statusTimer.Tick += (s, e) =>
+            {
+                string status = finder.CurrentStatus;
+                if (status.Length == 0)
+                    return;
+                if (DuplicateCancelButton.IsEnabled)
+                    DuplicateResultsStatus.Text = status;
+                ShowDuplicateProgress(status);
+            };
+            statusTimer.Start();
+            try
+            {
+                var result = await finder.RunReportScanAsync();
+                statusTimer.Stop();
+                DuplicateResultsButton.Content = "Show Files";
+                DuplicateResultsButton.Visibility = Visibility.Collapsed;
+                if (finder.WasCanceled)
+                {
+                    DuplicateResultsStatus.Text = result.Copies > 0
+                        ? $"The duplicate search was stopped. {result.Copies} duplicate {(result.Copies == 1 ? "copy" : "copies")} found so far ({formatsize(result.Bytes)}). Nothing was deleted."
+                        : "The duplicate search was stopped.";
+                    DuplicateResultsButton.Visibility = result.Copies > 0 ? Visibility.Visible : Visibility.Collapsed;
+                    SetResultPanelColor(DuplicateResultsPanel, DuplicateResultsIcon, WarningColor);
+                }
+                else if (result.Copies == 0)
+                {
+                    DuplicateResultsStatus.Text = "No duplicate files were found in your personal folders.";
+                    SetResultPanelColor(DuplicateResultsPanel, DuplicateResultsIcon, OkColor);
+                }
+                else
+                {
+                    DuplicateResultsStatus.Text = $"{result.Copies} duplicate {(result.Copies == 1 ? "copy" : "copies")} of {result.Groups} {(result.Groups == 1 ? "file" : "files")} found ({formatsize(result.Bytes)} could be freed). Nothing was deleted.";
+                    DuplicateResultsButton.Visibility = Visibility.Visible;
+                    SetResultPanelColor(DuplicateResultsPanel, DuplicateResultsIcon, WarningColor);
+                    if (automatic)
+                    {
+                        new Notify("Duplicate Files Found",
+                            $"{result.Copies} duplicate {(result.Copies == 1 ? "copy" : "copies")} in your personal folders. Click to review.",
+                            formatsize(result.Bytes),
+                            () => utilities?.ShowDuplicateFinder()).Show();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DuplicateResultsStatus.Text = "The duplicate file search failed: " + ex.Message;
+                DuplicateResultsButton.Visibility = Visibility.Collapsed;
+                SetResultPanelColor(DuplicateResultsPanel, DuplicateResultsIcon, ProblemColor);
+            }
+            finally
+            {
+                statusTimer.Stop();
+                duplicateReportRunning = false;
+                DuplicateCancelButton.Visibility = Visibility.Collapsed;
+                bool wasWaiting = duplicateCancelMode;
+                LeaveDuplicateCancelMode();
+                if (wasWaiting && Equals(buttonStartScan.Content, "Clean"))
+                {
+                    progressBar1.Value = 100;
+                    label1_Copy.Text = DuplicateResultsStatus.Text;
+                    label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(InfoColor));
+                }
+            }
+        }
+
+        private bool duplicateCancelMode;
+        private bool duplicateCancelWasEnabled;
+
+        private void EnterDuplicateCancelMode()
+        {
+            if (duplicateCancelMode || !Equals(buttonStartScan.Content, "Clean"))
+                return;
+            duplicateCancelMode = true;
+            duplicateCancelWasEnabled = buttonStartScan.IsEnabled;
+            buttonStartScan.Content = "Cancel";
+            buttonStartScan.IsEnabled = true;
+            buttonStartScan.ToolTip = "Stop the duplicate file search.";
+        }
+
+        private void LeaveDuplicateCancelMode()
+        {
+            if (!duplicateCancelMode)
+                return;
+            duplicateCancelMode = false;
+            buttonStartScan.Content = "Clean";
+            buttonStartScan.IsEnabled = duplicateCancelWasEnabled;
+            buttonStartScan.ToolTip = null;
+        }
+
+        private void ShowDuplicateProgress(string status)
+        {
+            if (!duplicateCancelMode)
+                return;
+            label1_Copy.Text = "Duplicate files: " + status;
+            label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(InfoColor));
+        }
+
+        private void CancelDuplicateReport()
+        {
+            if (!duplicateReportRunning)
+                return;
+            DuplicateCancelButton.IsEnabled = false;
+            DuplicateResultsStatus.Text = "Stopping the duplicate file search...";
+            utilities?.GetDuplicateFinder()?.CancelScan();
+        }
+
+        private void DuplicateCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            CancelDuplicateReport();
+        }
+
+        private void DuplicateResultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            utilities?.ShowDuplicateFinder();
         }
 
         public async Task startup()
@@ -605,7 +1518,7 @@ namespace Multron_Win_Cleaner
                     cleanEnabled = settings.chkEnableStartupClean.IsChecked == true;
                 });
 
-                if (scanEnabled)
+                if (scanEnabled || cleanEnabled)
                 {
                   
                     this.startupscan = 1;
@@ -649,6 +1562,10 @@ namespace Multron_Win_Cleaner
             };
             checkbox.Checked += CheckBox2_Checked;
             checkbox.Unchecked += CheckBox2_Unchecked;
+            string commandKey = "command:" + checkboxname.Split('=').Last();
+            checkbox.IsChecked = MultronWinCleaner.Processes.Load.ReadSelections().TryGetValue(commandKey, out bool savedCommand) && savedCommand;
+            checkbox.Checked += (s, e) => SaveCommandSelection(commandKey, true);
+            checkbox.Unchecked += (s, e) => SaveCommandSelection(commandKey, false);
             checkboxes2.Add(checkbox);
 
             Expander existingExpander = expanders.FirstOrDefault(e => e.Header != null && e.Header.ToString() == expander);
@@ -713,11 +1630,6 @@ namespace Multron_Win_Cleaner
             {
                 database.Insert(0, content);
             }
-            else
-            {
-                string file = stringtokenizer(content, "=", 1);
-                settings.removeexception(file);
-            }
         }
         private void CheckBox2_Unchecked(object sender, RoutedEventArgs e)
 
@@ -728,20 +1640,10 @@ namespace Multron_Win_Cleaner
 
             string content = checkBox.Content.ToString();
 
-            if (content.Contains("Dism.exe") || content.StartsWith("cleanmgr.exe") || content.Contains("Deep Log Files Scan"))
+            if (content.Contains("Dism.exe") || content.StartsWith("cleanmgr.exe") || content.Contains("Deep Log Files Scan") || content.Contains("sfc.exe"))
 
             {
                         database.Remove(content);
-
-            }
-
-            else
-
-            {
-
-                string file = stringtokenizer(checkBox.Content.ToString(), "=", 1);
-
-                settings.addexception(file);
 
             }
 
@@ -1193,53 +2095,42 @@ namespace Multron_Win_Cleaner
 
                     if (System.IO.File.Exists(path))
                     {
-                        foreach (var locker in whousef.GetLockers(path))
-                        {
-                            if (whousef.IsProtectedProcess(locker.Id, locker.Name))
-                            {
-                                await AddKillMessage($"Skipped system process: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Goldenrod);
-                                continue;
-                            }
-
-                            try
-                            {
-                                await AddKillMessage($"Killing: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Red);
-                                using (Process proc = Process.GetProcessById(locker.Id))
-                                {
-                                    proc.Kill();
-                                    proc.WaitForExit(5000);
-                                }
-                                killed++;
-                            }
-                            catch (ArgumentException)
-                            {
-                            }
-                            catch (Exception ex)
-                            {
-                                await AddKillMessage($"Cannot Kill: {locker.Name} (PID {locker.Id}) - {ex.Message}", System.Windows.Media.Brushes.Goldenrod);
-                            }
-                        }
-
-                        string error = null;
                         long fileSize = 0;
-                        for (int attempt = 0; attempt < 3; attempt++)
+                        string error = TryDeleteLocked(path, ref fileSize, out bool inUse);
+
+                        if (error != null && inUse)
                         {
-                            try
+                            foreach (var locker in whousef.GetLockers(path))
                             {
-                                FileInfo info = new FileInfo(path);
-                                if (!info.Exists)
-                                    break;
-                                fileSize = info.Length;
-                                if (info.IsReadOnly)
-                                    info.IsReadOnly = false;
-                                info.Delete();
-                                error = null;
-                                break;
+                                if (whousef.IsProtectedProcess(locker.Id, locker.Name))
+                                {
+                                    await AddKillMessage($"Skipped system process: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Goldenrod);
+                                    continue;
+                                }
+
+                                try
+                                {
+                                    await AddKillMessage($"Killing: {locker.Name} (PID {locker.Id}) for {path}", System.Windows.Media.Brushes.Red);
+                                    using (Process proc = Process.GetProcessById(locker.Id))
+                                    {
+                                        proc.Kill();
+                                        proc.WaitForExit(5000);
+                                    }
+                                    killed++;
+                                }
+                                catch (ArgumentException)
+                                {
+                                }
+                                catch (Exception ex)
+                                {
+                                    await AddKillMessage($"Cannot Kill: {locker.Name} (PID {locker.Id}) - {ex.Message}", System.Windows.Media.Brushes.Goldenrod);
+                                }
                             }
-                            catch (Exception ex)
+
+                            for (int attempt = 0; attempt < 3 && error != null && inUse; attempt++)
                             {
-                                error = ex.Message;
                                 await Task.Delay(300);
+                                error = TryDeleteLocked(path, ref fileSize, out inUse);
                             }
                         }
 
@@ -1256,7 +2147,7 @@ namespace Multron_Win_Cleaner
                     }
                     else
                     {
-                        await AddKillMessage($"File no longer exists: {path}", new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")));
+                        await AddKillMessage($"File no longer exists: {path}", InfoBrush);
                     }
 
                     progress++;
@@ -1290,12 +2181,54 @@ namespace Multron_Win_Cleaner
                     main.label1_Copy.Text = message;
                     main.label1_Copy.Foreground = labelColor;
                     main.buttonReset.Visibility = Visibility.Visible;
+                    main.buttonStartScan.Content = "Scan";
+                    main.buttonStartScan.IsEnabled = false;
                     main.paths.Clear();
                 });
             }
 
+            private static readonly System.Windows.Media.SolidColorBrush InfoBrush = CreateFrozenBrush("#0078d7");
+
+            private static System.Windows.Media.SolidColorBrush CreateFrozenBrush(string hex)
+            {
+                var brush = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex));
+                brush.Freeze();
+                return brush;
+            }
+
+            private static string TryDeleteLocked(string path, ref long fileSize, out bool inUse)
+            {
+                inUse = false;
+                try
+                {
+                    FileInfo info = new FileInfo(path);
+                    if (!info.Exists)
+                        return null;
+                    fileSize = info.Length;
+                    if (info.IsReadOnly)
+                        info.IsReadOnly = false;
+                    info.Delete();
+                    return null;
+                }
+                catch (IOException ex) when ((ex.HResult & 0xFFFF) == 0x20 || (ex.HResult & 0xFFFF) == 0x21)
+                {
+                    inUse = true;
+                    return ex.Message;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    return "Access denied. Only Windows can delete this file.";
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+
             private async Task AddKillMessage(string text, System.Windows.Media.Brush brush)
             {
+                if (brush.CanFreeze && !brush.IsFrozen)
+                    brush.Freeze();
                 await main.Dispatcher.InvokeAsync(() =>
                 {
                     main.wrapPanelDirectories.Children.Add(new TextBlock
@@ -1336,6 +2269,11 @@ namespace Multron_Win_Cleaner
             }
             else if (buttonStartScan.Content.Equals("Scan"))
             {
+                DuplicateResultsPanel.Visibility = Visibility.Collapsed;
+                FirewallResultsPanel.Visibility = Visibility.Collapsed;
+                ShortcutResultsPanel.Visibility = Visibility.Collapsed;
+                SecurityResultsPanel.Visibility = Visibility.Collapsed;
+                HideSystemChecks();
                 cancelstatus.Dispose();
                 dismcancel.Dispose();
                 cancelstatus = new CancellationTokenSource();
@@ -1347,12 +2285,15 @@ namespace Multron_Win_Cleaner
                 cancelclean = 0;
                 MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
 
-                await Task.Run(() => scan.run());
                 buttonStartScan.Content = "Cancel";
+
+                await Task.Run(() => scan.run());
 
             }
             else if (buttonStartScan.Content.Equals("Cancel"))
             {
+                StopScanStep();
+                CancelDuplicateReport();
                 cancelstatus.Cancel();
                 dismcancel.Cancel();
                 cancelclean = 2;
@@ -1365,6 +2306,12 @@ namespace Multron_Win_Cleaner
                 if (paths.Count != 0)
                 {
                     killer = 1;
+                    cancelstatus.Dispose();
+                    dismcancel.Dispose();
+                    cancelstatus = new CancellationTokenSource();
+                    dismcancel = new CancellationTokenSource();
+                    cancelclean = 0;
+                    LockedFilesWindowOverlay.Visibility = Visibility.Collapsed;
                     wrapPanelDirectories.Children.Clear();
               
                     buttonStartScan.Content = "Cancel";
@@ -1405,10 +2352,33 @@ namespace Multron_Win_Cleaner
                 buttonStartScan.Content = "Scan";
             }
         }
+        public bool IsScanOrCleanBusy => Equals(buttonStartScan.Content, "Cancel");
+
+        public void CancelScanOrClean()
+        {
+            if (IsScanOrCleanBusy && buttonStartScan.IsEnabled)
+                ButtonStartScan_Click(buttonStartScan, new RoutedEventArgs());
+        }
+
         private async void ButtonStartScan_Click(object sender, RoutedEventArgs e)
         {
+            if (scanStepStop != null)
+            {
+                buttonStartScan.IsEnabled = false;
+                StopScanStep();
+                return;
+            }
+            if (duplicateCancelMode)
+            {
+                buttonStartScan.IsEnabled = false;
+                duplicateCancelWasEnabled = true;
+                label1_Copy.Text = "Stopping the duplicate file search...";
+                label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(WarningColor));
+                CancelDuplicateReport();
+                return;
+            }
             
-            bool allUnchecked = checkboxes2.All(cb => cb.IsChecked != true);
+            bool allUnchecked = !Equals(buttonStartScan.Content, "Cancel") && checkboxes2.All(cb => cb.IsChecked != true);
 
             if (allUnchecked)
             {
@@ -1553,6 +2523,16 @@ namespace Multron_Win_Cleaner
             {
                 MessageBox.Show("Error:\n" + ex.Message, "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AddToExceptions_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.DataContext is Scan.FileItem fileItem)
+            {
+                settings.addexception(fileItem.Path);
+                fileItem.IsChecked = false;
+                label1_Copy.Text = "Added to Exceptions: " + fileItem.Path;
             }
         }
 
@@ -2213,6 +3193,40 @@ namespace Multron_Win_Cleaner
                     }
                 }
             }
+        }
+
+        private void ResetSelections_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ReloadDb.IsEnabled || !buttonStartScan.IsEnabled)
+            {
+                MessageBox.Show("Please wait until the current scan or clean has finished.", "Reset Selections", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var answer = MessageBox.Show("Reset all your selections to the database defaults?\n\nThis deletes selections.txt, including your cleanmgr, Dism.exe, SFC and Deep Log Files Scan choices.",
+                "Reset Selections", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            selectionsAutoSaveTimer?.Stop();
+            lock (pendingSelections)
+            {
+                pendingSelections.Clear();
+            }
+            lock (selectionsFileLock)
+            {
+                try
+                {
+                    if (System.IO.File.Exists(MultronWinCleaner.Processes.Load.SelectionsPath))
+                        System.IO.File.Delete(MultronWinCleaner.Processes.Load.SelectionsPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not reset the selections:\n" + ex.Message, "Reset Selections", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            ReloadDatabase_Click(ReloadDb, new RoutedEventArgs());
         }
 
         private async void ReloadDatabase_Click(object sender, RoutedEventArgs e)

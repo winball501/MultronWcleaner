@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -58,6 +59,12 @@ namespace MultronWinCleaner
 
         public string Hash { get; set; }
         public long FileSize { get; set; }
+        public DateTime Created { get; set; }
+        public string FolderPath => Path.GetDirectoryName(FilePath) ?? string.Empty;
+        public bool IsExactDuplicate => Hash != null && !Hash.StartsWith(Duplicate_File_Finder.SimilarMediaPrefix);
+        public string CopyBadge => IsExactDuplicate ? "COPY" : "SIMILAR";
+        public string CopyBadgeColor => IsExactDuplicate ? "#FFE67E22" : "#FF8E44AD";
+        public string CreatedText => Created == default || Created == DateTime.MaxValue ? string.Empty : "Created " + Created.ToString("g");
 
         public List<string> MatchedFilePaths { get; } = new List<string>();
 
@@ -75,12 +82,42 @@ namespace MultronWinCleaner
         protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
+    public class DuplicatePairModel
+    {
+        public FileNodeModel Copy { get; set; }
+        public FileNodeModel Original { get; set; }
+        public string RelationText => Copy != null && Copy.IsExactDuplicate ? "copy of" : "similar to";
+    }
+
     public partial class Duplicate_File_Finder : Window
     {
         public ObservableCollection<FolderNodeModel> ExplorerTree { get; set; } = new ObservableCollection<FolderNodeModel>();
         private List<DuplicateFileModel> allDuplicates = new List<DuplicateFileModel>();
 
         private Dictionary<string, List<FileNodeModel>> _duplicateGroupIndex = new Dictionary<string, List<FileNodeModel>>(StringComparer.OrdinalIgnoreCase);
+        private List<DuplicatePairModel> duplicatePairs = new List<DuplicatePairModel>();
+        private const string SearchPlaceholder = "Search by File Name or SHA256 Hash...";
+        public const string SimilarMediaPrefix = "Similar Media: ";
+        private static readonly EnumerationOptions DuplicateFolderOptions = new EnumerationOptions { IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint | FileAttributes.System };
+        private static readonly EnumerationOptions DuplicateFileOptions = new EnumerationOptions { IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint | FileAttributes.System };
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct BY_HANDLE_FILE_INFORMATION
+        {
+            public uint FileAttributes;
+            public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+            public uint VolumeSerialNumber;
+            public uint FileSizeHigh;
+            public uint FileSizeLow;
+            public uint NumberOfLinks;
+            public uint FileIndexHigh;
+            public uint FileIndexLow;
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool GetFileInformationByHandle(Microsoft.Win32.SafeHandles.SafeFileHandle hFile, out BY_HANDLE_FILE_INFORMATION info);
 
         private string duplicatesFilePath = Path.Combine(Environment.CurrentDirectory, "duplicates.json");
 
@@ -94,6 +131,21 @@ namespace MultronWinCleaner
 
             DuplicatesTreeView.ItemsSource = ExplorerTree;
             this.Loaded += Window_Loaded;
+
+            var availabilityTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
+            availabilityTimer.Tick += (s, e) => UpdateScanAvailability();
+            IsVisibleChanged += (s, e) =>
+            {
+                if (IsVisible)
+                {
+                    UpdateScanAvailability();
+                    availabilityTimer.Start();
+                }
+                else
+                {
+                    availabilityTimer.Stop();
+                }
+            };
 
             SetSearchPlaceholder();
         }
@@ -128,6 +180,8 @@ namespace MultronWinCleaner
 
         private async Task LoadDuplicatesDataAsync()
         {
+            if (_isScanning) return;
+
             if (!File.Exists(duplicatesFilePath))
             {
                 StatusText.Text = "Ready to scan target directories.";
@@ -149,14 +203,14 @@ namespace MultronWinCleaner
                     }
                 });
 
-                if (loaded == null || loaded.Count == 0) return;
+                if (loaded == null || loaded.Count == 0 || _isScanning) return;
 
                 allDuplicates = loaded;
 
                 bool isHashVisible = ShowHashCheckBox?.IsChecked == true;
 
                 var (newRoots, groupIndex) = await Task.Run(() => BuildFolderTreeNodes(allDuplicates, isHashVisible));
-                _duplicateGroupIndex = groupIndex;
+                SetGroupIndex(groupIndex);
 
                 DuplicatesTreeView.ItemsSource = null;
                 ExplorerTree.Clear();
@@ -193,6 +247,11 @@ namespace MultronWinCleaner
 
         private async void MainActionButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_mainCancelContent != null)
+            {
+                (Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow)?.CancelScanOrClean();
+                return;
+            }
             if (_isScanning)
             {
                 _cts?.Cancel();
@@ -244,6 +303,98 @@ namespace MultronWinCleaner
             }
         }
 
+        private bool _isDeleting;
+
+        private object _mainCancelContent;
+
+        private void UpdateScanAvailability()
+        {
+            if (_isScanning || _isDeleting)
+                return;
+            bool busy = (Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow)?.IsScanOrCleanBusy == true;
+            if (busy)
+            {
+                if (!Equals(MainActionButton.Content, "Cancel"))
+                    _mainCancelContent = MainActionButton.Content;
+                MainActionButton.Content = "Cancel";
+                MainActionButton.IsEnabled = true;
+                MainActionButton.ToolTip = "Cancel the scan or clean running on the main screen.";
+            }
+            else if (_mainCancelContent != null)
+            {
+                MainActionButton.Content = _mainCancelContent;
+                _mainCancelContent = null;
+                MainActionButton.IsEnabled = true;
+                MainActionButton.ToolTip = null;
+            }
+        }
+
+        public bool IsBusy => _isScanning;
+
+        public string CurrentStatus => StatusText?.Text ?? "";
+
+        public bool WasCanceled => _cts?.IsCancellationRequested == true;
+
+        public void CancelScan()
+        {
+            if (_isScanning)
+                _cts?.Cancel();
+        }
+
+        public void ShowSideBySide()
+        {
+            SideBySideRadio.IsChecked = true;
+            if (WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+            Activate();
+        }
+
+        public async Task<(int Copies, int Groups, long Bytes)> RunReportScanAsync()
+        {
+            if (_isScanning)
+                return (0, 0, 0);
+
+            var folders = new List<string>
+            {
+                Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyMusic)
+            };
+            FolderListBox.Items.Clear();
+            foreach (string folder in folders.Where(f => !string.IsNullOrEmpty(f) && Directory.Exists(f)).Distinct(StringComparer.OrdinalIgnoreCase))
+                FolderListBox.Items.Add(folder);
+
+            _isScanning = true;
+            MainActionButton.Content = "Cancel";
+            TotalSizeText.Visibility = Visibility.Collapsed;
+            try
+            {
+                await RunScanAsync();
+            }
+            finally
+            {
+                _isScanning = false;
+                MainActionButton.IsEnabled = true;
+            }
+
+            if (allDuplicates.Count > 0)
+            {
+                _isScanned = true;
+                MainActionButton.Content = "CLEAN";
+                MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
+            }
+            else
+            {
+                ResetToScanState();
+            }
+
+            var groups = allDuplicates.Where(d => d.Hash != null && !d.Hash.StartsWith(SimilarMediaPrefix)).GroupBy(d => d.Hash).Where(g => g.Count() > 1).ToList();
+            return (groups.Sum(g => g.Count() - 1), groups.Count, groups.Sum(g => g.Skip(1).Sum(d => d.FileSize)));
+        }
+
         private async Task RunScanAsync()
         {
             _cts?.Cancel();
@@ -259,12 +410,7 @@ namespace MultronWinCleaner
 
             try
             {
-                foreach (var item in FolderListBox.Items)
-                {
-                    if (_cts.Token.IsCancellationRequested) break;
-                    string folder = item.ToString();
-                    await Scan(folder);
-                }
+                await Scan(FolderListBox.Items.Cast<object>().Select(i => i.ToString()).ToList());
 
                 await SaveDuplicatesDataAsync();
 
@@ -291,13 +437,44 @@ namespace MultronWinCleaner
             }
         }
 
-        private async Task Scan(string rootFolderPath)
+        private static string GetFileId(FileStream stream)
+        {
+            return GetFileInformationByHandle(stream.SafeFileHandle, out BY_HANDLE_FILE_INFORMATION info)
+                ? $"{info.VolumeSerialNumber:X8}-{info.FileIndexHigh:X8}{info.FileIndexLow:X8}"
+                : null;
+        }
+
+        private static bool FilesAreEqual(string first, string second, CancellationToken token)
+        {
+            const int BufferSize = 1024 * 1024;
+            using var a = new FileStream(first, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize, FileOptions.SequentialScan);
+            using var b = new FileStream(second, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, BufferSize, FileOptions.SequentialScan);
+            if (a.Length != b.Length)
+                return false;
+
+            byte[] bufferA = new byte[BufferSize];
+            byte[] bufferB = new byte[BufferSize];
+            while (true)
+            {
+                token.ThrowIfCancellationRequested();
+                int readA = a.ReadAtLeast(bufferA, BufferSize, throwOnEndOfStream: false);
+                int readB = b.ReadAtLeast(bufferB, BufferSize, throwOnEndOfStream: false);
+                if (readA != readB)
+                    return false;
+                if (readA == 0)
+                    return true;
+                if (!bufferA.AsSpan(0, readA).SequenceEqual(bufferB.AsSpan(0, readB)))
+                    return false;
+            }
+        }
+
+        private async Task Scan(List<string> rootFolders)
         {
             var token = _cts.Token;
-            var dupResults = new ConcurrentBag<DuplicateFileModel>();
+            var exactResults = new ConcurrentBag<DuplicateFileModel>();
+            var similarResults = new List<DuplicateFileModel>();
 
             int scannedCount = 0;
-            int hashedCount = 0;
             long lastUpdateTicks = 0;
             const int updateIntervalMs = 200;
 
@@ -305,7 +482,6 @@ namespace MultronWinCleaner
             if (MinSizeTextBox != null && long.TryParse(MinSizeTextBox.Text, out long minKb))
                 minSizeBytes = minKb * 1024;
 
-            // 1. ExtensionTextBox.Text içeriğini dinamik olarak ayrıştır
             var selectedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             bool allowAllExtensions = false;
 
@@ -316,7 +492,7 @@ namespace MultronWinCleaner
                 allowAllExtensions = true;
             }
             else
-            { 
+            {
                 var parts = filterText.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var part in parts)
@@ -326,7 +502,7 @@ namespace MultronWinCleaner
                     {
                         allowAllExtensions = true;
                         break;
-                    } 
+                    }
                     cleanExt = cleanExt.Replace("*", "");
                     if (!cleanExt.StartsWith("."))
                     {
@@ -338,7 +514,7 @@ namespace MultronWinCleaner
                         selectedExtensions.Add(cleanExt);
                     }
                 }
-                 
+
                 if (selectedExtensions.Count == 0)
                 {
                     allowAllExtensions = true;
@@ -355,7 +531,7 @@ namespace MultronWinCleaner
 
                 Dispatcher.BeginInvoke(() =>
                 {
-                    StatusText.Text = $"{phase}... {scannedCount} files scanned, {allDuplicates.Count + dupResults.Count} duplicate files found.";
+                    StatusText.Text = $"{phase}... {scannedCount} files scanned, {exactResults.Count} identical files found.";
                     if (FilesScannedText != null) FilesScannedText.Text = currentFile;
                 });
             }
@@ -364,27 +540,37 @@ namespace MultronWinCleaner
             {
                 await Task.Run(() =>
                 {
-                    IEnumerable<string> EnumerateAllFiles(string root)
+                    string windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows).TrimEnd('\\') + "\\";
+
+                    IEnumerable<string> EnumerateAllFiles()
                     {
+                        var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                         var stack = new Stack<string>();
-                        if (Directory.Exists(root)) stack.Push(root);
+                        foreach (string root in rootFolders)
+                        {
+                            if (Directory.Exists(root)) stack.Push(Path.GetFullPath(root));
+                        }
 
                         while (stack.Count > 0)
                         {
                             token.ThrowIfCancellationRequested();
-                            var dir = stack.Pop();
+                            string dir = stack.Pop();
+                            string key = dir.TrimEnd('\\') + "\\";
+                            if (!visited.Add(key) || key.StartsWith(windowsFolder, StringComparison.OrdinalIgnoreCase))
+                                continue;
 
-                            string[] subDirs = Array.Empty<string>();
-                            string[] filesHere = Array.Empty<string>();
+                            List<string> subDirs = new List<string>();
+                            List<string> filesHere = new List<string>();
                             try
                             {
-                                filesHere = Directory.GetFiles(dir, "*.*");
-                                subDirs = Directory.GetDirectories(dir);
+                                var info = new DirectoryInfo(dir);
+                                subDirs = info.EnumerateDirectories("*", DuplicateFolderOptions).Select(d => d.FullName).ToList();
+                                filesHere = info.EnumerateFiles("*", DuplicateFileOptions).Select(fi => fi.FullName).ToList();
                             }
                             catch { }
 
                             foreach (var d in subDirs) stack.Push(d);
-                            foreach (var f in filesHere) yield return f;
+                            foreach (var file in filesHere) yield return file;
                         }
                     }
 
@@ -392,12 +578,12 @@ namespace MultronWinCleaner
                     var mediaNameGroups = new ConcurrentDictionary<string, ConcurrentBag<string>>();
 
                     Parallel.ForEach(
-                        EnumerateAllFiles(rootFolderPath),
+                        EnumerateAllFiles(),
                         new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = token },
                         file =>
                         {
                             string ext = Path.GetExtension(file);
-                             
+
                             if (!allowAllExtensions && (string.IsNullOrEmpty(ext) || !selectedExtensions.Contains(ext)))
                             {
                                 return;
@@ -407,25 +593,22 @@ namespace MultronWinCleaner
                             try { size = new FileInfo(file).Length; }
                             catch { return; }
 
-                            if (size >= minSizeBytes)
+                            if (size > 0 && size >= minSizeBytes)
                             {
-                                string lowerExt = ext.ToLower();
-                                bool isMedia = lowerExt == ".mp4" || lowerExt == ".mkv" || lowerExt == ".avi" ||
-                                               lowerExt == ".mov" || lowerExt == ".jpg" || lowerExt == ".png" ||
-                                               lowerExt == ".jpeg" || lowerExt == ".webp";
+                                sizeGroups.GetOrAdd(size, _ => new ConcurrentBag<string>()).Add(file);
+
+                                string lowerExt = ext.ToLowerInvariant();
+                                bool isMedia = ImageExtensions.Contains(lowerExt) || VideoExtensions.Contains(lowerExt);
 
                                 if (checkQualities && isMedia)
                                 {
-                                    string baseName = Path.GetFileNameWithoutExtension(file).ToLower();
+                                    string baseName = Path.GetFileNameWithoutExtension(file).ToLowerInvariant();
                                     baseName = System.Text.RegularExpressions.Regex.Replace(baseName, @"\b(1080p|720p|1440p|4k|8k|480p|360p|copy)\b", "");
                                     baseName = System.Text.RegularExpressions.Regex.Replace(baseName, @"\(\d+\)", "");
                                     baseName = System.Text.RegularExpressions.Regex.Replace(baseName, @"\s+", " ").Trim(' ', '-', '_');
 
-                                    mediaNameGroups.GetOrAdd(baseName, _ => new ConcurrentBag<string>()).Add(file);
-                                }
-                                else
-                                {
-                                    sizeGroups.GetOrAdd(size, _ => new ConcurrentBag<string>()).Add(file);
+                                    if (baseName.Length > 0)
+                                        mediaNameGroups.GetOrAdd(baseName, _ => new ConcurrentBag<string>()).Add(file);
                                 }
                             }
                             Interlocked.Increment(ref scannedCount);
@@ -439,11 +622,11 @@ namespace MultronWinCleaner
                         new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = token },
                         group =>
                         {
-                            var filesInGroup = group.Value.ToList();
                             long exactSize = group.Key;
                             var hashDict = new Dictionary<string, List<string>>();
+                            var seenFileIds = new HashSet<string>();
 
-                            foreach (var file in filesInGroup)
+                            foreach (var file in group.Value.OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
                             {
                                 if (token.IsCancellationRequested) return;
 
@@ -454,25 +637,51 @@ namespace MultronWinCleaner
                                         file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite,
                                         bufferSize: 1024 * 1024, FileOptions.SequentialScan);
 
+                                    if (stream.Length != exactSize)
+                                        continue;
+
+                                    string fileId = GetFileId(stream);
+                                    if (fileId != null && !seenFileIds.Add(fileId))
+                                        continue;
+
                                     hash = Convert.ToHexString(SHA256.HashData(stream));
                                 }
                                 catch { continue; }
 
-                                if (!hashDict.ContainsKey(hash))
+                                if (!hashDict.TryGetValue(hash, out var list))
                                 {
-                                    hashDict[hash] = new List<string>();
+                                    list = new List<string>();
+                                    hashDict[hash] = list;
                                 }
-                                hashDict[hash].Add(file);
+                                list.Add(file);
 
-                                Interlocked.Increment(ref hashedCount);
-                                MaybeReportStatus(file, "Hashing & Verifying");
+                                MaybeReportStatus(file, "Hashing");
                             }
 
                             foreach (var hashGroup in hashDict.Where(hg => hg.Value.Count > 1))
                             {
-                                foreach (var exactDuplicate in hashGroup.Value)
+                                string reference = hashGroup.Value[0];
+                                var identical = new List<string> { reference };
+
+                                foreach (var other in hashGroup.Value.Skip(1))
                                 {
-                                    dupResults.Add(new DuplicateFileModel
+                                    if (token.IsCancellationRequested) return;
+                                    try
+                                    {
+                                        if (FilesAreEqual(reference, other, token))
+                                            identical.Add(other);
+                                    }
+                                    catch (OperationCanceledException) { return; }
+                                    catch { }
+                                    MaybeReportStatus(other, "Verifying byte by byte");
+                                }
+
+                                if (identical.Count < 2)
+                                    continue;
+
+                                foreach (var exactDuplicate in identical)
+                                {
+                                    exactResults.Add(new DuplicateFileModel
                                     {
                                         FileName = Path.GetFileName(exactDuplicate),
                                         FilePath = exactDuplicate,
@@ -485,17 +694,20 @@ namespace MultronWinCleaner
 
                     if (checkQualities && !token.IsCancellationRequested)
                     {
-                        var fuzzyCandidates = mediaNameGroups.Where(g => g.Value.Count > 1).ToList();
-                        foreach (var group in fuzzyCandidates)
+                        var exactPaths = new HashSet<string>(exactResults.Select(r => r.FilePath), StringComparer.OrdinalIgnoreCase);
+                        foreach (var group in mediaNameGroups)
                         {
-                            string displayHash = "Similar Media: " + group.Key.ToUpper();
+                            var files = group.Value.Where(p => !exactPaths.Contains(p)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                            if (files.Count < 2)
+                                continue;
 
-                            foreach (var file in group.Value)
+                            string displayHash = SimilarMediaPrefix + group.Key.ToUpperInvariant();
+                            foreach (var file in files)
                             {
                                 long fSize = 0;
                                 try { fSize = new FileInfo(file).Length; } catch { }
 
-                                dupResults.Add(new DuplicateFileModel
+                                similarResults.Add(new DuplicateFileModel
                                 {
                                     FileName = Path.GetFileName(file),
                                     FilePath = file,
@@ -507,21 +719,20 @@ namespace MultronWinCleaner
                     }
 
                 }, token);
-
-                var finalList = dupResults.ToList();
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    foreach (var item in finalList)
-                    {
-                        if (!allDuplicates.Any(d => d.FilePath.Equals(item.FilePath, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            allDuplicates.Add(item);
-                        }
-                    }
-                    if (FilesScannedText != null) FilesScannedText.Text = "";
-                });
             }
             catch (OperationCanceledException) { }
+
+            var finalList = exactResults.OrderBy(r => r.Hash).ThenBy(r => r.FilePath, StringComparer.OrdinalIgnoreCase).Concat(similarResults).ToList();
+            await Dispatcher.InvokeAsync(() =>
+            {
+                var paths = new HashSet<string>(allDuplicates.Select(d => d.FilePath), StringComparer.OrdinalIgnoreCase);
+                foreach (var item in finalList)
+                {
+                    if (paths.Add(item.FilePath))
+                        allDuplicates.Add(item);
+                }
+                if (FilesScannedText != null) FilesScannedText.Text = "";
+            });
         }
         private void ExtensionCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
         {
@@ -530,14 +741,14 @@ namespace MultronWinCleaner
 
             List<string> selectedExtensions = new List<string>();
 
-            if (PngCheckBox?.IsChecked == true) selectedExtensions.Add("*.png");
-            if (JpegCheckBox?.IsChecked == true) selectedExtensions.Add("*.jpeg");
-            if (JpgCheckBox?.IsChecked == true) selectedExtensions.Add("*.jpg");
-            if (WebpCheckBox?.IsChecked == true) selectedExtensions.Add("*.webp");
-            if (Mp4CheckBox?.IsChecked == true) selectedExtensions.Add("*.mp4");
-            if (AviCheckBox?.IsChecked == true) selectedExtensions.Add("*.avi");
-            if (MkvCheckBox?.IsChecked == true) selectedExtensions.Add("*.mkv");
-            if (MovCheckBox?.IsChecked == true) selectedExtensions.Add("*.mov");
+            if (QuickExtensionGrid != null)
+            {
+                foreach (var box in QuickExtensionGrid.Children.OfType<CheckBox>())
+                {
+                    if (box.IsChecked == true)
+                        selectedExtensions.Add("*" + box.Content);
+                }
+            }
 
             if (selectedExtensions.Count > 0)
             {
@@ -548,6 +759,41 @@ namespace MultronWinCleaner
                 ExtensionTextBox.Text = "*.*";
             }
         }
+
+        private static readonly string[] ImageExtensions =
+        {
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".heic", ".heif", ".tif", ".tiff", ".svg", ".ico",
+            ".raw", ".cr2", ".cr3", ".nef", ".arw", ".dng", ".orf", ".rw2", ".psd", ".avif", ".jfif"
+        };
+
+        private static readonly string[] VideoExtensions =
+        {
+            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".m4v", ".mpg", ".mpeg", ".3gp", ".ts",
+            ".m2ts", ".mts", ".vob", ".ogv", ".rmvb", ".divx"
+        };
+
+        private static readonly string[] MusicExtensions =
+        {
+            ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a", ".opus", ".aiff", ".alac", ".ape", ".mid", ".midi", ".amr"
+        };
+
+        private static readonly string[] DocumentExtensions =
+        {
+            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".csv", ".odt", ".ods", ".odp",
+            ".epub", ".mobi", ".md", ".xps", ".one", ".pages", ".key", ".numbers"
+        };
+
+        private static readonly string[] ArchiveExtensions =
+        {
+            ".zip", ".rar", ".7z", ".tar", ".gz", ".tgz", ".bz2", ".xz", ".zst", ".cab", ".iso", ".img", ".vhd", ".vhdx", ".vmdk", ".wim", ".esd"
+        };
+
+        private static readonly string[] ProgramExtensions =
+        {
+            ".exe", ".msi", ".msix", ".msixbundle", ".appx", ".appxbundle", ".apk", ".xapk", ".dmg", ".deb", ".rpm", ".jar"
+        };
+
+        private static string ToFilter(IEnumerable<string> extensions) => string.Join(", ", extensions.Select(e => "*" + e));
 
         private void ExtensionPresetComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -562,11 +808,27 @@ namespace MultronWinCleaner
             }
             else if (content.Contains("Images Only"))
             {
-                ExtensionTextBox.Text = "*.png, *.jpg, *.jpeg, *.webp, *.bmp";
+                ExtensionTextBox.Text = ToFilter(ImageExtensions);
             }
             else if (content.Contains("Videos Only"))
             {
-                ExtensionTextBox.Text = "*.mp4, *.avi, *.mkv, *.mov, *.wmv";
+                ExtensionTextBox.Text = ToFilter(VideoExtensions);
+            }
+            else if (content.Contains("Music Only"))
+            {
+                ExtensionTextBox.Text = ToFilter(MusicExtensions);
+            }
+            else if (content.Contains("Documents Only"))
+            {
+                ExtensionTextBox.Text = ToFilter(DocumentExtensions);
+            }
+            else if (content.Contains("Archives"))
+            {
+                ExtensionTextBox.Text = ToFilter(ArchiveExtensions);
+            }
+            else if (content.Contains("Programs"))
+            {
+                ExtensionTextBox.Text = ToFilter(ProgramExtensions);
             }
             else if (content.Contains("Custom"))
             {
@@ -576,7 +838,7 @@ namespace MultronWinCleaner
         private void BuildFolderTree(List<DuplicateFileModel> duplicates)
         {
             var (nodes, groupIndex) = BuildFolderTreeNodes(duplicates, ShowHashCheckBox?.IsChecked == true);
-            _duplicateGroupIndex = groupIndex;
+            SetGroupIndex(groupIndex);
 
             ExplorerTree.Clear();
             foreach (var root in nodes)
@@ -597,17 +859,19 @@ namespace MultronWinCleaner
 
             var groupedByHash = duplicates.GroupBy(d => d.Hash);
             var fileCheckStates = new Dictionary<string, bool>();
+            var createdTimes = new Dictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
             var siblingPathsByHash = new Dictionary<string, List<string>>();
 
             foreach (var group in groupedByHash)
             {
-                var orderedFiles = group.OrderBy(f => f.FilePath).ToList();
+                var orderedFiles = group.OrderBy(f => GetCreated(f.FilePath, createdTimes)).ThenBy(f => f.FilePath.Length).ThenBy(f => f.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
                 siblingPathsByHash[group.Key] = orderedFiles.Select(f => f.FilePath).ToList();
 
                 bool isFirst = true;
+                bool isSimilarGroup = group.Key != null && group.Key.StartsWith(SimilarMediaPrefix);
                 foreach (var file in orderedFiles)
                 {
-                    fileCheckStates[file.FilePath] = !isFirst;
+                    fileCheckStates[file.FilePath] = !isFirst && !isSimilarGroup;
                     isFirst = false;
                 }
             }
@@ -651,6 +915,7 @@ namespace MultronWinCleaner
                         FileName = file.FileName,
                         FilePath = file.FilePath,
                         FileSize = file.FileSize,
+                        Created = GetCreated(file.FilePath, createdTimes),
                         Hash = file.Hash,
                         FileIcon = GetFileIcon(file.FileName),
                         FormattedSize = FormatSize(file.FileSize),
@@ -684,19 +949,73 @@ namespace MultronWinCleaner
             return (rootNodes, groupIndex);
         }
 
+        private static DateTime GetCreated(string path, Dictionary<string, DateTime> cache)
+        {
+            if (!cache.TryGetValue(path, out DateTime value))
+            {
+                try
+                {
+                    value = File.Exists(path) ? File.GetCreationTime(path) : DateTime.MaxValue;
+                }
+                catch (Exception)
+                {
+                    value = DateTime.MaxValue;
+                }
+                cache[path] = value;
+            }
+            return value;
+        }
+
+        private void SetGroupIndex(Dictionary<string, List<FileNodeModel>> groupIndex)
+        {
+            _duplicateGroupIndex = groupIndex;
+            var pairs = new List<DuplicatePairModel>();
+            foreach (var group in groupIndex.Values)
+            {
+                if (group.Count < 2) continue;
+                var ordered = group.OrderBy(n => n.Created).ThenBy(n => n.FilePath.Length).ThenBy(n => n.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
+                foreach (var copy in ordered.Skip(1))
+                    pairs.Add(new DuplicatePairModel { Copy = copy, Original = ordered[0] });
+            }
+            duplicatePairs = pairs.OrderBy(p => p.Original.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
+            ApplyPairFilter();
+        }
+
+        private void ApplyPairFilter()
+        {
+            if (PairsListBox == null) return;
+            string query = SearchBox?.Text.Trim() ?? string.Empty;
+            if (query.Length == 0 || query == SearchPlaceholder)
+            {
+                PairsListBox.ItemsSource = duplicatePairs;
+                return;
+            }
+            PairsListBox.ItemsSource = duplicatePairs.Where(p => MatchesQuery(p.Copy, query) || MatchesQuery(p.Original, query)).ToList();
+        }
+
+        private static bool MatchesQuery(FileNodeModel node, string query)
+        {
+            return node.FilePath.Contains(query, StringComparison.OrdinalIgnoreCase)
+                || (node.Hash != null && node.Hash.Contains(query, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private void ViewMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (DuplicatesTreeView == null || PairsListBox == null) return;
+            bool sideBySide = SideBySideRadio.IsChecked == true;
+            DuplicatesTreeView.Visibility = sideBySide ? Visibility.Collapsed : Visibility.Visible;
+            PairsListBox.Visibility = sideBySide ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private string GetFileIcon(string fileName)
         {
             string ext = Path.GetExtension(fileName).ToLowerInvariant();
-            return ext switch
-            {
-                ".jpg" or ".jpeg" or ".png" or ".gif" or ".bmp" => "🖼️",
-                ".mp4" or ".avi" or ".mkv" or ".mov" => "🎥",
-                ".mp3" or ".wav" or ".flac" => "🎵",
-                ".zip" or ".rar" or ".7z" => "📦",
-                ".exe" or ".msi" => "⚙️",
-                ".txt" or ".doc" or ".docx" or ".pdf" => "📄",
-                _ => "📄"
-            };
+            if (ImageExtensions.Contains(ext)) return "🖼️";
+            if (VideoExtensions.Contains(ext)) return "🎥";
+            if (MusicExtensions.Contains(ext)) return "🎵";
+            if (ArchiveExtensions.Contains(ext)) return "📦";
+            if (ProgramExtensions.Contains(ext)) return "⚙️";
+            return "📄";
         }
 
         private string FormatSize(long bytes)
@@ -719,7 +1038,7 @@ namespace MultronWinCleaner
             long totalRecoverableBytes = await Task.Run(() =>
             {
                 long bytes = 0;
-                var groups = allDuplicates.GroupBy(d => d.Hash);
+                var groups = allDuplicates.Where(d => d.Hash != null && !d.Hash.StartsWith(SimilarMediaPrefix)).GroupBy(d => d.Hash);
 
                 foreach (var group in groups)
                 {
@@ -752,7 +1071,19 @@ namespace MultronWinCleaner
 
             if (result == MessageBoxResult.Yes)
             {
-                var filesToDelete = GetCheckedFiles(ExplorerTree).ToList();
+                var keptFileOf = new Dictionary<FileNodeModel, FileNodeModel>();
+                foreach (var group in _duplicateGroupIndex.Values)
+                {
+                    var ordered = group.OrderBy(n => n.Created).ThenBy(n => n.FilePath.Length).ThenBy(n => n.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
+                    var kept = ordered.FirstOrDefault(n => !n.IsSelectedForDeletion && File.Exists(n.FilePath))
+                               ?? ordered.FirstOrDefault(n => File.Exists(n.FilePath));
+                    if (kept == null)
+                        continue;
+                    foreach (var node in ordered.Where(n => n.IsSelectedForDeletion && !ReferenceEquals(n, kept)))
+                        keptFileOf[node] = kept;
+                }
+                var filesToDelete = keptFileOf.Keys.ToList();
+                var verifyToken = CancellationToken.None;
 
                 int totalFiles = filesToDelete.Count;
 
@@ -766,6 +1097,8 @@ namespace MultronWinCleaner
                 long freedBytes = 0;
 
                 var failedFilesList = new List<FileNodeModel>();
+
+                _isDeleting = true;
 
                 MainActionButton.IsEnabled = false;
 
@@ -787,7 +1120,12 @@ namespace MultronWinCleaner
 
                         try
                         {
-                            if (File.Exists(filePath))
+                            var keptFile = keptFileOf[fileNode];
+                            if (File.Exists(filePath) && fileNode.IsExactDuplicate && !FilesAreEqual(filePath, keptFile.FilePath, verifyToken))
+                            {
+                                failedFilesList.Add(CreateErrorNode(fileNode, "Not deleted: its content no longer matches " + keptFile.FilePath));
+                            }
+                            else if (File.Exists(filePath))
                             {
                                 long fileSize = new FileInfo(filePath).Length;
 
@@ -812,6 +1150,8 @@ namespace MultronWinCleaner
 
                 MainActionButton.IsEnabled = true;
 
+                _isDeleting = false;
+
                 ClearListButton_Click(null, null);
 
                 StatusText.Text = $"Cleanup Complete! Successfully deleted {deletedCount} of {totalFiles} files. Total freed space: {FormatSize(freedBytes)}";
@@ -825,6 +1165,7 @@ namespace MultronWinCleaner
                         Children = new ObservableCollection<object>(failedFilesList)
                     };
 
+                    TreeViewRadio.IsChecked = true;
                     DuplicatesTreeView.ItemsSource = new List<object> { errorFolder };
                 }
             }
@@ -870,6 +1211,7 @@ namespace MultronWinCleaner
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            ApplyPairFilter();
             string query = SearchBox.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(query) || query == "Search by File Name or SHA256 Hash...")
@@ -1070,6 +1412,7 @@ namespace MultronWinCleaner
         {
             allDuplicates.Clear();
             ExplorerTree.Clear();
+            SetGroupIndex(new Dictionary<string, List<FileNodeModel>>(StringComparer.OrdinalIgnoreCase));
             StatusText.Text = "List cleared.";
             if (File.Exists(duplicatesFilePath)) File.Delete(duplicatesFilePath);
             ResetToScanState();

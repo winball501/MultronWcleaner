@@ -10,6 +10,7 @@
         ShowInTaskbar="False"
         ResizeMode="NoResize"
         Loaded="Window_Loaded"
+        MouseLeftButtonUp="Window_MouseLeftButtonUp"
         WindowStartupLocation="Manual">
 
     <Border CornerRadius="14" 

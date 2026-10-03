@@ -11,6 +11,19 @@ namespace MultronWinCleaner
     {
       
         Utilities utilities;
+        ObservableCollection<ServiceItem> items;
+        string settingPrefix = "selectedservice:";
+
+        public void ShowItems(string title, string header, ObservableCollection<ServiceItem> list, string prefix)
+        {
+            TitleText.Text = title;
+            HeaderText.Text = header;
+            ServicesList.ItemsSource = list;
+            items = list;
+            settingPrefix = prefix;
+            Show();
+            Activate();
+        }
 
         string settingsPath = AppDomain.CurrentDomain.BaseDirectory + "Settings.txt";
         public Configure(Utilities utilities)
@@ -44,39 +57,18 @@ namespace MultronWinCleaner
             }
             ServicesList.ItemsSource = utilities.turboBoostServices;
             this.utilities = utilities;
+            items = utilities.turboBoostServices;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-
-            int selected = 0;
-            foreach (var svc in utilities.turboBoostServices.ToList())
+            if (!items.Any(i => i.IsSelected))
             {
-                if (svc.IsSelected == true)
-                {
-                    selected = 1;
-                    svc.IsSelected = true;
-                    utilities.savesettings("selectedservice:" + svc.ServiceName  + ":" + "true");
-                } else
-                {
-                    svc.IsSelected = false;
-                    utilities.savesettings("selectedservice:" + svc.ServiceName + ":" + "false");
-                }
-                  
-            }  
-            if(selected == 0)
-            {
-                MessageBox.Show("All services disabled! this means services going to enabled and an optimizer going to disable all.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                foreach (var svc in utilities.turboBoostServices.ToList())
-                {
-                   
-                        svc.IsSelected = true;
-                        utilities.savesettings("selectedservice:" + svc.ServiceName + ":" + "true");
-                }
-            
-
+                MessageBox.Show("Select at least one option.", "Optimization", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
-          
+            foreach (var item in items)
+                utilities.savesettings(settingPrefix + item.ServiceName + ":" + (item.IsSelected ? "true" : "false"));
             this.Hide();
         }
 
@@ -105,6 +97,10 @@ namespace MultronWinCleaner
     {
         private bool _isSelected;
         public string ServiceName { get; set; }
+        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public string Title => string.IsNullOrEmpty(DisplayName) ? ServiceName : DisplayName;
+        public Visibility DescriptionVisibility => string.IsNullOrEmpty(Description) ? Visibility.Collapsed : Visibility.Visible;
 
         public bool IsSelected
         {

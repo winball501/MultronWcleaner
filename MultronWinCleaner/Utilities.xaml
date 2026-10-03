@@ -115,7 +115,7 @@
                     </Border>
 
 
-                    <Border Grid.Row="2" Grid.Column="0" Margin="10" Padding="15"
+                    <Border Grid.Row="4" Grid.Column="1" Margin="10" Padding="15"
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
@@ -136,10 +136,25 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Optimization For Old Systems" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="System Optimization" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Temporarily stops unnecessary Windows services to free up system resources for gaming or heavy tasks."
+                            <ComboBox x:Name="OptimizationProfile" Height="30" Margin="0,0,0,10" SelectionChanged="OptimizationProfile_SelectionChanged">
+                                <ComboBoxItem Content="For old systems: pause background services"/>
+                                <ComboBoxItem Content="For new systems: performance boost"/>
+                            </ComboBox>
+                            <TextBlock x:Name="OptimizationDescription" Text="Pauses background Windows services to free memory and CPU on older PCs. Windows starts them again after a restart, so while this is on they are paused again every time the app starts. Undo starts exactly the services that were paused."
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <TextBlock Text="Activity" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,4"/>
+                            <ListBox x:Name="OptimizationLog" Height="110" FontSize="12"
+                                     Background="{DynamicResource PanelBackground}"
+                                     Foreground="{DynamicResource TextSecondary}"
+                                     BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,10">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                             <TextBlock FontSize="13" Foreground="DodgerBlue" Margin="0,0,0,10" Cursor="Hand">
                                 <Hyperlink Click="ConfigureTurboBoost_Click">Configure</Hyperlink>
                             </TextBlock>
@@ -182,6 +197,102 @@
                                 <TextBlock x:Name="lblStatusStartup" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
                                 <Button x:Name="btnCloseStartup" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseStartup_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
                             </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="4" Grid.Column="0" Margin="10" Padding="15"
+                            Background="{DynamicResource PanelBackground}" CornerRadius="12"
+                            Effect="{StaticResource DropShadowEffect}">
+                        <StackPanel>
+                            <TextBlock Text="Shortcut Fixer"
+                                       FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Finds Desktop and Start Menu shortcuts whose program no longer exists. Shortcuts to programs that moved to a new version folder are repaired, the others are moved to the Recycle Bin."
+                                       FontSize="13" Foreground="{DynamicResource TextSecondary}"
+                                       TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <ProgressBar x:Name="ShortcutProgress" Height="18" Minimum="0" Maximum="100" Value="0" IsIndeterminate="True"
+                                         Margin="0,0,0,5" Foreground="{DynamicResource ButtonNormalBackground}"
+                                         Background="#DDD" Visibility="Collapsed"/>
+                            <ListBox x:Name="ShortcutList" Height="120"
+                                     Background="{DynamicResource PanelBackground}"
+                                     Foreground="{DynamicResource TextPrimary}"
+                                     BorderBrush="Transparent" Margin="0,0,0,5" Visibility="Collapsed">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Label x:Name="ShortcutResultLabel" FontWeight="Bold" FontSize="13"
+                                   Margin="0,5,0,0" Visibility="Collapsed"
+                                   HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Button x:Name="ShortcutScan" Content="Start Scan"
+                                        Width="140" Height="36" Cursor="Hand" Click="ShortcutScan_Click"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                                <Button x:Name="ShortcutReset" Content="Reset"
+                                        Width="140" Height="36" Cursor="Hand" Click="ShortcutReset_Click"
+                                        Visibility="Collapsed" Margin="8,0,0,0" Background="Blue"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="SecurityCard" Grid.Row="2" Grid.Column="0" Margin="10" Padding="15"
+                            Background="{DynamicResource PanelBackground}" CornerRadius="12"
+                            Effect="{StaticResource DropShadowEffect}">
+                        <StackPanel>
+                            <TextBlock Text="Security Check"
+                                       FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
+                            <TextBlock Text="Finds Windows settings that make your PC less secure, for example UAC, Windows Firewall or Defender turned off, AutoPlay on for USB drives, SMB 1.0, Remote Desktop without protection, blocked Task Manager or backdoors on the sign-in screen. Tick the settings to fix; the current values are saved first, so every fix can be undone."
+                                       FontSize="13" Foreground="{DynamicResource TextSecondary}"
+                                       TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <ProgressBar x:Name="SecurityProgress" Height="18" Minimum="0" Maximum="100" Value="0" IsIndeterminate="True"
+                                         Margin="0,0,0,5" Foreground="{DynamicResource ButtonNormalBackground}"
+                                         Background="#DDD" Visibility="Collapsed"/>
+                            <ScrollViewer x:Name="SecurityListScroll" MaxHeight="320" VerticalScrollBarVisibility="Auto" Visibility="Collapsed" Margin="0,0,0,5">
+                                <ItemsControl x:Name="SecurityList">
+                                    <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource SecondaryPanelBackground}" CornerRadius="6" Padding="10,6" Margin="0,3">
+                                            <DockPanel>
+                                                <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,2,10,0"
+                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanFix}"
+                                                          ToolTip="Fix this setting"/>
+                                                <StackPanel>
+                                                    <DockPanel>
+                                                        <Border Background="{Binding SeverityColor}" CornerRadius="4" Padding="6,1" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0">
+                                                            <TextBlock Text="{Binding SeverityText}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                                        </Border>
+                                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimary}" TextWrapping="Wrap"/>
+                                                    </DockPanel>
+                                                    <TextBlock Text="{Binding DetailsText}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                    <TextBlock Text="{Binding ActionText}" FontSize="11" FontStyle="Italic" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                            <TextBlock x:Name="SecurityResultLabel" FontWeight="Bold" FontSize="13" TextWrapping="Wrap"
+                                       Margin="0,5,0,0" Visibility="Collapsed"
+                                       HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
+                            <UniformGrid Rows="1" Margin="-4,10,-4,0">
+                                <Button x:Name="SecurityScan" Margin="4,0" Content="Start Scan" Height="36" Cursor="Hand" Click="SecurityScan_Click"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                                <Button x:Name="SecurityFix" Margin="4,0" Content="Fix Selected" Height="36" Cursor="Hand" Click="SecurityFix_Click"
+                                        Visibility="Collapsed" Background="Crimson"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                                <Button x:Name="SecurityUndo" Margin="4,0" Content="Undo Fixes" Height="36" Cursor="Hand" Click="SecurityUndo_Click"
+                                        Visibility="Collapsed"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                                <Button x:Name="SecurityReset" Margin="4,0" Content="Reset" Height="36" Cursor="Hand" Click="SecurityReset_Click"
+                                        Visibility="Collapsed" Background="Blue"
+                                        Style="{StaticResource RoundedButtonStyle}"/>
+                            </UniformGrid>
                         </StackPanel>
                     </Border>
 

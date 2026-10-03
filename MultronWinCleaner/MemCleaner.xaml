@@ -1,4 +1,4 @@
-﻿<Window x:Class="MultronWinCleaner.MemCleaner"
+﻿<Window x:Class="MultronWinCleaner.MemCleaner" Icon="pack://application:,,,/Assets/mwc_utilities.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Memory Cleaner" Height="480" Width="920"

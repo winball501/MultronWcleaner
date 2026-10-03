@@ -7,6 +7,22 @@
       "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:processes\\updater.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\processes\\optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:processes\\optimizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\processes\\shortcutfixer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:processes\\shortcutfixer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\processes\\systemchecks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:processes\\systemchecks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
@@ -25,10 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\memcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:memcleaner.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|solutionrelative:duplicate file finder.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E52F8CF7-D707-4411-86A3-3EB48CA118E5}|MultronWinCleaner.csproj|c:\\users\\winball_501\\documents\\github\\multronwcleaner\\multronwincleaner\\folderduplicateswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -66,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -78,7 +90,92 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Clean.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Clean.cs",
+              "RelativeDocumentMoniker": "Processes\\Clean.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Clean.cs",
+              "RelativeToolTip": "Processes\\Clean.cs",
+              "ViewState": "AgIAABsBAAAAAAAAAIAwwHoCAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-23T15:53:35.048Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Updater.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Updater.cs",
+              "RelativeDocumentMoniker": "Processes\\Updater.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Updater.cs",
+              "RelativeToolTip": "Processes\\Updater.cs",
+              "ViewState": "AgIAALAAAAAAAAAAAAAnwNUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-23T15:18:46.974Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Scan.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Scan.cs",
+              "RelativeDocumentMoniker": "Processes\\Scan.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Scan.cs",
+              "RelativeToolTip": "Processes\\Scan.cs",
+              "ViewState": "AgIAAP8CAAAAAAAAAADgv2oDAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-23T15:12:14.134Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "StartupManager.xaml",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\StartupManager.xaml",
+              "RelativeDocumentMoniker": "StartupManager.xaml",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\StartupManager.xaml",
+              "RelativeToolTip": "StartupManager.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-09-23T14:31:52.227Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-09-23T12:22:32.933Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 10,
+              "Title": "FolderDuplicatesWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\FolderDuplicatesWindow.xaml.cs",
+              "RelativeDocumentMoniker": "FolderDuplicatesWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\FolderDuplicatesWindow.xaml.cs",
+              "RelativeToolTip": "FolderDuplicatesWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-01T13:02:40.038Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Duplicate File Finder.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
+              "RelativeDocumentMoniker": "Duplicate File Finder.xaml.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
+              "RelativeToolTip": "Duplicate File Finder.xaml.cs",
+              "ViewState": "AgIAAHECAAAAAAAAAAAAAI8CAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-01T13:02:44.519Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "MemoryMon.xaml.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MemoryMon.xaml.cs",
               "RelativeDocumentMoniker": "MemoryMon.xaml.cs",
@@ -91,91 +188,30 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Clean.cs",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Clean.cs",
-              "RelativeDocumentMoniker": "Processes\\Clean.cs",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Clean.cs",
-              "RelativeToolTip": "Processes\\Clean.cs",
-              "ViewState": "AgIAABsBAAAAAAAAAIAwwHoCAAANAAAAAAAAAA==",
+              "Title": "Optimizer.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Optimizer.cs",
+              "RelativeDocumentMoniker": "Processes\\Optimizer.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Optimizer.cs",
+              "RelativeToolTip": "Processes\\Optimizer.cs",
+              "ViewState": "AgIAAEUAAAAAAAAAAAA4wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-23T15:53:35.048Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Updater.cs",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Updater.cs",
-              "RelativeDocumentMoniker": "Processes\\Updater.cs",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Updater.cs",
-              "RelativeToolTip": "Processes\\Updater.cs",
-              "ViewState": "AgIAAPIAAAAAAAAAAAAnwLoAAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-23T15:18:46.974Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Scan.cs",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Scan.cs",
-              "RelativeDocumentMoniker": "Processes\\Scan.cs",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Scan.cs",
-              "RelativeToolTip": "Processes\\Scan.cs",
-              "ViewState": "AgIAAP8CAAAAAAAAAADgv2oDAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-23T15:12:14.134Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "StartupManager.xaml",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\StartupManager.xaml",
-              "RelativeDocumentMoniker": "StartupManager.xaml",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\StartupManager.xaml",
-              "RelativeToolTip": "StartupManager.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-09-23T14:31:52.227Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MainWindow.xaml",
-              "RelativeToolTip": "MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-09-23T12:22:32.933Z",
+              "WhenOpened": "2026-10-03T18:20:20.06Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "FolderDuplicatesWindow.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\FolderDuplicatesWindow.xaml.cs",
-              "RelativeDocumentMoniker": "FolderDuplicatesWindow.xaml.cs",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\FolderDuplicatesWindow.xaml.cs",
-              "RelativeToolTip": "FolderDuplicatesWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T13:02:40.038Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "Settings.xaml",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Settings.xaml",
               "RelativeDocumentMoniker": "Settings.xaml",
               "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Settings.xaml",
               "RelativeToolTip": "Settings.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-09-23T12:19:21.593Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-23T12:19:21.593Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "MemCleaner.xaml.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MemCleaner.xaml.cs",
               "RelativeDocumentMoniker": "MemCleaner.xaml.cs",
@@ -187,7 +223,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "Load.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\Load.cs",
               "RelativeDocumentMoniker": "Processes\\Load.cs",
@@ -199,7 +235,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 4,
+              "Title": "SystemChecks.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\SystemChecks.cs",
+              "RelativeDocumentMoniker": "Processes\\SystemChecks.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\SystemChecks.cs",
+              "RelativeToolTip": "Processes\\SystemChecks.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-03T18:20:07.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ShortcutFixer.cs",
+              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\ShortcutFixer.cs",
+              "RelativeDocumentMoniker": "Processes\\ShortcutFixer.cs",
+              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Processes\\ShortcutFixer.cs",
+              "RelativeToolTip": "Processes\\ShortcutFixer.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAqwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-03T18:20:15.509Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "MatchingFilesWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MatchingFilesWindow.xaml.cs",
               "RelativeDocumentMoniker": "MatchingFilesWindow.xaml.cs",
@@ -211,19 +273,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Duplicate File Finder.xaml.cs",
-              "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
-              "RelativeDocumentMoniker": "Duplicate File Finder.xaml.cs",
-              "ToolTip": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Duplicate File Finder.xaml.cs",
-              "RelativeToolTip": "Duplicate File Finder.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-01T13:02:44.519Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
@@ -235,7 +285,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "Settings.xaml.cs",
               "DocumentMoniker": "C:\\Users\\winball_501\\Documents\\GitHub\\MultronWcleaner\\MultronWinCleaner\\Settings.xaml.cs",
               "RelativeDocumentMoniker": "Settings.xaml.cs",

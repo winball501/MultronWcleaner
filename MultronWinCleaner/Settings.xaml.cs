@@ -30,7 +30,9 @@ namespace MultronWinCleaner
 {
     public partial class Settings : Window
     {
-        public HashSet<string> excludedfiles = new HashSet<string>();
+        public HashSet<string> excludedfiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private string[] excludedFolders = Array.Empty<string>();
+        private readonly object exceptionsFileLock = new object();
         public string logfilepath = "";
         string excludedfilesdir = Environment.CurrentDirectory + "\\excluded.txt";
 
@@ -114,14 +116,8 @@ namespace MultronWinCleaner
                     await Task.Delay(1000);
                     continue;
                 }
-                DateTime time = DateTime.Now;
-                switch (cmbScheduleType.SelectedIndex)
-                {
-                    case 0: txtStat.Text = "Status: " + time + " Selected = Only Minutes"; break;
-                    case 1: txtStat.Text = "Status: " + time + " Selected = Daily Default Interval Min 120 : " + txtStartTime.Text + " " + txtEndTime.Text; break;
-                    case 2: txtStat.Text = "Status: " + time + " Selected = Weekly Default Interval Min 120 : " + txtStartTime.Text + " " + txtEndTime.Text; break;
-                    case 3: txtStat.Text = "Status: " + time + " Selected = Custom"; break;
-                }
+                string status = mainWindow?.AutoCleanStatus ?? "";
+                txtStat.Text = "Status: " + (status.Length > 0 ? status : chkAutoClean.IsChecked == true ? "starting..." : "Automatic cleaning is off");
                 await Task.Delay(1000);
             }
         }
@@ -173,11 +169,9 @@ namespace MultronWinCleaner
             else
             {
                 var excludeLines = await System.IO.File.ReadAllLinesAsync(excludedfilesdir);
-                foreach (string line in excludeLines.Where(l => !string.IsNullOrWhiteSpace(l)))
-                {
+                foreach (string line in excludeLines.Select(NormalizeExceptionPath).Where(l => l.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase))
                     lstExceptions.Items.Add(line);
-                    excludedfiles.Add(line);
-                }
+                RebuildExceptions();
             }
 
             string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
@@ -308,6 +302,18 @@ namespace MultronWinCleaner
             SetComboBoxSelection(cmbAgePreset, GetString("oldscanindex"));
             SetComboBoxSelection(cmbScheduleType, GetString("scheduletype"));
             SetComboBoxSelection(cmbPostCleanupAction, GetString("postaction"));
+
+            for (int i = 1; i <= 7; i++)
+            {
+                if (FindName($"Day{i}") is CheckBox dayBox)
+                    dayBox.IsChecked = GetBool($"day{i}");
+            }
+            chkLimitWeeks.IsChecked = GetBool("limitweeks");
+            for (int i = 1; i <= 5; i++)
+            {
+                if (FindName($"Week{i}") is CheckBox weekBox)
+                    weekBox.IsChecked = GetString($"week{i}") != "0";
+            }
         }
 
         private bool offlineModeLoading;
@@ -424,6 +430,13 @@ namespace MultronWinCleaner
                         Upsert(keyName, dayBox.IsChecked == true ? "1" : "0");
                 }
 
+                Upsert("limitweeks", chkLimitWeeks.IsChecked == true ? "1" : "0");
+                for (int i = 1; i <= 5; i++)
+                {
+                    if (this.FindName($"Week{i}") is CheckBox weekBox)
+                        Upsert($"week{i}", weekBox.IsChecked == true ? "1" : "0");
+                }
+
                 await System.IO.File.WriteAllLinesAsync(path, lines);
                 MessageBox.Show("Settings Saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -473,53 +486,85 @@ namespace MultronWinCleaner
             this.Hide();
         }
 
-        public async void addexception(string path)
+        public static string NormalizeExceptionPath(string path)
         {
-            if (!string.IsNullOrWhiteSpace(path) && !lstExceptions.Items.Contains(path))
-            {
-                lstExceptions.Items.Add(path);
-                excludedfiles.Add(path);
-                txtExceptionPath.Clear();
+            string value = (path ?? "").Trim().Trim('"');
+            if (value.Length > 3)
+                value = value.TrimEnd('\\', '/');
+            return value;
+        }
 
-                await System.IO.File.AppendAllTextAsync(excludedfilesdir, path + Environment.NewLine);
+        public bool IsExcluded(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+            if (excludedfiles.Contains(path))
+                return true;
+            foreach (string folder in excludedFolders)
+            {
+                if (path.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        private void RebuildExceptions()
+        {
+            var items = lstExceptions.Items.Cast<string>().ToList();
+            excludedfiles = new HashSet<string>(items, StringComparer.OrdinalIgnoreCase);
+            excludedFolders = items.Where(System.IO.Directory.Exists).Select(p => p.EndsWith("\\") ? p : p + "\\").ToArray();
+        }
+
+        private void SaveExceptions()
+        {
+            var items = lstExceptions.Items.Cast<string>().ToList();
+            lock (exceptionsFileLock)
+            {
+                try
+                {
+                    System.IO.File.WriteAllLines(excludedfilesdir, items);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not save the exceptions list:\n" + ex.Message, "Exceptions", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
             }
         }
 
-        public async void removeexception(string path)
+        public void addexception(string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) return;
+            path = NormalizeExceptionPath(path);
+            if (path.Length == 0 || lstExceptions.Items.Cast<string>().Any(i => i.Equals(path, StringComparison.OrdinalIgnoreCase)))
+                return;
 
-            foreach (var item in lstExceptions.Items.Cast<string>().ToList())
-            {
-                if (item.Equals(path, StringComparison.OrdinalIgnoreCase))
-                {
-                    lstExceptions.Items.Remove(item);
-                    break;
-                }
-            }
+            lstExceptions.Items.Add(path);
+            txtExceptionPath.Clear();
+            RebuildExceptions();
+            SaveExceptions();
+        }
 
-            excludedfiles.Remove(path);
+        public void removeexception(string path)
+        {
+            path = NormalizeExceptionPath(path);
+            var item = lstExceptions.Items.Cast<string>().FirstOrDefault(i => i.Equals(path, StringComparison.OrdinalIgnoreCase));
+            if (item == null)
+                return;
 
-            if (System.IO.File.Exists(excludedfilesdir))
-            {
-                var lines = await System.IO.File.ReadAllLinesAsync(excludedfilesdir);
-                var updatedLines = lines
-                    .Where(line => !line.Equals(path, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
-                await System.IO.File.WriteAllLinesAsync(excludedfilesdir, updatedLines);
-            }
+            lstExceptions.Items.Remove(item);
+            RebuildExceptions();
+            SaveExceptions();
         }
 
         private void AddException_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(txtExceptionPath.Text))
+            string path = NormalizeExceptionPath(txtExceptionPath.Text);
+            if (System.IO.File.Exists(path) || System.IO.Directory.Exists(path))
             {
-                addexception(txtExceptionPath.Text.Trim());
+                addexception(path);
             }
             else
             {
-                MessageBox.Show("Path is not correct or file not exists anymore");
+                MessageBox.Show("The file or folder does not exist.", "Exceptions", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -531,10 +576,9 @@ namespace MultronWinCleaner
 
         private void RemoveExceptionAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (string selected in lstExceptions.Items.Cast<string>().ToList())
-            {
-                removeexception(selected);
-            }
+            lstExceptions.Items.Clear();
+            RebuildExceptions();
+            SaveExceptions();
         }
 
         private void allusersChecked(object sender, RoutedEventArgs e)

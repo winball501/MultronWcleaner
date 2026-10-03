@@ -1,4 +1,4 @@
-﻿<Window x:Class="MultronWinCleaner.StartupManager"
+﻿<Window x:Class="MultronWinCleaner.StartupManager" Icon="pack://application:,,,/Assets/mwc_utilities.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Startup Manager" Height="624" Width="900"
