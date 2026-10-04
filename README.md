@@ -42,7 +42,7 @@
 
 ## Overview
 
-**Multron Win Cleaner** is a comprehensive system maintenance and disk recovery suite engineered for Windows. Unlike conventional cleaning tools, it pairs deep low-level system controls (DISM, WinSxS, boot-time operations) with transparent, community-updatable cleaning definitions.
+**Multron Win Cleaner** is a comprehensive system maintenance, security and disk recovery suite engineered for Windows. Unlike conventional cleaning tools, it pairs deep low-level system controls (DISM, SFC, WinSxS, boot-time operations) with transparent, community-updatable cleaning definitions — and one scan checks junk files, system health, firewall rules, shortcuts, security settings and duplicate files together.
 
 ---
 
@@ -51,30 +51,55 @@
 ### 🧹 Deep System Cleanup
 * **Application Rules:** Continuously updated definitions for third-party software, browser caches, and temporary data.
 * **Modular Rule Database:** Cleanup targets are governed by a modular [`database.txt`](https://github.com/winball501/MultronWcleaner-Database) repository, allowing instant community contributions without altering core application binaries.
-* **WinSxS Optimization:** Integrated component store analysis and image reduction utilizing native `DISM.exe` commands.
+* **Detailed Cleaning Log:** Every location is shown live as `Cleaning:` and then `Cleaned:` with the number of deleted files, freed space, locked files and access-denied files, followed by a full summary.
 * **Deep Log Tracing:** Configurable detection and wiping of `.log`, `.etl`, `.dmp`, `.tmp`, and `.bak` files across target directories.
 * **Age-Based File Filters:** Target files strictly older than defined day thresholds based on file creation or last access timestamps.
-* **Auto Cleaner:** Configurable background routines to schedule automatic cleanup intervals (hourly, daily, custom).
-* **Native cleanmgr Access:** Integrated launch shortcuts to Windows Disk Cleanup presets.
+* **Exceptions:** Exclude files and whole folders from scanning and cleaning.
+* **Saved Selections:** Your ticked locations and commands are remembered, with a one-click **Reset Selections** button.
+* **Native cleanmgr Access:** Windows Disk Cleanup presets run silently in the background during automatic cleaning.
+
+### 🩺 System Health (DISM & SFC)
+* **No Command Windows:** DISM and SFC run inside the app with live progress.
+* **Result Panels:** Component store analysis, component store health and system file checks are shown as color-coded panels (green when healthy) with clear explanations.
+* **Repair on Demand:** Tick **Run during cleaning** on a panel to clean up the component store (WinSxS), repair the Windows image (`/RestoreHealth`) or repair system files (`sfc /scannow`) as part of the clean.
+
+### 🛡️ Security Check
+* **Finds Insecure Windows Settings:** Checks more than 50 settings that weaken your PC — UAC or Windows Firewall turned off, no active antivirus, Defender disabled by policy or with whole drives excluded, SmartScreen off, **AutoPlay on for USB drives**, AutoRun, SMB 1.0, Remote Desktop without Network Level Authentication, disabled Windows Update, Guest account on, blocked Task Manager, sign-in screen backdoors, Office running all macros and more.
+* **Risk Levels:** Every finding is marked HIGH, MEDIUM or LOW with an explanation of why it matters.
+* **One-Click Fix & Undo:** Tick the findings and click **Fix Selected**. Previous values are backed up first, so every fix can be undone.
+* Available in Utilities and as an option of the main scan, with a notification when an automatic scan finds high-risk settings.
+
+### 🔎 One Scan, Every Check
+* After the folder scan, **Firewall Rules**, **Shortcuts**, **Security Settings** and **Duplicate Files** run as steps of the scan, each with its own result panel above the scan results (green when nothing was found).
+* While a step runs, the Clean button turns into **Cancel**, the progress is shown on the main screen, **Show Status** opens the tool, and **✕** skips the step.
+* Nothing is changed automatically — remove rules, fix shortcuts, fix settings or review duplicates right from the panels.
+
+### ⏰ Automatic Cleaning
+* **Flexible Schedules:** Every X minutes, daily, weekly or custom days, with an allowed time range and optional **weeks of the month**.
+* **Run Conditions:** Waits when the CPU is busy or the PC is in use, and never interrupts a scan or clean you started yourself.
+* **Startup Cleaning:** Scan or scan and clean when Windows starts.
+* **Status at a Glance:** Green status lines on the main window show when automatic or startup cleaning is on and when the next run is.
+* **Notifications:** Bottom-right notifications for finished automatic runs, duplicate files and security warnings.
 
 ### 🔒 Locked File & Process Management
 * **Real-Time Lock Detection:** Surfaces file locks dynamically, displaying the active locking Process Name, Process ID (PID), and absolute file path.
-* **Force Unlock & Delete:** Inline retry mechanisms or administrative force-kill routines to dispose of locked traces.
+* **Force Unlock & Delete:** Kills only the processes that hold the file (system processes are protected) and retries the deletion.
 * **Boot Operations Manager:** Schedules pending file removal and modification routines to execute cleanly during the next Windows reboot cycle.
 
 ### ⚙️ System & Startup Control
 * **Startup Manager:** Inspects and toggles boot entries across Registry keys, Task Scheduler, and Winlogon Userinit targets.
 * **Startup Sentinel:** Delivers real-time notifications whenever a newly installed application registers a boot entry.
-* **Firewall Rule Hygiene:** Scans for and prunes broken, orphaned, or obsolete Windows Firewall rules.
-* **Legacy System Optimization:** One-click resource tuning profiles tailored to accelerate low-spec or older machines.
+* **Firewall Rule Cleaner:** Scans for and removes broken Windows Firewall rules that point to programs that no longer exist.
+* **Shortcut Fixer:** Finds Desktop and Start Menu shortcuts to missing programs, repairs the ones whose program moved to a new version folder and moves the others to the Recycle Bin.
+* **System Optimization:** Two profiles — **For old systems** pauses selected services, **For new systems** applies performance settings (power plan, Game Mode, priorities, faster menus and more). Settings are re-applied at startup, every action is listed in an Activity log, and **Undo** restores your previous values.
 
 ### 📊 Memory & Performance Tracking
 * **RAM Optimizer:** Manual or interval-based memory working set reductions.
 * **Real-Time Resource Monitor:** Continuous visual tracking for active CPU and memory utilization.
 
 ### 🔍 Storage Utilities
-* **Duplicate File Finder:** Fast byte-level comparison scanner to identify and eliminate duplicate copies.
-* **Large File Finder:** Scans drive structures to isolate overgrown archives, installers, and oversized media.
+* **Duplicate File Finder:** Byte-by-byte verified, A **side-by-side view** shows each copy next to its original, 40 quick-select file types and presets for images, videos, music, documents, archives and installers, and a safe delete that always keeps one copy.
+* **Large File Finder:** Scans drive structures to isolate oversized media, archives, installers, disk images and virtual machines, backups, dumps and logs.
 * **Pre-Deletion Audit:** Comprehensive summary table displaying each file's size, creation date, modification date, and age in days prior to execution.
 
 ---
@@ -82,8 +107,8 @@
 ## System Requirements
 
 * **OS:** Windows 10 / Windows 11 (64-bit recommended)
-* **Privileges:** Administrator permissions (required for DISM operations, boot-time actions, and Registry access)
-* **Runtimes:** Microsoft .NET Framework / Desktop Runtime
+* **Privileges:** Administrator permissions (required for DISM/SFC operations, security fixes, boot-time actions, and Registry access)
+* **Runtimes:** Microsoft .NET 8 Desktop Runtime
 
 ---
 
