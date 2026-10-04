@@ -51,7 +51,6 @@
 ### 🧹 Deep System Cleanup
 * **Application Rules:** Continuously updated definitions for third-party software, browser caches, and temporary data.
 * **Modular Rule Database:** Cleanup targets are governed by a modular [`database.txt`](https://github.com/winball501/MultronWcleaner-Database) repository, allowing instant community contributions without altering core application binaries.
-* **Detailed Cleaning Log:** Every location is shown live as `Cleaning:` and then `Cleaned:` with the number of deleted files, freed space, locked files and access-denied files, followed by a full summary.
 * **Deep Log Tracing:** Configurable detection and wiping of `.log`, `.etl`, `.dmp`, `.tmp`, and `.bak` files across target directories.
 * **Age-Based File Filters:** Target files strictly older than defined day thresholds based on file creation or last access timestamps.
 * **Exceptions:** Exclude files and whole folders from scanning and cleaning.
