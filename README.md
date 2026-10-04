@@ -31,10 +31,18 @@
 ## Previews
 
 <div align="center">
-   <img width="788" height="563" alt="{B4478B4F-0660-4402-8F2F-405BB9D86FE5}" src="https://github.com/user-attachments/assets/4a481578-d6fc-4f78-9274-3318e007af77" />
-   <img width="788" height="563" alt="{402C60EB-0D5B-4BE8-A976-6DC7FA25E028}" src="https://github.com/user-attachments/assets/6e37774e-0859-4fd6-ac06-36eb099ebbb6" />
-   <img width="600" height="552" alt="{7547A368-FBB0-48B2-AB90-36582D181F31}" src="https://github.com/user-attachments/assets/52246d47-e11d-495f-8d6a-3b43763d5fc0" />
-   
+       <img width="1575" height="1125" alt="35F44E55-84B9-47F4-896B-29CFFBE4061B" src="https://github.com/user-attachments/assets/d309f1f1-5214-4bfc-aeff-ef6db26f50fd" />
+       <img width="1575" height="1125" alt="786F986D-923D-4DC8-97F2-BC6C97184CE1" src="https://github.com/user-attachments/assets/f2991893-bf34-44a5-9de2-84d20a80903b" />
+       <img width="750" height="600" alt="7BB8CBF5-5F94-4137-9014-484766A05895" src="https://github.com/user-attachments/assets/d8a3fd7e-6080-4759-8bde-a7765732fcfa" />
+<img width="735" height="570" alt="FE6D26C8-E8D2-4B88-942C-E05348DA5C4E" src="https://github.com/user-attachments/assets/3eb01f3b-fe89-4945-a83b-445997a02cce" />
+<img width="1200" height="1104" alt="23E6A899-0E4C-420D-AFA9-3C4CEE77EB7E" src="https://github.com/user-attachments/assets/c34c2b3a-638e-41bb-9178-0dc7dbb87a75" />
+ 
+<img width="1350" height="936" alt="7E510AF1-8C18-4781-B3B7-4DA318AE518D" src="https://github.com/user-attachments/assets/3ea4f7f6-39d5-4100-83e7-7fb233173950" />
+<img width="600" height="552" alt="A84BAA24-3531-4C6D-A8C6-C450E96283D9" src="https://github.com/user-attachments/assets/39c16d7d-8dfd-4b52-88ff-36ffaa84e37b" />
+<img width="1575" height="1125" alt="0653182B-44AE-46C3-B4E6-737D55AF4952" src="https://github.com/user-attachments/assets/16143052-a06a-4067-b956-893227839d6d" />
+<img width="1575" height="1125" alt="48A8087F-5CC7-4C7D-9613-4BF46436E4EC" src="https://github.com/user-attachments/assets/58823a6c-238f-40ff-bc82-3b47e9a0d45d" />
+
+      
 
 </div>
 
