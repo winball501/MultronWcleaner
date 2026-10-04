@@ -84,7 +84,6 @@
 ### 🔒 Locked File & Process Management
 * **Real-Time Lock Detection:** Surfaces file locks dynamically, displaying the active locking Process Name, Process ID (PID), and absolute file path.
 * **Force Unlock & Delete:** Kills only the processes that hold the file (system processes are protected) and retries the deletion.
-* **Boot Operations Manager:** Schedules pending file removal and modification routines to execute cleanly during the next Windows reboot cycle.
 
 ### ⚙️ System & Startup Control
 * **Startup Manager:** Inspects and toggles boot entries across Registry keys, Task Scheduler, and Winlogon Userinit targets.
