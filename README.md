@@ -22,7 +22,7 @@
   </a>
   </p>
 
-  [Download Release](https://github.com/winball501/MultronWcleaner/releases/latest) • [Database Repo](https://github.com/winball501/MultronWcleaner-Database) • [Report Issue](https://github.com/winball501/MultronWcleaner/issues)
+  [Download Release](https://github.com/winball501/MultronWcleaner/releases/latest) • [Database Repo](https://github.com/winball501/MultronWcleaner-Database) • [Report Issue](https://github.com/winball501/MultronWcleaner/issues) • [Support on Patreon](https://www.patreon.com/cw/multron)
 
 </div>
 
@@ -291,6 +291,16 @@ If the connection drops during a scan, the client reconnects one attempt at a ti
 The cleaning rules are kept outside the main codebase to allow rapid additions without needing a new version release. You can inspect or extend the rule definitions directly at the [MultronWcleaner-Database](https://github.com/winball501/MultronWcleaner-Database) repository.
 
 Pull Requests adding support for new applications or custom directory paths are always reviewed and merged there.
+
+---
+
+## Support the Project
+
+Multron Win Cleaner is free, open-source and has no ads, subscriptions or locked features. If it helps you and you would like to support its development, you can do so on Patreon:
+
+<a href="https://www.patreon.com/cw/multron"><img src="https://img.shields.io/badge/Support%20on-Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white" alt="Support on Patreon" /></a>
+
+Every bit of support is appreciated, but the app stays completely free either way.
 
 ---
 
