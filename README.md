@@ -26,6 +26,9 @@
 
 </div>
 
+> [!WARNING]
+> **Antivirus false positives:** some antivirus programs may flag Multron Win Cleaner or one of its DLL files as suspicious when you download or run it. This is a false positive caused by what a system cleaner has to do (closing programs, deleting files, changing Windows settings), not by malware. The full source code is in this repository, and every release is built automatically by GitHub Actions. If your antivirus blocks the app, you can report the file to its vendor as a false positive or add an exception for the app folder.
+
 ---
 
 ## Previews
