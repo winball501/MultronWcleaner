@@ -94,7 +94,7 @@ namespace MultronWinCleaner.Processes
             public int AgeDays { get; set; }
             public string CreatedDate { get; set; }
             public string ModifiedDate { get; set; }
-            public string File => $"File to delete={FileName}={formatsize(SizeBytes)} | Created: {CreatedDate} ({AgeDays} days ago) | Modified: {ModifiedDate}";
+            public string File => Loc.F("File to delete={0}={1} | Created: {2} ({3} days ago) | Modified: {4}", FileName, formatsize(SizeBytes), CreatedDate, AgeDays, ModifiedDate);
 
 
 
@@ -115,9 +115,9 @@ namespace MultronWinCleaner.Processes
             private string formatsize(long size)
             {
                 if ((size < 0))
-                    return "0 Byte";
+                    return Loc.T("0 Byte");
 
-                string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
+                string[] sizes = { Loc.T("Byte"), "KB", "MB", "GB", "TB" };
                 double len = size;
                 int order = 0;
                 while (len >= 1024 && order < sizes.Length - 1)
@@ -155,9 +155,9 @@ namespace MultronWinCleaner.Processes
             private string formatsize(long size)
             {
                 if ((size < 0))
-                    return "0 Byte";
+                    return Loc.T("0 Byte");
 
-                string[] sizes = { "Byte", "KB", "MB", "GB", "TB" };
+                string[] sizes = { Loc.T("Byte"), "KB", "MB", "GB", "TB" };
                 double len = size;
                 int order = 0;
                 while (len >= 1024 && order < sizes.Length - 1)
@@ -281,7 +281,7 @@ namespace MultronWinCleaner.Processes
             try
             {
                 if (!proc.Start())
-                    throw new InvalidOperationException("sfc.exe could not be started.");
+                    throw new InvalidOperationException(Loc.T("sfc.exe could not be started."));
 
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
@@ -378,7 +378,7 @@ namespace MultronWinCleaner.Processes
             try
             {
                 if (!proc.Start())
-                    throw new InvalidOperationException("DISM process could not be started.");
+                    throw new InvalidOperationException(Loc.T("DISM process could not be started."));
 
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
@@ -513,7 +513,7 @@ namespace MultronWinCleaner.Processes
                     filterByAge = main.settings.OldScan.IsChecked == true;
                     int.TryParse(main.settings.txtCustomAccess.Text, out customAccessDays);
                     int.TryParse(main.settings.txtCustomDay.Text, out customAgeDays);
-                    var task = ScandotsAsync("Scanning", cts.Token);
+                    var task = ScandotsAsync(Loc.T("Scanning"), cts.Token);
                     main.wrapPanelDirectories.Visibility = Visibility.Visible;
                     main.ScrollViewerDirectories.Visibility = Visibility.Visible;
                     main.progressBar1.Value = 0;
@@ -532,14 +532,14 @@ namespace MultronWinCleaner.Processes
 
                     if (name.Contains("cleanmgr.exe"))
                     {
-                        dropscanmessage("The cleanmgr.exe command will run after the scan is completed and you click the Clean button!", "#0078d7");
+                        dropscanmessage(Loc.T("The cleanmgr.exe command will run after the scan is completed and you click the Clean button!"), "#1e88e5");
                         continue;
                     }
                     else if (name.Contains("Dism.exe") && !path.Contains("RestoreHealth", StringComparison.OrdinalIgnoreCase) && winsxs == 0)
                     {
                         try
                         {
-                            dropscanmessage("Analyzing the Windows component store (Dism.exe /AnalyzeComponentStore)...", "#0078d7");
+                            dropscanmessage(Loc.T("Analyzing the Windows component store (Dism.exe /AnalyzeComponentStore)..."), "#1e88e5");
                             await main.Dispatcher.InvokeAsync(() => main.ShowSystemCheckRunning("store"));
                             string output = await RunDismAnalyzeComponentStoreAsync(main.dismcancel.Token, main.progressBar1);
 
@@ -551,8 +551,8 @@ namespace MultronWinCleaner.Processes
                                     totalsize += info.Reclaimable;
                                 await main.Dispatcher.InvokeAsync(() => main.ShowComponentStoreResult(info));
                                 dropscanmessage(info.Parsed
-                                    ? "Component store analyzed: " + main.formatsize(info.Reclaimable) + " can be reclaimed."
-                                    : "Dism.exe did not report the component store size (see dism_scan.log).", info.Parsed ? "#107c10" : "#D83B01");
+                                    ? Loc.F("Component store analyzed: {0} can be reclaimed.", main.formatsize(info.Reclaimable))
+                                    : Loc.T("Dism.exe did not report the component store size (see dism_scan.log)."), info.Parsed ? "#28A745" : "#FF9800");
                             }
                             winsxs = 1;
                         }
@@ -568,7 +568,7 @@ namespace MultronWinCleaner.Processes
                     {
                         try
                         {
-                            dropscanmessage("Checking the component store for corruption (Dism.exe /ScanHealth)...", "#0078d7");
+                            dropscanmessage(Loc.T("Checking the component store for corruption (Dism.exe /ScanHealth)..."), "#1e88e5");
                             await main.Dispatcher.InvokeAsync(() => main.ShowSystemCheckRunning("health"));
                             string output = await RunDismCommandWithProgressAsync(
                                 "/English /Online /Cleanup-Image /ScanHealth /NoRestart",
@@ -583,9 +583,9 @@ namespace MultronWinCleaner.Processes
                                 string detail = SystemChecks.LastLine(output);
                                 await main.Dispatcher.InvokeAsync(() => main.ShowComponentHealthResult(state, detail));
                                 dropscanmessage(state == SystemChecks.HealthState.Healthy
-                                    ? "No component store corruption detected."
-                                    : state == SystemChecks.HealthState.Unknown ? "Component store check: " + detail : "Component store corruption detected. Restore Health is recommended.",
-                                    state == SystemChecks.HealthState.Healthy ? "#107c10" : "#D83B01");
+                                    ? Loc.T("No component store corruption detected.")
+                                    : state == SystemChecks.HealthState.Unknown ? Loc.F("Component store check: {0}", detail) : Loc.T("Component store corruption detected. Restore Health is recommended."),
+                                    state == SystemChecks.HealthState.Healthy ? "#28A745" : "#FF9800");
                             }
                             health = 1;
                         }
@@ -597,7 +597,7 @@ namespace MultronWinCleaner.Processes
                     }
                     else if (name.Contains("Deep Log Files Scan") && logscan == 0)
                     {
-                        dropscanmessage("Running Deep Log Files Scan", "#0078d7");
+                        dropscanmessage(Loc.T("Running Deep Log Files Scan"), "#1e88e5");
                         cts.Cancel();
                         current = 0;
                         await main.Dispatcher.InvokeAsync(() =>
@@ -618,7 +618,7 @@ namespace MultronWinCleaner.Processes
                             main.progressBar1.BeginAnimation(ProgressBar.ValueProperty, null);
                             main.progressBar1.Value = 100;
                         });
-                        dropscanmessage("Deep Log Files Scan Completed!", "#107c10");
+                        dropscanmessage(Loc.T("Deep Log Files Scan Completed!"), "#28A745");
 
                         logscan = 1;
 
@@ -630,7 +630,7 @@ namespace MultronWinCleaner.Processes
                     {
                         try
                         {
-                            dropscanmessage("Checking Windows system files (sfc /verifyonly)...", "#0078d7");
+                            dropscanmessage(Loc.T("Checking Windows system files (sfc /verifyonly)..."), "#1e88e5");
                             await main.Dispatcher.InvokeAsync(() => main.ShowSystemCheckRunning("sfc"));
                             string output = await RunSfcCommandAsync(
                                 "/verifyonly",
@@ -645,9 +645,9 @@ namespace MultronWinCleaner.Processes
                                 string detail = SystemChecks.LastLine(output);
                                 await main.Dispatcher.InvokeAsync(() => main.ShowSystemFilesResult(state, detail));
                                 dropscanmessage(state == SystemChecks.SfcState.Clean
-                                    ? "No system file integrity violations detected."
-                                    : state == SystemChecks.SfcState.Unknown ? "System file check: " + detail : "System file integrity violations detected. sfc /scannow is recommended.",
-                                    state == SystemChecks.SfcState.Clean ? "#107c10" : "#D83B01");
+                                    ? Loc.T("No system file integrity violations detected.")
+                                    : state == SystemChecks.SfcState.Unknown ? Loc.F("System file check: {0}", detail) : Loc.T("System file integrity violations detected. sfc /scannow is recommended."),
+                                    state == SystemChecks.SfcState.Clean ? "#28A745" : "#FF9800");
                             }
                             sfc = 1;
                         }
@@ -659,7 +659,7 @@ namespace MultronWinCleaner.Processes
                     }
                     else
                     {
-                        dropscanmessage("Scanning: " + name + ": " + path, "#0078d7");
+                        dropscanmessage(Loc.F("Scanning: {0}: {1}", name, path), "#1e88e5");
                         if (System.IO.File.Exists(path) && !main.settings.IsExcluded(path))
                         {
                             await addtocheckbox(path, name, "Direct Files");
@@ -692,7 +692,7 @@ namespace MultronWinCleaner.Processes
                     main.dataGridGroups.Visibility = Visibility.Visible;
                     main.ScrollViewerDetectedFiles.Visibility = Visibility.Hidden;
                     main.Datagridscroll.Visibility = Visibility.Visible;
-                    var task = ScandotsAsync("Scanning", cts.Token);
+                    var task = ScandotsAsync(Loc.T("Scanning"), cts.Token);
 
 
                  
@@ -711,7 +711,7 @@ namespace MultronWinCleaner.Processes
 
                         var allFiles = items.Select(item => new FileItem
                         {
-                            FileName = $"{item.file}={main.formatsize(item.size)} | Created: {item.date} ({item.days} days) | Last Access: {item.modified}",
+                            FileName = Loc.F("{0}={1} | Created: {2} ({3} days) | Last Access: {4}", item.file, main.formatsize(item.size), item.date, item.days, item.modified),
                             SizeBytes = item.size,
                             IsChecked = true,
                             Path = item.file,
@@ -727,7 +727,7 @@ namespace MultronWinCleaner.Processes
                                 main.viewModel.Groups.Add(groupVm);
 
                                 currentGroup++;
-                                main.label1_Copy.Text = $"Loading group {currentGroup} / {totalGroups}";
+                                main.label1_Copy.Text = Loc.F("Loading group {0} / {1}", currentGroup, totalGroups);
                                 main.progressBar1.Value = (double)currentGroup / totalGroups * 100;
                         });
 
@@ -736,13 +736,13 @@ namespace MultronWinCleaner.Processes
                     }
 
                     main.DataContext = main.viewModel;
-                    main.label1_Copy.Text = "Loading Completed!";
+                    main.label1_Copy.Text = Loc.T("Loading Completed!");
                     main.progressBar1.Value = 100;
                     main.label1_Copy.Foreground = System.Windows.Media.Brushes.Goldenrod;
                     main.buttonReset.Visibility = Visibility.Visible;
                     main.buttonStartScan.IsEnabled = true;
-                    main.buttonStartScan.Content = "Clean";
-                
+                    main.buttonStartScan.Content = Loc.T("Clean");
+
                     main.AnimateIcon(false);
                     if (!main.cancelstatus.IsCancellationRequested)
                         await main.RunFirewallReportAsync();
@@ -755,22 +755,26 @@ namespace MultronWinCleaner.Processes
 
                     if (!main.cancelstatus.IsCancellationRequested)
                         await main.RunDuplicateReportAsync();
+
+                    if (!main.cancelstatus.IsCancellationRequested)
+                        await main.RunQueuedMalwareScanAsync();
+
                     if (main.startupscan == 1)
                     {
                         if (main.cancelstatus.IsCancellationRequested == true)
                         {
-                           main.label1_Copy.Text = $"Startup scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                           main.label1_Copy.Text = Loc.F("Startup scan canceled! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
 
                         }
                         else
                         {
                           
-                            main.label1_Copy.Text = $"Startup scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                            main.label1_Copy.Text = Loc.F("Startup scan completed! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
                             main.Dispatcher.Invoke(() =>
                             {
                                 if (main.settings.chkEnableNotifyScan.IsChecked == true && (main.Visibility != Visibility.Visible || main.WindowState == WindowState.Minimized))
                                 {
-                                    Notify notify = new Notify("Scan Information", $"Your startup system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                    Notify notify = new Notify(Loc.T("Scan Information"), Loc.T("Your startup system scan done!") + "\r\n", $"{main.formatsize(totalsize)}");
                                     notify.Show();
                                 }
                             });
@@ -784,18 +788,18 @@ namespace MultronWinCleaner.Processes
                             if (main.cancelstatus.IsCancellationRequested == true)
                             {
                              
-                                main.label1_Copy.Text = $"Auto scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = Loc.F("Auto scan canceled! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
 
                             }
                             else
                             {
                            
-                                main.label1_Copy.Text = $"Auto scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = Loc.F("Auto scan completed! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
                                 main.Dispatcher.Invoke(() =>
                                 {
                                     if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
                                     {
-                                        Notify notify = new Notify("Scan Information", $"Your auto system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                        Notify notify = new Notify(Loc.T("Scan Information"), Loc.T("Your auto system scan done!") + "\r\n", $"{main.formatsize(totalsize)}");
                                         notify.Show();
                                     }
                                 });
@@ -807,17 +811,17 @@ namespace MultronWinCleaner.Processes
                         {
                             if (main.cancelstatus.IsCancellationRequested == true)
                             {
-                                main.label1_Copy.Text = $"Scan canceled! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = Loc.F("Scan canceled! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
 
                             }
                             else
                             {
-                                main.label1_Copy.Text = $"Scan completed! + {main.formatsize(totalsize)}  Useless file found! {DateTime.Now}";
+                                main.label1_Copy.Text = Loc.F("Scan completed! + {0}  Useless file found! {1}", main.formatsize(totalsize), DateTime.Now);
                                 await main.Dispatcher.InvokeAsync(() =>
                                 {
                                     if (main.settings.chkEnableNotifyScan.IsChecked == true && main.Visibility == Visibility.Hidden)
                                     {
-                                        Notify notify = new Notify("Scan Information", $"Your system scan done!\r\n", $"{main.formatsize(totalsize)}");
+                                        Notify notify = new Notify(Loc.T("Scan Information"), Loc.T("Your system scan done!") + "\r\n", $"{main.formatsize(totalsize)}");
                                         notify.Show();
                                     }
                                 });
@@ -961,10 +965,10 @@ namespace MultronWinCleaner.Processes
                         {
                             await main.Dispatcher.InvokeAsync(() =>
                             {
-                                main.label1_Copy.Text = $"Scanning C:\\ — {current} files checked, {main.formatsize(deeplogscantotal)} found";
+                                main.label1_Copy.Text = Loc.F("Scanning C:\\ — {0} files checked, {1} found", current, main.formatsize(deeplogscantotal));
                                  
                                 var converter = new System.Windows.Media.BrushConverter();
-                                main.label1_Copy.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString("#0078d7");
+                                main.label1_Copy.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString("#1e88e5");
                             });
                         }
                     }
@@ -998,7 +1002,7 @@ namespace MultronWinCleaner.Processes
                 }
             }
             catch { }
-            dropscanmessage($"Completed: {name} {main.formatsize(currentscan)}", "#107c10");
+            dropscanmessage(Loc.F("Completed: {0} {1}", name, main.formatsize(currentscan)), "#28A745");
           
           
         }

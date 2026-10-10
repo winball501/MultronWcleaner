@@ -48,8 +48,135 @@ namespace MultronWinCleaner
             this.Utilities = utilities;
             this.mainWindow = mainWindow;
             this.manager = manager;
-             
+
+            foreach (var box in new[] { cmbAccessPreset, cmbAgePreset, cmbScheduleType, cmbPostCleanupAction })
+                defaultComboIndexes[box] = box.SelectedIndex;
+
+            LoadLanguageOptions();
             _ = getusers();
+        }
+
+        private readonly Dictionary<ComboBox, int> defaultComboIndexes = new Dictionary<ComboBox, int>();
+
+        private static readonly string[] ResettableKeys =
+        {
+            "customday", "starttime", "customaccess", "endtime", "minutes", "loglocation", "logpath", "autoclean", "trayicon",
+            MainWindow.OfflineModeSettingKey, MainWindow.AutoSaveSelectionsSettingKey, MainWindow.AllBrowserProfilesSettingKey,
+            "oldscan", "access_scan", "onlylowcpu", "runifactive", "pluggedin", "batterylow", "enablelog", "showlastlog",
+            "cleanallusers", "cleanselectedusers", "startupscan", "startupclean", "startupnotifyscan", "startupnotifyclean",
+            MainWindow.NotifySecuritySettingKey, MainWindow.NotifyFirewallSettingKey, MainWindow.NotifyDuplicatesSettingKey,
+            MainWindow.NotifyMalwareSettingKey, Notify.PositionSettingKey, Notify.LayoutSettingKey,
+            "accessscanindex", "oldscanindex", "scheduletype", "postaction",
+            "day1", "day2", "day3", "day4", "day5", "day6", "day7", "limitweeks", "week1", "week2", "week3", "week4", "week5",
+            MultronWinCleaner.Processes.Updater.AppUpdateSettingKey, MultronWinCleaner.Processes.Updater.AutoUpdateSettingKey,
+            MultronWinCleaner.Processes.Updater.AutoUpdateHoursSettingKey, MultronWinCleaner.Processes.Updater.AutoReloadSettingKey,
+            MultronWinCleaner.Processes.Updater.StatusSettingKey, MultronWinCleaner.Processes.Updater.ButtonSettingKey,
+            MainWindow.ThemeFollowsWindowsSettingKey,
+            Appearance.EnabledSettingKey, Appearance.ColorSettingKey, Appearance.LevelSettingKey
+        };
+
+        private void ResetToDefaults_Click(object sender, RoutedEventArgs e)
+        {
+            var answer = AppDialog.Show(this,
+                Loc.T("Reset all settings in this window to their defaults?") + "\n\n" +
+                Loc.T("Your language, exceptions, right-click menu, Windows startup and saved cleaning selections are kept."),
+                Loc.T("Reset to defaults"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            autoSaveTimer?.Stop();
+            autoSaveReady = false;
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                if (System.IO.File.Exists(path))
+                {
+                    var keys = new HashSet<string>(ResettableKeys, StringComparer.OrdinalIgnoreCase);
+                    var kept = System.IO.File.ReadAllLines(path)
+                        .Where(l => { int i = l.IndexOf(':'); return i <= 0 || !keys.Contains(l.Substring(0, i).Trim()); })
+                        .ToList();
+                    System.IO.File.WriteAllLines(path, kept);
+                }
+
+                foreach (var pair in defaultComboIndexes)
+                    pair.Key.SelectedIndex = pair.Value;
+                rbCleanAllUsers.IsChecked = true;
+                LoadSettingsFromFile();
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not reset the settings: {0}", ex.Message), Loc.T("Settings"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                autoSaveReady = true;
+            }
+
+            mainWindow?.SetAutoSaveSelections(chkAutoSaveSelections.IsChecked == true);
+            mainWindow?.ApplyOfflineModeToMalwareScan();
+            mainWindow?.ApplyDatabaseUpdateSettings();
+            mainWindow?.ReloadDatabaseIfIdle();
+            mainWindow?.SetThemeFollowsWindows(true);
+            Appearance.Apply();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e) =>
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+        private void Window_StateChanged(object? sender, EventArgs e)
+        {
+            bool maximized = WindowState == WindowState.Maximized;
+            MaxHeight = SystemParameters.WorkArea.Height;
+            MaxWidth = SystemParameters.WorkArea.Width;
+            WindowFrame.Margin = new Thickness(maximized ? 0 : 24);
+            WindowFrame.CornerRadius = new CornerRadius(maximized ? 0 : 22);
+            if (System.Windows.Shell.WindowChrome.GetWindowChrome(this) is System.Windows.Shell.WindowChrome chrome)
+                chrome.ResizeBorderThickness = new Thickness(maximized ? 0 : 24);
+            MaximizeButton.Content = maximized ? "❐" : "□";
+        }
+
+        private bool languageLoading;
+
+        private void LoadLanguageOptions()
+        {
+            languageLoading = true;
+            string saved = Loc.ReadSavedLanguage();
+            string windowsName = Loc.Languages.First(l => l.Code == Loc.DetectWindowsLanguage()).Name;
+            var autoItem = new ComboBoxItem { Content = Loc.F("Automatic (Windows language: {0})", windowsName), Tag = Loc.AutoLanguage };
+            cmbLanguage.Items.Add(autoItem);
+            if (saved == Loc.AutoLanguage)
+                cmbLanguage.SelectedItem = autoItem;
+            foreach (var (code, name) in Loc.Languages)
+            {
+                var item = new ComboBoxItem { Content = name, Tag = code };
+                cmbLanguage.Items.Add(item);
+                if (code == saved)
+                    cmbLanguage.SelectedItem = item;
+            }
+            languageLoading = false;
+        }
+
+        private void cmbLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (languageLoading || cmbLanguage.SelectedItem is not ComboBoxItem item || item.Tag is not string code) return;
+
+            try
+            {
+                Loc.SaveLanguage(code);
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not save {0}: {1}", Loc.T("language"), ex.Message), Loc.T("Settings"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (Loc.Resolve(code) == Loc.Language) return;
+
+            var answer = AppDialog.Show(Loc.T("The new language is applied after the app restarts. Restart now?"), Loc.T("Language"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer == MessageBoxResult.Yes)
+                Loc.Restart();
         }
 
         public void defaultloglocation()
@@ -98,7 +225,6 @@ namespace MultronWinCleaner
         }
 
  
-        // Utilities closes and recreates this window; a loop that never ends would keep every old copy alive.
         private bool isClosed;
 
         protected override void OnClosed(EventArgs e)
@@ -117,7 +243,7 @@ namespace MultronWinCleaner
                     continue;
                 }
                 string status = mainWindow?.AutoCleanStatus ?? "";
-                txtStat.Text = "Status: " + (status.Length > 0 ? status : chkAutoClean.IsChecked == true ? "starting..." : "Automatic cleaning is off");
+                txtStat.Text = Loc.F("Status: {0}", status.Length > 0 ? status : Loc.T(chkAutoClean.IsChecked == true ? "starting..." : "Automatic cleaning is off"));
                 await Task.Delay(1000);
             }
         }
@@ -174,6 +300,11 @@ namespace MultronWinCleaner
                 RebuildExceptions();
             }
 
+            LoadSettingsFromFile();
+        }
+
+        private void LoadSettingsFromFile()
+        {
             string settingsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
             var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -183,7 +314,7 @@ namespace MultronWinCleaner
             }
             else
             {
-                var lines = await System.IO.File.ReadAllLinesAsync(settingsPath);
+                var lines = System.IO.File.ReadAllLines(settingsPath);
                 settings = lines
                     .Where(l => l.Contains(":") && !l.StartsWith("selectedservice:", StringComparison.OrdinalIgnoreCase))
                     .Select(l => l.Split(new[] { ':' }, 2))
@@ -198,7 +329,7 @@ namespace MultronWinCleaner
                 if (string.IsNullOrEmpty(value)) return;
                 foreach (ComboBoxItem item in comboBox.Items)
                 {
-                    if (item.Content.ToString().Equals(value, StringComparison.OrdinalIgnoreCase))
+                    if (Loc.En(item.Content).Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
                         comboBox.SelectedItem = item;
                         break;
@@ -212,6 +343,7 @@ namespace MultronWinCleaner
             offlineModeLoading = true;
             chkOfflineMode.IsChecked = GetBool(MainWindow.OfflineModeSettingKey);
             offlineModeLoading = false;
+            LoadDatabaseUpdateSettings();
             autoSaveSelectionsLoading = true;
             chkAutoSaveSelections.IsChecked = GetString(MainWindow.AutoSaveSelectionsSettingKey, "1") != "0";
             autoSaveSelectionsLoading = false;
@@ -221,10 +353,24 @@ namespace MultronWinCleaner
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
             RunIfInactive.IsChecked = GetBool("runifactive");
             SkipBattery.IsChecked = GetBool("batterylow");
+            startupScanLoading = true;
             chkEnableStartupScan.IsChecked = GetBool("startupscan");
+            startupScanLoading = false;
+            startupCleanLoading = true;
             chkEnableStartupClean.IsChecked = GetBool("startupclean");
-            chkEnableNotifyScan.IsChecked = GetBool("startupnotifyscan");
-            chkEnableNotifyClean.IsChecked = GetBool("startupnotifyclean");
+            startupCleanLoading = false;
+            chkEnableNotifyScan.IsChecked = GetString("startupnotifyscan", "1") != "0";
+            chkEnableNotifyClean.IsChecked = GetString("startupnotifyclean", "1") != "0";
+            chkNotifySecurity.IsChecked = GetString(MainWindow.NotifySecuritySettingKey, "1") != "0";
+            chkNotifyFirewall.IsChecked = GetString(MainWindow.NotifyFirewallSettingKey, "1") != "0";
+            chkNotifyDuplicates.IsChecked = GetString(MainWindow.NotifyDuplicatesSettingKey, "1") != "0";
+            chkNotifyMalware.IsChecked = GetString(MainWindow.NotifyMalwareSettingKey, "1") != "0";
+            cmbNotifyPosition.SelectedIndex = (int)Notify.ReadPosition();
+            cmbNotifyLayout.SelectedIndex = (int)Notify.ReadLayout();
+            LoadContextMenuSettings();
+            SetThemeFollowsWindowsBox(MainWindow.ThemeFollowsWindows);
+            LoadTransparencySettings();
+            _ = LoadRunAtStartupAsync();
             if(GetBool("cleanallusers") == true && GetBool("cleanallusers") != null)
             {
                  rbCleanAllUsers.IsChecked = GetBool("cleanallusers");
@@ -314,15 +460,19 @@ namespace MultronWinCleaner
                 if (FindName($"Week{i}") is CheckBox weekBox)
                     weekBox.IsChecked = GetString($"week{i}") != "0";
             }
+
+            if (autoSaveTimer == null)
+                StartAutoSave();
         }
 
         private bool offlineModeLoading;
 
-        // Saved right away (not only on "Save") so the next startup always sees the choice.
         private void chkOfflineMode_Changed(object sender, RoutedEventArgs e)
         {
             if (offlineModeLoading) return;
             SaveSettingNow(MainWindow.OfflineModeSettingKey, chkOfflineMode.IsChecked == true, "offline mode");
+            mainWindow?.ApplyOfflineModeToMalwareScan();
+            mainWindow?.ApplyDatabaseUpdateSettings();
         }
 
         private bool autoSaveSelectionsLoading;
@@ -344,6 +494,134 @@ namespace MultronWinCleaner
             mainWindow?.ReloadDatabaseIfIdle();
         }
 
+        private bool databaseUpdateLoading = true;
+
+        private MultronWinCleaner.Processes.Updater.AppUpdate? latestAppRelease;
+
+        private void ShowAppUpdateState(string status)
+        {
+            txtAppVersion.Text = Loc.F("Installed version: {0}", MultronWinCleaner.Processes.Updater.CurrentAppVersion);
+            txtAppUpdateStatus.Text = status;
+            bool newer = latestAppRelease != null && latestAppRelease.Version > MultronWinCleaner.Processes.Updater.CurrentAppVersion;
+            btnInstallAppUpdate.Content = newer ? Loc.F("Update to {0}", latestAppRelease!.Version) : "";
+            btnInstallAppUpdate.Visibility = newer ? Visibility.Visible : Visibility.Collapsed;
+            btnAppReleasePage.Visibility = latestAppRelease != null && latestAppRelease.PageUrl.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async void CheckAppUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsOfflineModeEnabled())
+            {
+                ShowAppUpdateState(Loc.T("Turn off offline mode to check for updates."));
+                return;
+            }
+            btnCheckAppUpdate.IsEnabled = false;
+            btnInstallAppUpdate.IsEnabled = false;
+            ShowAppUpdateState(Loc.T("Checking for updates..."));
+            try
+            {
+                latestAppRelease = await Task.Run(MultronWinCleaner.Processes.Updater.FindLatestAppReleaseAsync);
+                if (latestAppRelease == null)
+                    ShowAppUpdateState(Loc.T("No release with an update package was found."));
+                else if (latestAppRelease.Version > MultronWinCleaner.Processes.Updater.CurrentAppVersion)
+                    ShowAppUpdateState(Loc.F("Version {0} is available.", latestAppRelease.Version));
+                else
+                    ShowAppUpdateState(Loc.F("You have the latest version ({0}).", latestAppRelease.Version));
+            }
+            catch (Exception ex)
+            {
+                ShowAppUpdateState(Loc.F("Could not check for updates: {0}", ex.Message));
+            }
+            finally
+            {
+                btnCheckAppUpdate.IsEnabled = true;
+                btnInstallAppUpdate.IsEnabled = true;
+            }
+        }
+
+        private async void InstallAppUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var update = latestAppRelease;
+            if (update == null || mainWindow == null)
+                return;
+            if (!mainWindow.IsIdleForDatabaseReload() || mainWindow.IsAppUpdateBusy)
+            {
+                AppDialog.Show(this, Loc.T("Please wait until the current scan or clean has finished."), Loc.T("App Updates"), MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            if (AppDialog.Show(this, Loc.F("Install Multron Win Cleaner {0} now? The app closes and starts again during the update.", update.Version),
+                    Loc.T("App Updates"), MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            btnCheckAppUpdate.IsEnabled = false;
+            btnInstallAppUpdate.IsEnabled = false;
+            var progress = new Progress<int>(percent => txtAppUpdateStatus.Text = Loc.F("Downloading Update {0}%", percent));
+            bool installed = await mainWindow.InstallAppUpdateNowAsync(update, this, progress);
+            if (!installed)
+            {
+                btnCheckAppUpdate.IsEnabled = true;
+                btnInstallAppUpdate.IsEnabled = true;
+                ShowAppUpdateState(Loc.T("The update was not installed."));
+            }
+        }
+
+        private void AppReleasePage_Click(object sender, RoutedEventArgs e)
+        {
+            if (latestAppRelease?.PageUrl is { Length: > 0 } url)
+            {
+                try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+                catch (Exception ex) { Debug.WriteLine("Could not open the release page: " + ex.Message); }
+            }
+        }
+
+        private void LoadDatabaseUpdateSettings()
+        {
+            ShowAppUpdateState(Loc.T("Click Check for Updates to look for a newer version."));
+            databaseUpdateLoading = true;
+            chkAppAutoUpdate.IsChecked = MultronWinCleaner.Processes.Updater.IsAppAutoUpdateEnabled();
+            chkDatabaseAutoUpdate.IsChecked = MultronWinCleaner.Processes.Updater.IsAutoUpdateEnabled();
+            chkDatabaseAutoReload.IsChecked = MultronWinCleaner.Processes.Updater.IsAutoReloadEnabled();
+            chkDatabaseUpdateStatus.IsChecked = MultronWinCleaner.Processes.Updater.IsStatusEnabled();
+            chkDatabaseUpdateButton.IsChecked = MultronWinCleaner.Processes.Updater.IsButtonEnabled();
+
+            cmbDatabaseUpdateHours.Items.Clear();
+            int saved = MultronWinCleaner.Processes.Updater.GetUpdateHours();
+            foreach (int hours in MultronWinCleaner.Processes.Updater.UpdateIntervals)
+            {
+                var item = new ComboBoxItem { Content = Loc.F(hours == 1 ? "{0} hour" : "{0} hours", hours), Tag = hours };
+                cmbDatabaseUpdateHours.Items.Add(item);
+                if (hours == saved)
+                    cmbDatabaseUpdateHours.SelectedItem = item;
+            }
+            UpdateDatabaseSettingStates();
+            databaseUpdateLoading = false;
+        }
+
+        private void UpdateDatabaseSettingStates()
+        {
+            bool on = chkDatabaseAutoUpdate.IsChecked == true;
+            cmbDatabaseUpdateHours.IsEnabled = on;
+            chkDatabaseAutoReload.IsEnabled = on;
+        }
+
+        private void DatabaseUpdateSetting_Changed(object sender, RoutedEventArgs e)
+        {
+            if (databaseUpdateLoading) return;
+            UpdateDatabaseSettingStates();
+            SaveSettingNow(MultronWinCleaner.Processes.Updater.AppUpdateSettingKey, chkAppAutoUpdate.IsChecked == true, "app updates");
+            SaveSettingNow(MultronWinCleaner.Processes.Updater.AutoUpdateSettingKey, chkDatabaseAutoUpdate.IsChecked == true, "database updates");
+            SaveSettingNow(MultronWinCleaner.Processes.Updater.AutoReloadSettingKey, chkDatabaseAutoReload.IsChecked == true, "database updates");
+            SaveSettingNow(MultronWinCleaner.Processes.Updater.StatusSettingKey, chkDatabaseUpdateStatus.IsChecked == true, "database updates");
+            SaveSettingNow(MultronWinCleaner.Processes.Updater.ButtonSettingKey, chkDatabaseUpdateButton.IsChecked == true, "database updates");
+            mainWindow?.ApplyDatabaseUpdateSettings();
+        }
+
+        private void DatabaseUpdateHours_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (databaseUpdateLoading || cmbDatabaseUpdateHours.SelectedItem is not ComboBoxItem item || item.Tag is not int hours) return;
+            MultronWinCleaner.Processes.Updater.SaveSetting(MultronWinCleaner.Processes.Updater.AutoUpdateHoursSettingKey, hours.ToString());
+        }
+
         private void SaveSettingNow(string key, bool enabled, string displayName)
         {
             try
@@ -360,17 +638,53 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not save " + displayName + ": " + ex.Message, "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.F("Could not save {0}: {1}", Loc.T(displayName), ex.Message), Loc.T("Settings"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        private async void SaveSettings_Click(object sender, RoutedEventArgs e)
+        private bool autoSaveReady;
+        private System.Windows.Threading.DispatcherTimer? autoSaveTimer;
+
+        private void StartAutoSave()
         {
-            SaveButton.IsEnabled = false;
+            autoSaveTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
+            autoSaveTimer.Tick += (s, e) =>
+            {
+                autoSaveTimer.Stop();
+                SaveAllSettings();
+            };
+            AddHandler(System.Windows.Controls.Primitives.ToggleButton.CheckedEvent, new RoutedEventHandler(QueueAutoSave));
+            AddHandler(System.Windows.Controls.Primitives.ToggleButton.UncheckedEvent, new RoutedEventHandler(QueueAutoSave));
+            AddHandler(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, new SelectionChangedEventHandler((s, e) => QueueAutoSave(s, e)));
+            AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent, new TextChangedEventHandler((s, e) => QueueAutoSave(s, e)));
+            IsVisibleChanged += (s, e) => { if (!IsVisible) FlushAutoSave(); };
+            Closing += (s, e) => FlushAutoSave();
+            Application.Current.Exit += (s, e) => FlushAutoSave();
+            autoSaveReady = true;
+        }
+
+        private void QueueAutoSave(object sender, RoutedEventArgs e)
+        {
+            if (!autoSaveReady || autoSaveTimer == null)
+                return;
+            autoSaveTimer.Stop();
+            autoSaveTimer.Start();
+        }
+
+        private void FlushAutoSave()
+        {
+            if (autoSaveTimer == null || !autoSaveTimer.IsEnabled)
+                return;
+            autoSaveTimer.Stop();
+            SaveAllSettings();
+        }
+
+        private void SaveAllSettings()
+        {
             try
             {
                 string path = AppDomain.CurrentDomain.BaseDirectory + "\\" + "Settings.txt";
-                var lines = System.IO.File.Exists(path) ? (await System.IO.File.ReadAllLinesAsync(path)).ToList() : new List<string>();
+                var lines = System.IO.File.Exists(path) ? System.IO.File.ReadAllLines(path).ToList() : new List<string>();
 
                 void Upsert(string key, string value)
                 {
@@ -382,6 +696,7 @@ namespace MultronWinCleaner
                 }
 
                 Upsert("customday", txtCustomDay.Text.Trim());
+                Upsert("starttime", txtStartTime.Text.Trim());
                 Upsert("customaccess", txtCustomAccess.Text.Trim());
                 Upsert("endtime", txtEndTime.Text.Trim());
                 Upsert("minutes", txtCleaningInterval.Text.Trim());
@@ -406,21 +721,27 @@ namespace MultronWinCleaner
                 Upsert("startupclean", chkEnableStartupClean.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyscan", chkEnableNotifyScan.IsChecked == true ? "1" : "0");
                 Upsert("startupnotifyclean", chkEnableNotifyClean.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.NotifySecuritySettingKey, chkNotifySecurity.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.NotifyFirewallSettingKey, chkNotifyFirewall.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.NotifyDuplicatesSettingKey, chkNotifyDuplicates.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.NotifyMalwareSettingKey, chkNotifyMalware.IsChecked == true ? "1" : "0");
+                Upsert(Notify.PositionSettingKey, Math.Max(0, cmbNotifyPosition.SelectedIndex).ToString());
+                Upsert(Notify.LayoutSettingKey, Math.Max(0, cmbNotifyLayout.SelectedIndex).ToString());
                 if (comboBoxUserSelection != null)
                 {
                     comboBoxUserSelection.IsEnabled = rbCleanAllUsers.IsChecked != true;
                 }
                 if (cmbAccessPreset.SelectedItem is ComboBoxItem selectedaccess)
-                    Upsert("accessscanindex", selectedaccess.Content.ToString());
+                    Upsert("accessscanindex", Loc.En(selectedaccess.Content));
 
                 if (cmbAgePreset.SelectedItem is ComboBoxItem selectedindex)
-                    Upsert("oldscanindex", selectedindex.Content.ToString());
+                    Upsert("oldscanindex", Loc.En(selectedindex.Content));
 
                 if (cmbScheduleType.SelectedItem is ComboBoxItem selectedSchedule)
-                    Upsert("scheduletype", selectedSchedule.Content.ToString());
+                    Upsert("scheduletype", Loc.En(selectedSchedule.Content));
 
                 if (cmbPostCleanupAction.SelectedItem is ComboBoxItem selectedAction)
-                    Upsert("postaction", selectedAction.Content.ToString());
+                    Upsert("postaction", Loc.En(selectedAction.Content));
 
                 for (int i = 1; i <= 7; i++)
                 {
@@ -437,14 +758,12 @@ namespace MultronWinCleaner
                         Upsert($"week{i}", weekBox.IsChecked == true ? "1" : "0");
                 }
 
-                await System.IO.File.WriteAllLinesAsync(path, lines);
-                MessageBox.Show("Settings Saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                System.IO.File.WriteAllLines(path, lines);
             }
-            finally
+            catch (Exception ex)
             {
-                SaveButton.IsEnabled = true;
+                Debug.WriteLine("Could not save the settings: " + ex.Message);
             }
-          
         }
 
         private void chkCleanAllUsers_Checked(object sender, RoutedEventArgs e)
@@ -526,7 +845,7 @@ namespace MultronWinCleaner
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Could not save the exceptions list:\n" + ex.Message, "Exceptions", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AppDialog.Show(Loc.F("Could not save the exceptions list:\n{0}", ex.Message), Loc.T("Exceptions"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -564,7 +883,7 @@ namespace MultronWinCleaner
             }
             else
             {
-                MessageBox.Show("The file or folder does not exist.", "Exceptions", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("The file or folder does not exist."), Loc.T("Exceptions"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -666,46 +985,79 @@ namespace MultronWinCleaner
             catch { return false; }
         }
 
-        private async void AddToStartup_Click(object sender, RoutedEventArgs e)
-        {
-            if (!await IsInStartup_ActAsync())
-            {
-                bool success = await CreateStartupTaskAsync();
+        private bool runAtStartupLoading;
 
-                if (success)
+        private async Task LoadRunAtStartupAsync()
+        {
+            bool inStartup = await IsInStartup_ActAsync();
+            SetRunAtStartupBox(inStartup);
+        }
+
+        public void SetRunAtStartupBox(bool on)
+        {
+            runAtStartupLoading = true;
+            try { chkRunAtStartup.IsChecked = on; }
+            finally { runAtStartupLoading = false; }
+        }
+
+        private async void ChkRunAtStartup_Changed(object sender, RoutedEventArgs e)
+        {
+            if (runAtStartupLoading)
+                return;
+            bool on = chkRunAtStartup.IsChecked == true;
+            chkRunAtStartup.IsEnabled = false;
+            try
+            {
+                bool success = on ? await CreateStartupTaskAsync() : await RemoveFromStartup_ActAsync() || !await IsInStartup_ActAsync();
+                if (!success)
                 {
-                    MessageBox.Show("Successfully added to startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                    SetRunAtStartupBox(!on);
+                    AppDialog.Show(Loc.T("Could not change Windows startup. Make sure the program runs as administrator."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
-                else
+                if (on)
+                    EnsureTrayIconForStartup();
+                if (!on)
                 {
-                    MessageBox.Show("Failed to add to startup. Please make sure to run the program as Administrator.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    chkEnableStartupScan.IsChecked = false;
+                    chkEnableStartupClean.IsChecked = false;
+                    mainWindow?.utilities?.savesettings("startupscan:0");
+                    mainWindow?.utilities?.savesettings("startupclean:0");
                 }
             }
-            else
+            finally
             {
-                MessageBox.Show("It has already been added to startup.", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                chkRunAtStartup.IsEnabled = true;
             }
         }
 
-        private async void RemoveFromStartup_Click(object sender, RoutedEventArgs e)
+        private void EnsureTrayIconForStartup()
+        {
+            if (chkTrayIcon.IsChecked == true || mainWindow?.utilities?.chkTrayIconUtil.IsChecked == true)
+                return;
+            chkTrayIcon.IsChecked = true;
+            SaveSettingNow("trayicon", true, "tray icon");
+        }
+
+        private async Task<bool> EnsureRunAtStartupAsync()
         {
             if (await IsInStartup_ActAsync())
             {
-                bool success = await RemoveFromStartup_ActAsync();
-
-                if (success)
-                {
-                    MessageBox.Show("Successfully removed from startup!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Failed to remove from startup. Please make sure to run the program as Administrator.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                EnsureTrayIconForStartup();
+                return true;
             }
-            else
+            var answer = AppDialog.Show(Loc.T("This option needs Multron Win Cleaner to start with Windows. Turn that on now?"),
+                Loc.T("Multron Win Cleaner"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return false;
+            if (!await CreateStartupTaskAsync())
             {
-                MessageBox.Show("The program is not currently in the startup list.", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.T("Could not change Windows startup. Make sure the program runs as administrator."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
+            SetRunAtStartupBox(true);
+            EnsureTrayIconForStartup();
+            return true;
         }
 
         private void OldScan_Checked(object sender, RoutedEventArgs e)
@@ -713,14 +1065,166 @@ namespace MultronWinCleaner
             AccessScan.IsChecked = false;
         }
 
+        private bool startupScanLoading;
+        private bool startupCleanLoading;
+
+        private bool transparencyLoading;
+
+        private void LoadTransparencySettings()
+        {
+            transparencyLoading = true;
+            try
+            {
+                if (cmbTransparencyColor.Items.Count == 0)
+                {
+                    foreach (var (name, color) in Appearance.Colors)
+                    {
+                        var swatch = new Border { Width = 14, Height = 14, CornerRadius = new CornerRadius(7), Margin = new Thickness(0, 0, 8, 0), Background = new SolidColorBrush(color), VerticalAlignment = VerticalAlignment.Center };
+                        var label = new TextBlock { Text = Loc.T(name), VerticalAlignment = VerticalAlignment.Center };
+                        var row = new StackPanel { Orientation = Orientation.Horizontal };
+                        row.Children.Add(swatch);
+                        row.Children.Add(label);
+                        cmbTransparencyColor.Items.Add(new ComboBoxItem { Content = row });
+                    }
+                }
+                chkTransparency.IsChecked = Appearance.Enabled;
+                cmbTransparencyColor.SelectedIndex = Appearance.ColorIndex;
+                cmbTransparencyLevel.SelectedIndex = Appearance.LevelIndex;
+                UpdateTransparencyControls();
+            }
+            finally
+            {
+                transparencyLoading = false;
+            }
+        }
+
+        private void UpdateTransparencyControls()
+        {
+            bool on = chkTransparency.IsChecked == true;
+            cmbTransparencyColor.IsEnabled = on;
+            cmbTransparencyLevel.IsEnabled = on;
+        }
+
+        private void Transparency_Changed(object sender, RoutedEventArgs e)
+        {
+            if (transparencyLoading || cmbTransparencyColor == null || cmbTransparencyLevel == null || chkTransparency == null)
+                return;
+            UpdateTransparencyControls();
+            Utilities?.savesettings(Appearance.EnabledSettingKey + (chkTransparency.IsChecked == true ? ":1" : ":0"));
+            Utilities?.savesettings(Appearance.ColorSettingKey + ":" + Math.Max(0, cmbTransparencyColor.SelectedIndex));
+            Utilities?.savesettings(Appearance.LevelSettingKey + ":" + Math.Max(0, cmbTransparencyLevel.SelectedIndex));
+            Appearance.Apply();
+        }
+
+        private bool themeFollowsWindowsLoading;
+
+        public void SetThemeFollowsWindowsBox(bool follow)
+        {
+            themeFollowsWindowsLoading = true;
+            try { chkThemeFollowsWindows.IsChecked = follow; }
+            finally { themeFollowsWindowsLoading = false; }
+        }
+
+        private void ChkThemeFollowsWindows_Changed(object sender, RoutedEventArgs e)
+        {
+            if (themeFollowsWindowsLoading || !IsLoaded)
+                return;
+            mainWindow?.SetThemeFollowsWindows(chkThemeFollowsWindows.IsChecked == true);
+        }
+
+        private bool contextMenuLoading;
+
+        private void LoadContextMenuSettings()
+        {
+            contextMenuLoading = true;
+            try
+            {
+                chkContextMenuScan.IsChecked = MultronWinCleaner.Processes.ShellContextMenu.IsScanRegistered();
+                bool win11 = MultronWinCleaner.Processes.ShellContextMenu.IsWindows11;
+                chkClassicContextMenu.Visibility = win11 ? Visibility.Visible : Visibility.Collapsed;
+                txtClassicContextMenuHint.Visibility = chkClassicContextMenu.Visibility;
+                chkClassicContextMenu.IsChecked = win11 && MultronWinCleaner.Processes.ShellContextMenu.IsClassicMenuOn();
+                MultronWinCleaner.Processes.ShellContextMenu.RefreshScan();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Could not read the right-click menu settings: " + ex.Message);
+            }
+            finally
+            {
+                contextMenuLoading = false;
+            }
+        }
+
+        private void ChkContextMenuScan_Changed(object sender, RoutedEventArgs e)
+        {
+            if (contextMenuLoading)
+                return;
+            try
+            {
+                if (chkContextMenuScan.IsChecked == true)
+                    MultronWinCleaner.Processes.ShellContextMenu.RegisterScan();
+                else
+                    MultronWinCleaner.Processes.ShellContextMenu.UnregisterScan();
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not change the right-click menu: {0}", ex.Message), Loc.T("Right-Click Menu"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                LoadContextMenuSettings();
+            }
+        }
+
+        private void ChkClassicContextMenu_Changed(object sender, RoutedEventArgs e)
+        {
+            if (contextMenuLoading)
+                return;
+            try
+            {
+                MultronWinCleaner.Processes.ShellContextMenu.SetClassicMenu(chkClassicContextMenu.IsChecked == true);
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not change the right-click menu: {0}", ex.Message), Loc.T("Right-Click Menu"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                LoadContextMenuSettings();
+                return;
+            }
+
+            var answer = AppDialog.Show(Loc.T("The change takes effect after File Explorer restarts. Restart File Explorer now? Open Explorer windows will close."),
+                Loc.T("Right-Click Menu"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer == MessageBoxResult.Yes)
+                MultronWinCleaner.Processes.ShellContextMenu.RestartExplorer();
+        }
+
+        private async void ChkEnableStartupScan_Checked(object sender, RoutedEventArgs e)
+        {
+            if (startupScanLoading) return;
+            if (!await EnsureRunAtStartupAsync())
+            {
+                startupScanLoading = true;
+                chkEnableStartupScan.IsChecked = false;
+                startupScanLoading = false;
+            }
+        }
+
+        private async void ChkEnableStartupClean_Checked(object sender, RoutedEventArgs e)
+        {
+            if (startupCleanLoading) return;
+            if (!await EnsureRunAtStartupAsync())
+            {
+                startupCleanLoading = true;
+                chkEnableStartupClean.IsChecked = false;
+                startupCleanLoading = false;
+            }
+        }
+
         private void btnAutoCleanHelp_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Once you configure your settings, automatic cleaning will start if the checkmark above is enabled. However, if you close and reopen the software, it will reset. It needs to keep running continuously, this way it will no longer create files or registry in the system. I may think about improving this later, but for now this approach seemed better.", "Auto Clean Help", MessageBoxButton.OK, MessageBoxImage.Information);
+            AppDialog.Show(Loc.T("Once you configure your settings, automatic cleaning will start if the checkmark above is enabled. However, if you close and reopen the software, it will reset. It needs to keep running continuously, this way it will no longer create files or registry in the system. I may think about improving this later, but for now this approach seemed better."), Loc.T("Auto Clean Help"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void btnScannerHelp_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("These settings are intended for high-end systems. If you are using an older system, there is no need to modify these settings. You don't need to use in old systems because cache files cause slowdowns and fill up storage space on older systems. However, high-end systems can reduce power consumption and allow applications to open faster by using cache files and similar optimizations. The recommended setting is 30 days, but you can adjust it according to your own knowledge or situation.", "Scanner Help", MessageBoxButton.OK, MessageBoxImage.Information);
+            AppDialog.Show(Loc.T("These settings are intended for high-end systems. If you are using an older system, there is no need to modify these settings. You don't need to use in old systems because cache files cause slowdowns and fill up storage space on older systems. However, high-end systems can reduce power consumption and allow applications to open faster by using cache files and similar optimizations. The recommended setting is 30 days, but you can adjust it according to your own knowledge or situation."), Loc.T("Scanner Help"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void AccessScan_Checked(object sender, RoutedEventArgs e)
@@ -737,7 +1241,7 @@ namespace MultronWinCleaner
         {
             if (mainWindow.extensions == txtNewExtension.Text)
             {
-                System.Windows.Forms.MessageBox.Show("No changed detected. " + txtNewExtension.Text + " > " + mainWindow.extensions);
+                AppDialog.Show(Loc.F("No change detected. {0} > {1}", txtNewExtension.Text, mainWindow.extensions), Loc.T("Multron Win Cleaner"), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -745,29 +1249,34 @@ namespace MultronWinCleaner
 
             if (input.Contains(" "))
             {
-                MessageBox.Show("Extensions cannot contain spaces.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Extensions cannot contain spaces."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(input, @"^(\.[a-zA-Z0-9]+)+$"))
             {
-                MessageBox.Show("Invalid format. Example: .log.etl.dmp.tmp", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Invalid format. Example: .log.etl.dmp.tmp"), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var result = System.Windows.MessageBox.Show("Are you sure to add " + txtNewExtension.Text + "?", "Confirm", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+            var result = AppDialog.Show(Loc.F("Are you sure you want to add {0}?", txtNewExtension.Text), Loc.T("Confirm"), System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
 
             if (result == System.Windows.MessageBoxResult.Yes)
             {
                 mainWindow.extensions = txtNewExtension.Text;
-                System.Windows.MessageBox.Show("Changes applied. " + mainWindow.extensions + " > " + txtNewExtension.Text, "Information", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                AppDialog.Show(Loc.F("Changes applied. {0} > {1}", mainWindow.extensions, txtNewExtension.Text), Loc.T("Information"), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
         }
 
         private void OpenLogFile_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(logfilepath))
-                Process.Start("explorer.exe", logfilepath);
+            if (string.IsNullOrWhiteSpace(logfilepath) || !System.IO.File.Exists(logfilepath))
+            {
+                AppDialog.Show(this, Loc.T("The log file was not found. No log has been written yet, or its location has changed."),
+                    Loc.T("Open Log File"), MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            Process.Start("explorer.exe", logfilepath);
         }
 
         private void OpenAppFolder_Click(object sender, RoutedEventArgs e)
@@ -791,11 +1300,11 @@ namespace MultronWinCleaner
             try
             {
                 await System.IO.File.WriteAllTextAsync(logfilepath, "");
-                MessageBox.Show("Log file " + logfilepath + " all logs cleaned!", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.F("Log file {0}: all logs cleaned!", logfilepath), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error clearing log: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("Error clearing log: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
         }
@@ -803,7 +1312,7 @@ namespace MultronWinCleaner
         private void BrowseLogPath_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new OpenFolderDialog();
-            dialog.Title = "Select Folder For Log File.";
+            dialog.Title = Loc.T("Select Folder For Log File.");
 
             dialog.DefaultDirectory = Environment.CurrentDirectory;
             dialog.InitialDirectory = Environment.CurrentDirectory;
@@ -832,11 +1341,11 @@ namespace MultronWinCleaner
                     logfilepath = txtLogPath.Text;
                 }
 
-                MessageBox.Show("Log path applied successfully!", "Multron Win Cleaner", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.T("Log path applied successfully!"), Loc.T("Multron Win Cleaner"), MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error applying log path: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("Error applying log path: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

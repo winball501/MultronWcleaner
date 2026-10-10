@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -122,14 +122,14 @@ namespace MultronWinCleaner
                 {
                     TimeSpan span = DateTime.Now - LastAccessed;
                     if (span.TotalDays >= 365)
-                        return $"{(int)(span.TotalDays / 365)} years ago";
+                        return Loc.F("{0} years ago", (int)(span.TotalDays / 365));
                     if (span.TotalDays >= 30)
-                        return $"{(int)(span.TotalDays / 30)} months ago";
+                        return Loc.F("{0} months ago", (int)(span.TotalDays / 30));
                     if (span.TotalDays >= 1)
-                        return $"{(int)span.TotalDays} days ago";
+                        return Loc.F("{0} days ago", (int)span.TotalDays);
                     if (span.TotalHours >= 1)
-                        return $"{(int)span.TotalHours} hours ago";
-                    return "Recently";
+                        return Loc.F("{0} hours ago", (int)span.TotalHours);
+                    return Loc.T("Recently");
                 }
             }
         } 
@@ -155,14 +155,14 @@ namespace MultronWinCleaner
             if (isScanning)
             {
                 cancel = 1;
-                ScanResultLabel.Text = "Cancelling scan...";
+                ScanResultLabel.Text = Loc.T("Cancelling scan...");
                 StartScan.IsEnabled = false;
                 return;
             }
 
             if (!double.TryParse(SizeThresholdTextBox.Text, out double minSize))
             {
-                ScanResultLabel.Text = "Please enter a valid size threshold.";
+                ScanResultLabel.Text = Loc.T("Please enter a valid size threshold.");
                 return;
             }
 
@@ -170,10 +170,10 @@ namespace MultronWinCleaner
             int minDaysOld = 0;
             if (applyDateFilter && !int.TryParse(DaysOldTextBox.Text, out minDaysOld))
             {
-                ScanResultLabel.Text = "Please enter a valid number of days for the date filter.";
+                ScanResultLabel.Text = Loc.T("Please enter a valid number of days for the date filter.");
                 return;
             }
-            string selectedDateType = (DateTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Last Accessed";
+            string selectedDateType = Loc.En((DateTypeComboBox.SelectedItem as ComboBoxItem)?.Content ?? "Last Accessed");
 
             bool allowVideos = ChkVideos.IsChecked == true;
             bool allowMusic = ChkMusic.IsChecked == true;
@@ -188,7 +188,7 @@ namespace MultronWinCleaner
             if (!allowVideos && !allowMusic && !allowPhotos && !allowArchives && !allowDocuments &&
                 !allowPrograms && !allowDiskImages && !allowBackups && !allowOthers)
             {
-                ScanResultLabel.Text = "Please select at least one file type category to scan.";
+                ScanResultLabel.Text = Loc.T("Please select at least one file type category to scan.");
                 return;
             }
 
@@ -196,7 +196,7 @@ namespace MultronWinCleaner
             cancel = 0;
             UpdateScanButtonUI(true);
 
-            ScanResultLabel.Text = "Calculating...";
+            ScanResultLabel.Text = Loc.T("Calculating...");
             ScanProgressBar.Visibility = Visibility.Visible;
             ScanProgressBar.Value = 0;
             LargeFilesDataGrid.ItemsSource = null;
@@ -205,7 +205,7 @@ namespace MultronWinCleaner
 
             if (SizeColumn != null)
             {
-                SizeColumn.Header = $"Size ({selectedUnit})";
+                SizeColumn.Header = Loc.F("Size ({0})", selectedUnit);
             }
 
             long multiplier = selectedUnit switch
@@ -245,7 +245,7 @@ namespace MultronWinCleaner
                 int totalFiles = allFiles.Count;
                 if (totalFiles == 0)
                 {
-                    ScanResultLabel.Text = "No files found in the selected folders.";
+                    ScanResultLabel.Text = Loc.T("No files found in the selected folders.");
                     return;
                 }
 
@@ -348,7 +348,7 @@ namespace MultronWinCleaner
                             Application.Current.Dispatcher.Invoke(() =>
                             {
                                 ScanProgressBar.Value = progress;
-                                ScanResultLabel.Text = $"Scanning... {progress:F1}% - ETA: {remaining:mm\\:ss}";
+                                ScanResultLabel.Text = Loc.F("Scanning... {0:F1}% - ETA: {1:mm\\:ss}", progress, remaining);
                             });
                         }
                     }
@@ -361,17 +361,17 @@ namespace MultronWinCleaner
 
                     if (cancel == 1)
                     {
-                        ScanResultLabel.Text = $"{sortedList.Count} large files found. Scan Cancelled!";
+                        ScanResultLabel.Text = Loc.F("{0} large files found. Scan Cancelled!", sortedList.Count);
                     }
                     else
                     {
-                        ScanResultLabel.Text = $"{sortedList.Count} large files found.";
+                        ScanResultLabel.Text = Loc.F("{0} large files found.", sortedList.Count);
                     }
                 });
             }
             catch (Exception ex)
             {
-                ScanResultLabel.Text = $"An error occurred: {ex.Message}";
+                ScanResultLabel.Text = Loc.F("An error occurred: {0}", ex.Message);
             }
             finally
             {
@@ -386,11 +386,11 @@ namespace MultronWinCleaner
             StartScan.IsEnabled = true;
             if (StartScan.Content is TextBlock tb)
             {
-                tb.Text = scanning ? "CANCEL" : "SCAN";
+                tb.Text = Loc.T(scanning ? "CANCEL" : "SCAN");
             }
             else
             {
-                StartScan.Content = scanning ? "CANCEL" : "SCAN";
+                StartScan.Content = Loc.T(scanning ? "CANCEL" : "SCAN");
             }
         }
 
@@ -444,7 +444,7 @@ namespace MultronWinCleaner
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select a folder to exclude",
+                Description = Loc.T("Select a folder to exclude"),
                 UseDescriptionForTitle = true
             };
 
@@ -487,7 +487,7 @@ namespace MultronWinCleaner
             if (LargeFilesDataGrid.SelectedItem is LargeFileInfo selectedFile && !string.IsNullOrEmpty(selectedFile.Path))
             {
                 AddExclusionPath(selectedFile.Path);
-                MessageBox.Show($"File added to exclusions:\n{selectedFile.Path}", "Excluded", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.F("File added to exclusions:\n{0}", selectedFile.Path), Loc.T("Excluded"), MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -499,7 +499,7 @@ namespace MultronWinCleaner
                 if (!string.IsNullOrEmpty(directory))
                 {
                     AddExclusionPath(directory);
-                    MessageBox.Show($"Folder added to exclusions:\n{directory}", "Excluded", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AppDialog.Show(Loc.F("Folder added to exclusions:\n{0}", directory), Loc.T("Excluded"), MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
@@ -562,12 +562,12 @@ namespace MultronWinCleaner
                     }
                     else
                     {
-                        MessageBox.Show("File no longer exists.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        AppDialog.Show(Loc.T("File no longer exists."), Loc.T("Warning"), MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Could not open file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppDialog.Show(Loc.F("Could not open file: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -586,7 +586,7 @@ namespace MultronWinCleaner
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Could not open folder: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppDialog.Show(Loc.F("Could not open folder: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -612,7 +612,7 @@ namespace MultronWinCleaner
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select a folder",
+                Description = Loc.T("Select a folder"),
                 UseDescriptionForTitle = true
             };
 
@@ -630,7 +630,7 @@ namespace MultronWinCleaner
         private void ClearListButton_Click(object sender, RoutedEventArgs e)
         {
             LargeFilesDataGrid.ItemsSource = null;
-            ScanResultLabel.Text = "List Cleared!";
+            ScanResultLabel.Text = Loc.T("List Cleared!");
         }
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -641,7 +641,7 @@ namespace MultronWinCleaner
         {
             var dialog = new VistaFolderBrowserDialog
             {
-                Description = "Select a folder to exclude",
+                Description = Loc.T("Select a folder to exclude"),
                 UseDescriptionForTitle = true
             };
 

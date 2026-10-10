@@ -34,6 +34,8 @@ namespace MultronWinCleaner.Processes
             public uint dwTime;
         }
 
+        private delegate bool GetLastInputInfoDelegate(ref LASTINPUTINFO plii);
+
         [StructLayout(LayoutKind.Sequential)]
         struct SYSTEM_POWER_STATUS
         {
@@ -44,9 +46,6 @@ namespace MultronWinCleaner.Processes
             public uint BatteryLifeTime;
             public uint BatteryFullLifeTime;
         }
-
-        [DllImport("user32.dll")]
-        static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
         [DllImport("kernel32.dll")]
         static extern bool GetSystemTimes(out FILETIME idleTime, out FILETIME kernelTime, out FILETIME userTime);
@@ -71,7 +70,7 @@ namespace MultronWinCleaner.Processes
                 }
                 catch (Exception ex)
                 {
-                    window.SetAutoCleanStatus("Auto Clean error: " + ex.Message);
+                    window.SetAutoCleanStatus(Loc.F("Auto Clean error: {0}", ex.Message));
                 }
                 await Task.Delay(TickInterval);
             }
@@ -95,7 +94,7 @@ namespace MultronWinCleaner.Processes
 
             if (window.autoclean == 1)
             {
-                window.SetAutoCleanStatus("Auto Clean is running...");
+                window.SetAutoCleanStatus(Loc.T("Auto Clean is running..."));
                 return;
             }
 
@@ -140,36 +139,36 @@ namespace MultronWinCleaner.Processes
 
             if (schedule == 3 && Array.TrueForAll(days, d => !d))
             {
-                window.SetAutoCleanStatus("Auto Clean is on · no days selected");
+                window.SetAutoCleanStatus(Loc.T("Auto Clean is on · no days selected"));
                 return;
             }
             if (schedule == 3 && limitWeeks && Array.TrueForAll(weeks, w => !w))
             {
-                window.SetAutoCleanStatus("Auto Clean is on · no weeks selected");
+                window.SetAutoCleanStatus(Loc.T("Auto Clean is on · no weeks selected"));
                 return;
             }
             if (now < next)
             {
-                window.SetAutoCleanStatus("Auto Clean is on · next run " + FormatNext(next, now));
+                window.SetAutoCleanStatus(Loc.F("Auto Clean is on · next run {0}", FormatNext(next, now)));
                 return;
             }
 
             string blocked = CheckConditions(settings, cpu);
             if (blocked != null)
             {
-                window.SetAutoCleanStatus("Auto Clean is on · waiting: " + blocked);
+                window.SetAutoCleanStatus(Loc.F("Auto Clean is on · waiting: {0}", blocked));
                 return;
             }
 
             if (!await window.StartAutoCleanAsync())
             {
-                window.SetAutoCleanStatus("Auto Clean is on · waiting for the current task to finish");
+                window.SetAutoCleanStatus(Loc.T("Auto Clean is on · waiting for the current task to finish"));
                 return;
             }
 
             lastRun = now;
             SaveLastRun(now);
-            window.SetAutoCleanStatus("Auto Clean is running...");
+            window.SetAutoCleanStatus(Loc.T("Auto Clean is running..."));
         }
 
         private string CheckConditions(Settings settings, int cpu)
@@ -179,13 +178,13 @@ namespace MultronWinCleaner.Processes
             bool pluggedIn = !hasPower || power.ACLineStatus != 0;
 
             if (settings.SkipBattery.IsChecked == true && hasPower && power.BatteryLifePercent != 255 && power.BatteryLifePercent <= 30 && !pluggedIn)
-                return "battery is at " + power.BatteryLifePercent + "%";
+                return Loc.F("battery is at {0}%", power.BatteryLifePercent);
             if (settings.OnlyBattery.IsChecked == true && !pluggedIn)
-                return "the device is not plugged in";
+                return Loc.T("the device is not plugged in");
             if (settings.RunIfInactive.IsChecked == true && GetIdleMinutes() < 15)
-                return "the PC is in use";
+                return Loc.T("the PC is in use");
             if (settings.OnlyLowCPU.IsChecked == true && cpu > 30)
-                return "CPU usage is " + cpu + "%";
+                return Loc.F("CPU usage is {0}%", cpu);
             return null;
         }
 
@@ -237,8 +236,8 @@ namespace MultronWinCleaner.Processes
             if (next.Date == now.Date)
                 return next.ToString("HH:mm");
             if (next.Date == now.Date.AddDays(1))
-                return "tomorrow " + next.ToString("HH:mm");
-            return next.ToString("ddd HH:mm", CultureInfo.InvariantCulture);
+                return Loc.F("tomorrow {0}", next.ToString("HH:mm"));
+            return next.ToString("ddd HH:mm", Loc.Culture);
         }
 
         private static DateTime ReadLastRun()
@@ -263,12 +262,24 @@ namespace MultronWinCleaner.Processes
 
         private static int GetIdleMinutes()
         {
-            LASTINPUTINFO info = new LASTINPUTINFO();
-            info.cbSize = (uint)Marshal.SizeOf(info);
-            if (!GetLastInputInfo(ref info))
+            try
+            {
+                if (!NativeLibrary.TryLoad("user32.dll", out IntPtr lib))
+                    return int.MaxValue;
+                if (!NativeLibrary.TryGetExport(lib, "GetLastInputInfo", out IntPtr proc))
+                    return int.MaxValue;
+                var func = Marshal.GetDelegateForFunctionPointer<GetLastInputInfoDelegate>(proc);
+                LASTINPUTINFO info = new LASTINPUTINFO();
+                info.cbSize = (uint)Marshal.SizeOf(info);
+                if (!func(ref info))
+                    return int.MaxValue;
+                uint idleMs = (uint)Environment.TickCount - info.dwTime;
+                return (int)(idleMs / 1000 / 60);
+            }
+            catch
+            {
                 return int.MaxValue;
-            uint idleMs = (uint)Environment.TickCount - info.dwTime;
-            return (int)(idleMs / 1000 / 60);
+            }
         }
 
         private int GetCpuUsage()

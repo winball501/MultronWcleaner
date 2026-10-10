@@ -1,8 +1,9 @@
-﻿<Window x:Class="MultronWinCleaner.Utilities"
+<Window x:Class="MultronWinCleaner.Utilities"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Utilities" Height="735" Width="800"
-        WindowStyle="None" ResizeMode="NoResize"
+        xmlns:loc="clr-namespace:MultronWinCleaner"
+        Title="{loc:Tr 'Utilities'}" Height="735" Width="800"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize"
         Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
@@ -20,16 +21,25 @@
             <DockPanel LastChildFill="False" Margin="8,0,8,0">
                
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <TextBlock Text="Multron Win Cleaner Utilities"
+                    <TextBlock Text="{loc:Tr 'Multron Win Cleaner Utilities'}"
                        FontSize="22" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
                 </StackPanel>
  
                 <Button Content="✕" DockPanel.Dock="Right" Style="{DynamicResource DangerButtonStyle}" Width="31" Height="30" FontSize="14"
-           Click="CloseButton_Click" ToolTip="Close"
+           Click="CloseButton_Click" ToolTip="{loc:Tr 'Close'}"
            Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
- 
+
+                <Button x:Name="MainWindowButton" DockPanel.Dock="Right" Style="{DynamicResource AccentButtonStyle}"
+           Height="32" FontSize="13" Margin="0,0,10,0" VerticalAlignment="Center" Visibility="Collapsed"
+           Click="ShowMainWindow_Click" ToolTip="{loc:Tr 'Show the main Multron Win Cleaner window'}">
+                    <StackPanel Orientation="Horizontal" Margin="12,0">
+                        <TextBlock Text="&#x2302;" FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="{loc:Tr 'Main Window'}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,15,0">
-                    <TextBlock Text="Tray Icon" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="13"/>
+                    <TextBlock Text="{loc:Tr 'Tray Icon'}" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold" FontSize="13"/>
                     <ToggleButton x:Name="chkTrayIconUtil" Style="{StaticResource ToggleSwitchStyle}" Checked="chkTrayIconUtil_CheckedChanged" Unchecked="chkTrayIconUtil_CheckedChanged" VerticalAlignment="Center" />
                 </StackPanel>
             </DockPanel>
@@ -59,10 +69,10 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Firewall Rule Cleaner"
+                            <TextBlock Text="{loc:Tr 'Firewall Rule Cleaner'}"
                                        FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Removes broken or orphaned rules from Windows Firewall."
+                            <TextBlock Text="{loc:Tr 'Removes broken or orphaned rules from Windows Firewall.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}"
                                        TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <ProgressBar x:Name="FirewallProgress" Height="18" Minimum="0" Maximum="100" Value="0"
@@ -82,15 +92,15 @@
                                    Margin="0,5,0,0" Visibility="Collapsed"
                                    HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <Button x:Name="FirewallScan" Content="Start Scan"
+                                <Button x:Name="FirewallScan" Content="{loc:Tr 'Start Scan'}"
                                         Width="140" Height="36" Cursor="Hand" Click="FirewallClean_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="FirewallReset" Content="Reset"
+                                <Button x:Name="FirewallReset" Content="{loc:Tr 'Reset'}"
                                         Width="140" Height="36" Cursor="Hand" Click="FirewallReset_Click"
                                         Visibility="Collapsed" Margin="8,0,0,0" Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                          
-                                <TextBlock x:Name="lblStatusFirewall" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <TextBlock x:Name="lblStatusFirewall" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -100,14 +110,14 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Large File Finder" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="{loc:Tr 'Large File Finder'}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Scans a selected folder for the largest files consuming disk space."
+                            <TextBlock Text="{loc:Tr 'Scans a selected folder for the largest files consuming disk space.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="LargeFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
-                                <TextBlock x:Name="lblStatusLargeFile" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
-                                <Button x:Name="btnCloseLargeFile" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseLargeFile_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                                <Button Content="{loc:Tr 'Launch'}" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="LargeFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusLargeFile" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseLargeFile" Content="{loc:Tr 'Close'}" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseLargeFile_Click" Background="#DC3545" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
                             </StackPanel>
 
                         </StackPanel>
@@ -115,18 +125,18 @@
                     </Border>
 
 
-                    <Border Grid.Row="4" Grid.Column="1" Margin="10" Padding="15"
+                    <Border Grid.Row="5" Grid.Column="0" Margin="10" Padding="15"
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Duplicate File Finder" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="{loc:Tr 'Duplicate File Finder'}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Scans a selected folder to find duplicate files and helps you clean up disk space."
+                            <TextBlock Text="{loc:Tr 'Scans a selected folder to find duplicate files and helps you clean up disk space.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="DuplicateFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
-                                <TextBlock x:Name="lblStatusDuplicate" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
-                                <Button x:Name="btnCloseDuplicate" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseDuplicate_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                                <Button Content="{loc:Tr 'Launch'}" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="DuplicateFilesScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusDuplicate" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseDuplicate" Content="{loc:Tr 'Close'}" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseDuplicate_Click" Background="#DC3545" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -136,15 +146,15 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="System Optimization" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="{loc:Tr 'System Optimization'}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
                             <ComboBox x:Name="OptimizationProfile" Height="30" Margin="0,0,0,10" SelectionChanged="OptimizationProfile_SelectionChanged">
-                                <ComboBoxItem Content="For old systems: pause background services"/>
-                                <ComboBoxItem Content="For new systems: performance boost"/>
+                                <ComboBoxItem Content="{loc:Tr 'For old systems: pause background services'}"/>
+                                <ComboBoxItem Content="{loc:Tr 'For new systems: performance boost'}"/>
                             </ComboBox>
-                            <TextBlock x:Name="OptimizationDescription" Text="Pauses background Windows services to free memory and CPU on older PCs. Windows starts them again after a restart, so while this is on they are paused again every time the app starts. Undo starts exactly the services that were paused."
+                            <TextBlock x:Name="OptimizationDescription" Text="{loc:Tr 'Pauses background Windows services to free memory and CPU on older PCs. Windows starts them again after a restart, so while this is on they are paused again every time the app starts. Undo starts exactly the services that were paused.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                            <TextBlock Text="Activity" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{loc:Tr 'Activity'}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,4"/>
                             <ListBox x:Name="OptimizationLog" Height="110" FontSize="12"
                                      Background="{DynamicResource PanelBackground}"
                                      Foreground="{DynamicResource TextSecondary}"
@@ -156,14 +166,14 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                             <TextBlock FontSize="13" Foreground="DodgerBlue" Margin="0,0,0,10" Cursor="Hand">
-                                <Hyperlink Click="ConfigureTurboBoost_Click">Configure</Hyperlink>
+                                <Hyperlink Click="ConfigureTurboBoost_Click"><Run Text="{loc:Tr 'Configure'}"/></Hyperlink>
                             </TextBlock>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <Button x:Name="Turbo" Content="Apply Optimization" Width="180" Height="36"
+                                <Button x:Name="Turbo" Content="{loc:Tr 'Apply Optimization'}" Width="180" Height="36"
                                         HorizontalAlignment="Left" Cursor="Hand" Click="ActivateTurboBoost_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                               
-                                <TextBlock x:Name="lblStatusTurbo" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <TextBlock x:Name="lblStatusTurbo" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -172,14 +182,14 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Memory Cleaner" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="{loc:Tr 'Memory Cleaner'}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Cleans system memory to help boost system speed and performance." 
+                            <TextBlock Text="{loc:Tr 'Cleans system memory to help boost system speed and performance.'}" 
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="OpenMemoryCleaner_Click" Style="{StaticResource RoundedButtonStyle}"/>
-                                <TextBlock x:Name="lblStatusMemCleaner" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
-                                <Button x:Name="btnCloseMemCleaner" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseMemCleaner_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                                <Button Content="{loc:Tr 'Launch'}" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="OpenMemoryCleaner_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusMemCleaner" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseMemCleaner" Content="{loc:Tr 'Close'}" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseMemCleaner_Click" Background="#DC3545" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -188,14 +198,14 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Startup Manager" FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="{loc:Tr 'Startup Manager'}" FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Manage programs that run automatically when Windows starts. Speed up your boot time and disable or delete unwanted startup entries."
+                            <TextBlock Text="{loc:Tr 'Manage programs that run automatically when Windows starts. Speed up your boot time and disable or delete unwanted startup entries.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                                <Button Content="Launch" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="StartupManager_Click" Style="{StaticResource RoundedButtonStyle}"/>
-                                <TextBlock x:Name="lblStatusStartup" Text="Running" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
-                                <Button x:Name="btnCloseStartup" Content="Close" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseStartup_Click" Background="#FF4C4C" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                                <Button Content="{loc:Tr 'Launch'}" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="StartupManager_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusStartup" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseStartup" Content="{loc:Tr 'Close'}" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseStartup_Click" Background="#DC3545" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -204,10 +214,35 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Shortcut Fixer"
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="{loc:Tr 'Malware Scan'}" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                                <Border Background="#201E88E5" CornerRadius="4" Padding="6,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{loc:Tr 'CLOUD'}" FontSize="10" FontWeight="Bold" Foreground="#FF1E88E5" />
+                                </Border>
+                                <Border Background="#20FF8C1A" CornerRadius="4" Padding="6,1" Margin="6,0,0,0" VerticalAlignment="Center"
+                                        ToolTip="{loc:Tr 'The cloud malware scan is published for testing so it can be tried thoroughly and made stable. Results and behavior may still change.'}">
+                                    <TextBlock Text="{loc:Tr 'TESTING'}" FontSize="10" FontWeight="Bold" Foreground="#FFFF8C1A" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{loc:Tr 'Sends executables from running processes, startup items or selected folders to the cloud with the viruskov.com static engine over an encrypted connection and checks them for malware.'}"
+                                       FontSize="13" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                <Button Content="{loc:Tr 'Launch'}" Width="140" Height="36" HorizontalAlignment="Left" Cursor="Hand" Click="MalwareScan_Click" Style="{StaticResource RoundedButtonStyle}"/>
+                                <TextBlock x:Name="lblStatusMalwareScan" Text="{loc:Tr 'Running'}" Foreground="LimeGreen" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed"/>
+                                <Button x:Name="btnCloseMalwareScan" Content="{loc:Tr 'Close'}" Width="60" Height="28" Margin="10,0,0,0" Cursor="Hand" Click="CloseMalwareScan_Click" Background="#DC3545" Foreground="White" BorderThickness="0" Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="4" Grid.Column="1" Margin="10" Padding="15"
+                            Background="{DynamicResource PanelBackground}" CornerRadius="12"
+                            Effect="{StaticResource DropShadowEffect}">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Tr 'Shortcut Fixer'}"
                                        FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Finds Desktop and Start Menu shortcuts whose program no longer exists. Shortcuts to programs that moved to a new version folder are repaired, the others are moved to the Recycle Bin."
+                            <TextBlock Text="{loc:Tr 'Finds Desktop and Start Menu shortcuts whose program no longer exists. Shortcuts to programs that moved to a new version folder are repaired, the others are moved to the Recycle Bin.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}"
                                        TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <ProgressBar x:Name="ShortcutProgress" Height="18" Minimum="0" Maximum="100" Value="0" IsIndeterminate="True"
@@ -227,10 +262,10 @@
                                    Margin="0,5,0,0" Visibility="Collapsed"
                                    HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <Button x:Name="ShortcutScan" Content="Start Scan"
+                                <Button x:Name="ShortcutScan" Content="{loc:Tr 'Start Scan'}"
                                         Width="140" Height="36" Cursor="Hand" Click="ShortcutScan_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="ShortcutReset" Content="Reset"
+                                <Button x:Name="ShortcutReset" Content="{loc:Tr 'Reset'}"
                                         Width="140" Height="36" Cursor="Hand" Click="ShortcutReset_Click"
                                         Visibility="Collapsed" Margin="8,0,0,0" Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
@@ -242,10 +277,10 @@
                             Background="{DynamicResource PanelBackground}" CornerRadius="12"
                             Effect="{StaticResource DropShadowEffect}">
                         <StackPanel>
-                            <TextBlock Text="Security Check"
+                            <TextBlock Text="{loc:Tr 'Security Check'}"
                                        FontSize="16" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,10"/>
-                            <TextBlock Text="Finds Windows settings that make your PC less secure, for example UAC, Windows Firewall or Defender turned off, AutoPlay on for USB drives, SMB 1.0, Remote Desktop without protection, blocked Task Manager or backdoors on the sign-in screen. Tick the settings to fix; the current values are saved first, so every fix can be undone."
+                            <TextBlock Text="{loc:Tr 'Finds Windows settings that make your PC less secure, for example UAC, Windows Firewall or Defender turned off, AutoPlay on for USB drives, SMB 1.0, Remote Desktop without protection, blocked Task Manager or backdoors on the sign-in screen. Tick the settings to fix; the current values are saved first, so every fix can be undone.'}"
                                        FontSize="13" Foreground="{DynamicResource TextSecondary}"
                                        TextWrapping="Wrap" Margin="0,0,0,10"/>
                             <ProgressBar x:Name="SecurityProgress" Height="18" Minimum="0" Maximum="100" Value="0" IsIndeterminate="True"
@@ -259,7 +294,7 @@
                                             <DockPanel>
                                                 <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,2,10,0"
                                                           IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanFix}"
-                                                          ToolTip="Fix this setting"/>
+                                                          ToolTip="{loc:Tr 'Fix this setting'}"/>
                                                 <StackPanel>
                                                     <DockPanel>
                                                         <Border Background="{Binding SeverityColor}" CornerRadius="4" Padding="6,1" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0">
@@ -281,15 +316,15 @@
                                        Margin="0,5,0,0" Visibility="Collapsed"
                                        HorizontalAlignment="Left" Foreground="{DynamicResource TextPrimary}"/>
                             <UniformGrid Rows="1" Margin="-4,10,-4,0">
-                                <Button x:Name="SecurityScan" Margin="4,0" Content="Start Scan" Height="36" Cursor="Hand" Click="SecurityScan_Click"
+                                <Button x:Name="SecurityScan" Margin="4,0" Content="{loc:Tr 'Start Scan'}" Height="36" Cursor="Hand" Click="SecurityScan_Click"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="SecurityFix" Margin="4,0" Content="Fix Selected" Height="36" Cursor="Hand" Click="SecurityFix_Click"
+                                <Button x:Name="SecurityFix" Margin="4,0" Content="{loc:Tr 'Fix Selected'}" Height="36" Cursor="Hand" Click="SecurityFix_Click"
                                         Visibility="Collapsed" Background="Crimson"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="SecurityUndo" Margin="4,0" Content="Undo Fixes" Height="36" Cursor="Hand" Click="SecurityUndo_Click"
+                                <Button x:Name="SecurityUndo" Margin="4,0" Content="{loc:Tr 'Undo Fixes'}" Height="36" Cursor="Hand" Click="SecurityUndo_Click"
                                         Visibility="Collapsed"
                                         Style="{StaticResource RoundedButtonStyle}"/>
-                                <Button x:Name="SecurityReset" Margin="4,0" Content="Reset" Height="36" Cursor="Hand" Click="SecurityReset_Click"
+                                <Button x:Name="SecurityReset" Margin="4,0" Content="{loc:Tr 'Reset'}" Height="36" Cursor="Hand" Click="SecurityReset_Click"
                                         Visibility="Collapsed" Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                             </UniformGrid>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace MultronWinCleaner
 {
-    /// <summary>
-    /// Interaction logic for NewStartupItemDetected.xaml
-    /// </summary>
     public partial class NewStartupItemDetected : Window
     {
         StartupManager startupManager;

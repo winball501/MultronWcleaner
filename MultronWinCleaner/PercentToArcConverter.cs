@@ -6,15 +6,6 @@ using System.Windows.Media;
 
 namespace Multron_Win_Cleaner
 {
-    /// <summary>
-    /// Converts a ProgressBar's Value (0-100) into a PathGeometry describing
-    /// a circular arc, so the "ModernProgressBarStyle" ring in MainWindow.xaml
-    /// can render a determinate percentage without any extra code-behind.
-    ///
-    /// Geometry assumes a 120x120 host with StrokeThickness="12"
-    /// (radius = (120 - 12) / 2 = 54, center = (60,60)).
-    /// If you resize the ring, update Center/Radius below to match.
-    /// </summary>
     public class PercentToArcConverter : IValueConverter
     {
         private const double Center = 60.0;

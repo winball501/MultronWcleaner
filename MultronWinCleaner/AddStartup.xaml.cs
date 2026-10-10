@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace MultronWinCleaner
 {
-    /// <summary>
-    /// Interaction logic for AddStartup.xaml
-    /// </summary>
     public partial class AddStartup : Window
     {
         public AddStartup()
@@ -42,7 +39,7 @@ namespace MultronWinCleaner
 
                 if (key == null)
                 {
-                    MessageBox.Show("Key returned null.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    AppDialog.Show(Loc.T("Key returned null."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                 } else
                 {
                     string raw = key.GetValue("Userinit") as string ?? "";
@@ -53,7 +50,7 @@ namespace MultronWinCleaner
                     bool alreadyExists = parts.Any(p => p.Equals(pathToAdd, StringComparison.OrdinalIgnoreCase));
                     if (alreadyExists)
                     {
-                        MessageBox.Show(pathToAdd + " Already Exists", "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
+                        AppDialog.Show(Loc.F("{0} already exists", pathToAdd), Loc.T("Warning"), MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else
                     {
@@ -61,7 +58,7 @@ namespace MultronWinCleaner
 
                         string newValue = string.Join(",", parts) + ",";
                         key.SetValue("Userinit", newValue);
-                        MessageBox.Show("Operation Sucessfully! " + newValue + " > added!", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                        AppDialog.Show(Loc.F("Operation successful! {0} > added!", newValue), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
 
@@ -71,7 +68,7 @@ namespace MultronWinCleaner
 
             }
             catch (Exception ex) { 
-                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                 AppDialog.Show(ex.Message, Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             
             }
         }
@@ -82,12 +79,12 @@ namespace MultronWinCleaner
 
             if (string.IsNullOrEmpty(name))
             {
-                MessageBox.Show("Please enter a name.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Please enter a name."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(path))
             {
-                MessageBox.Show("Please enter the executable path.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Please enter the executable path."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -100,12 +97,12 @@ namespace MultronWinCleaner
 
                     if (runKey == null)
                     {
-                        MessageBox.Show("Unable to open registry key.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        AppDialog.Show(Loc.T("Unable to open registry key."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
                     runKey.SetValue(name, $"\"{path}\"");
-                    MessageBox.Show("Startup application added successfully. ", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AppDialog.Show(Loc.T("Startup application added successfully. "), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else if (rbTaskScheduler.IsChecked == true)
                 { 
@@ -121,11 +118,11 @@ namespace MultronWinCleaner
 
                     if (proc.ExitCode != 0)
                     {
-                        MessageBox.Show("Task Scheduler entry could not be created.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        AppDialog.Show(Loc.T("Task Scheduler entry could not be created."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     } else
                     {
-                        MessageBox.Show("Added to task scheduler successfully. ", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        AppDialog.Show(Loc.T("Added to task scheduler successfully. "), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
                     }
 
                 } else
@@ -139,7 +136,7 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -149,7 +146,7 @@ namespace MultronWinCleaner
             OpenFileDialog openFileDialog1 = new OpenFileDialog
             {
                 InitialDirectory = @"C:\",
-                Filter = "All files (*.*)|*.*",
+                Filter = Loc.T("All files (*.*)|*.*"),
                 FilterIndex = 1,
                 RestoreDirectory = true
             };

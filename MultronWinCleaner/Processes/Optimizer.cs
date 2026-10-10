@@ -83,7 +83,7 @@ namespace MultronWinCleaner.Processes
         }
 
         private static ServiceItem Item(string id, string title, string description, bool selected) =>
-            new ServiceItem { ServiceName = id, DisplayName = title, Description = description, IsSelected = selected };
+            new ServiceItem { ServiceName = id, DisplayName = Loc.T(title), Description = Loc.T(description), IsSelected = selected };
 
         public static ObservableCollection<ServiceItem> CreateNewSystemTweaks() => new ObservableCollection<ServiceItem>
         {
@@ -285,11 +285,11 @@ namespace MultronWinCleaner.Processes
                     {
                         continue;
                     }
-                    messages.Add("Applied: " + tweak.DisplayName);
+                    messages.Add(Loc.F("Applied: {0}", tweak.DisplayName));
                 }
                 catch (Exception ex)
                 {
-                    messages.Add($"Could not apply {tweak.DisplayName}: {ex.Message}");
+                    messages.Add(Loc.F("Could not apply {0}: {1}", tweak.DisplayName, ex.Message));
                 }
             }
 
@@ -315,7 +315,7 @@ namespace MultronWinCleaner.Processes
                             changed = true;
                         }
                         if (changed)
-                            messages.Add($"Applied again at startup: {tweak.DisplayName} (it had been changed)");
+                            messages.Add(Loc.F("Applied again at startup: {0} (it had been changed)", tweak.DisplayName));
                     }
                     else if (tweak.ServiceName == "powerplan")
                     {
@@ -323,18 +323,18 @@ namespace MultronWinCleaner.Processes
                         if (!wanted.Equals(ActivePowerScheme(), StringComparison.OrdinalIgnoreCase))
                         {
                             RunTool("powercfg.exe", "/setactive " + wanted);
-                            messages.Add($"Applied again at startup: {tweak.DisplayName} (another power plan had been selected)");
+                            messages.Add(Loc.F("Applied again at startup: {0} (another power plan had been selected)", tweak.DisplayName));
                         }
                     }
                     else if (tweak.ServiceName == "flushdns")
                     {
                         FlushDns();
-                        messages.Add("DNS cache flushed automatically at startup");
+                        messages.Add(Loc.T("DNS cache flushed automatically at startup"));
                     }
                 }
                 catch (Exception ex)
                 {
-                    messages.Add($"Could not apply {tweak.DisplayName} at startup: {ex.Message}");
+                    messages.Add(Loc.F("Could not apply {0} at startup: {1}", tweak.DisplayName, ex.Message));
                 }
             }
 
@@ -355,7 +355,7 @@ namespace MultronWinCleaner.Processes
                 }
                 catch (Exception ex)
                 {
-                    messages.Add($"Could not restore {item.Key}\\{item.Name}: {ex.Message}");
+                    messages.Add(Loc.F("Could not restore {0}\\{1}: {2}", item.Key, item.Name, ex.Message));
                 }
             }
 
@@ -368,14 +368,14 @@ namespace MultronWinCleaner.Processes
             }
             catch (Exception ex)
             {
-                messages.Add("Could not restore the power plan: " + ex.Message);
+                messages.Add(Loc.F("Could not restore the power plan: {0}", ex.Message));
             }
 
             if (messages.Count == 0)
             {
                 try { File.Delete(BackupPath); } catch (Exception) { }
             }
-            messages.Insert(0, $"Restored {backup.Registry.Count} settings" + (backup.PreviousPowerScheme != null ? " and the previous power plan." : "."));
+            messages.Insert(0, Loc.F(backup.PreviousPowerScheme != null ? "Restored {0} settings and the previous power plan." : "Restored {0} settings.", backup.Registry.Count));
             return messages;
         }
 

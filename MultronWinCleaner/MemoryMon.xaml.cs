@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic.Devices;
+using Microsoft.VisualBasic.Devices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,15 +12,13 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.Win32;
 
 namespace MultronWinCleaner
 {
-    /// <summary>
-    /// Interaction logic for MemoryMon.xaml
-    /// </summary>
     public partial class MemoryMon : Window
     {
         private readonly MemCleaner _memcleaner;
@@ -186,6 +184,22 @@ namespace MultronWinCleaner
                         await Task.Delay(1000, _cancellationToken);
                     }
                 }
+            }
+        }
+
+        private void LoadingBorder_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (LoadingBorder.IsVisible)
+            {
+                LoadingSpinnerRotation.BeginAnimation(RotateTransform.AngleProperty,
+                    new DoubleAnimation(0, 360, TimeSpan.FromSeconds(0.7)) { RepeatBehavior = RepeatBehavior.Forever });
+                LoadingText.BeginAnimation(OpacityProperty,
+                    new DoubleAnimation(1.0, 0.3, TimeSpan.FromSeconds(0.6)) { AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever });
+            }
+            else
+            {
+                LoadingSpinnerRotation.BeginAnimation(RotateTransform.AngleProperty, null);
+                LoadingText.BeginAnimation(OpacityProperty, null);
             }
         }
 

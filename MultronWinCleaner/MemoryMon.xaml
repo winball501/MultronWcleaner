@@ -1,7 +1,8 @@
-﻿<Window x:Class="MultronWinCleaner.MemoryMon"
+<Window x:Class="MultronWinCleaner.MemoryMon"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Memory Monitor"
+        xmlns:loc="clr-namespace:MultronWinCleaner"
+        Title="{loc:Tr 'Memory Monitor'}"
         Height="Auto" Width="235"
         SizeToContent="Height"
         WindowStartupLocation="Manual"
@@ -83,7 +84,7 @@
             </Grid.RowDefinitions>
  
             <Grid Grid.Row="0" Margin="0,0,0,6">
-                <TextBlock Text="PERFORMANCE" FontSize="8" FontWeight="Bold" 
+                <TextBlock Text="{loc:Tr 'PERFORMANCE'}" FontSize="8" FontWeight="Bold" 
                            Foreground="{DynamicResource TextPrimary}" Opacity="0.5" 
                            VerticalAlignment="Center" IsHitTestVisible="False"/>
                 <Button Content="✕" 
@@ -92,7 +93,7 @@
                         FontSize="10"
                         Background="Transparent" Foreground="{DynamicResource TextPrimary}"
                         BorderThickness="0" Cursor="Hand" 
-                        Click="CloseButton_Click" ToolTip="Close"/>
+                        Click="CloseButton_Click" ToolTip="{loc:Tr 'Close'}"/>
             </Grid>
 
   
@@ -113,7 +114,7 @@
                                      Style="{StaticResource ModernProgressBar}"
                                      Background="{DynamicResource ProgressBarBackground}"
                                      BorderBrush="{DynamicResource ProgressBarBorder}"
-                                     Foreground="#FF0078D4"/>
+                                     Foreground="#FF1E88E5"/>
                     </StackPanel>
                 </Border>
  
@@ -133,12 +134,12 @@
             </Grid>
  
             <UniformGrid Grid.Row="2" Columns="2" Rows="1">
-                <Button Content="Clean RAM" Margin="0,0,3,0" 
+                <Button Content="{loc:Tr 'Clean RAM'}" Margin="0,0,3,0" 
                         Style="{StaticResource WidgetButtonStyle}"
                         Click="CleanMemory_Click"
-                        Background="#FF0078D4" Foreground="White"/>
+                        Background="#FF1E88E5" Foreground="White"/>
 
-                <Button Content="Usage" Margin="3,0,0,0"
+                <Button Content="{loc:Tr 'Usage'}" Margin="3,0,0,0"
                         Style="{StaticResource WidgetButtonStyle}"
                         Click="SlowProcesses_Click"
                         Background="{DynamicResource AccentColorHover}" Foreground="{DynamicResource Text}"/>
@@ -194,7 +195,7 @@
                                             <ColumnDefinition Width="45"/>
                                           
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="1" Text="APP" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Opacity="0.5" Margin="2,0,0,0"/>
+                                        <TextBlock Grid.Column="1" Text="{loc:Tr 'APP'}" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Opacity="0.5" Margin="2,0,0,0"/>
                                         <TextBlock Grid.Column="2" Text="CPU" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Opacity="0.5" TextAlignment="Right"/>
                                         <TextBlock Grid.Column="3" Text="RAM" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Opacity="0.5" TextAlignment="Right"/>
                                     </Grid>
@@ -238,7 +239,8 @@
                         BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"
                         CornerRadius="5"
-                        Visibility="Collapsed">
+                        Visibility="Collapsed"
+                        IsVisibleChanged="LoadingBorder_IsVisibleChanged">
 
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                   
@@ -247,35 +249,16 @@
                             <Path Data="M 11,2 A 9,9 0 0 1 20,11" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5">
                                 <Path.Stroke>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#FF0078D4" Offset="0"/>
-                                        <GradientStop Color="#000078D4" Offset="1"/>
+                                        <GradientStop Color="#FF1E88E5" Offset="0"/>
+                                        <GradientStop Color="#001E88E5" Offset="1"/>
                                     </LinearGradientBrush>
                                 </Path.Stroke>
                                 <Path.RenderTransform>
-                                    <RotateTransform Angle="0"/>
+                                    <RotateTransform x:Name="LoadingSpinnerRotation" Angle="0"/>
                                 </Path.RenderTransform>
-                                <Path.Triggers>
-                                    <EventTrigger RoutedEvent="Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:0.7" RepeatBehavior="Forever"/>
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Path.Triggers>
                             </Path>
                         </Grid>
-                        <TextBlock Text="Loading..." FontSize="9" FontWeight="Medium" Foreground="{DynamicResource TextPrimary}" Opacity="0.6" HorizontalAlignment="Center">
-                            <TextBlock.Triggers>
-                                <EventTrigger RoutedEvent="Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1.0" To="0.3" Duration="0:0:0.6" AutoReverse="True" RepeatBehavior="Forever"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </EventTrigger>
-                            </TextBlock.Triggers>
-                        </TextBlock>
+                        <TextBlock x:Name="LoadingText" Text="{loc:Tr 'Loading...'}" FontSize="9" FontWeight="Medium" Foreground="{DynamicResource TextPrimary}" Opacity="0.6" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Border>
 

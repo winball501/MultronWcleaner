@@ -1,0 +1,179 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, beta ]
+    tags: [ 'v*' ]
+    paths-ignore:
+      - '**.md'
+      - '.github/*.md'
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'Test repo only: test build number, e.g. r10 (empty = next number). Other repos use the version in Updater.cs.'
+        required: false
+        default: ''
+      prerelease:
+        description: 'Mark as pre-release (a pre-release is not shown as Latest)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        env:
+          LABEL: ${{ github.event.inputs.label }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          TEST_REPO: ${{ github.repository == 'Multron-Community/MultronWcleaner-Test-Build' }}
+        run: |
+          $updaterFile = 'MultronWinCleaner/Processes/Updater.cs'
+          $src = Get-Content $updaterFile -Raw
+          $sourceVersion = [version][regex]::Match($src, 'CurrentAppVersion\s*=\s*new Version\("([^"]+)"\)').Groups[1].Value
+          $isTag = '${{ github.ref_type }}' -eq 'tag'
+
+          if ($env:TEST_REPO -eq 'true') {
+            $version = $sourceVersion.ToString()
+            if ($isTag) {
+              $tag = '${{ github.ref_name }}'
+              $build = [regex]::Match($tag, 'r\d+$').Value
+            } else {
+              $build = $env:LABEL
+              if (-not $build) {
+                $m = [regex]::Match($env:COMMIT_MESSAGE + '', '(?i)\btest\s*r(\d+)\b')
+                if ($m.Success) { $build = 'r' + $m.Groups[1].Value }
+              }
+              if (-not $build) {
+                $last = git tag --list 'v*-test-r*' |
+                  ForEach-Object { [regex]::Match($_, '-test-r(\d+)$') } |
+                  Where-Object Success | ForEach-Object { [int]$_.Groups[1].Value } |
+                  Sort-Object -Descending | Select-Object -First 1
+                $build = 'r' + ([int]$last + 1)
+              }
+              if ($build -notmatch '^r') { $build = "r$build" }
+              $tag = "v$version-test-$build"
+              if (git tag --list $tag) {
+                $last = git tag --list 'v*-test-r*' |
+                  ForEach-Object { [regex]::Match($_, '-test-r(\d+)$') } |
+                  Where-Object Success | ForEach-Object { [int]$_.Groups[1].Value } |
+                  Sort-Object -Descending | Select-Object -First 1
+                Write-Host "::notice::$tag already exists, using the next free number instead."
+                $build = 'r' + ([int]$last + 1)
+                $tag = "v$version-test-$build"
+              }
+            }
+            $name = "Multron Windows Cleaner v$version test-$build"
+          } else {
+            if ($isTag) {
+              $version = [regex]::Match('${{ github.ref_name }}', '\d+\.\d+(\.\d+)?').Value
+              $tag = '${{ github.ref_name }}'
+            } else {
+              $version = $sourceVersion.ToString()
+              $tag = "v$version"
+            }
+            $name = "Multron Windows Cleaner v$version"
+            if (-not $isTag -and (git tag --list $tag)) {
+              Write-Host "::notice::$tag is already released. Raise CurrentAppVersion in Updater.cs to publish a new version."
+              "skip=true" >> $env:GITHUB_OUTPUT
+              exit 0
+            }
+          }
+
+          if (-not $isTag -and (git tag --list $tag)) { throw "Tag $tag already exists" }
+
+          $src = [regex]::Replace($src, '(CurrentAppVersion\s*=\s*new Version\(")[^"]+("\))', "`${1}$version`${2}")
+          [IO.File]::WriteAllText((Resolve-Path $updaterFile), $src)
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "name=$name" >> $env:GITHUB_OUTPUT
+          Write-Host "$name ($tag)"
+
+      - name: Restore
+        if: steps.ver.outputs.skip != 'true'
+        working-directory: ./MultronWinCleaner
+        run: dotnet restore
+
+      - name: Build (Release)
+        if: steps.ver.outputs.skip != 'true'
+        working-directory: ./MultronWinCleaner
+        run: msbuild MultronWinCleaner.csproj /p:Configuration=Release /v:minimal
+
+      - name: Create portable zip
+        if: steps.ver.outputs.skip != 'true'
+        id: pack
+        shell: pwsh
+        run: |
+          $out = 'MultronWinCleaner/bin/Release/net8.0-windows'
+          if (-not (Test-Path "$out/MultronWinCleaner.exe")) { throw "Build output not found in $out" }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $stage = Join-Path $env:RUNNER_TEMP 'mwc'
+          Copy-Item $out $stage -Recurse
+          Get-ChildItem $stage -Recurse -Filter *.pdb | Remove-Item
+          Compress-Archive -Path $stage -DestinationPath dist/mwc.zip
+          "stage=$stage" >> $env:GITHUB_OUTPUT
+
+      - name: Install Inno Setup
+        if: steps.ver.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup --no-progress -y
+          }
+
+      - name: Build installer
+        if: steps.ver.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            "/DAppVersion=${{ steps.ver.outputs.version }}" `
+            "/DSourceDir=${{ steps.pack.outputs.stage }}" `
+            installer/MultronWinCleaner.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
+
+      - name: Checksums
+        if: steps.ver.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          Get-ChildItem dist -File | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          } | Set-Content dist/SHA256SUMS.txt -Encoding ascii
+
+      - name: Upload artifact
+        if: steps.ver.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MultronWinCleaner-${{ steps.ver.outputs.version }}
+          path: dist/
+
+      - name: Publish GitHub release
+        if: steps.ver.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.ver.outputs.name }}
+          body_path: RELEASE_NOTES.md
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
+          make_latest: ${{ github.event.inputs.prerelease != 'true' }}
+          files: dist/*

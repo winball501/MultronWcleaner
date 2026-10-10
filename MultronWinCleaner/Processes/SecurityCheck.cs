@@ -32,10 +32,10 @@ namespace MultronWinCleaner.Processes
             internal Action<Backup>? Apply { get; init; }
 
             public bool CanFix => Apply != null;
-            public string SeverityText => Severity switch { Level.High => "HIGH", Level.Medium => "MEDIUM", _ => "LOW" };
-            public string SeverityColor => Severity switch { Level.High => "#DC3545", Level.Medium => "#E67E22", _ => "#0078D4" };
+            public string SeverityText => Loc.T(Severity switch { Level.High => "HIGH", Level.Medium => "MEDIUM", _ => "LOW" });
+            public string SeverityColor => Severity switch { Level.High => "#DC3545", Level.Medium => "#FF9800", _ => "#1E88E5" };
             public string DetailsText => Details.Length == 0 ? Category : Category + " · " + Details;
-            public string ActionText => (CanFix ? "Fix: " : "How to fix: ") + FixText + (NeedsRestart ? " (restart needed)" : "");
+            public string ActionText => Loc.T(CanFix ? "Fix: " : "How to fix: ") + FixText + (NeedsRestart ? Loc.T(" (restart needed)") : "");
             public bool HasDetails => Details.Length > 0;
 
             private bool isSelected;
@@ -252,7 +252,7 @@ namespace MultronWinCleaner.Processes
                 if (!process.WaitForExit(timeoutMs))
                 {
                     try { process.Kill(true); } catch (Exception) { }
-                    return (-1, "timed out");
+                    return (-1, Loc.T("timed out"));
                 }
                 return (process.ExitCode, output.Result + error.Result);
             }
@@ -290,7 +290,7 @@ namespace MultronWinCleaner.Processes
 
             var (exit, output) = RunTool(SystemTool("sc.exe"), $"config \"{name}\" start= {mode}");
             if (exit != 0)
-                throw new InvalidOperationException(LastLine(output, $"sc.exe failed with code {exit}"));
+                throw new InvalidOperationException(LastLine(output, Loc.F("sc.exe failed with code {0}", exit)));
 
             try
             {
@@ -324,7 +324,7 @@ namespace MultronWinCleaner.Processes
         {
             var (exit, output) = RunTool(SystemTool("dism.exe"), $"/online /disable-feature /featurename:{feature} /norestart /English", 600000);
             if (exit != 0 && exit != 3010)
-                throw new InvalidOperationException(LastLine(output, $"DISM failed with code {exit}"));
+                throw new InvalidOperationException(LastLine(output, Loc.F("DISM failed with code {0}", exit)));
             if (!backup.Features.Contains(feature))
                 backup.Features.Add(feature);
         }
@@ -401,7 +401,7 @@ namespace MultronWinCleaner.Processes
         private static void SetAccountEnabled(Backup backup, string rid, bool enabled)
         {
             using var context = new PrincipalContext(ContextType.Machine);
-            using var user = FindBuiltInAccount(context, rid) ?? throw new InvalidOperationException("The account was not found.");
+            using var user = FindBuiltInAccount(context, rid) ?? throw new InvalidOperationException(Loc.T("The account was not found."));
             string sid = user.Sid.Value;
             if (!backup.Accounts.ContainsKey(sid))
                 backup.Accounts[sid] = user.Enabled == true;
@@ -421,7 +421,7 @@ namespace MultronWinCleaner.Processes
         {
             var (exit, output) = RunTool(SystemTool("bcdedit.exe"), "/set {current} nx " + value, 15000);
             if (exit != 0)
-                throw new InvalidOperationException(LastLine(output, $"bcdedit failed with code {exit}"));
+                throw new InvalidOperationException(LastLine(output, Loc.F("bcdedit failed with code {0}", exit)));
         }
 
         #endregion
@@ -441,11 +441,11 @@ namespace MultronWinCleaner.Processes
                 Issues.Add(new Issue
                 {
                     Id = id,
-                    Category = category,
+                    Category = Loc.T(category),
                     Severity = level,
-                    Title = title,
-                    Description = description,
-                    FixText = fixText,
+                    Title = Loc.T(title),
+                    Description = Loc.T(description),
+                    FixText = Loc.T(fixText),
                     Apply = fix,
                     Details = details,
                     NeedsRestart = restart,
@@ -564,7 +564,7 @@ namespace MultronWinCleaner.Processes
             if (lmLevel.HasValue && lmLevel.Value < 3)
                 c.Add("ntlm", cat, Level.Medium, "Old LM and NTLMv1 sign-in is allowed",
                     "These old protocols can be broken or relayed by attackers on the network.",
-                    "Send NTLMv2 only", b => SetDword(b, HKLM, Lsa, "LmCompatibilityLevel", 3), details: $"Level {lmLevel.Value}");
+                    "Send NTLMv2 only", b => SetDword(b, HKLM, Lsa, "LmCompatibilityLevel", 3), details: Loc.F("Level {0}", lmLevel.Value));
 
             if (GetInt(HKLM, Lsa, "RestrictAnonymousSAM") == 0)
                 c.Add("anon_sam", cat, Level.Medium, "Anonymous users can list the accounts on this PC",
@@ -608,7 +608,7 @@ namespace MultronWinCleaner.Processes
                             b.Firewall[p.Name] = fw.FirewallEnabled[p.Profile];
                         fw.FirewallEnabled[p.Profile] = true;
                     }
-                }, details: string.Join(", ", all) + " network");
+                }, details: Loc.F("{0} network", string.Join(", ", all.Select(Loc.T))));
         }
 
         private static void CheckRemoteAccess(Context c)
@@ -663,13 +663,13 @@ namespace MultronWinCleaner.Processes
             const string server = @"SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters";
             if (GetInt(HKLM, server, "SMB1") == 1)
                 c.Add("smb1_server", cat, Level.High, "The SMBv1 file sharing server is turned on",
-                    "SMBv1 is the protocol used by WannaCry and other ransomware to spread between computers.",
+                    "SMBv1 is an outdated protocol with known security vulnerabilities that can be exploited to spread threats between computers.",
                     "Turn the SMBv1 server off", b => SetDword(b, HKLM, server, "SMB1", 0), restart: true);
 
             int? client = ServiceStart("mrxsmb10");
             if (client.HasValue && client.Value != 4)
                 c.Add("smb1", cat, Level.High, "SMB 1.0 is installed",
-                    "SMB 1.0 is outdated and has known attacks such as EternalBlue. Only very old network drives still need it.",
+                    "SMB 1.0 is outdated and has known security vulnerabilities. Only very old network drives still need it.",
                     "Remove SMB 1.0 with DISM", b => DisableFeature(b, "SMB1Protocol"), restart: true);
         }
 
@@ -713,7 +713,7 @@ namespace MultronWinCleaner.Processes
                 c.Add("no_av", cat, Level.High, "No antivirus is turned on",
                     "Nothing checks downloaded files and programs for malware.",
                     "Open Windows Security > Virus & threat protection and turn real-time protection on", null,
-                    details: c.Antivirus.Count > 0 ? "Installed: " + string.Join(", ", c.Antivirus.Select(p => p.Name).Distinct()) : "");
+                    details: c.Antivirus.Count > 0 ? Loc.F("Installed: {0}", string.Join(", ", c.Antivirus.Select(p => p.Name).Distinct())) : "");
                 return;
             }
 
@@ -877,9 +877,9 @@ namespace MultronWinCleaner.Processes
             {
                 if (ServiceStart(name) != 4)
                     continue;
-                c.Add("service_" + name, cat, Level.High, $"The {title} service is disabled",
+                c.Add("service_" + name, cat, Level.High, Loc.F("The {0} service is disabled", Loc.T(title)),
                     "Windows protection that depends on this service does not work.",
-                    $"Set the service to {(mode == "demand" ? "manual" : "automatic")} and start it", b => SetServiceMode(b, name, mode), details: name);
+                    Loc.T(mode == "demand" ? "Set the service to manual and start it" : "Set the service to automatic and start it"), b => SetServiceMode(b, name, mode), details: name);
             }
         }
 
@@ -902,7 +902,7 @@ namespace MultronWinCleaner.Processes
                     {
                         SetDword(b, HKLM, PolicyExplorer, "NoDriveTypeAutoRun", 0xFF);
                         SetDword(b, HKLM, PolicyExplorer, "NoAutorun", 1);
-                    }, details: noDrive.HasValue ? $"NoDriveTypeAutoRun = 0x{noDrive.Value:X2}" : "Not configured");
+                    }, details: noDrive.HasValue ? $"NoDriveTypeAutoRun = 0x{noDrive.Value:X2}" : Loc.T("Not configured"));
         }
 
         private static void CheckWindowsUpdate(Context c)
@@ -911,9 +911,9 @@ namespace MultronWinCleaner.Processes
             foreach (var (name, title, mode) in new[] { ("wuauserv", "Windows Update", "demand"), ("UsoSvc", "Update Orchestrator", "delayed-auto"), ("BITS", "Background Intelligent Transfer", "demand") })
             {
                 if (ServiceStart(name) == 4)
-                    c.Add("wu_service_" + name, cat, Level.High, $"The {title} service is disabled",
+                    c.Add("wu_service_" + name, cat, Level.High, Loc.F("The {0} service is disabled", Loc.T(title)),
                         "Windows does not download security updates, so known security holes stay open.",
-                        $"Set the service back to {(mode == "demand" ? "manual" : "automatic")}", b => SetServiceMode(b, name, mode), details: name);
+                        Loc.T(mode == "demand" ? "Set the service back to manual" : "Set the service back to automatic"), b => SetServiceMode(b, name, mode), details: name);
             }
 
             const string au = WindowsUpdatePolicy + @"\AU";
@@ -940,7 +940,7 @@ namespace MultronWinCleaner.Processes
                     {
                         foreach (string name in new[] { "PauseUpdatesExpiryTime", "PauseUpdatesStartTime", "PauseFeatureUpdatesStartTime", "PauseFeatureUpdatesEndTime", "PauseQualityUpdatesStartTime", "PauseQualityUpdatesEndTime" })
                             DeleteValue(b, HKLM, ux, name);
-                    }, selected: false, details: "Until " + until.ToLocalTime().ToString("d"));
+                    }, selected: false, details: Loc.F("Until {0}", until.ToLocalTime().ToString("d")));
         }
 
         private static void CheckBackdoors(Context c)
@@ -1010,7 +1010,7 @@ namespace MultronWinCleaner.Processes
                     {
                         foreach (var t in tools)
                             DeleteValue(b, t.Hive, t.Key, t.Name);
-                    }, details: string.Join(", ", tools.Select(t => t.Title).Distinct()));
+                    }, details: string.Join(", ", tools.Select(t => Loc.T(t.Title)).Distinct()));
 
             const string installer = @"SOFTWARE\Policies\Microsoft\Windows\Installer";
             if (GetInt(HKLM, installer, "AlwaysInstallElevated") == 1 && GetInt(HKCU, installer, "AlwaysInstallElevated") == 1)
@@ -1205,7 +1205,7 @@ namespace MultronWinCleaner.Processes
                 {
                     issue.Apply!(backup);
                     result.Fixed++;
-                    result.Log.Add("Security fix: " + issue.Title);
+                    result.Log.Add(Loc.F("Security fix: {0}", issue.Title));
                     if (issue.NeedsRestart)
                         result.NeedsRestart = true;
                 }
@@ -1240,7 +1240,7 @@ namespace MultronWinCleaner.Processes
                 catch (Exception ex)
                 {
                     complete = false;
-                    log.Add($"Could not restore {item.Key}\\{item.Name}: {ex.Message}");
+                    log.Add(Loc.F("Could not restore {0}\\{1}: {2}", item.Key, item.Name, ex.Message));
                 }
             }
 
@@ -1250,7 +1250,7 @@ namespace MultronWinCleaner.Processes
                 if (exit != 0)
                 {
                     complete = false;
-                    log.Add($"Could not restore the {name} service: {LastLine(output, "sc.exe failed")}");
+                    log.Add(Loc.F("Could not restore the {0} service: {1}", name, LastLine(output, Loc.T("sc.exe failed"))));
                 }
                 else if (mode == "disabled")
                 {
@@ -1276,7 +1276,7 @@ namespace MultronWinCleaner.Processes
                 catch (Exception ex)
                 {
                     complete = false;
-                    log.Add("Could not restore Windows Firewall: " + ex.Message);
+                    log.Add(Loc.F("Could not restore Windows Firewall: {0}", ex.Message));
                 }
             }
 
@@ -1296,7 +1296,7 @@ namespace MultronWinCleaner.Processes
                 catch (Exception ex)
                 {
                     complete = false;
-                    log.Add("Could not restore the accounts: " + ex.Message);
+                    log.Add(Loc.F("Could not restore the accounts: {0}", ex.Message));
                 }
             }
 
@@ -1306,7 +1306,7 @@ namespace MultronWinCleaner.Processes
                 catch (Exception ex)
                 {
                     complete = false;
-                    log.Add("Could not restore DEP: " + ex.Message);
+                    log.Add(Loc.F("Could not restore DEP: {0}", ex.Message));
                 }
             }
 
@@ -1316,11 +1316,11 @@ namespace MultronWinCleaner.Processes
                 if (exit != 0 && exit != 3010)
                 {
                     complete = false;
-                    log.Add($"Could not turn {feature} back on: {LastLine(output, "DISM failed")}. Turn it on in Windows Features.");
+                    log.Add(Loc.F("Could not turn {0} back on: {1}. Turn it on in Windows Features.", feature, LastLine(output, Loc.T("DISM failed"))));
                 }
             }
 
-            log.Insert(0, complete ? "Security fixes were undone." : "Security fixes were undone, with errors:");
+            log.Insert(0, Loc.T(complete ? "Security fixes were undone." : "Security fixes were undone, with errors:"));
             try { File.Delete(BackupPath); } catch (Exception) { }
             return log;
         }

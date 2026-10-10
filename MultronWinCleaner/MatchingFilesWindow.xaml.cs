@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -7,21 +7,16 @@ using System.Windows.Input;
 
 namespace MultronWinCleaner
 {
-    /// <summary>
-    /// Small popup that lists every file sharing the same hash as the file the user
-    /// clicked "Show Matching Files" on. Each row shows the file name and full path,
-    /// with buttons to open the file itself or reveal it in File Explorer.
-    /// </summary>
     public partial class MatchingFilesWindow : Window
     {
         public MatchingFilesWindow(FileNodeModel sourceFile, List<FileNodeModel> matches)
         {
             InitializeComponent();
 
-            Title = $"Matching Files - {sourceFile.FileName}";
+            Title = Loc.F("Matching Files - {0}", sourceFile.FileName);
             HeaderText.Text = matches.Count == 1
-                ? $"1 file matches \"{sourceFile.FileName}\":"
-                : $"{matches.Count} files match \"{sourceFile.FileName}\":";
+                ? Loc.F("1 file matches \"{0}\":", sourceFile.FileName)
+                : Loc.F("{0} files match \"{1}\":", matches.Count, sourceFile.FileName);
 
             MatchesListBox.ItemsSource = matches;
         }

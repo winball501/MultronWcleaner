@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using Multron_Win_Cleaner;
 using MultronWinCleaner;
 using NetFwTypeLib;
@@ -30,6 +30,7 @@ namespace MultronWinCleaner
         public StartupManager startupmanager;
         public Duplicate_File_Finder Duplicate_File_Finder;
         public Configure configure;
+        public MalwareScan? malwarescan;
 
         [DllImport("kernel32.dll")]
         private static extern bool SetProcessWorkingSetSize(IntPtr procHandle, int min, int max);
@@ -84,11 +85,11 @@ namespace MultronWinCleaner
         {
             if (busy)
             {
-                if (!Equals(button.Content, "Cancel"))
+                if (!Equals(button.Content, Loc.T("Cancel")))
                     saved = button.Content;
-                button.Content = "Cancel";
+                button.Content = Loc.T("Cancel");
                 button.IsEnabled = true;
-                button.ToolTip = "Cancel the scan or clean running on the main screen.";
+                button.ToolTip = Loc.T("Cancel the scan or clean running on the main screen.");
             }
             else if (saved != null)
             {
@@ -104,6 +105,7 @@ namespace MultronWinCleaner
          
 
             LoadSettings();
+            UpdateMainWindowButton();
             _ = ReapplyOptimizationAtStartupAsync();
             StartStatusTask();
 
@@ -133,7 +135,7 @@ namespace MultronWinCleaner
                     {
                         await Dispatcher.InvokeAsync(() =>
                         {
-                            if (!IsVisible) return; // nothing to show while Utilities is hidden
+                            if (!IsVisible) return;
                             try
                             {
                                 bool isLargeFile = IsToolRunning(largefilefinder);
@@ -151,6 +153,10 @@ namespace MultronWinCleaner
                                 bool isStartup = IsToolRunning(startupmanager);
                                 lblStatusStartup.Visibility = isStartup ? Visibility.Visible : Visibility.Collapsed;
                                 btnCloseStartup.Visibility = isStartup ? Visibility.Visible : Visibility.Collapsed;
+
+                                bool isMalwareScan = IsToolRunning(malwarescan);
+                                lblStatusMalwareScan.Visibility = isMalwareScan ? Visibility.Visible : Visibility.Collapsed;
+                                btnCloseMalwareScan.Visibility = isMalwareScan ? Visibility.Visible : Visibility.Collapsed;
 
 
                             }
@@ -209,10 +215,55 @@ namespace MultronWinCleaner
         {
             startupmanager.Close();
             startupmanager = null;
-        
+
+        }
+
+        private void MalwareScan_Click(object sender, RoutedEventArgs e)
+        {
+            ShowMalwareScan();
+        }
+
+        private void CloseMalwareScan_Click(object sender, RoutedEventArgs e)
+        {
+            if (malwarescan != null && malwarescan.IsScanning)
+            {
+                var answer = AppDialog.Show(Loc.T("A malware scan is running. Stop it and close the window?"), Loc.T("Malware Scan"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (answer != MessageBoxResult.Yes) return;
+            }
+            malwarescan?.Close();
+            malwarescan = null;
+        }
+
+        public MalwareScan ShowMalwareScan()
+        {
+            if (malwarescan == null)
+                malwarescan = new MalwareScan(this);
+
+            malwarescan.Show();
+            if (malwarescan.WindowState == WindowState.Minimized)
+                malwarescan.WindowState = WindowState.Normal;
+            malwarescan.Activate();
+            malwarescan.Topmost = true;
+            malwarescan.Topmost = false;
+            return malwarescan;
+        }
+
+        public async Task RunQueuedMalwareScanAsync(MalwareScan.ScanMode mode)
+        {
+            if (malwarescan == null)
+                malwarescan = new MalwareScan(this);
+            await malwarescan.StartScanAsync(mode, fromMainScan: true);
         }
 
         private System.Windows.Forms.NotifyIcon trayIcon;
+
+        internal void DisposeTrayIcon()
+        {
+            if (trayIcon == null) return;
+            trayIcon.Visible = false;
+            trayIcon.Dispose();
+            trayIcon = null;
+        }
 
         private void SetupTrayIcon()
         {
@@ -238,7 +289,7 @@ namespace MultronWinCleaner
                     trayIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 }
 
-                trayIcon.Text = "Multron Win Cleaner Utilities";
+                trayIcon.Text = Loc.T("Multron Win Cleaner Utilities");
 
                 trayIcon.DoubleClick += (s, e) =>
                 {
@@ -247,8 +298,8 @@ namespace MultronWinCleaner
                 };
 
                 var contextMenu = new System.Windows.Forms.ContextMenuStrip();
-                contextMenu.Items.Add("Show Utilities", null, (s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
-                contextMenu.Items.Add("Hide Utilities", null, (s, e) => { this.Hide(); });
+                contextMenu.Items.Add(Loc.T("Show Utilities"), null, (s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
+                contextMenu.Items.Add(Loc.T("Hide Utilities"), null, (s, e) => { this.Hide(); });
 
                 trayIcon.ContextMenuStrip = contextMenu;
                 AppDomain.CurrentDomain.ProcessExit += (s, e) => trayIcon?.Dispose();
@@ -317,7 +368,15 @@ namespace MultronWinCleaner
             {
                 trayIcon.Visible = false;
             }
+            UpdateMainWindowButton();
             savesettings($"utilitiestrayicon:{(chkTrayIconUtil.IsChecked == true ? "1" : "0")}");
+        }
+
+        // The Main Window button is only useful when Utilities runs on its own from its tray icon.
+        private void UpdateMainWindowButton()
+        {
+            if (MainWindowButton != null)
+                MainWindowButton.Visibility = chkTrayIconUtil.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void FirewallReset_Click(object sender, RoutedEventArgs e)
@@ -328,7 +387,7 @@ namespace MultronWinCleaner
             FirewallScanResultLabel.Visibility = Visibility.Collapsed;
             FirewallProgress.Value = 0;
             FirewallProgress.Visibility = Visibility.Collapsed;
-            FirewallScan.Content = "Start Scan";
+            FirewallScan.Content = Loc.T("Start Scan");
             FirewallScan.IsEnabled = true;
             FirewallReset.Visibility = Visibility.Collapsed;
         }
@@ -341,9 +400,9 @@ namespace MultronWinCleaner
                 return;
             }
             firewallRunning = true;
-            if (FirewallScan.Content.Equals("Start Scan") || FirewallScan.Content.Equals("ReScan"))
+            if (FirewallScan.Content.Equals(Loc.T("Start Scan")) || FirewallScan.Content.Equals(Loc.T("ReScan")))
             {
-                FirewallScan.Content = "Clean";
+                FirewallScan.Content = Loc.T("Clean");
                 FirewallScan.IsEnabled = false;
                 scanforrules();
                 FirewallReset.Visibility = Visibility.Visible;
@@ -373,40 +432,36 @@ namespace MultronWinCleaner
             ShortcutResultLabel.Visibility = Visibility.Collapsed;
             try
             {
-                if (ShortcutScan.Content.Equals("Fix") && brokenShortcuts.Count > 0)
+                if (ShortcutScan.Content.Equals(Loc.T("Fix")) && brokenShortcuts.Count > 0)
                 {
                     var items = brokenShortcuts;
                     var result = await Task.Run(() => MultronWinCleaner.Processes.ShortcutFixer.Fix(items));
-                    foreach (var item in items)
-                        ShortcutList.Items.Add((result.Failed.Contains(item) ? "Could not fix: " : item.RepairTarget != null ? "Repaired: " : "Moved to the Recycle Bin: ") + item.Name);
-                    brokenShortcuts = new List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut>();
-                    ShortcutResultLabel.Content = $"{result.Repaired} repaired, {result.Removed} moved to the Recycle Bin" + (result.Failed.Count > 0 ? $", {result.Failed.Count} failed." : ".");
-                    ShortcutResultLabel.Foreground = result.Failed.Count == 0 ? Brushes.LimeGreen : Brushes.OrangeRed;
-                    ShortcutScan.Content = "ReScan";
+                    ShowShortcutFix(items, result);
+                    window?.ApplyShortcutFix(items, result);
                 }
                 else
                 {
                     brokenShortcuts = await Task.Run(MultronWinCleaner.Processes.ShortcutFixer.FindBrokenShortcuts);
                     foreach (var item in brokenShortcuts)
-                        ShortcutList.Items.Add($"{item.Location}: {item.Name} → {item.TargetPath}  ({item.Action})");
+                        ShortcutList.Items.Add($"{Loc.T(item.Location)}: {item.Name} → {item.TargetPath}  ({item.Action})");
                     if (brokenShortcuts.Count > 0)
                     {
-                        ShortcutResultLabel.Content = $"{brokenShortcuts.Count} broken shortcut(s) found.";
+                        ShortcutResultLabel.Content = Loc.F("{0} broken shortcut(s) found.", brokenShortcuts.Count);
                         ShortcutResultLabel.Foreground = Brushes.OrangeRed;
-                        ShortcutScan.Content = "Fix";
+                        ShortcutScan.Content = Loc.T("Fix");
                     }
                     else
                     {
-                        ShortcutResultLabel.Content = "No broken shortcuts found.";
+                        ShortcutResultLabel.Content = Loc.T("No broken shortcuts found.");
                         ShortcutResultLabel.Foreground = Brushes.LimeGreen;
-                        ShortcutScan.Content = "ReScan";
+                        ShortcutScan.Content = Loc.T("ReScan");
                     }
                 }
                 ShortcutList.Visibility = ShortcutList.Items.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
             catch (Exception ex)
             {
-                ShortcutResultLabel.Content = "Shortcut Fixer failed: " + ex.Message;
+                ShortcutResultLabel.Content = Loc.F("Shortcut Fixer failed: {0}", ex.Message);
                 ShortcutResultLabel.Foreground = Brushes.OrangeRed;
             }
             finally
@@ -417,6 +472,39 @@ namespace MultronWinCleaner
                 ShortcutReset.Visibility = Visibility.Visible;
                 shortcutRunning = false;
             }
+        }
+
+        public void ShowShortcutFix(List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut> items, (int Repaired, int Removed, List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut> Failed) result)
+        {
+            if (shortcutRunning && !ReferenceEquals(items, brokenShortcuts))
+                return;
+            ShortcutList.Items.Clear();
+            foreach (var item in items)
+                ShortcutList.Items.Add(Loc.T(result.Failed.Contains(item) ? "Could not fix: " : item.RepairTarget != null ? "Repaired: " : "Moved to the Recycle Bin: ") + item.Name);
+            brokenShortcuts = new List<MultronWinCleaner.Processes.ShortcutFixer.BrokenShortcut>();
+            ShortcutResultLabel.Content = Loc.F("{0} repaired, {1} moved to the Recycle Bin", result.Repaired, result.Removed) + (result.Failed.Count > 0 ? Loc.F(", {0} failed.", result.Failed.Count) : ".");
+            ShortcutResultLabel.Foreground = result.Failed.Count == 0 ? Brushes.LimeGreen : Brushes.OrangeRed;
+            ShortcutResultLabel.Visibility = Visibility.Visible;
+            ShortcutList.Visibility = ShortcutList.Items.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            ShortcutReset.Visibility = Visibility.Visible;
+            ShortcutScan.Content = Loc.T("ReScan");
+        }
+
+        public void ShowSecurityIssues(List<MultronWinCleaner.Processes.SecurityCheck.Issue> issues, string suffix)
+        {
+            if (securityRunning)
+                return;
+            securityIssues = issues;
+            SecurityList.ItemsSource = securityIssues;
+            SecurityListScroll.Visibility = securityIssues.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            string status = MainWindow.DescribeSecurityIssues(securityIssues, out string color);
+            SecurityResultLabel.Text = suffix.Length > 0 ? status + " " + suffix : status;
+            SecurityResultLabel.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
+            SecurityResultLabel.Visibility = Visibility.Visible;
+            SecurityFix.Visibility = securityIssues.Any(i => i.CanFix) ? Visibility.Visible : Visibility.Collapsed;
+            SecurityUndo.Visibility = MultronWinCleaner.Processes.SecurityCheck.HasBackup ? Visibility.Visible : Visibility.Collapsed;
+            SecurityReset.Visibility = Visibility.Visible;
+            SecurityScan.Content = Loc.T("ReScan");
         }
 
         private List<MultronWinCleaner.Processes.SecurityCheck.Issue> securityIssues = new List<MultronWinCleaner.Processes.SecurityCheck.Issue>();
@@ -446,23 +534,23 @@ namespace MultronWinCleaner
             FirewallProgress.IsIndeterminate = true;
             FirewallInvalidRulesList.Items.Clear();
             FirewallInvalidRulesList.Visibility = Visibility.Collapsed;
-            FirewallScanResultLabel.Content = "Checking the firewall rules for the main screen scan...";
+            FirewallScanResultLabel.Content = Loc.T("Checking the firewall rules for the main screen scan...");
             FirewallScanResultLabel.Foreground = Brushes.DodgerBlue;
             FirewallScanResultLabel.Visibility = Visibility.Visible;
             try
             {
                 invalidrules = await Task.Run(MultronWinCleaner.Processes.FirewallRules.FindInvalidRules);
                 foreach (var rule in invalidrules)
-                    FirewallInvalidRulesList.Items.Add($"Invalid Path: {rule.ApplicationPath}  ({rule.Name}, {rule.Direction})");
+                    FirewallInvalidRulesList.Items.Add(Loc.F("Invalid Path: {0}  ({1}, {2})", rule.ApplicationPath, rule.Name, Loc.T(rule.Direction)));
                 FirewallInvalidRulesList.Visibility = invalidrules.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                FirewallScanResultLabel.Content = invalidrules.Count > 0 ? $"{invalidrules.Count} invalid firewall rule(s) found." : "No invalid firewall rules found.";
+                FirewallScanResultLabel.Content = invalidrules.Count > 0 ? Loc.F("{0} invalid firewall rule(s) found.", invalidrules.Count) : Loc.T("No invalid firewall rules found.");
                 FirewallScanResultLabel.Foreground = invalidrules.Count > 0 ? Brushes.OrangeRed : Brushes.LimeGreen;
-                FirewallScan.Content = invalidrules.Count > 0 ? "Clean" : "ReScan";
+                FirewallScan.Content = Loc.T(invalidrules.Count > 0 ? "Clean" : "ReScan");
                 return invalidrules;
             }
             catch (Exception ex)
             {
-                FirewallScanResultLabel.Content = "Failed to read firewall rules: " + ex.Message;
+                FirewallScanResultLabel.Content = Loc.F("Failed to read firewall rules: {0}", ex.Message);
                 FirewallScanResultLabel.Foreground = Brushes.OrangeRed;
                 throw;
             }
@@ -487,23 +575,23 @@ namespace MultronWinCleaner
             ShortcutProgress.Visibility = Visibility.Visible;
             ShortcutList.Items.Clear();
             ShortcutList.Visibility = Visibility.Collapsed;
-            ShortcutResultLabel.Content = "Checking the shortcuts for the main screen scan...";
+            ShortcutResultLabel.Content = Loc.T("Checking the shortcuts for the main screen scan...");
             ShortcutResultLabel.Foreground = Brushes.DodgerBlue;
             ShortcutResultLabel.Visibility = Visibility.Visible;
             try
             {
                 brokenShortcuts = await Task.Run(MultronWinCleaner.Processes.ShortcutFixer.FindBrokenShortcuts);
                 foreach (var item in brokenShortcuts)
-                    ShortcutList.Items.Add($"{item.Location}: {item.Name} → {item.TargetPath}  ({item.Action})");
+                    ShortcutList.Items.Add($"{Loc.T(item.Location)}: {item.Name} → {item.TargetPath}  ({item.Action})");
                 ShortcutList.Visibility = brokenShortcuts.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                ShortcutResultLabel.Content = brokenShortcuts.Count > 0 ? $"{brokenShortcuts.Count} broken shortcut(s) found." : "No broken shortcuts found.";
+                ShortcutResultLabel.Content = brokenShortcuts.Count > 0 ? Loc.F("{0} broken shortcut(s) found.", brokenShortcuts.Count) : Loc.T("No broken shortcuts found.");
                 ShortcutResultLabel.Foreground = brokenShortcuts.Count > 0 ? Brushes.OrangeRed : Brushes.LimeGreen;
-                ShortcutScan.Content = brokenShortcuts.Count > 0 ? "Fix" : "ReScan";
+                ShortcutScan.Content = Loc.T(brokenShortcuts.Count > 0 ? "Fix" : "ReScan");
                 return brokenShortcuts;
             }
             catch (Exception ex)
             {
-                ShortcutResultLabel.Content = "Shortcut Fixer failed: " + ex.Message;
+                ShortcutResultLabel.Content = Loc.F("Shortcut Fixer failed: {0}", ex.Message);
                 ShortcutResultLabel.Foreground = Brushes.OrangeRed;
                 throw;
             }
@@ -551,11 +639,11 @@ namespace MultronWinCleaner
                 SecurityResultLabel.Text = suffix.Length > 0 ? status + " " + suffix : status;
                 SecurityResultLabel.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
                 SecurityFix.Visibility = securityIssues.Any(i => i.CanFix) ? Visibility.Visible : Visibility.Collapsed;
-                SecurityScan.Content = "ReScan";
+                SecurityScan.Content = Loc.T("ReScan");
             }
             catch (Exception ex)
             {
-                SecurityResultLabel.Text = "Security Check failed: " + ex.Message;
+                SecurityResultLabel.Text = Loc.F("Security Check failed: {0}", ex.Message);
                 SecurityResultLabel.Foreground = Brushes.OrangeRed;
             }
             finally
@@ -584,7 +672,7 @@ namespace MultronWinCleaner
             var selected = securityIssues.Where(i => i.IsSelected && i.CanFix).ToList();
             if (selected.Count == 0)
             {
-                SecurityResultLabel.Text = "Tick the settings you want to fix.";
+                SecurityResultLabel.Text = Loc.T("Tick the settings you want to fix.");
                 SecurityResultLabel.Foreground = Brushes.OrangeRed;
                 SecurityResultLabel.Visibility = Visibility.Visible;
                 return;
@@ -599,16 +687,17 @@ namespace MultronWinCleaner
             });
             if (done)
             {
-                MultronWinCleaner.Processes.Optimizer.AppendLog(selected.Select(i => "Security fix: " + i.Title));
+                MultronWinCleaner.Processes.Optimizer.AppendLog(selected.Select(i => Loc.F("Security fix: {0}", i.Title)));
                 RefreshOptimizationCard();
                 await RunSecurityScanAsync(message);
+                window?.ApplySecurityIssues(securityIssues, message);
             }
         }
 
         private async void SecurityUndo_Click(object sender, RoutedEventArgs e)
         {
-            var answer = MessageBox.Show("Undo all security fixes made by Multron Win Cleaner?\n\nThe saved values are written back, so the settings become as insecure as they were before.",
-                "Security Check", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var answer = AppDialog.Show(Loc.T("Undo all security fixes made by Multron Win Cleaner?\n\nThe saved values are written back, so the settings become as insecure as they were before."),
+                Loc.T("Security Check"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (answer != MessageBoxResult.Yes)
                 return;
 
@@ -618,8 +707,9 @@ namespace MultronWinCleaner
             {
                 var log = await Task.Run(MultronWinCleaner.Processes.SecurityCheck.Undo);
                 if (log.Count > 1)
-                    MessageBox.Show(string.Join("\n", log), "Security Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AppDialog.Show(string.Join("\n", log), Loc.T("Security Check"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 await RunSecurityScanAsync(log.FirstOrDefault() ?? "");
+                window?.ApplySecurityIssues(securityIssues, log.FirstOrDefault() ?? "");
             }
             finally
             {
@@ -636,7 +726,7 @@ namespace MultronWinCleaner
             SecurityResultLabel.Visibility = Visibility.Collapsed;
             SecurityProgress.Visibility = Visibility.Collapsed;
             SecurityFix.Visibility = Visibility.Collapsed;
-            SecurityScan.Content = "Start Scan";
+            SecurityScan.Content = Loc.T("Start Scan");
             SecurityScan.IsEnabled = true;
             SecurityReset.Visibility = Visibility.Collapsed;
             SecurityUndo.Visibility = MultronWinCleaner.Processes.SecurityCheck.HasBackup ? Visibility.Visible : Visibility.Collapsed;
@@ -650,7 +740,7 @@ namespace MultronWinCleaner
             ShortcutResultLabel.Content = "";
             ShortcutResultLabel.Visibility = Visibility.Collapsed;
             ShortcutProgress.Visibility = Visibility.Collapsed;
-            ShortcutScan.Content = "Start Scan";
+            ShortcutScan.Content = Loc.T("Start Scan");
             ShortcutScan.IsEnabled = true;
             ShortcutReset.Visibility = Visibility.Collapsed;
         }
@@ -668,27 +758,27 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to read firewall rules: " + ex.Message);
+                AppDialog.Show(Loc.F("Failed to read firewall rules: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             FirewallProgress.IsIndeterminate = false;
             FirewallProgress.Value = 100;
             foreach (var rule in invalidrules)
-                FirewallInvalidRulesList.Items.Add($"Invalid Path: {rule.ApplicationPath}  ({rule.Name}, {rule.Direction})");
+                FirewallInvalidRulesList.Items.Add(Loc.F("Invalid Path: {0}  ({1}, {2})", rule.ApplicationPath, rule.Name, Loc.T(rule.Direction)));
 
             FirewallScanResultLabel.Visibility = Visibility.Visible;
             if (invalidrules.Count > 0)
             {
                 FirewallInvalidRulesList.Visibility = Visibility.Visible;
-                FirewallScanResultLabel.Content = $"{invalidrules.Count} invalid firewall rule(s) found.";
+                FirewallScanResultLabel.Content = Loc.F("{0} invalid firewall rule(s) found.", invalidrules.Count);
                 FirewallScanResultLabel.Foreground = Brushes.OrangeRed;
             }
             else
             {
                 FirewallProgress.Visibility = Visibility.Collapsed;
-                FirewallScanResultLabel.Content = "No invalid firewall rules found.";
+                FirewallScanResultLabel.Content = Loc.T("No invalid firewall rules found.");
                 FirewallScanResultLabel.Foreground = Brushes.LimeGreen;
-                FirewallScan.Content = "ReScan";
+                FirewallScan.Content = Loc.T("ReScan");
             }
             firewallRunning = false;
             FirewallScan.IsEnabled = true;
@@ -702,21 +792,31 @@ namespace MultronWinCleaner
 
             var rules = invalidrules;
             var result = await Task.Run(() => MultronWinCleaner.Processes.FirewallRules.RemoveRules(rules));
+            ShowFirewallRemoval(rules, result);
+            window?.ApplyFirewallRemoval(rules, result);
+            firewallRunning = false;
+            FirewallScan.IsEnabled = true;
+        }
+
+        public void ShowFirewallRemoval(List<MultronWinCleaner.Processes.FirewallRules.InvalidRule> rules, (int Removed, List<MultronWinCleaner.Processes.FirewallRules.InvalidRule> Failed) result)
+        {
+            if (firewallRunning && !ReferenceEquals(rules, invalidrules))
+                return;
+            FirewallInvalidRulesList.Items.Clear();
             foreach (var rule in rules)
-                FirewallInvalidRulesList.Items.Add((result.Failed.Contains(rule) ? "could not delete: " : "deleted: ") + rule.ApplicationPath);
+                FirewallInvalidRulesList.Items.Add(Loc.T(result.Failed.Contains(rule) ? "could not delete: " : "deleted: ") + rule.ApplicationPath);
             invalidrules = new List<MultronWinCleaner.Processes.FirewallRules.InvalidRule>();
 
             FirewallProgress.IsIndeterminate = false;
             FirewallProgress.Visibility = Visibility.Collapsed;
+            FirewallReset.Visibility = Visibility.Visible;
             FirewallInvalidRulesList.Visibility = Visibility.Visible;
             FirewallScanResultLabel.Content = result.Failed.Count == 0
-                ? $"{result.Removed} invalid firewall rule(s) deleted."
-                : $"{result.Removed} invalid firewall rule(s) deleted, {result.Failed.Count} could not be deleted.";
+                ? Loc.F("{0} invalid firewall rule(s) deleted.", result.Removed)
+                : Loc.F("{0} invalid firewall rule(s) deleted, {1} could not be deleted.", result.Removed, result.Failed.Count);
             FirewallScanResultLabel.Foreground = result.Failed.Count == 0 ? Brushes.LimeGreen : Brushes.OrangeRed;
             FirewallScanResultLabel.Visibility = Visibility.Visible;
-            FirewallScan.Content = "ReScan";
-            firewallRunning = false;
-            FirewallScan.IsEnabled = true;
+            FirewallScan.Content = Loc.T("ReScan");
         }
 
         private void LargeFilesScan_Click(object sender, RoutedEventArgs e)
@@ -737,6 +837,19 @@ namespace MultronWinCleaner
         }
         private void TopPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { if (e.ButtonState == MouseButtonState.Pressed) this.DragMove(); }
         private void CloseButton_Click(object sender, RoutedEventArgs e) => this.Hide();
+
+        private void ShowMainWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if (window == null)
+                return;
+            if (!window.IsVisible)
+                window.Show();
+            if (window.WindowState == WindowState.Minimized)
+                window.WindowState = WindowState.Normal;
+            window.Activate();
+            window.Topmost = true;
+            window.Topmost = false;
+        }
         public Duplicate_File_Finder GetDuplicateFinder()
         {
             if (Duplicate_File_Finder == null)
@@ -817,7 +930,7 @@ namespace MultronWinCleaner
         public int newBoostAutoMemPrevious = -1;
 
         private static ServiceItem Svc(string name, string title, string description, bool selected) =>
-            new ServiceItem { ServiceName = name, DisplayName = title, Description = description, IsSelected = selected };
+            new ServiceItem { ServiceName = name, DisplayName = Loc.T(title), Description = Loc.T(description), IsSelected = selected };
 
         private bool IsNewProfile => OptimizationProfile.SelectedIndex == 1;
 
@@ -826,7 +939,7 @@ namespace MultronWinCleaner
             if (OptimizationLog == null) return;
             var lines = MultronWinCleaner.Processes.Optimizer.ReadLog();
             if (lines.Count == 0)
-                lines.Add("No optimization has been applied yet.");
+                lines.Add(Loc.T("No optimization has been applied yet."));
             OptimizationLog.ItemsSource = lines;
         }
 
@@ -836,25 +949,26 @@ namespace MultronWinCleaner
             if (settings == null || await settings.IsInStartup_ActAsync())
                 return;
 
-            var answer = MessageBox.Show(
-                "Some of these optimizations do not last after a restart: Windows starts paused services again, the DNS cache fills up again and other programs can change settings back. Multron Win Cleaner applies them again every time it starts.\n\n" +
-                "Add Multron Win Cleaner to Windows startup, so this happens automatically after every restart?\n\n" +
-                "If you choose No, they are applied again whenever you open the app.",
-                "System Optimization", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var answer = AppDialog.Show(
+                Loc.T("Some of these optimizations do not last after a restart: Windows starts paused services again, the DNS cache fills up again and other programs can change settings back. Multron Win Cleaner applies them again every time it starts.") + "\n\n" +
+                Loc.T("Add Multron Win Cleaner to Windows startup, so this happens automatically after every restart?") + "\n\n" +
+                Loc.T("If you choose No, they are applied again whenever you open the app."),
+                Loc.T("System Optimization"), MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             string result;
             if (answer != MessageBoxResult.Yes)
             {
-                result = "Not added to Windows startup: the optimization is applied again whenever the app is opened";
+                result = Loc.T("Not added to Windows startup: the optimization is applied again whenever the app is opened");
             }
             else if (await settings.CreateStartupTaskAsync())
             {
-                result = "Added Multron Win Cleaner to Windows startup";
+                settings.SetRunAtStartupBox(true);
+                result = Loc.T("Added Multron Win Cleaner to Windows startup");
             }
             else
             {
-                result = "Could not add Multron Win Cleaner to Windows startup";
-                MessageBox.Show("Multron Win Cleaner could not be added to Windows startup. You can try again in Settings.", "System Optimization", MessageBoxButton.OK, MessageBoxImage.Warning);
+                result = Loc.T("Could not add Multron Win Cleaner to Windows startup");
+                AppDialog.Show(Loc.T("Multron Win Cleaner could not be added to Windows startup. You can try again in Settings."), Loc.T("System Optimization"), MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             MultronWinCleaner.Processes.Optimizer.AppendLog(new[] { result });
             RefreshOptimizationLog();
@@ -875,12 +989,12 @@ namespace MultronWinCleaner
                     var services = turboBoostServices.ToList();
                     var stopped = await Task.Run(() => MultronWinCleaner.Processes.Optimizer.StopOldSystemServices(services));
                     if (stopped.Count > 0)
-                        messages.Add("Paused again at startup (Windows had started them): " + string.Join(", ", stopped));
+                        messages.Add(Loc.F("Paused again at startup (Windows had started them): {0}", string.Join(", ", stopped)));
                 }
             }
             catch (Exception ex)
             {
-                messages.Add("Could not apply the optimization at startup: " + ex.Message);
+                messages.Add(Loc.F("Could not apply the optimization at startup: {0}", ex.Message));
             }
 
             if (messages.Count > 0)
@@ -894,10 +1008,10 @@ namespace MultronWinCleaner
         {
             RefreshOptimizationLog();
             bool active = IsNewProfile ? newBoostActive : turboBoostActive;
-            Turbo.Content = active ? "Undo Optimization" : "Apply Optimization";
+            Turbo.Content = Loc.T(active ? "Undo Optimization" : "Apply Optimization");
             OptimizationDescription.Text = IsNewProfile
-                ? "Applies performance settings for modern PCs: power plan, Game Mode, game and multimedia priority and more. Every changed setting is saved first, so Undo restores your previous values. While it is on, settings that were changed back are applied again and the DNS cache is flushed every time the app starts."
-                : "Pauses background Windows services to free memory and CPU on older PCs. Windows starts them again after a restart, so while this is on they are paused again every time the app starts. Undo starts exactly the services that were paused.";
+                ? Loc.T("Applies performance settings for modern PCs: power plan, Game Mode, game and multimedia priority and more. Every changed setting is saved first, so Undo restores your previous values. While it is on, settings that were changed back are applied again and the DNS cache is flushed every time the app starts.")
+                : Loc.T("Pauses background Windows services to free memory and CPU on older PCs. Windows starts them again after a restart, so while this is on they are paused again every time the app starts. Undo starts exactly the services that were paused.");
         }
 
         private void OptimizationProfile_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -959,9 +1073,9 @@ namespace MultronWinCleaner
         private void ConfigureTurboBoost_Click(object sender, RoutedEventArgs e)
         {
             if (IsNewProfile)
-                configure.ShowItems("Configure Performance Boost", "Select the settings to apply. Undo restores your previous values:", newSystemTweaks, "selectedtweak:");
+                configure.ShowItems(Loc.T("Configure Performance Boost"), Loc.T("Select the settings to apply. Undo restores your previous values:"), newSystemTweaks, "selectedtweak:");
             else
-                configure.ShowItems("Configure Optimization Services", "Select the services to pause during optimization:", turboBoostServices, "selectedservice:");
+                configure.ShowItems(Loc.T("Configure Optimization Services"), Loc.T("Select the services to pause during optimization:"), turboBoostServices, "selectedservice:");
         }
 
         private async void ActivateTurboBoost_Click(object sender, RoutedEventArgs e)
@@ -971,7 +1085,7 @@ namespace MultronWinCleaner
             bool active = newProfile ? newBoostActive : turboBoostActive;
             btn.IsEnabled = false;
             OptimizationProfile.IsEnabled = false;
-            btn.Content = active ? "Undoing..." : "Applying...";
+            btn.Content = Loc.T(active ? "Undoing..." : "Applying...");
 
             try
             {
@@ -990,14 +1104,14 @@ namespace MultronWinCleaner
                         savesettings($"newboostautomem:{newBoostAutoMemPrevious}");
                         memcleaner.chkEnableAutoClean.IsChecked = true;
                         await memcleaner.cleanmemory();
-                        messages.Add("Applied: Automatic memory cleaning (Memory Cleaner)");
+                        messages.Add(Loc.T("Applied: Automatic memory cleaning (Memory Cleaner)"));
                     }
                     else if (active)
                     {
                         if (newBoostAutoMemPrevious == 0)
                         {
                             memcleaner.chkEnableAutoClean.IsChecked = false;
-                            messages.Add("Automatic memory cleaning was turned off again.");
+                            messages.Add(Loc.T("Automatic memory cleaning was turned off again."));
                         }
                         newBoostAutoMemPrevious = -1;
                         savesettings("newboostautomem:-1");
@@ -1011,28 +1125,28 @@ namespace MultronWinCleaner
                     if (active)
                     {
                         var started = await Task.Run(MultronWinCleaner.Processes.Optimizer.StartStoppedServices);
-                        messages = new List<string> { started.Count == 0 ? "No paused services had to be started again." : "Started again: " + string.Join(", ", started) };
+                        messages = new List<string> { started.Count == 0 ? Loc.T("No paused services had to be started again.") : Loc.F("Started again: {0}", string.Join(", ", started)) };
                     }
                     else
                     {
                         var stopped = await Task.Run(() => MultronWinCleaner.Processes.Optimizer.StopOldSystemServices(services));
                         await memcleaner.cleanmemory();
-                        messages = new List<string> { stopped.Count == 0 ? "No selected service was running, so nothing had to be paused. Memory was cleaned." : "Paused: " + string.Join(", ", stopped) + ". Memory was cleaned." };
+                        messages = new List<string> { stopped.Count == 0 ? Loc.T("No selected service was running, so nothing had to be paused. Memory was cleaned.") : Loc.F("Paused: {0}. Memory was cleaned.", string.Join(", ", stopped)) };
                     }
                     turboBoostActive = !active;
                     savesettings($"turboboost:{(turboBoostActive ? "1" : "0")}");
                 }
 
-                string profileName = newProfile ? "new systems" : "old systems";
-                if (active) MultronWinCleaner.Processes.Optimizer.ClearLog(); else MultronWinCleaner.Processes.Optimizer.AppendLog(new[] { $"Applied: optimization for {profileName}" }.Concat(messages.Select(m => "   " + m)));
-                MessageBox.Show((active ? "Optimization undone." : "Optimization applied.") + "\n\n" + string.Join("\n", messages), "System Optimization", MessageBoxButton.OK, MessageBoxImage.Information);
+                string profileName = Loc.T(newProfile ? "new systems" : "old systems");
+                if (active) MultronWinCleaner.Processes.Optimizer.ClearLog(); else MultronWinCleaner.Processes.Optimizer.AppendLog(new[] { Loc.F("Applied: optimization for {0}", profileName) }.Concat(messages.Select(m => "   " + m)));
+                AppDialog.Show(Loc.T(active ? "Optimization undone." : "Optimization applied.") + "\n\n" + string.Join("\n", messages), Loc.T("System Optimization"), MessageBoxButton.OK, MessageBoxImage.Information);
                 if (!active)
                     await OfferStartupAsync();
             }
             catch (Exception ex)
             {
-                MultronWinCleaner.Processes.Optimizer.AppendLog(new[] { "Optimization failed: " + ex.Message });
-                MessageBox.Show("Optimization failed:\n" + ex.Message, "System Optimization", MessageBoxButton.OK, MessageBoxImage.Error);
+                MultronWinCleaner.Processes.Optimizer.AppendLog(new[] { Loc.F("Optimization failed: {0}", ex.Message) });
+                AppDialog.Show(Loc.F("Optimization failed:\n{0}", ex.Message), Loc.T("System Optimization"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

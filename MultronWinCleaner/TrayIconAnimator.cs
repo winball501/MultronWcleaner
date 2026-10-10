@@ -1,4 +1,4 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,24 @@ namespace Multron_Win_Cleaner
         public void Stop()
         {
             _timer.Stop();
-            _trayIcon.IconSource = _idleIcon; // eski ikona geri dön
+            ShowIdleIcon();
+        }
+
+        private System.Drawing.Icon? _warningIcon;
+
+        public void SetWarningIcon(System.Drawing.Icon? icon)
+        {
+            _warningIcon = icon;
+            if (!_timer.IsEnabled)
+                ShowIdleIcon();
+        }
+
+        private void ShowIdleIcon()
+        {
+            if (_warningIcon != null)
+                _trayIcon.Icon = _warningIcon;
+            else
+                _trayIcon.IconSource = _idleIcon;
         }
 
         private void OnTick(object sender, EventArgs e)

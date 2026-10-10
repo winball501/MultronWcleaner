@@ -21,6 +21,31 @@ namespace MultronWinCleaner.Processes
         string currentid = null;
         string getline = null;
 
+        private const string GlobeGlyph = "";
+        private const string PersonGlyph = "";
+
+        private static object SectionHeader(string title)
+        {
+            if (title.Length < 2 || title[0] < '' || title[0] > '' || title[1] != ' ')
+                return title;
+            var header = new StackPanel { Orientation = Orientation.Horizontal };
+            header.Children.Add(new TextBlock
+            {
+                Text = title.Substring(0, 1),
+                FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
+                FontWeight = FontWeights.Normal,
+                FontSize = 16,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 1, 6, 0)
+            });
+            header.Children.Add(new TextBlock
+            {
+                Text = title.Substring(2),
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            return header;
+        }
+
         public Load(MainWindow main)
         {
             this.main = main;
@@ -34,7 +59,7 @@ namespace MultronWinCleaner.Processes
                 {
                     await main.Dispatcher.InvokeAsync(() => {
                         main.StatusLoad.Text = text + ".";
-                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7"));
+                        main.StatusLoad.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1e88e5"));
                     });
 
                     await System.Threading.Tasks.Task.Delay(1000, cancellationToken);
@@ -358,7 +383,7 @@ namespace MultronWinCleaner.Processes
 
                     await main.Dispatcher.InvokeAsync(() =>
                     {
-                        var task = ScandotsAsync("Loading Database", cts.Token);
+                        var task = ScandotsAsync(Loc.T("Loading Database"), cts.Token);
                         main.buttonStartScan.IsEnabled = false;
                     });
 
@@ -379,7 +404,7 @@ namespace MultronWinCleaner.Processes
                                 sectionPanel = new WrapPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(5) };
                                 sectionExpander = new Expander
                                 {
-                                    Header = section.Title,
+                                    Header = SectionHeader(section.Title),
                                     Margin = new Thickness(5, 10, 5, 5),
                                     BorderThickness = new Thickness(1),
                                     Padding = new Thickness(5, 5, 5, 10),
@@ -432,7 +457,7 @@ namespace MultronWinCleaner.Processes
                             lastLine = File.ReadLines(main.settings.logfilepath).LastOrDefault();
 
                         if (lastLine != null && main.settings.chkShowLastLog.IsChecked == true) main.label1_Copy.Text = lastLine;
-                        else main.label1_Copy.Text = "Ready to scan";
+                        else main.label1_Copy.Text = Loc.T("Ready to scan");
 
                         main.buttonStartScan.IsEnabled = true;
                         main.progressBar1.Value = 0;
@@ -443,7 +468,7 @@ namespace MultronWinCleaner.Processes
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message + " in Load.cs\n" + ex.StackTrace + "\nLine: " + getline, "database.txt error");
+                AppDialog.Show(ex.Message + " in Load.cs\n" + ex.StackTrace + "\n" + Loc.T("Line:") + " " + getline, Loc.T("database.txt error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -548,10 +573,10 @@ namespace MultronWinCleaner.Processes
 
             List<string> linesToProcess = new List<string>();
 
-            linesToProcess.Add("USER_START=💻 System & Global Tools");
+            linesToProcess.Add("USER_START=" + GlobeGlyph + " " + Loc.T("System & Global Tools"));
             if (globalStandalone.Count > 0)
             {
-                linesToProcess.Add("{=General Tools");
+                linesToProcess.Add("{=" + Loc.T("General Tools"));
                 linesToProcess.AddRange(globalStandalone);
                 linesToProcess.Add("}");
             }
@@ -564,11 +589,11 @@ namespace MultronWinCleaner.Processes
                 if (hasContent)
                 {
                     string userName = new DirectoryInfo(user).Name;
-                    linesToProcess.Add($"USER_START=👤 {userName}");
+                    linesToProcess.Add($"USER_START={PersonGlyph} {userName}");
 
                     if (userStandalone[user].Count > 0)
                     {
-                        linesToProcess.Add("{=User Specific Files");
+                        linesToProcess.Add("{=" + Loc.T("User Specific Files"));
                         linesToProcess.AddRange(userStandalone[user]);
                         linesToProcess.Add("}");
                     }
@@ -814,12 +839,12 @@ namespace MultronWinCleaner.Processes
             {
                 var profilelist = new System.Windows.Controls.ComboBox
                 {
-                    Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#0078d7")),
+                    Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1e88e5")),
                     FontSize = 14,
                     Margin = new Thickness(5),
                     HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Top,
-                    ToolTip = "Browser profile to clean"
+                    ToolTip = Loc.T("Browser profile to clean")
                 };
                 foreach (string folder in group.ProfileFolders)
                 {
@@ -839,9 +864,9 @@ namespace MultronWinCleaner.Processes
             if (box.ContextMenu == null)
             {
                 var menu = new ContextMenu();
-                var openDirectory = new MenuItem { Header = "Open directory" };
-                var openLocation = new MenuItem { Header = "Open location" };
-                var copyPath = new MenuItem { Header = "Copy path" };
+                var openDirectory = new MenuItem { Header = Loc.T("Open directory") };
+                var openLocation = new MenuItem { Header = Loc.T("Open location") };
+                var copyPath = new MenuItem { Header = Loc.T("Copy path") };
                 openDirectory.Click += main.OpenDirectory_MainMenu_Click;
                 openLocation.Click += main.OpenFileLocation_MainMenu_Click;
                 copyPath.Click += main.CopyPath_MainMenu_Click;

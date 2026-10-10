@@ -113,22 +113,22 @@ namespace MultronWinCleaner.Processes
         {
             int? code = ExitCode(output);
             if (code == null)
-                return (false, "Stopped: " + LastLine(output));
+                return (false, Loc.F("Stopped: {0}", LastLine(output)));
             if (code == 0)
-                return (true, "The operation completed successfully.");
+                return (true, Loc.T("The operation completed successfully."));
             if (code == 3010)
-                return (true, "Completed. Restart the PC to finish.");
-            return (false, $"Error {code}: {LastLine(output)}");
+                return (true, Loc.T("Completed. Restart the PC to finish."));
+            return (false, Loc.F("Error {0}: {1}", code, LastLine(output)));
         }
 
         public static (bool Ok, string Text) DescribeSfc(string output)
         {
             return ParseSfc(output) switch
             {
-                SfcState.Clean => (true, "No integrity violations were found."),
-                SfcState.Repaired => (true, "Corrupt files were found and repaired."),
-                SfcState.NotRepaired => (false, "Corrupt files were found but some could not be repaired. Details are in C:\\Windows\\Logs\\CBS\\CBS.log."),
-                SfcState.Violations => (false, "Integrity violations were found."),
+                SfcState.Clean => (true, Loc.T("No integrity violations were found.")),
+                SfcState.Repaired => (true, Loc.T("Corrupt files were found and repaired.")),
+                SfcState.NotRepaired => (false, Loc.T("Corrupt files were found but some could not be repaired. Details are in C:\\Windows\\Logs\\CBS\\CBS.log.")),
+                SfcState.Violations => (false, Loc.T("Integrity violations were found.")),
                 _ => (false, LastLine(output))
             };
         }

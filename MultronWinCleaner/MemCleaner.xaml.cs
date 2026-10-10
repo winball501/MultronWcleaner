@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using Multron_Win_Cleaner;
 using System;
 using System.ComponentModel;
@@ -126,7 +126,7 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error resetting location: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("Error resetting location: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -143,6 +143,7 @@ namespace MultronWinCleaner
             autocleanmem = new AutoCleanMem(this);
             InitializeSystemInfo();
             UpdateSystemStats();
+            await CreateCpuCounterAsync();
 
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
             {
@@ -155,15 +156,29 @@ namespace MultronWinCleaner
         {
             try
             {
-                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-
                 using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
                 CpuNameText.Text = key?.GetValue("ProcessorNameString")?.ToString() ?? "Unknown CPU";
             }
             catch (Exception)
             {
+                CpuNameText.Text = Loc.T("CPU Information Unavailable");
+            }
+        }
+
+        private async Task CreateCpuCounterAsync()
+        {
+            try
+            {
+                cpuCounter = await Task.Run(() =>
+                {
+                    var counter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                    counter.NextValue();
+                    return counter;
+                });
+            }
+            catch (Exception)
+            {
                 cpuCounter = null;
-                CpuNameText.Text = "CPU Information Unavailable";
             }
         }
 
@@ -187,7 +202,7 @@ namespace MultronWinCleaner
                 if (cpuCounter != null)
                 {
                     int currentCpuUsage = (int)cpuCounter.NextValue();
-                    CpuUsageText.Text = $"CPU Load: %{currentCpuUsage}";
+                    CpuUsageText.Text = Loc.F("CPU Load: %{0}", currentCpuUsage);
                 }
 
                 UpdateArcGraphic(usedPercent);
@@ -244,7 +259,7 @@ namespace MultronWinCleaner
         public async Task cleanmemory()
         {
             CleanButton.IsEnabled = false;
-            CleanButton.Content = "Cleaning...";
+            CleanButton.Content = Loc.T("Cleaning...");
             CleanedMemoryLabel.Text = "";
 
             bool isDeepClean = rbDeepClean.IsChecked == true;
@@ -355,20 +370,20 @@ namespace MultronWinCleaner
             long freed = Math.Max(0, afterFree - beforeFree);
             double mbFreed = freed / (1024.0 * 1024.0);
 
-            string freedMessage = $"Freed {mbFreed:F2} MB {DateTime.Now:T}";
+            string freedMessage = Loc.F("Freed {0:F2} MB {1:T}", mbFreed, DateTime.Now);
             CleanedMemoryLabel.Text = freedMessage;
 
             if (memorymon != null)
                 memorymon.FreedLabel.Text = freedMessage;
 
-            CleanButton.Content = "Clean Memory Now";
+            CleanButton.Content = Loc.T("Clean Memory Now");
             CleanButton.IsEnabled = true;
              
             UpdateSystemStats();
 
             if (this.WindowState == WindowState.Minimized || this.Visibility == Visibility.Hidden)
             {
-                Notify notify = new Notify("Memory Cleaned", "Your system memory has been optimized successfully.\r\n", $"Freed {mbFreed:F2} MB");
+                Notify notify = new Notify(Loc.T("Memory Cleaned"), Loc.T("Your system memory has been optimized successfully.") + "\r\n", Loc.F("Freed {0:F2} MB", mbFreed));
                 notify.Show();
             }
         }
@@ -463,7 +478,7 @@ namespace MultronWinCleaner
                 {
                     if (memcleaner.cbCleanInterval.SelectedItem is ComboBoxItem selectedItem)
                     {
-                        string content = selectedItem.Content?.ToString()?.ToLower() ?? "";
+                        string content = Loc.En(selectedItem.Content).ToLower();
                         intervalMinutes = content switch
                         {
                             "1 minute" => 1,
@@ -492,7 +507,7 @@ namespace MultronWinCleaner
 
                             memcleaner.Dispatcher.Invoke(() =>
                             {
-                                memcleaner.Status.Text = $"Next clean: {mins:D2}:{secs:D2}";
+                                memcleaner.Status.Text = Loc.F("Next clean: {0:D2}:{1:D2}", mins, secs);
                             });
 
                             await Task.Delay(1000, token);
@@ -505,12 +520,12 @@ namespace MultronWinCleaner
                             int battery = GetBatteryPercent();
                             if (battery == -1)
                             {
-                                memcleaner.Dispatcher.Invoke(() => memcleaner.Status.Text = "Battery unknown, skipping...");
+                                memcleaner.Dispatcher.Invoke(() => memcleaner.Status.Text = Loc.T("Battery unknown, skipping..."));
                                 await Task.Delay(5000, token);
                             }
                             else if (battery <= 30)
                             {
-                                memcleaner.Dispatcher.Invoke(() => memcleaner.Status.Text = "Skipping clean (Low battery).");
+                                memcleaner.Dispatcher.Invoke(() => memcleaner.Status.Text = Loc.T("Skipping clean (Low battery)."));
                                 await Task.Delay(5000, token);
                                 continue;
                             }
@@ -536,7 +551,7 @@ namespace MultronWinCleaner
 
                 memcleaner.Dispatcher.Invoke(() =>
                 {
-                    memcleaner.Status.Text = "Auto clean stopped.";
+                    memcleaner.Status.Text = Loc.T("Auto clean stopped.");
                 });
             }
 

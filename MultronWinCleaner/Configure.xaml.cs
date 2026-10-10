@@ -1,4 +1,4 @@
-﻿using Octokit;
+using Octokit;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
@@ -64,7 +64,7 @@ namespace MultronWinCleaner
         {
             if (!items.Any(i => i.IsSelected))
             {
-                MessageBox.Show("Select at least one option.", "Optimization", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.T("Select at least one option."), Loc.T("Optimization"), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             foreach (var item in items)

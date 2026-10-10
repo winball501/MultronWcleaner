@@ -1,8 +1,9 @@
-﻿<Window
+<Window
     x:Class="MultronWinCleaner.LargeFileFinder"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Large File Finder"
+        xmlns:loc="clr-namespace:MultronWinCleaner"
+    Title="{loc:Tr 'Large File Finder'}"
     Height="800" Width="1000"
     WindowStyle="None"
     ResizeMode="CanResizeWithGrip"
@@ -20,13 +21,13 @@
 
         <DockPanel Grid.Row="0" Background="{DynamicResource PanelBackground}" VerticalAlignment="Top" LastChildFill="False" MouseDown="TopBar_MouseDown" Height="46">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="16,0,0,0">
-                <TextBlock Text="Multron Large File Finder" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
+                <TextBlock Text="{loc:Tr 'Multron Large File Finder'}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,12,0">
-                <Button Content="─" Style="{StaticResource ModernButtonStyle}" Width="30" Height="30" FontSize="14" Click="MinimizeButton_Click" ToolTip="Minimize" Margin="0,0,6,0"/>
-                <Button x:Name="buttonMaximize" Content="⤢" Style="{StaticResource ModernButtonStyle}" Width="30" Height="30" FontSize="14" Click="MaximizeButton_Click" ToolTip="Maximize/Restore" Margin="0,0,6,0"/>
-                <Button Content="✕" Style="{StaticResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="Close"/>
+                <Button Content="-" Style="{StaticResource ModernButtonStyle}" Width="30" Height="30" FontSize="14" Click="MinimizeButton_Click" ToolTip="{loc:Tr 'Minimize'}" Margin="0,0,6,0"/>
+                <Button x:Name="buttonMaximize" Content="⤢" Style="{StaticResource ModernButtonStyle}" Width="30" Height="30" FontSize="14" Click="MaximizeButton_Click" ToolTip="{loc:Tr 'Maximize/Restore'}" Margin="0,0,6,0"/>
+                <Button Content="─" Style="{StaticResource DangerButtonStyle}" Width="30" Height="30" FontSize="14" Click="CloseButton_Click" ToolTip="{loc:Tr 'Close'}"/>
             </StackPanel>
         </DockPanel>
 
@@ -52,10 +53,10 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
-                <TextBlock Text="SCAN" FontSize="18" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="{loc:Tr 'SCAN'}" FontSize="18" FontWeight="Bold" Foreground="White"/>
             </Button>
 
-            <TextBlock x:Name="ScanResultLabel" Text="Ready to scan" 
+            <TextBlock x:Name="ScanResultLabel" Text="{loc:Tr 'Ready to scan'}" 
                        FontStyle="Italic" HorizontalAlignment="Center" Foreground="{DynamicResource Text}" FontSize="13"/>
 
             <ProgressBar x:Name="ScanProgressBar" Height="6" Width="300" Margin="0,10,0,0"
@@ -65,7 +66,7 @@
         <Border Grid.Row="2" Margin="20,0,20,10" Background="{DynamicResource PanelBackground}" CornerRadius="8" Padding="10">
             <Expander x:Name="PropertiesExpander" IsExpanded="False" Background="Transparent" BorderThickness="0">
                 <Expander.Header>
-                    <TextBlock Text="▼ Advanced Search Settings (Folders, Exclusions, File Types &amp; Filters)" Foreground="#1E88E5" FontWeight="SemiBold" FontSize="14" Cursor="Hand"/>
+                    <TextBlock Text="{loc:Tr '▼ Advanced Search Settings (Folders, Exclusions, File Types &amp; Filters)'}" Foreground="#1E88E5" FontWeight="SemiBold" FontSize="14" Cursor="Hand"/>
                 </Expander.Header>
 
                 <Grid Margin="10,12,10,5">
@@ -81,28 +82,28 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Row="0" Grid.Column="0">
-                        <TextBlock Text="Target Directories (Scan):" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
+                        <TextBlock Text="{loc:Tr 'Target Directories (Scan):'}" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
                         <ListBox x:Name="FolderListBox" Height="85"
                                  Background="{DynamicResource TextBoxBackground}"
                                  Foreground="{DynamicResource Text}"
                                  BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,8"/>
 
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="+ Add Folder" Click="AddFolder_Click" Width="100" Height="28" Margin="0,0,6,0" Style="{DynamicResource ModernButtonStyle}"/>
-                            <Button Content="Remove" Click="RemoveSelectedFolder_Click" Width="80" Height="28" Style="{DynamicResource DangerButtonStyle}"/>
+                            <Button Content="{loc:Tr '+ Add Folder'}" Click="AddFolder_Click" Width="100" Height="28" Margin="0,0,6,0" Style="{DynamicResource ModernButtonStyle}"/>
+                            <Button Content="{loc:Tr 'Remove'}" Click="RemoveSelectedFolder_Click" Width="80" Height="28" Style="{DynamicResource DangerButtonStyle}"/>
                         </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0" Grid.Column="2">
-                        <TextBlock Text="Excluded Directories (Skip):" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
+                        <TextBlock Text="{loc:Tr 'Excluded Directories (Skip):'}" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
                         <ListBox x:Name="ExcludedFolderListBox" Height="85"
                                  Background="{DynamicResource TextBoxBackground}"
                                  Foreground="{DynamicResource Text}"
                                  BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,0,8"/>
 
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="+ Exclude Folder" Click="AddExcludedFolder_Click" Width="110" Height="28" Margin="0,0,6,0" Style="{DynamicResource ModernButtonStyle}"/>
-                            <Button Content="Remove" Click="RemoveSelectedExcludedFolder_Click" Width="80" Height="28" Style="{DynamicResource DangerButtonStyle}"/>
+                            <Button Content="{loc:Tr '+ Exclude Folder'}" Click="AddExcludedFolder_Click" Width="110" Height="28" Margin="0,0,6,0" Style="{DynamicResource ModernButtonStyle}"/>
+                            <Button Content="{loc:Tr 'Remove'}" Click="RemoveSelectedExcludedFolder_Click" Width="80" Height="28" Style="{DynamicResource DangerButtonStyle}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -115,7 +116,7 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Min Size Threshold:" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
+                                <TextBlock Text="{loc:Tr 'Min Size Threshold:'}" FontWeight="Bold" Margin="0,0,0,6" Foreground="{DynamicResource Text}"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="75"/>
@@ -123,7 +124,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="Min Size:" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource Text}"/>
+                                    <TextBlock Text="{loc:Tr 'Min Size:'}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource Text}"/>
                                     <TextBox x:Name="SizeThresholdTextBox" Grid.Column="1" Text="100" Height="28"
                                              FontSize="13" FontWeight="Bold" Padding="5,2,5,2" VerticalContentAlignment="Center"
                                              Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource Text}" 
@@ -139,8 +140,8 @@
 
                             <StackPanel Grid.Column="2">
                                 <DockPanel Margin="0,0,0,6">
-                                    <TextBlock Text="File Age / Date Limit:" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="EnableDateFilterCheckBox" Content="Enable" DockPanel.Dock="Right" HorizontalAlignment="Right"
+                                    <TextBlock Text="{loc:Tr 'File Age / Date Limit:'}" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
+                                    <CheckBox x:Name="EnableDateFilterCheckBox" Content="{loc:Tr 'Enable'}" DockPanel.Dock="Right" HorizontalAlignment="Right"
                                               FontWeight="SemiBold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
                                 </DockPanel>
 
@@ -152,8 +153,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <ComboBox x:Name="DateTypeComboBox" Grid.Column="0" Height="28" SelectedIndex="0" VerticalContentAlignment="Center">
-                                        <ComboBoxItem Content="Last Accessed"/>
-                                        <ComboBoxItem Content="Last Modified"/>
+                                        <ComboBoxItem Content="{loc:Tr 'Last Accessed'}"/>
+                                        <ComboBoxItem Content="{loc:Tr 'Last Modified'}"/>
                                     </ComboBox>
 
                                     <TextBox x:Name="DaysOldTextBox" Grid.Column="1" Text="30" Height="28" Margin="6,0,0,0"
@@ -161,7 +162,7 @@
                                              Background="{DynamicResource TextBoxBackground}" Foreground="{DynamicResource Text}" 
                                              BorderBrush="{DynamicResource BorderBrush}"/>
 
-                                    <TextBlock Grid.Column="2" Text="days old or older" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="{DynamicResource Text}"/>
+                                    <TextBlock Grid.Column="2" Text="{loc:Tr 'days old or older'}" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="{DynamicResource Text}"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
@@ -170,23 +171,23 @@
                     <Border Grid.Row="2" Grid.ColumnSpan="3" Margin="0,10,0,0" Padding="10" Background="{DynamicResource WindowBackground}" CornerRadius="6">
                         <StackPanel>
                             <DockPanel Margin="0,0,0,8">
-                                <TextBlock Text="File Types / Categories to Include:" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
+                                <TextBlock Text="{loc:Tr 'File Types / Categories to Include:'}" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                                    <Button Content="Select All" Click="SelectAllCategories_Click" Width="75" Height="22" FontSize="11" Margin="0,0,5,0" Style="{DynamicResource ModernButtonStyle}"/>
-                                    <Button Content="Deselect All" Click="DeselectAllCategories_Click" Width="80" Height="22" FontSize="11" Style="{DynamicResource ModernButtonStyle}"/>
+                                    <Button Content="{loc:Tr 'Select All'}" Click="SelectAllCategories_Click" Width="75" Height="22" FontSize="11" Margin="0,0,5,0" Style="{DynamicResource ModernButtonStyle}"/>
+                                    <Button Content="{loc:Tr 'Deselect All'}" Click="DeselectAllCategories_Click" Width="80" Height="22" FontSize="11" Style="{DynamicResource ModernButtonStyle}"/>
                                 </StackPanel>
                             </DockPanel>
 
                             <WrapPanel Name="CategoryWrapPanel">
-                                <CheckBox x:Name="ChkVideos" Content="Videos (.mp4, .mkv, .avi, .ts...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkMusic" Content="Music (.mp3, .wav, .flac, .opus...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkPhotos" Content="Photos (.jpg, .png, .heic, .raw...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkArchives" Content="Archives (.zip, .rar, .7z, .zst...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkDocuments" Content="Documents (.pdf, .docx, .epub, .pst...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkPrograms" Content="Programs and Installers (.exe, .msi, .msix, .apk...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkDiskImages" Content="Disk Images and VMs (.iso, .vhdx, .vmdk, .wim...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkBackups" Content="Backups, Dumps and Logs (.bak, .dmp, .log, .db...)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
-                                <CheckBox x:Name="ChkOthers" Content="Others (Other extensions)" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkVideos" Content="{loc:Tr 'Videos (.mp4, .mkv, .avi, .ts...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkMusic" Content="{loc:Tr 'Music (.mp3, .wav, .flac, .opus...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkPhotos" Content="{loc:Tr 'Photos (.jpg, .png, .heic, .raw...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkArchives" Content="{loc:Tr 'Archives (.zip, .rar, .7z, .zst...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkDocuments" Content="{loc:Tr 'Documents (.pdf, .docx, .epub, .pst...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkPrograms" Content="{loc:Tr 'Programs and Installers (.exe, .msi, .msix, .apk...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkDiskImages" Content="{loc:Tr 'Disk Images and VMs (.iso, .vhdx, .vmdk, .wim...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkBackups" Content="{loc:Tr 'Backups, Dumps and Logs (.bak, .dmp, .log, .db...)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
+                                <CheckBox x:Name="ChkOthers" Content="{loc:Tr 'Others (Other extensions)'}" IsChecked="True" Foreground="{DynamicResource Text}" Margin="0,0,20,6"/>
                             </WrapPanel>
                         </StackPanel>
                     </Border>
@@ -201,8 +202,8 @@
             </Grid.RowDefinitions>
 
             <DockPanel Grid.Row="0" Margin="0,0,0,8">
-                <TextBlock Text="Large Files Found" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
-                <Button Content="Clear List" Click="ClearListButton_Click" Width="90" Height="26" DockPanel.Dock="Right" Style="{DynamicResource DangerButtonStyle}"/>
+                <TextBlock Text="{loc:Tr 'Large Files Found'}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource Text}" VerticalAlignment="Center"/>
+                <Button Content="{loc:Tr 'Clear List'}" Click="ClearListButton_Click" Width="90" Height="26" DockPanel.Dock="Right" Style="{DynamicResource DangerButtonStyle}"/>
             </DockPanel>
 
             <DataGrid x:Name="LargeFilesDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False"
@@ -217,19 +218,19 @@
 
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Open File" Click="OpenFile_Click"/>
-                        <MenuItem Header="Open File Location" Click="OpenFileLocation_Click"/>
+                        <MenuItem Header="{loc:Tr 'Open File'}" Click="OpenFile_Click"/>
+                        <MenuItem Header="{loc:Tr 'Open File Location'}" Click="OpenFileLocation_Click"/>
                         <Separator/>
-                        <MenuItem Header="Copy File Path" Click="CopyFilePath_Click"/>
+                        <MenuItem Header="{loc:Tr 'Copy File Path'}" Click="CopyFilePath_Click"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="File Name" Binding="{Binding Name}" Width="160"/>
-                    <DataGridTextColumn x:Name="SizeColumn" Header="Size" Binding="{Binding FormattedSize}" Width="100"/>
-                    <DataGridTextColumn Header="Last Used / Access" Binding="{Binding TimeAgo}" Width="120"/>
-                    <DataGridTextColumn Header="Last Modified" Binding="{Binding FormattedLastModified}" Width="135"/>
-                    <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="*"/>
+                    <DataGridTextColumn Header="{loc:Tr 'File Name'}" Binding="{Binding Name}" Width="160"/>
+                    <DataGridTextColumn x:Name="SizeColumn" Header="{loc:Tr 'Size'}" Binding="{Binding FormattedSize}" Width="100"/>
+                    <DataGridTextColumn Header="{loc:Tr 'Last Used / Access'}" Binding="{Binding TimeAgo}" Width="120"/>
+                    <DataGridTextColumn Header="{loc:Tr 'Last Modified'}" Binding="{Binding FormattedLastModified}" Width="135"/>
+                    <DataGridTextColumn Header="{loc:Tr 'Path'}" Binding="{Binding Path}" Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

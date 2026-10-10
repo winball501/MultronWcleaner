@@ -15,7 +15,7 @@ namespace MultronWinCleaner.Processes
             public string RepairTarget { get; set; }
             public string Location { get; set; } = "";
             public string Name => Path.GetFileNameWithoutExtension(ShortcutPath);
-            public string Action => RepairTarget != null ? "Will be repaired: " + RepairTarget : "Will be moved to the Recycle Bin";
+            public string Action => RepairTarget != null ? Loc.F("Will be repaired: {0}", RepairTarget) : Loc.T("Will be moved to the Recycle Bin");
         }
 
         private static readonly EnumerationOptions LinkSearch = new EnumerationOptions

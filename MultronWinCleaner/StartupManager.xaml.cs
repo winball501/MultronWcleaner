@@ -1,4 +1,4 @@
-﻿using IWshRuntimeLibrary;
+using IWshRuntimeLibrary;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using System;
@@ -49,8 +49,6 @@ namespace MultronWinCleaner
 
             Loaded += async (s, e) => await LoadStartupAppsFastAsync(isSilentRefresh: false);
 
-            // Refresh when the window is shown; the background monitor only runs while it is visible
-            // or new-item notifications are on.
             IsVisibleChanged += async (s, e) =>
             {
                 _isShown = IsVisible;
@@ -62,8 +60,6 @@ namespace MultronWinCleaner
 
         private volatile bool _isShown;
 
-        // Enumerating every scheduled task over COM is by far the most expensive part of a refresh,
-        // so silent refreshes reuse the last task list for this long.
         private static readonly TimeSpan TaskSchedulerRefreshInterval = TimeSpan.FromSeconds(60);
         private DateTime _lastTaskSchedulerScan = DateTime.MinValue;
         private List<StartupApp> _cachedTaskApps = new();
@@ -195,15 +191,15 @@ namespace MultronWinCleaner
                         if (highImpactApps.Any())
                         {
                             string appNames = string.Join(", ", highImpactApps.Take(3));
-                            if (highImpactApps.Count > 3) appNames += " and others";
-                            ShowInAppWarning($"Warning: You have high-impact apps ({appNames}) enabled. This may slow down your boot time.");
+                            if (highImpactApps.Count > 3) appNames += Loc.T(" and others");
+                            ShowInAppWarning(Loc.F("Warning: You have high-impact apps ({0}) enabled. This may slow down your boot time.", appNames));
                         }
                     }
                 });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"A critical error occurred while loading the list:\n\n{ex.Message}", "System Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("A critical error occurred while loading the list:\n\n{0}", ex.Message), Loc.T("System Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -213,16 +209,49 @@ namespace MultronWinCleaner
         }
 
 
+        private DispatcherTimer? searchTimer;
+
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool empty = SearchBox.Text.Length == 0;
+            SearchHint.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
+            SearchClear.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
+            if (searchTimer == null)
+            {
+                searchTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+                searchTimer.Tick += (s, args) =>
+                {
+                    searchTimer.Stop();
+                    ApplySearch(SearchBox.Text.Trim());
+                };
+            }
+            searchTimer.Stop();
+            searchTimer.Start();
+        }
+
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+                SearchBox.Clear();
+        }
+
+        private void SearchClear_Click(object sender, RoutedEventArgs e)
+        {
+            SearchBox.Clear();
+            SearchBox.Focus();
+        }
+
+        private void ApplySearch(string query)
         {
             var view = CollectionViewSource.GetDefaultView(StartupApps);
             if (view == null) return;
 
-            string filter = SearchBox.Text.ToLowerInvariant();
-            if (string.IsNullOrWhiteSpace(filter))
+            if (query.Length == 0)
                 view.Filter = null;
             else
-                view.Filter = item => (item as StartupApp)?.Name.ToLowerInvariant().Contains(filter) == true;
+                view.Filter = item => item is StartupApp app
+                    && (app.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
+                        || app.Path.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
 
         private void tglShowNotifications_Checked(object sender, RoutedEventArgs e)
@@ -298,7 +327,7 @@ namespace MultronWinCleaner
                         if (task.Definition.Triggers.Any(tr => tr.TriggerType is TaskTriggerType.Logon or TaskTriggerType.Boot or TaskTriggerType.Registration))
                         {
                             var action = task.Definition.Actions.OfType<ExecAction>().FirstOrDefault();
-                            string actionPath = action != null ? $"{action.Path} {action.Arguments}".Trim() : "Task Action";
+                            string actionPath = action != null ? $"{action.Path} {action.Arguments}".Trim() : Loc.T("Task Action");
 
                             apps.Add(new StartupApp
                             {
@@ -392,9 +421,6 @@ namespace MultronWinCleaner
         private const int StabilityRetries = 3;
         private const int StabilityDelayMs = 150;
 
-        private static readonly ConcurrentDictionary<string, ((DateTime, long) Stamp, string Impact)> ImpactCache =
-            new(StringComparer.OrdinalIgnoreCase);
-
         private string CalculateImpactAutomatically(string path, string appName)
         {
             if (string.IsNullOrWhiteSpace(path)) return "Low";
@@ -424,7 +450,6 @@ namespace MultronWinCleaner
                 if (fullPathNormalized.StartsWith(winDirNormalized, StringComparison.OrdinalIgnoreCase))
                     return "Low";
 
-                // Parsing the PE imports (3 passes, 150 ms apart) is costly: reuse the answer until the file changes.
                 var info = new FileInfo(fullPathNormalized);
                 var stamp = (info.LastWriteTimeUtc, info.Length);
                 if (ImpactCache.TryGetValue(fullPathNormalized, out var cached) && cached.Stamp == stamp)
@@ -439,6 +464,9 @@ namespace MultronWinCleaner
 
             return "Low";
         }
+
+        private static readonly ConcurrentDictionary<string, ((DateTime, long) Stamp, string Impact)> ImpactCache =
+            new(StringComparer.OrdinalIgnoreCase);
 
         private static long GetStableImportWeight(string exePath)
         {
@@ -773,14 +801,14 @@ namespace MultronWinCleaner
             foreach (var item in StartupApps.Where(a => a.HasPendingChange))
                 item.ApplyPendingChange();
 
-            MessageBox.Show("Changes applied successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            AppDialog.Show(Loc.T("Changes applied successfully!"), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
             CheckPendingChanges();
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedApp == null) return;
-            if (MessageBox.Show($"Are you sure you want to remove '{SelectedApp.Name}'?", "Confirm Removal", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (AppDialog.Show(Loc.F("Are you sure you want to remove '{0}'?", SelectedApp.Name), Loc.T("Confirm Removal"), MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 SelectedApp.Remove();
                 StartupApps.Remove(SelectedApp);
@@ -855,12 +883,15 @@ namespace MultronWinCleaner
             public string RegistryPath { get; set; } = "";
 
             private bool _isEnabled, _isPresent, _pendingEnabled;
-            public bool IsPresent { get => _isPresent; set { _isPresent = value; OnPropertyChanged(); OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsCheckboxEnabled)); } }
-            public bool IsEnabled { get => _isEnabled; set { _isEnabled = value; _pendingEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(Status)); } }
+            public bool IsPresent { get => _isPresent; set { _isPresent = value; OnPropertyChanged(); OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(StatusText)); OnPropertyChanged(nameof(IsCheckboxEnabled)); } }
+            public bool IsEnabled { get => _isEnabled; set { _isEnabled = value; _pendingEnabled = value; OnPropertyChanged(); OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(StatusText)); } }
             public bool IsCheckboxEnabled => IsPresent;
             public string Impact { get; set; } = "Low";
             public int ImpactScore => Impact == "High" ? 3 : (Impact == "Medium" ? 2 : 1);
-          
+            public string ImpactText => Loc.T(Impact);
+            public string StartupTypeText => Loc.T(StartupType);
+            public string StatusText => Loc.T(Status);
+
             public Action<string>? HighImpactWarningAction { get; set; }
 
             public bool PendingEnabled
@@ -871,7 +902,7 @@ namespace MultronWinCleaner
                     _pendingEnabled = value; 
                     if (value == true && Impact == "High")
                     {
-                        HighImpactWarningAction?.Invoke($"Warning: '{Name}' may consume significant system resources and slow down your startup time.");
+                        HighImpactWarningAction?.Invoke(Loc.F("Warning: '{0}' may consume significant system resources and slow down your startup time.", Name));
                     }
 
                     OnPropertyChanged();
@@ -909,7 +940,7 @@ namespace MultronWinCleaner
                             }
                             break;
                     }
-                    OnPropertyChanged(nameof(Status));
+                    OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(StatusText));
                 }
             }
 
@@ -932,7 +963,7 @@ namespace MultronWinCleaner
                     }
                     IsEnabled = _pendingEnabled;
                 }
-                catch (Exception ex) { MessageBox.Show($"Error applying changes: {ex.Message}"); }
+                catch (Exception ex) { AppDialog.Show(Loc.F("Error applying changes: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
             }
 
             public void Remove()

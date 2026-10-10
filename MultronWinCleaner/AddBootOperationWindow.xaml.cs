@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -28,10 +28,10 @@ namespace MultronWinCleaner
             {
                 return Type switch
                 {
-                    OperationType.Delete => $"Delete: {SourcePath}",
-                    OperationType.Move => $"Move: {SourcePath} -> {DestinationPath}",
-                    OperationType.Rename => $"Rename: {SourcePath} -> {DestinationPath}",
-                    OperationType.ManualCommand => $"ManualCommand: {ManualCommand}",
+                    OperationType.Delete => Loc.F("Delete: {0}", SourcePath),
+                    OperationType.Move => Loc.F("Move: {0} -> {1}", SourcePath, DestinationPath),
+                    OperationType.Rename => Loc.F("Rename: {0} -> {1}", SourcePath, DestinationPath),
+                    OperationType.ManualCommand => Loc.F("ManualCommand: {0}", ManualCommand),
                     _ => base.ToString(),
                 };
             }
@@ -65,7 +65,7 @@ namespace MultronWinCleaner
         {
             if (cmbOperationType.SelectedItem is ComboBoxItem selected)
             {
-                var selectedStr = selected.Content?.ToString() ?? "";
+                var selectedStr = Loc.En(selected.Content);
 
                 txtDestPath.IsEnabled = selectedStr == "Move" || selectedStr == "Rename";
                 txtSourcePath.IsEnabled = selectedStr != "ManualCommand";
@@ -82,15 +82,15 @@ namespace MultronWinCleaner
         {
             if (cmbOperationType.SelectedItem is not ComboBoxItem selectedItem)
             {
-                MessageBox.Show("Please select an operation type.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Please select an operation type."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            string typeStr = selectedItem.Content?.ToString()?.Trim() ?? "";
+            string typeStr = Loc.En(selectedItem.Content).Trim();
 
             if (!Enum.TryParse(typeStr, true, out OperationType opType))
             {
-                MessageBox.Show("Invalid operation type.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show(Loc.T("Invalid operation type."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -102,7 +102,7 @@ namespace MultronWinCleaner
                     string cmd = txtManualCommand.Text.Trim();
                     if (string.IsNullOrWhiteSpace(cmd))
                     {
-                        MessageBox.Show("Please enter a manual command.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        AppDialog.Show(Loc.T("Please enter a manual command."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -117,12 +117,12 @@ namespace MultronWinCleaner
                 case OperationType.Rename:
                     if (string.IsNullOrWhiteSpace(txtSourcePath.Text))
                     {
-                        MessageBox.Show("Please enter a source path.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        AppDialog.Show(Loc.T("Please enter a source path."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     if (string.IsNullOrWhiteSpace(txtDestPath.Text))
                     {
-                        MessageBox.Show("Please enter a destination path.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        AppDialog.Show(Loc.T("Please enter a destination path."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -138,7 +138,7 @@ namespace MultronWinCleaner
                 default:
                     if (string.IsNullOrWhiteSpace(txtSourcePath.Text))
                     {
-                        MessageBox.Show("Please enter a source path.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        AppDialog.Show(Loc.T("Please enter a source path."), Loc.T("Input Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -162,7 +162,7 @@ namespace MultronWinCleaner
         {
             if (lstBootOperations.SelectedItem is not BootOperation selected)
             {
-                MessageBox.Show("Please select an operation from the list.", "Run Command", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(Loc.T("Please select an operation from the list."), Loc.T("Run Command"), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -178,18 +178,18 @@ namespace MultronWinCleaner
                             CreateNoWindow = true,
                             UseShellExecute = false
                         });
-                        MessageBox.Show($"Ran command:\n{selected.ManualCommand}");
+                        AppDialog.Show(Loc.F("Ran command:\n{0}", selected.ManualCommand), Loc.T("Run Command"), MessageBoxButton.OK, MessageBoxImage.Information);
                         break;
 
                      
                     default:
-                        MessageBox.Show($"Operation {selected} çalıştırma kodu eklenmedi.");
+                        AppDialog.Show(Loc.F("No run code has been added for operation {0}.", selected), Loc.T("Run Command"), MessageBoxButton.OK, MessageBoxImage.Warning);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Komut çalıştırılırken hata: {ex.Message}");
+                AppDialog.Show(Loc.F("Error while running the command: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

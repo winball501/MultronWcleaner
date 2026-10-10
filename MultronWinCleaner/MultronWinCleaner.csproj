@@ -9,6 +9,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\mwc_icon.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -79,7 +83,6 @@
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.6" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="9.0.6" />
     <PackageReference Include="TaskScheduler" Version="2.12.1" />
-    <PackageReference Include="WindowsInput" Version="6.4.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -100,7 +103,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Lang\" />
+    <EmbeddedResource Include="Lang\*.json" LogicalName="MultronWinCleaner.Lang.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 

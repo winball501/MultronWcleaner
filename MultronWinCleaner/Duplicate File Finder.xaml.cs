@@ -1,4 +1,4 @@
-﻿using Ookii.Dialogs.Wpf;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -62,9 +62,10 @@ namespace MultronWinCleaner
         public DateTime Created { get; set; }
         public string FolderPath => Path.GetDirectoryName(FilePath) ?? string.Empty;
         public bool IsExactDuplicate => Hash != null && !Hash.StartsWith(Duplicate_File_Finder.SimilarMediaPrefix);
-        public string CopyBadge => IsExactDuplicate ? "COPY" : "SIMILAR";
-        public string CopyBadgeColor => IsExactDuplicate ? "#FFE67E22" : "#FF8E44AD";
-        public string CreatedText => Created == default || Created == DateTime.MaxValue ? string.Empty : "Created " + Created.ToString("g");
+        public string DisplayHash => IsExactDuplicate || Hash == null ? Hash : Loc.T(Duplicate_File_Finder.SimilarMediaPrefix) + Hash.Substring(Duplicate_File_Finder.SimilarMediaPrefix.Length);
+        public string CopyBadge => Loc.T(IsExactDuplicate ? "COPY" : "SIMILAR");
+        public string CopyBadgeColor => IsExactDuplicate ? "#FFFF9800" : "#FF8E44AD";
+        public string CreatedText => Created == default || Created == DateTime.MaxValue ? string.Empty : Loc.F("Created {0:g}", Created);
 
         public List<string> MatchedFilePaths { get; } = new List<string>();
 
@@ -74,8 +75,8 @@ namespace MultronWinCleaner
         public string MatchSummary => MatchCount switch
         {
             0 => string.Empty,
-            1 => $"1 match found — {Path.GetFileName(MatchedFilePaths[0])}",
-            _ => $"{MatchCount} matches found — view"
+            1 => Loc.F("1 match found — {0}", Path.GetFileName(MatchedFilePaths[0])),
+            _ => Loc.F("{0} matches found — view", MatchCount)
         };
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -86,7 +87,7 @@ namespace MultronWinCleaner
     {
         public FileNodeModel Copy { get; set; }
         public FileNodeModel Original { get; set; }
-        public string RelationText => Copy != null && Copy.IsExactDuplicate ? "copy of" : "similar to";
+        public string RelationText => Loc.T(Copy != null && Copy.IsExactDuplicate ? "copy of" : "similar to");
     }
 
     public partial class Duplicate_File_Finder : Window
@@ -96,7 +97,6 @@ namespace MultronWinCleaner
 
         private Dictionary<string, List<FileNodeModel>> _duplicateGroupIndex = new Dictionary<string, List<FileNodeModel>>(StringComparer.OrdinalIgnoreCase);
         private List<DuplicatePairModel> duplicatePairs = new List<DuplicatePairModel>();
-        private const string SearchPlaceholder = "Search by File Name or SHA256 Hash...";
         public const string SimilarMediaPrefix = "Similar Media: ";
         private static readonly EnumerationOptions DuplicateFolderOptions = new EnumerationOptions { IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint | FileAttributes.System };
         private static readonly EnumerationOptions DuplicateFileOptions = new EnumerationOptions { IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint | FileAttributes.System };
@@ -146,8 +146,6 @@ namespace MultronWinCleaner
                     availabilityTimer.Stop();
                 }
             };
-
-            SetSearchPlaceholder();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -174,7 +172,7 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Could not save duplicates.json data:\n{ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(Loc.F("Could not save duplicates.json data:\n{0}", ex.Message), Loc.T("Save Error"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -184,7 +182,7 @@ namespace MultronWinCleaner
 
             if (!File.Exists(duplicatesFilePath))
             {
-                StatusText.Text = "Ready to scan target directories.";
+                StatusText.Text = Loc.T("Ready to scan target directories.");
                 return;
             }
 
@@ -222,20 +220,20 @@ namespace MultronWinCleaner
 
                 DuplicatesTreeView.ItemsSource = ExplorerTree;
 
-                StatusText.Text = $"Successfully loaded {allDuplicates.Count} duplicate files from previous scan.";
+                StatusText.Text = Loc.F("Successfully loaded {0} duplicate files from previous scan.", allDuplicates.Count);
 
                 await CalculateTotalDuplicateSizeAsync();
 
                 if (allDuplicates.Count > 0)
                 {
                     _isScanned = true;
-                    MainActionButton.Content = "CLEAN";
+                    MainActionButton.Content = Loc.T("CLEAN");
                     MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
                 }
             }
             catch
             {
-                StatusText.Text = "Failed to load previous scan data.";
+                StatusText.Text = Loc.T("Failed to load previous scan data.");
             }
             finally
             {
@@ -256,7 +254,7 @@ namespace MultronWinCleaner
             {
                 _cts?.Cancel();
                 MainActionButton.IsEnabled = false;
-                StatusText.Text = "Canceling scan...";
+                StatusText.Text = Loc.T("Canceling scan...");
                 return;
             }
 
@@ -264,12 +262,12 @@ namespace MultronWinCleaner
             {
                 if (FolderListBox.Items.Count == 0)
                 {
-                    MessageBox.Show("Please select at least one folder.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AppDialog.Show(Loc.T("Please select at least one folder."), Loc.T("Warning"), MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 _isScanning = true;
-                MainActionButton.Content = "Cancel";
+                MainActionButton.Content = Loc.T("Cancel");
                 TotalSizeText.Visibility = Visibility.Collapsed;
                 if (SearchCountText != null) SearchCountText.Text = "";
 
@@ -280,20 +278,19 @@ namespace MultronWinCleaner
 
                 if (_cts != null && _cts.IsCancellationRequested)
                 {
-                    StatusText.Text = $"Scan Canceled. Found {allDuplicates.Count} duplicate files.";
+                    StatusText.Text = Loc.F("Scan Canceled. Found {0} duplicate files.", allDuplicates.Count);
                     if (allDuplicates.Count == 0) ResetToScanState();
                 }
                 else if (allDuplicates.Count > 0)
                 {
                     _isScanned = true;
-                    MainActionButton.Content = "CLEAN";
+                    MainActionButton.Content = Loc.T("CLEAN");
                     MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
                 }
                 else
                 {
-                    // HİÇBİR ŞEY BULUNAMADIĞI DURUM
-                    StatusText.Text = "Scan Complete. No duplicate files found.";
-                    MessageBox.Show("Scan complete. No duplicate files were found in the selected directories.", "Scan Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                    StatusText.Text = Loc.T("Scan Complete. No duplicate files found.");
+                    AppDialog.Show(Loc.T("Scan complete. No duplicate files were found in the selected directories."), Loc.T("Scan Results"), MessageBoxButton.OK, MessageBoxImage.Information);
                     ResetToScanState();
                 }
             }
@@ -314,11 +311,11 @@ namespace MultronWinCleaner
             bool busy = (Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow)?.IsScanOrCleanBusy == true;
             if (busy)
             {
-                if (!Equals(MainActionButton.Content, "Cancel"))
+                if (!Equals(MainActionButton.Content, Loc.T("Cancel")))
                     _mainCancelContent = MainActionButton.Content;
-                MainActionButton.Content = "Cancel";
+                MainActionButton.Content = Loc.T("Cancel");
                 MainActionButton.IsEnabled = true;
-                MainActionButton.ToolTip = "Cancel the scan or clean running on the main screen.";
+                MainActionButton.ToolTip = Loc.T("Cancel the scan or clean running on the main screen.");
             }
             else if (_mainCancelContent != null)
             {
@@ -368,7 +365,7 @@ namespace MultronWinCleaner
                 FolderListBox.Items.Add(folder);
 
             _isScanning = true;
-            MainActionButton.Content = "Cancel";
+            MainActionButton.Content = Loc.T("Cancel");
             TotalSizeText.Visibility = Visibility.Collapsed;
             try
             {
@@ -383,7 +380,7 @@ namespace MultronWinCleaner
             if (allDuplicates.Count > 0)
             {
                 _isScanned = true;
-                MainActionButton.Content = "CLEAN";
+                MainActionButton.Content = Loc.T("CLEAN");
                 MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
             }
             else
@@ -405,7 +402,7 @@ namespace MultronWinCleaner
                 allDuplicates.Clear();
                 ExplorerTree.Clear();
                 if (FilesScannedText != null) FilesScannedText.Text = "";
-                StatusText.Text = "Scanning directories...";
+                StatusText.Text = Loc.T("Scanning directories...");
             });
 
             try
@@ -422,18 +419,18 @@ namespace MultronWinCleaner
                     if (allDuplicates.Count > 0)
                     {
                         StatusText.Text = _cts.IsCancellationRequested
-                            ? $"Scan Canceled. Found {allDuplicates.Count} duplicate files."
-                            : $"Scan Complete. Found {allDuplicates.Count} duplicate files.";
+                            ? Loc.F("Scan Canceled. Found {0} duplicate files.", allDuplicates.Count)
+                            : Loc.F("Scan Complete. Found {0} duplicate files.", allDuplicates.Count);
                     }
                 });
             }
             catch (OperationCanceledException)
             {
-                await Dispatcher.InvokeAsync(() => StatusText.Text = "Scan Canceled.");
+                await Dispatcher.InvokeAsync(() => StatusText.Text = Loc.T("Scan Canceled."));
             }
             catch (Exception ex)
             {
-                await Dispatcher.InvokeAsync(() => StatusText.Text = $"Scan Error: {ex.Message}");
+                await Dispatcher.InvokeAsync(() => StatusText.Text = Loc.F("Scan Error: {0}", ex.Message));
             }
         }
 
@@ -531,7 +528,7 @@ namespace MultronWinCleaner
 
                 Dispatcher.BeginInvoke(() =>
                 {
-                    StatusText.Text = $"{phase}... {scannedCount} files scanned, {exactResults.Count} identical files found.";
+                    StatusText.Text = Loc.F("{0}... {1} files scanned, {2} identical files found.", Loc.T(phase), scannedCount, exactResults.Count);
                     if (FilesScannedText != null) FilesScannedText.Text = currentFile;
                 });
             }
@@ -800,7 +797,7 @@ namespace MultronWinCleaner
             if (ExtensionTextBox == null || ExtensionPresetComboBox.SelectedItem == null) return;
 
             var selectedItem = (ComboBoxItem)ExtensionPresetComboBox.SelectedItem;
-            string content = selectedItem.Content.ToString();
+            string content = Loc.En(selectedItem.Content);
 
             if (content.Contains("All Files"))
             {
@@ -985,7 +982,7 @@ namespace MultronWinCleaner
         {
             if (PairsListBox == null) return;
             string query = SearchBox?.Text.Trim() ?? string.Empty;
-            if (query.Length == 0 || query == SearchPlaceholder)
+            if (query.Length == 0)
             {
                 PairsListBox.ItemsSource = duplicatePairs;
                 return;
@@ -1012,10 +1009,10 @@ namespace MultronWinCleaner
             string ext = Path.GetExtension(fileName).ToLowerInvariant();
             if (ImageExtensions.Contains(ext)) return "🖼️";
             if (VideoExtensions.Contains(ext)) return "🎥";
-            if (MusicExtensions.Contains(ext)) return "🎵";
-            if (ArchiveExtensions.Contains(ext)) return "📦";
-            if (ProgramExtensions.Contains(ext)) return "⚙️";
-            return "📄";
+            if (MusicExtensions.Contains(ext)) return "🎥";
+            if (ArchiveExtensions.Contains(ext)) return "🎥";
+            if (ProgramExtensions.Contains(ext)) return "🎥";
+            return "🎵";
         }
 
         private string FormatSize(long bytes)
@@ -1054,7 +1051,7 @@ namespace MultronWinCleaner
 
             if (totalRecoverableBytes > 0)
             {
-                TotalSizeText.Text = $"Recoverable Space: {FormatSize(totalRecoverableBytes)}";
+                TotalSizeText.Text = Loc.F("Recoverable Space: {0}", FormatSize(totalRecoverableBytes));
                 TotalSizeText.Visibility = Visibility.Visible;
             }
             else
@@ -1065,9 +1062,9 @@ namespace MultronWinCleaner
 
         private async void CleanDuplicates()
         {
-            MessageBoxResult result = MessageBox.Show(
-                "All CHECKED files in the list will be permanently deleted. Are you sure?",
-                "Confirm Cleanup", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult result = AppDialog.Show(
+                Loc.T("All CHECKED files in the list will be permanently deleted. Are you sure?"),
+                Loc.T("Confirm Cleanup"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -1089,7 +1086,7 @@ namespace MultronWinCleaner
 
                 if (totalFiles == 0)
                 {
-                    MessageBox.Show("No files were selected for deletion.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AppDialog.Show(Loc.T("No files were selected for deletion."), Loc.T("Info"), MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
@@ -1123,7 +1120,7 @@ namespace MultronWinCleaner
                             var keptFile = keptFileOf[fileNode];
                             if (File.Exists(filePath) && fileNode.IsExactDuplicate && !FilesAreEqual(filePath, keptFile.FilePath, verifyToken))
                             {
-                                failedFilesList.Add(CreateErrorNode(fileNode, "Not deleted: its content no longer matches " + keptFile.FilePath));
+                                failedFilesList.Add(CreateErrorNode(fileNode, Loc.F("Not deleted: its content no longer matches {0}", keptFile.FilePath)));
                             }
                             else if (File.Exists(filePath))
                             {
@@ -1136,7 +1133,7 @@ namespace MultronWinCleaner
                             }
                             else
                             {
-                                failedFilesList.Add(CreateErrorNode(fileNode, "File missing on disk"));
+                                failedFilesList.Add(CreateErrorNode(fileNode, Loc.T("File missing on disk")));
                             }
                         }
                         catch (Exception ex)
@@ -1144,7 +1141,7 @@ namespace MultronWinCleaner
                             failedFilesList.Add(CreateErrorNode(fileNode, ex.Message));
                         }
 
-                        progressReporter.Report($"Deleting... ({currentProcessed}/{totalFiles}) - Freed: {FormatSize(freedBytes)}");
+                        progressReporter.Report(Loc.F("Deleting... ({0}/{1}) - Freed: {2}", currentProcessed, totalFiles, FormatSize(freedBytes)));
                     }
                 });
 
@@ -1154,13 +1151,13 @@ namespace MultronWinCleaner
 
                 ClearListButton_Click(null, null);
 
-                StatusText.Text = $"Cleanup Complete! Successfully deleted {deletedCount} of {totalFiles} files. Total freed space: {FormatSize(freedBytes)}";
+                StatusText.Text = Loc.F("Cleanup Complete! Successfully deleted {0} of {1} files. Total freed space: {2}", deletedCount, totalFiles, FormatSize(freedBytes));
 
                 if (failedFilesList.Count > 0)
                 {
                     var errorFolder = new FolderNodeModel
                     {
-                        Name = $"⚠️ Failed to Delete ({failedFilesList.Count} files)",
+                        Name = Loc.F("⚠️ Failed to Delete ({0} files)", failedFilesList.Count),
                         FullPath = "ErrorList",
                         Children = new ObservableCollection<object>(failedFilesList)
                     };
@@ -1175,7 +1172,7 @@ namespace MultronWinCleaner
         {
             return new FileNodeModel
             {
-                FileName = $"{originalNode.FileName}  [ERROR: {errorMessage}]",
+                FileName = Loc.F("{0}  [ERROR: {1}]", originalNode.FileName, errorMessage),
                 FilePath = originalNode.FilePath,
                 FileIcon = "❌",
                 FormattedSize = originalNode.FormattedSize,
@@ -1201,20 +1198,52 @@ namespace MultronWinCleaner
             _isScanning = false;
             _isScanned = false;
             MainActionButton.IsEnabled = true;
-            MainActionButton.Content = "SCAN";
+            MainActionButton.Content = Loc.T("SCAN");
             MainActionButton.Background = (Brush)FindResource("AccentColor");
-            StatusText.Text = "Ready to scan target directories.";
+            StatusText.Text = Loc.T("Ready to scan target directories.");
             TotalSizeText.Visibility = Visibility.Collapsed;
             if (SearchCountText != null) SearchCountText.Text = "";
             if (FilesScannedText != null) FilesScannedText.Text = "";
         }
 
+        private System.Windows.Threading.DispatcherTimer? searchTimer;
+
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool empty = SearchBox.Text.Length == 0;
+            SearchHint.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
+            SearchClear.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
+            if (searchTimer == null)
+            {
+                searchTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+                searchTimer.Tick += (s, args) =>
+                {
+                    searchTimer.Stop();
+                    ApplySearch();
+                };
+            }
+            searchTimer.Stop();
+            searchTimer.Start();
+        }
+
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+                SearchBox.Clear();
+        }
+
+        private void SearchClear_Click(object sender, RoutedEventArgs e)
+        {
+            SearchBox.Clear();
+            SearchBox.Focus();
+        }
+
+        private void ApplySearch()
         {
             ApplyPairFilter();
             string query = SearchBox.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(query) || query == "Search by File Name or SHA256 Hash...")
+            if (query.Length == 0)
             {
                 DuplicatesTreeView.ItemsSource = ExplorerTree;
                 if (SearchCountText != null) SearchCountText.Text = "";
@@ -1234,7 +1263,7 @@ namespace MultronWinCleaner
             }
 
             DuplicatesTreeView.ItemsSource = filteredTree;
-            if (SearchCountText != null) SearchCountText.Text = $"{matchCount} matches found";
+            if (SearchCountText != null) SearchCountText.Text = Loc.F("{0} matches found", matchCount);
         }
 
         private FolderNodeModel FilterFolderTree(FolderNodeModel node, string query, ref int matchCount)
@@ -1381,18 +1410,18 @@ namespace MultronWinCleaner
             if (File.Exists(duplicatesFilePath))
             {
                 try { Process.Start(new ProcessStartInfo(duplicatesFilePath) { UseShellExecute = true }); }
-                catch (Exception ex) { MessageBox.Show($"Could not open the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                catch (Exception ex) { AppDialog.Show(Loc.F("Could not open the file: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
             }
-            else MessageBox.Show("The duplicates data file does not exist yet.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            else AppDialog.Show(Loc.T("The duplicates data file does not exist yet."), Loc.T("Information"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnDeleteJson_Click(object sender, RoutedEventArgs e)
         {
             if (File.Exists(duplicatesFilePath))
             {
-                MessageBoxResult result = MessageBox.Show(
-                    "Are you sure you want to delete the saved duplicates data file?",
-                    "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = AppDialog.Show(
+                    Loc.T("Are you sure you want to delete the saved duplicates data file?"),
+                    Loc.T("Confirm Deletion"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -1400,12 +1429,12 @@ namespace MultronWinCleaner
                     {
                         File.Delete(duplicatesFilePath);
                         ClearListButton_Click(null, null);
-                        MessageBox.Show("Data file successfully deleted.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        AppDialog.Show(Loc.T("Data file successfully deleted."), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                    catch (Exception ex) { MessageBox.Show($"Could not delete the file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+                    catch (Exception ex) { AppDialog.Show(Loc.F("Could not delete the file: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
                 }
             }
-            else MessageBox.Show("The duplicates data file does not exist.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            else AppDialog.Show(Loc.T("The duplicates data file does not exist."), Loc.T("Information"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ClearListButton_Click(object sender, RoutedEventArgs e)
@@ -1413,33 +1442,9 @@ namespace MultronWinCleaner
             allDuplicates.Clear();
             ExplorerTree.Clear();
             SetGroupIndex(new Dictionary<string, List<FileNodeModel>>(StringComparer.OrdinalIgnoreCase));
-            StatusText.Text = "List cleared.";
+            StatusText.Text = Loc.T("List cleared.");
             if (File.Exists(duplicatesFilePath)) File.Delete(duplicatesFilePath);
             ResetToScanState();
-        }
-
-        private void SetSearchPlaceholder()
-        {
-            SearchBox.Text = "Search by File Name or SHA256 Hash...";
-            SearchBox.Foreground = new SolidColorBrush(Colors.Gray);
-
-            SearchBox.GotFocus += (s, ev) =>
-            {
-                if (SearchBox.Text == "Search by File Name or SHA256 Hash...")
-                {
-                    SearchBox.Text = "";
-                    SearchBox.Foreground = (Brush)FindResource("TextPrimary");
-                }
-            };
-
-            SearchBox.LostFocus += (s, ev) =>
-            {
-                if (string.IsNullOrWhiteSpace(SearchBox.Text))
-                {
-                    SearchBox.Text = "Search by File Name or SHA256 Hash...";
-                    SearchBox.Foreground = new SolidColorBrush(Colors.Gray);
-                }
-            };
         }
 
         private void AdvancedToggle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -1447,18 +1452,18 @@ namespace MultronWinCleaner
             if (AdvancedPanel.Visibility == Visibility.Collapsed)
             {
                 AdvancedPanel.Visibility = Visibility.Visible;
-                AdvancedToggleText.Text = "▲ Hide Properties";
+                AdvancedToggleText.Text = Loc.T("▲ Hide Properties");
             }
             else
             {
                 AdvancedPanel.Visibility = Visibility.Collapsed;
-                AdvancedToggleText.Text = "▼ Properties";
+                AdvancedToggleText.Text = Loc.T("▼ Properties");
             }
         }
         
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new VistaFolderBrowserDialog { Description = "Select folder" };
+            var dlg = new VistaFolderBrowserDialog { Description = Loc.T("Select folder") };
             if (dlg.ShowDialog() == true && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
                 FolderListBox.Items.Add(dlg.SelectedPath);
         }
