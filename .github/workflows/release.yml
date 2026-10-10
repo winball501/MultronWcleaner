@@ -91,7 +91,7 @@ jobs:
               $version = $sourceVersion.ToString()
               $tag = "v$version"
             }
-            $name = "Multron Windows Cleaner v$version"
+            $name = "Multron Windows Cleaner v$version beta"
             if (-not $isTag -and (git tag --list $tag)) {
               Write-Host "::notice::$tag is already released. Raise CurrentAppVersion in Updater.cs to publish a new version."
               "skip=true" >> $env:GITHUB_OUTPUT
@@ -130,7 +130,7 @@ jobs:
           $stage = Join-Path $env:RUNNER_TEMP 'mwc'
           Copy-Item $out $stage -Recurse
           Get-ChildItem $stage -Recurse -Filter *.pdb | Remove-Item
-          Compress-Archive -Path $stage -DestinationPath dist/mwc.zip
+          Compress-Archive -Path (Join-Path $stage "*") -DestinationPath dist/mwc.zip
           "stage=$stage" >> $env:GITHUB_OUTPUT
 
       - name: Install Inno Setup
