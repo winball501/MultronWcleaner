@@ -164,7 +164,6 @@ namespace MultronWinCleaner.Processes
             return false;
         }
 
-        /// <param name="rescan">Ask the server for a fresh scan (skips its shared verdict cache).</param>
         public async Task<CloudScanResult> ScanFileAsync(string path, IProgress<double>? uploadProgress, CancellationToken ct, bool rescan = false)
         {
             Connection connection = current is { IsUsable: true } c ? c : throw new IOException(Loc.T("Not connected."));
@@ -231,9 +230,6 @@ namespace MultronWinCleaner.Processes
         private async Task<CloudScanResult> UploadAndScanAsync(Connection connection, PendingScan pending, long id, string path,
             CloudScanResult result, IProgress<double>? uploadProgress, CancellationToken ct, bool rescan = false)
         {
-            // The upload slot covers reading and sending only. It is released before the
-            // result arrives, so the next file uploads while this one is being scanned
-            // (holding it until the result tied the upload rate to the scan speed).
             await connection.UploadSlots.WaitAsync(ct);
             try
             {
@@ -252,8 +248,6 @@ namespace MultronWinCleaner.Processes
                 result.Size = data.Length;
                 result.Sha256 = Convert.ToHexString(SHA256.HashData(data));
 
-                // Brotli upload when the server accepts it and it saves at least 10%.
-                // Compressed outside SendLock, so other uploads keep streaming meanwhile.
                 byte[] payload = data;
                 if (connection.SupportsBrotli && ShouldTryCompress(path, data.Length))
                 {
@@ -372,9 +366,6 @@ namespace MultronWinCleaner.Processes
             return (Convert.ToHexString(hash), file.Length);
         }
 
-        // Already compressed formats: Brotli would only cost CPU.
-        // Well-known folders replaced by placeholders before a folder path is sent, longest
-        // first so %LOCALAPPDATA% and %TEMP% win over %USERPROFILE%.
         private static readonly Lazy<(string Name, string Path)[]> FolderPlaceholders = new(() =>
         {
             var list = new List<(string Name, string Path)>();
@@ -394,12 +385,6 @@ namespace MultronWinCleaner.Processes
             return list.OrderByDescending(x => x.Path.Length).ToArray();
         });
 
-        /// <summary>
-        /// Folder of a scanned file as sent to the server (see the EULA, section 2): the
-        /// user profile and other well-known folders become placeholders such as
-        /// %USERPROFILE%\Downloads, and another user's profile (X:\Users\name) becomes
-        /// %USERPROFILE% too, so no Windows user name is sent. Empty when unknown.
-        /// </summary>
         internal static string NormalizeFolder(string path)
         {
             try
@@ -415,7 +400,6 @@ namespace MultronWinCleaner.Processes
                     if (dir.StartsWith(value + "\\", StringComparison.OrdinalIgnoreCase))
                         return Trim260(name + dir.Substring(value.Length));
                 }
-                // X:\Users\<other user>\...
                 if (dir.Length > 9 && dir[1] == ':' && dir.Substring(2).StartsWith("\\Users\\", StringComparison.OrdinalIgnoreCase))
                 {
                     int end = dir.IndexOf('\\', 9);
@@ -443,14 +427,13 @@ namespace MultronWinCleaner.Processes
         private static bool ShouldTryCompress(string path, int length) =>
             length >= 4096 && !IncompressibleExtensions.Contains(Path.GetExtension(path));
 
-        // Quality 5: several times faster than the maximum, most of the size gain.
         private static byte[]? TryBrotli(byte[] data)
         {
             var dest = new byte[BrotliEncoder.GetMaxCompressedLength(data.Length)];
             if (!BrotliEncoder.TryCompress(data, dest, out int written, quality: 5, window: 22))
                 return null;
             if (written >= data.Length - data.Length / 10)
-                return null; // packed or encrypted content: send it as is
+                return null;
             return dest.AsSpan(0, written).ToArray();
         }
 
@@ -504,7 +487,6 @@ namespace MultronWinCleaner.Processes
             private int faulted;
 
             public bool SupportsCheck { get; private set; }
-            /// <summary>Server accepts Brotli-compressed uploads ("encodings" in hello_ok).</summary>
             public bool SupportsBrotli { get; private set; }
             public int CheckBatchSize { get; private set; } = 256;
             public SemaphoreSlim UploadSlots { get; private set; } = new(4, 4);
@@ -703,9 +685,22 @@ namespace MultronWinCleaner.Processes
         }
     }
 
-    public class CloudScanResult
+    public class CloudScanResult : System.ComponentModel.INotifyPropertyChanged
     {
-        public bool IsSelected { get; set; }
+        private bool isSelected;
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        public bool IsSelected
+        {
+            get => isSelected;
+            set
+            {
+                if (isSelected == value) return;
+                isSelected = value;
+                PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(IsSelected)));
+            }
+        }
         public string FilePath { get; set; } = "";
         public string FileName => Path.GetFileName(FilePath);
         public long Size { get; set; }
@@ -727,6 +722,8 @@ namespace MultronWinCleaner.Processes
         public CloudScanResult MarkRemoved(string verdict, string detail, IEnumerable<string>? steps = null)
         {
             var copy = (CloudScanResult)MemberwiseClone();
+            copy.PropertyChanged = null;
+            copy.isSelected = false;
             if (!IsRemoved)
                 copy.OriginalVerdict = Verdict;
             copy.Verdict = verdict;

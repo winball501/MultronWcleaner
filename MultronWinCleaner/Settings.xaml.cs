@@ -530,7 +530,7 @@ namespace MultronWinCleaner
             }
             catch (Exception ex)
             {
-                ShowAppUpdateState(Loc.F("Could not check for updates: {0}", ex.Message));
+                ShowAppUpdateState(Loc.F("Could not check for updates: {0}", MultronWinCleaner.Processes.Updater.DescribeError(ex)));
             }
             finally
             {

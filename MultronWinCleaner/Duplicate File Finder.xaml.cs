@@ -243,6 +243,8 @@ namespace MultronWinCleaner
 
         #endregion
 
+        private static Multron_Win_Cleaner.MainWindow? MainStatus => Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow;
+
         private async void MainActionButton_Click(object sender, RoutedEventArgs e)
         {
             if (_mainCancelContent != null)
@@ -271,6 +273,7 @@ namespace MultronWinCleaner
                 TotalSizeText.Visibility = Visibility.Collapsed;
                 if (SearchCountText != null) SearchCountText.Text = "";
 
+                MainStatus?.MirrorToolStatus(Loc.T("Duplicate File Finder"), StatusText);
                 await RunScanAsync();
 
                 _isScanning = false;
@@ -279,6 +282,7 @@ namespace MultronWinCleaner
                 if (_cts != null && _cts.IsCancellationRequested)
                 {
                     StatusText.Text = Loc.F("Scan Canceled. Found {0} duplicate files.", allDuplicates.Count);
+                    MainStatus?.EndMirrorToolStatus(StatusText, true);
                     if (allDuplicates.Count == 0) ResetToScanState();
                 }
                 else if (allDuplicates.Count > 0)
@@ -286,10 +290,12 @@ namespace MultronWinCleaner
                     _isScanned = true;
                     MainActionButton.Content = Loc.T("CLEAN");
                     MainActionButton.Background = new SolidColorBrush(Colors.Crimson);
+                    MainStatus?.EndMirrorToolStatus(StatusText);
                 }
                 else
                 {
                     StatusText.Text = Loc.T("Scan Complete. No duplicate files found.");
+                    MainStatus?.EndMirrorToolStatus(StatusText);
                     AppDialog.Show(Loc.T("Scan complete. No duplicate files were found in the selected directories."), Loc.T("Scan Results"), MessageBoxButton.OK, MessageBoxImage.Information);
                     ResetToScanState();
                 }
@@ -1068,6 +1074,7 @@ namespace MultronWinCleaner
 
             if (result == MessageBoxResult.Yes)
             {
+                MainStatus?.MirrorToolStatus(Loc.T("Duplicate File Finder"), StatusText);
                 var keptFileOf = new Dictionary<FileNodeModel, FileNodeModel>();
                 foreach (var group in _duplicateGroupIndex.Values)
                 {
@@ -1152,6 +1159,7 @@ namespace MultronWinCleaner
                 ClearListButton_Click(null, null);
 
                 StatusText.Text = Loc.F("Cleanup Complete! Successfully deleted {0} of {1} files. Total freed space: {2}", deletedCount, totalFiles, FormatSize(freedBytes));
+                MainStatus?.EndMirrorToolStatus(StatusText, failedFilesList.Count > 0);
 
                 if (failedFilesList.Count > 0)
                 {

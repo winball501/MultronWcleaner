@@ -45,6 +45,10 @@ namespace MultronWinCleaner
             configure = new Configure(this);
             startupmanager = new StartupManager(this);
 
+            WatchToolProgress(FirewallProgress, "Firewall Rule Cleaner", () => (FirewallScanResultLabel.Content?.ToString() ?? "", FirewallScanResultLabel.Foreground));
+            WatchToolProgress(ShortcutProgress, "Shortcut Fixer", () => (ShortcutResultLabel.Content?.ToString() ?? "", ShortcutResultLabel.Foreground));
+            WatchToolProgress(SecurityProgress, "Security Check", () => (SecurityResultLabel.Text, SecurityResultLabel.Foreground));
+
             var availabilityTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
             SecurityUndo.Visibility = MultronWinCleaner.Processes.SecurityCheck.HasBackup ? Visibility.Visible : Visibility.Collapsed;
             availabilityTimer.Tick += (s, e) => UpdateToolAvailability();
@@ -377,6 +381,32 @@ namespace MultronWinCleaner
         {
             if (MainWindowButton != null)
                 MainWindowButton.Visibility = chkTrayIconUtil.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void WatchToolProgress(System.Windows.Controls.ProgressBar bar, string tool, Func<(string Text, Brush Brush)> result)
+        {
+            bool running = false;
+            void Check(object? sender, EventArgs e)
+            {
+                bool now = bar.Visibility == Visibility.Visible && bar.IsIndeterminate;
+                if (now == running)
+                    return;
+                running = now;
+                if (now)
+                {
+                    window?.ShowToolStatus(Loc.T(tool), Loc.T("Working..."));
+                    return;
+                }
+                Dispatcher.BeginInvoke(() =>
+                {
+                    var (text, brush) = result();
+                    bool ok = brush is SolidColorBrush solid &&
+                        (solid.Color == Colors.LimeGreen || solid.Color == (Color)ColorConverter.ConvertFromString(MainWindow.OkColor));
+                    window?.FinishToolStatus(Loc.T(tool), text, !ok);
+                });
+            }
+            System.ComponentModel.DependencyPropertyDescriptor.FromProperty(UIElement.VisibilityProperty, typeof(System.Windows.Controls.ProgressBar)).AddValueChanged(bar, Check);
+            System.ComponentModel.DependencyPropertyDescriptor.FromProperty(System.Windows.Controls.ProgressBar.IsIndeterminateProperty, typeof(System.Windows.Controls.ProgressBar)).AddValueChanged(bar, Check);
         }
 
         private void FirewallReset_Click(object sender, RoutedEventArgs e)

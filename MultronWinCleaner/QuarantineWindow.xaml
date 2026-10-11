@@ -1,0 +1,105 @@
+<Window
+    x:Class="MultronWinCleaner.QuarantineWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:loc="clr-namespace:MultronWinCleaner"
+    Title="{loc:Tr 'Quarantine'}"
+    Height="520" Width="900"
+    MinHeight="360" MinWidth="640"
+    WindowStyle="None"
+    ResizeMode="CanResizeWithGrip"
+    AllowsTransparency="True"
+    WindowStartupLocation="CenterOwner"
+    Icon="pack://application:,,,/Assets/mwc_utilities.ico"
+    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+    Background="{DynamicResource WindowBackground}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="MalwareScanStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="0,0,0,14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="Transparent" MouseDown="TopBar_MouseDown" Margin="20,14,14,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="18" Foreground="#FFFF9800" VerticalAlignment="Center"/>
+                <TextBlock Text="{loc:Tr 'Quarantined Files'}" FontSize="19" FontWeight="Bold" Margin="10,0,0,0" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                <TextBlock x:Name="CountText" Text="" FontSize="13" Margin="10,2,0,0" Foreground="{DynamicResource TextSecondary}" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                <Button Content="&#xE921;" Style="{StaticResource WindowButtonStyle}" Click="MinimizeButton_Click" ToolTip="{loc:Tr 'Minimize'}" Margin="0,0,4,0"/>
+                <Button Content="&#xE8BB;" Style="{StaticResource CloseWindowButtonStyle}" Click="CloseButton_Click" ToolTip="{loc:Tr 'Close'}"/>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="20,0,20,0" Padding="18,14,18,12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource HintStyle}" Margin="0,0,0,10"
+                           Text="{loc:Tr 'Quarantined files are compressed and encrypted in a hidden folder, so they cannot run and are not detected again by antivirus programs. You can restore them to their original location or delete them permanently.'}"/>
+
+                <DataGrid x:Name="QuarantineDataGrid" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                          Background="Transparent" Foreground="{DynamicResource TextPrimary}" BorderThickness="0"
+                          RowBackground="Transparent" AlternatingRowBackground="Transparent"
+                          ColumnHeaderStyle="{StaticResource ResultsHeaderStyle}"
+                          CellStyle="{StaticResource ResultsCellStyle}"
+                          RowStyle="{StaticResource ResultsRowStyle}"
+                          EnableRowVirtualization="True" SelectionMode="Single"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{loc:Tr 'Restore'}" Click="Restore_Click"/>
+                            <MenuItem Header="{loc:Tr 'Delete Permanently'}" Click="Delete_Click"/>
+                            <Separator/>
+                            <MenuItem Header="{loc:Tr 'Export Selected (ZIP)'}" Click="ExportSelected_Click"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="{loc:Tr 'File Name'}" Binding="{Binding OriginalFileName}" Width="170"/>
+                        <DataGridTextColumn Header="{loc:Tr 'Threat'}" Binding="{Binding ThreatName}" Width="170"/>
+                        <DataGridTextColumn Header="{loc:Tr 'Size'}" Binding="{Binding FormattedSize}" Width="90"/>
+                        <DataGridTextColumn Header="{loc:Tr 'Stored Size'}" Binding="{Binding FormattedStoredSize}" Width="105"/>
+                        <DataGridTextColumn Header="{loc:Tr 'Date'}" Binding="{Binding FormattedDate}" Width="130"/>
+                        <DataGridTextColumn Header="{loc:Tr 'Original Path'}" Binding="{Binding OriginalPath}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel x:Name="EmptyPanel" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                    <TextBlock Text="&#xE72E;" FontFamily="{StaticResource IconFont}" FontSize="34" Foreground="{DynamicResource TextSecondary}"
+                               Opacity="0.45" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{loc:Tr 'No quarantined files.'}" Margin="0,10,0,0" Style="{StaticResource HintStyle}" FontSize="13" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <WrapPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Content="{loc:Tr 'Restore Selected'}" Click="Restore_Click" Style="{StaticResource SoftButtonStyle}" Margin="0,0,8,6"/>
+                    <Button Content="{loc:Tr 'Delete Selected'}" Click="Delete_Click" Style="{StaticResource DangerSoftButtonStyle}" Margin="0,0,8,6"/>
+                    <Button Content="{loc:Tr 'Delete All'}" Click="DeleteAll_Click" Style="{StaticResource DangerSoftButtonStyle}" Margin="0,0,8,6"/>
+                    <Button x:Name="ExportSelectedButton" Content="{loc:Tr 'Export Selected (ZIP)'}" Click="ExportSelected_Click" Style="{StaticResource SoftButtonStyle}" Margin="0,0,8,6"
+                            ToolTip="{loc:Tr 'Saves the selected file in a ZIP protected with the password infected, for example to send it to an antivirus vendor.'}"/>
+                    <Button x:Name="ExportAllButton" Content="{loc:Tr 'Export All (ZIP)'}" Click="ExportAll_Click" Style="{StaticResource SoftButtonStyle}" Margin="0,0,8,6"
+                            ToolTip="{loc:Tr 'Saves all quarantined files in a ZIP protected with the password infected.'}"/>
+                    <Button Content="{loc:Tr 'Open Quarantine Folder'}" Click="OpenFolder_Click" Style="{StaticResource SoftButtonStyle}" Margin="0,0,8,6"/>
+                </WrapPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

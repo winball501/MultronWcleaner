@@ -200,6 +200,7 @@ namespace MultronWinCleaner
             ScanProgressBar.Visibility = Visibility.Visible;
             ScanProgressBar.Value = 0;
             LargeFilesDataGrid.ItemsSource = null;
+            (Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow)?.MirrorToolStatus(Loc.T("Large File Finder"), ScanResultLabel, ScanProgressBar);
 
             string selectedUnit = (SizeUnitComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "GB";
 
@@ -375,6 +376,7 @@ namespace MultronWinCleaner
             }
             finally
             {
+                (Application.Current?.MainWindow as Multron_Win_Cleaner.MainWindow)?.EndMirrorToolStatus(ScanResultLabel, cancel == 1);
                 isScanning = false;
                 UpdateScanButtonUI(false);
                 ScanProgressBar.Visibility = Visibility.Collapsed;

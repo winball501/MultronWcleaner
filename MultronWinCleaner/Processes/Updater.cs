@@ -137,9 +137,8 @@ namespace MultronWinCleaner.Processes
                 string repo = "MultronWcleaner-Database";
                 string owner = "winball501";
                 var client = new GitHubClient(new ProductHeaderValue("MultronWcleaner-Database"));
-                var releases = await client.Repository.Release.GetAll(owner, repo);
+                var latest = await client.Repository.Release.GetLatest(owner, repo);
                 WriteSetting(LastCheckSettingKey, DateTime.UtcNow.Ticks.ToString());
-                var latest = releases[0];
                 string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string versionFile = Path.Combine(appDirectory, "databaseversion.txt");
                 string databaseFile = Path.Combine(appDirectory, "database.txt");
@@ -240,13 +239,23 @@ namespace MultronWinCleaner.Processes
                 await main.Dispatcher.InvokeAsync(async () =>
                 {
                     await cts.CancelAsync();
-                    main.StatusLoad.Text = ex.Message;
+                    main.StatusLoad.Text = DescribeError(ex);
                 });
             }
         }
+
+        public static string DescribeError(Exception ex)
+        {
+            if (ex is RateLimitExceededException limit)
+                return Loc.F("GitHub's update check limit was reached. Try again after {0:t}.", limit.Reset.LocalDateTime);
+            if (ex is NotFoundException)
+                return Loc.T("No release was found on GitHub.");
+            return ex.Message;
+        }
+
         public const string AppUpdateSettingKey = "appautoupdate";
         private const string AppLastCheckSettingKey = "applastcheck";
-        public static readonly Version CurrentAppVersion = new Version("1.26");
+        public static readonly Version CurrentAppVersion = new Version("1.26.1");
 
         public static bool IsAppAutoUpdateEnabled() => ReadSetting(AppUpdateSettingKey) != "0";
 
@@ -274,10 +283,16 @@ namespace MultronWinCleaner.Processes
         public static async Task<AppUpdate?> FindLatestAppReleaseAsync()
         {
             var client = new GitHubClient(new ProductHeaderValue("MultronWcleaner"));
-            var releases = await client.Repository.Release.GetAll("winball501", "MultronWcleaner");
+            Release latest;
+            try
+            {
+                latest = await client.Repository.Release.GetLatest("winball501", "MultronWcleaner");
+            }
+            catch (NotFoundException)
+            {
+                return null;
+            }
             WriteSetting(AppLastCheckSettingKey, DateTime.UtcNow.Ticks.ToString());
-            if (releases.Count == 0) return null;
-            var latest = releases[0];
 
             var match = Regex.Match(latest.Name ?? "", @"\d+\.\d+(\.\d+)?");
             if (!match.Success) return null;
@@ -545,7 +560,7 @@ namespace MultronWinCleaner.Processes
                 await main.Dispatcher.InvokeAsync(async () =>
                 {
                     await cts.CancelAsync();
-                    main.StatusLoad.Text = ex.Message;
+                    main.StatusLoad.Text = DescribeError(ex);
                 });
             }
         }

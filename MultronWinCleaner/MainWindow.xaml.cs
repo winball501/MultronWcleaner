@@ -1895,6 +1895,8 @@ namespace Multron_Win_Cleaner
 
         private void ExitApp_Click(object sender, RoutedEventArgs e)
         {
+            if (!ConfirmExitIfBusy())
+                return;
             ExitApplication();
         }
 
@@ -1918,6 +1920,35 @@ namespace Multron_Win_Cleaner
             try { TrayIcon?.Dispose(); } catch { }
 
             Environment.Exit(0);
+        }
+
+        private string? BusyOperationName()
+        {
+            try
+            {
+                if (IsScanOrCleanBusy)
+                    return Loc.T("a scan or cleanup");
+                if (activeTool != null)
+                    return activeTool;
+                if (IsAppUpdateBusy)
+                    return Loc.T("an app update");
+            }
+            catch { }
+            return null;
+        }
+
+        private bool ConfirmExitIfBusy()
+        {
+            if (System.Threading.Volatile.Read(ref exiting) == 1)
+                return true;
+            string? op = BusyOperationName();
+            if (op == null)
+                return true;
+            MessageBoxResult answer = AppDialog.Show(
+                Loc.F("An operation is still running: {0}.", op) + "\n\n" +
+                Loc.T("If you close Multron Win Cleaner now, it will be stopped. Do you want to close anyway?"),
+                Loc.T("Multron Windows Cleaner"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            return answer == MessageBoxResult.Yes;
         }
 
 
@@ -2035,6 +2066,8 @@ namespace Multron_Win_Cleaner
             }
             else
             {
+                if (!ConfirmExitIfBusy())
+                    return;
                 ExitApplication();
             }
 
@@ -2718,13 +2751,114 @@ namespace Multron_Win_Cleaner
             malwareCancelRestore = null;
         }
 
+        private string? activeTool;
+        private double toolSavedProgress;
+        private string? mirrorTool;
+        private TextBlock? mirrorSource;
+        private System.Windows.Controls.ProgressBar? mirrorBar;
+
+        private static readonly System.ComponentModel.DependencyPropertyDescriptor MirrorTextDescriptor =
+            System.ComponentModel.DependencyPropertyDescriptor.FromProperty(TextBlock.TextProperty, typeof(TextBlock));
+        private static readonly System.ComponentModel.DependencyPropertyDescriptor MirrorValueDescriptor =
+            System.ComponentModel.DependencyPropertyDescriptor.FromProperty(System.Windows.Controls.Primitives.RangeBase.ValueProperty, typeof(System.Windows.Controls.ProgressBar));
+
+        private void SetStatusText(string text, string color)
+        {
+            label1_Copy.Text = text;
+            label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
+        }
+
+        public void ShowToolStatus(string tool, string text, double? percent = null, bool warning = false)
+        {
+            if (IsScanOrCleanBusy || string.IsNullOrWhiteSpace(text))
+                return;
+            if (activeTool == null)
+            {
+                toolSavedProgress = progressBar1.Value;
+                progressBar1.Value = 0;
+            }
+            activeTool = tool;
+            if (percent.HasValue)
+                progressBar1.Value = Math.Clamp(percent.Value, 0, 100);
+            SetStatusText(Loc.F("{0}: {1}", tool, text), warning ? WarningColor : InfoColor);
+        }
+
+        public void FinishToolStatus(string tool, string text, bool problem)
+        {
+            if (activeTool != tool)
+                return;
+            activeTool = null;
+            if (IsScanOrCleanBusy)
+                return;
+            progressBar1.Value = toolSavedProgress;
+            if (!string.IsNullOrWhiteSpace(text))
+                SetStatusText(Loc.F("{0}: {1}", tool, text), problem ? WarningColor : OkColor);
+        }
+
+        public void MirrorToolStatus(string tool, TextBlock source, System.Windows.Controls.ProgressBar? bar = null)
+        {
+            StopMirroring();
+            mirrorTool = tool;
+            mirrorSource = source;
+            mirrorBar = bar;
+            MirrorTextDescriptor.AddValueChanged(source, MirrorChanged);
+            if (bar != null)
+                MirrorValueDescriptor.AddValueChanged(bar, MirrorChanged);
+            MirrorChanged(null, EventArgs.Empty);
+        }
+
+        public void EndMirrorToolStatus(TextBlock source, bool problem = false)
+        {
+            if (!ReferenceEquals(mirrorSource, source) || mirrorTool == null)
+                return;
+            string tool = mirrorTool;
+            StopMirroring();
+            FinishToolStatus(tool, source.Text, problem);
+        }
+
+        private void MirrorChanged(object? sender, EventArgs e)
+        {
+            if (mirrorSource == null || mirrorTool == null)
+                return;
+            double? percent = null;
+            if (mirrorBar != null && !mirrorBar.IsIndeterminate && mirrorBar.Maximum > mirrorBar.Minimum)
+                percent = (mirrorBar.Value - mirrorBar.Minimum) * 100 / (mirrorBar.Maximum - mirrorBar.Minimum);
+            ShowToolStatus(mirrorTool, mirrorSource.Text, percent);
+        }
+
+        private void StopMirroring()
+        {
+            if (mirrorSource != null)
+                MirrorTextDescriptor.RemoveValueChanged(mirrorSource, MirrorChanged);
+            if (mirrorBar != null)
+                MirrorValueDescriptor.RemoveValueChanged(mirrorBar, MirrorChanged);
+            mirrorTool = null;
+            mirrorSource = null;
+            mirrorBar = null;
+        }
+
         public void SetStandaloneMalwareScan(bool running)
         {
             if (running)
+            {
                 EnterMalwareCancelMode("Scan");
+                ShowToolStatus(Loc.T("Malware Scan"), Loc.T("collecting files..."), 0);
+            }
             else if (Equals(malwareCancelRestore, "Scan"))
+            {
                 LeaveMalwareCancelMode();
+            }
         }
+
+        public void SetStandaloneMalwareProgress(int done, int total, int threats)
+        {
+            if (total <= 0 || activeTool != Loc.T("Malware Scan"))
+                return;
+            ShowToolStatus(Loc.T("Malware Scan"), Loc.F("{0:N0} / {1:N0} files checked, {2} threat(s) found", done, total, threats),
+                done * 100.0 / total, threats > 0);
+        }
+
+        public void SetStandaloneMalwareStatus(string text, bool problem) => FinishToolStatus(Loc.T("Malware Scan"), text, problem);
 
         private async void ButtonStartScan_Click(object sender, RoutedEventArgs e)
         {
@@ -3900,8 +4034,8 @@ namespace Multron_Win_Cleaner
             }
             catch (Exception ex)
             {
-                ShowDatabaseStatus(Loc.F("Could not install the update: {0}", ex.Message), WarningColor, always: true);
-                AppDialog.Show(owner, Loc.F("Could not install the update: {0}", ex.Message), Loc.T("Update Available"), MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowDatabaseStatus(Loc.F("Could not install the update: {0}", MultronWinCleaner.Processes.Updater.DescribeError(ex)), WarningColor, always: true);
+                AppDialog.Show(owner, Loc.F("Could not install the update: {0}", MultronWinCleaner.Processes.Updater.DescribeError(ex)), Loc.T("Update Available"), MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
             finally
@@ -4017,7 +4151,7 @@ namespace Multron_Win_Cleaner
             catch (Exception ex)
             {
                 if (beforeScan || IsIdleForDatabaseReload())
-                    ShowDatabaseStatus(Loc.F("Could not update the database: {0}", ex.Message), WarningColor, force);
+                    ShowDatabaseStatus(Loc.F("Could not update the database: {0}", MultronWinCleaner.Processes.Updater.DescribeError(ex)), WarningColor, force);
             }
             finally
             {
@@ -4255,6 +4389,11 @@ namespace Multron_Win_Cleaner
         }
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (!ConfirmExitIfBusy())
+            {
+                e.Cancel = true;
+                return;
+            }
             ExitApplication();
         }
     }

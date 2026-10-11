@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.26"
+  #define AppVersion "1.26.1"
 #endif
 #ifndef SourceDir
   #define SourceDir "..\MultronWinCleaner\bin\Release\net8.0-windows"
@@ -76,6 +76,7 @@ Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\Update"
+Type: filesandordirs; Name: "{app}\Logs"
 Type: files; Name: "{app}\*.mwcold"
 Type: files; Name: "{app}\excluded.txt"
 Type: files; Name: "{app}\settings.txt"

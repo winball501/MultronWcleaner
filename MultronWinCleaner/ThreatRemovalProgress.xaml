@@ -1,0 +1,160 @@
+<Window
+    x:Class="MultronWinCleaner.ThreatRemovalProgress"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:MultronWinCleaner"
+    Title="{loc:Tr 'Removing Threats'}"
+    Width="580" SizeToContent="Height"
+    WindowStyle="None"
+    ResizeMode="NoResize"
+    AllowsTransparency="True"
+    Background="Transparent"
+    WindowStartupLocation="CenterScreen"
+    ShowInTaskbar="True"
+    Icon="pack://application:,,,/Assets/mwc_utilities.ico"
+    FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    </Window.Resources>
+
+    <Border Margin="14" CornerRadius="14" Background="{DynamicResource WindowBackground}" BorderBrush="#26FFFFFF" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="18" ShadowDepth="4" Opacity="0.35" Color="Black"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="{DynamicResource PanelBackground}" CornerRadius="14,14,0,0" MouseDown="TitleBar_MouseDown">
+                <DockPanel LastChildFill="False" Margin="16,0,8,0">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <TextBlock x:Name="WindowTitleText" Text="{loc:Tr 'Removing Threats'}" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                        <Border Background="#20FF8C1A" CornerRadius="4" Padding="5,1" Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{loc:Tr 'TESTING'}" FontSize="10" FontWeight="Bold" Foreground="#FFFF8C1A"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                        <Button Content="─" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" FontSize="12" Click="Minimize_Click" ToolTip="{loc:Tr 'Minimize'}" Margin="0,0,4,0"/>
+                        <Button x:Name="CloseButton" Content="✕" Style="{StaticResource DangerButtonStyle}" Width="28" Height="28" FontSize="12" Click="Close_Click" ToolTip="{loc:Tr 'Close'}" IsEnabled="False"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="22,20,22,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Width="64" Height="64" VerticalAlignment="Center">
+                    <Ellipse x:Name="StateCircle" Fill="#FFDC3545"/>
+                    <TextBlock x:Name="StateGlyph" Text="&#xE74D;" FontFamily="{StaticResource IconFont}" FontSize="26" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Path x:Name="Spinner" Data="M 36,2 A 34,34 0 0 1 70,36" Width="72" Height="72" StrokeThickness="3" Stroke="#FFFF6B6B"
+                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5" Margin="-4">
+                        <Path.RenderTransform>
+                            <RotateTransform x:Name="SpinnerRotation" Angle="0"/>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+
+                <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
+                    <TextBlock x:Name="TitleText" Text="{loc:Tr 'Removing threats...'}" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="SubtitleText" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Row="2" Margin="22,18,22,0">
+                <ProgressBar x:Name="RemovalProgressBar" Height="8" Minimum="0" Maximum="100" Value="0"
+                             Foreground="#FFDC3545" Background="#22888888" BorderThickness="0"/>
+                <DockPanel Margin="0,6,0,0">
+                    <TextBlock x:Name="PercentText" Text="0%" DockPanel.Dock="Right" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="8,0,0,0"/>
+                    <TextBlock x:Name="CurrentFileText" Text="" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" TextTrimming="CharacterEllipsis"/>
+                </DockPanel>
+                <DockPanel Margin="0,3,0,0">
+                    <TextBlock Text="&#xE768;" FontFamily="{StaticResource IconFont}" FontSize="10" DockPanel.Dock="Left" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextSecondary}" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="CurrentStepText" Text="" FontSize="11" Foreground="{DynamicResource TextSecondary}" TextTrimming="CharacterEllipsis"/>
+                </DockPanel>
+
+                <Border Margin="0,14,0,0" Padding="0,12" CornerRadius="10" Background="{DynamicResource PanelBackground}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock x:Name="RemovedCountText" Text="0" FontSize="20" FontWeight="Bold" Foreground="#FF28A745" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="RemovedLabelText" Text="{loc:Tr 'Removed'}" FontSize="11" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="#22888888" Margin="0,4"/>
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <TextBlock x:Name="RebootCountText" Text="0" FontSize="20" FontWeight="Bold" Foreground="#FFFF9800" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{loc:Tr 'At Restart'}" FontSize="11" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <Border Grid.Column="3" Background="#22888888" Margin="0,4"/>
+                        <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                            <TextBlock x:Name="FailedCountText" Text="0" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{loc:Tr 'Failed'}" FontSize="11" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <Border Grid.Column="5" Background="#22888888" Margin="0,4"/>
+                        <StackPanel Grid.Column="6" HorizontalAlignment="Center">
+                            <TextBlock x:Name="ElapsedText" Text="00:00" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{loc:Tr 'Elapsed'}" FontSize="11" Foreground="{DynamicResource TextSecondary}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="{loc:Tr 'Details'}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,14,0,6"/>
+                <Border CornerRadius="10" Background="{DynamicResource TextBoxBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="4">
+                    <ListBox x:Name="DetailsList" Height="190" Background="Transparent" BorderThickness="0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.ScrollUnit="Pixel">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="4,1"/>
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <ContentPresenter Margin="{TemplateBinding Padding}"/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Text}" Foreground="{Binding Brush}" FontWeight="{Binding Weight}" Margin="{Binding Indent}"
+                                           FontSize="11.5" TextWrapping="Wrap"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+            </StackPanel>
+
+            <DockPanel Grid.Row="3" Margin="22,16,22,20" LastChildFill="False">
+                <Button x:Name="OpenLogButton" DockPanel.Dock="Left" Content="{loc:Tr 'Open Log'}" Height="34" Padding="14,0" Click="OpenLog_Click"
+                        Style="{StaticResource ModernButtonStyle}" Margin="0,0,8,0" ToolTip="{loc:Tr 'Opens the log file of this operation.'}"/>
+                <Button DockPanel.Dock="Left" Content="{loc:Tr 'Copy Details'}" Height="34" Padding="14,0" Click="CopyDetails_Click"
+                        Style="{StaticResource ModernButtonStyle}"/>
+                <Button x:Name="DoneButton" DockPanel.Dock="Right" Content="{loc:Tr 'Close'}" Width="90" Height="34" Click="Close_Click"
+                        Style="{StaticResource RoundedButtonStyle}" Visibility="Collapsed"/>
+                <Button x:Name="StopButton" DockPanel.Dock="Right" Content="{loc:Tr 'Stop'}" Width="100" Height="34" Click="Stop_Click"
+                        Style="{StaticResource DangerButtonStyle}" ToolTip="{loc:Tr 'Stops after the current file. Files already removed stay removed.'}"/>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

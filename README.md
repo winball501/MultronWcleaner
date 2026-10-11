@@ -115,11 +115,13 @@ The application is fully localized into **12 languages**: English, Turkish, Germ
 * **Rescan and "Possibly Clean":** Any result can be scanned again without the server's saved verdict. Files almost identical to a verified clean file are marked "Possibly clean".
 * **Reconnects by Itself:** If the connection drops, for example while the server restarts, the scan waits and reconnects instead of failing.
 * **Right-Click Scanning:** Optional *Scan with Multron Malware Scan* entry in the File Explorer right-click menu for files, folders and drives, plus *Send To > Multron Malware Scan* for scanning several items at once. Works while the app runs in the background.
-* **Quarantine Manager:** Suspicious or user-selected files can be safely isolated into a local quarantine vault with full metadata (origin path, SHA-256, size, threat label, timestamp).
+* **Quarantine Manager:** Suspicious or user-selected files can be safely isolated into a local quarantine vault with full metadata (origin path, SHA-256, size, threat label, timestamp). Quarantined files are compressed and encrypted with AES-256, so they cannot run, and are checked against their SHA-256 before they are restored. They can be exported to a ZIP protected with the password `infected`. The quarantine opens in its own window.
 * **Restore / Delete:** Quarantined files can be restored to their original location at any time, deleted individually, or purged in bulk.
 * **You Decide What Is Removed:** When a clean finds malicious files from the last scan, it lists them and asks before deleting anything. Automatic and startup cleans never delete them.
-* **Remove All Threats:** A single button deletes every remaining threat at once (after a confirmation that lists them), or clean each one by hand. Deleting or quarantining force-closes any program started from the infected file and the programs it started, while Windows system processes are never touched.
+* **Remove All Threats:** A single button deletes every remaining threat at once (after a confirmation that lists them), or clean each one by hand. **Quarantine All** moves them to quarantine instead, and a header checkbox checks every file in the list at once. Deleting or quarantining force-closes any program started from the infected file and the programs it started, while Windows system processes are never touched.
 * **Removal History:** A quarantined or deleted file stays in the results marked "Deleted by user" / "Quarantined by user" with the time; double-click a row for the full details, threat name, SHA-256 and the steps taken.
+* **Removal Progress:** Removing or quarantining threats opens a progress window with the current file, the step that is running (closing programs, taking ownership, scheduling deletion at restart...), counters for removed, at-restart and failed files, a detailed list of every step, and a Stop button.
+* **Scan Logs:** Every scan writes a log with its settings, every threat and suspicious file, files that could not be checked, connection drops and a summary; removals, quarantine actions and rescans are added to it. The Scan Logs window lists the logs and shows them next to the list. Logs can be exported as text files or as one ZIP.
 * **Offline Mode:** Turns off every online feature, including the cloud scan, when you do not want the app to connect to the internet.
 
 ### 🔒 Locked File & Process Management
@@ -307,3 +309,7 @@ Every bit of support is appreciated, but the app stays completely free either wa
 ## License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for complete details.
+
+### Third-party components
+
+Multron Win Cleaner bundles **Sysinternals PsExec** (`PsExec64.exe`), used by the Force Delete / Force Move feature to remove locked or protected files with SYSTEM privileges. PsExec is a Microsoft Sysinternals tool and is not covered by the MIT license above; it is governed by the Sysinternals Software License Terms. See [PSEXEC-EULA.md](PSEXEC-EULA.md).

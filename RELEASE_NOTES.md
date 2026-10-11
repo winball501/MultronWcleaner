@@ -1,4 +1,4 @@
-## Multron Win Cleaner 1.26 Update
+## Multron Win Cleaner 1.26.1 Update
 
 > [!WARNING]
 > **Antivirus false positives:** some antivirus programs may flag Multron Win Cleaner or one of its DLL files as suspicious when you download or run it. In particular, **Bitdefender** and engines that use it (for example Emsisoft, eScan, GData, Arcabit, VIPRE) may detect `MultronWinCleaner.dll` **heuristically as ransomware**, with a name such as `Gen:Heur.Ransom.Imps.3`. This is a false positive: a heuristic detection is based on behavior, not on a known malware signature, and it is triggered by what a system cleaner has to do (closing programs, deleting files, changing Windows settings). Multron Win Cleaner does not encrypt files, does not ask for a ransom and does not send your data anywhere except the optional cloud malware scan. The file has been reported to Bitdefender as a false positive again. The full source code is in this repository, and every release is built automatically by GitHub Actions. If your antivirus blocks the app, you can report the file to its vendor as a false positive or add an exception for the app folder.
@@ -6,85 +6,41 @@
 > * Bitdefender false positive form: <https://www.bitdefender.com/consumer/support/answer/29358/>
 > * Microsoft Defender file submission: <https://www.microsoft.com/en-us/wdsi/filesubmission>
 
-Changes since test build a3.
-
-### Languages
-- The whole app is translated into 12 languages: English, Turkish, German, Spanish, French, Italian, Brazilian Portuguese, Russian, Japanese, Korean, Simplified Chinese and Traditional Chinese.
-- The language can be changed in Settings; the app restarts to apply it.
-
-### Malware scan
-
 > **Test release:** the cloud malware scan is published for testing. It is released so it can be tried thoroughly and made stable, so results and behavior may still change. Please report false detections, missed threats or any problems in [Issues](https://github.com/winball501/MultronWcleaner/issues).
 
-- **Cloud engine:** files are checked by the viruskov.com OPEN-EDR engine over an encrypted TLS connection. The Malware Scan window now also shows that the scan servers run on a VDS hosted by [Türkbil](https://turkbil.net.tr/).
-- **License agreement:** shown once before the first cloud scan. It explains which files are sent; with the "Only executables & scripts" filter on (the default), personal files are never uploaded.
-- **Quarantine:** detected files can be moved to a quarantine folder, restored to their original place or deleted, one by one or all at once.
-- **Asks before removing threats:** when a clean finds malicious files from the last malware scan, it lists them and asks before deleting them. Automatic and startup cleans never delete them; they stay in the Malware Scan window for you to review.
-- **Removed items stay in the list:** a file you quarantine or delete is no longer dropped from the results; its row changes to "Deleted by user" or "Quarantined by user" with the time, so you keep a history. Double-click a row, or use "Show Details", to see the file, threat, SHA-256 and the steps taken.
-- **Remove All Threats:** one button deletes every remaining threat at once, after showing the list and asking. Files in a Windows or program folder are marked with a warning in that list.
-- **Force-closes the threat:** deleting or quarantining a file now force-closes any program started from that exact file (and the programs it started), while never touching Windows system processes or a program with merely the same name.
-- **Nothing is skipped:** threats in the Windows folder or Program Files are no longer skipped during a clean — once you confirm, they are removed like any other, with ownership taken when needed.
-- **Encrypted connection only:** the developer server address accepts unencrypted ws:// only for a server on the same PC (localhost); other servers need wss://.
-- **Tray icon:** a shield in the system tray shows when a scan is running and tells you when it finishes.
-- **Possibly clean:** a new result for files that are almost identical to a verified clean file.
-- **Rescan:** right-click a result and choose Rescan to check the file again without the server's saved verdict, for example after new rules or for a "possibly clean" file. A rescan can be stopped with the Stop button.
-- **Faster uploads:** files are compressed before upload when that makes them at least 10% smaller.
-- **Folder paths, without your user name:** the license agreement now explains that file names and their folder paths are sent to help find where malware hides. Your user folders are replaced by placeholders such as `%USERPROFILE%\Downloads`, so no Windows user name is sent.
-- **Survives connection drops:** if the connection to the scan server is lost, for example while the server restarts, the scan waits and reconnects by itself instead of failing. It tries one connection at a time with growing pauses (2 to 30 seconds), tries each file up to 3 times, and stops with an error only after 4 minutes without the server or when the server refuses the connection.
+### Malware scan: removal progress
+- **Detailed progress while threats are removed:** Remove All Threats, Remove Selected, Delete File, Quarantine and the removal at the end of a clean now open a progress window instead of only showing a wait cursor.
+- It shows which file is being handled (for example 2 / 5), a progress bar, and the step that is running right now: looking for programs started from the file, deleting, removing read-only attributes, closing programs that lock the file, taking ownership, renaming, or scheduling deletion at the next restart.
+- Counters for **Removed / Quarantined**, **At Restart**, **Failed** and the elapsed time, and a **Details** list with every step and the result of each file in color.
+- **Stop** ends the removal after the current file; files that were already removed stay removed.
+- **Copy Details** copies the list, and **Open Log** opens the log of the removal.
+- When some files can only be deleted at the next restart, the window says so.
 
-### Right-click menu (new, optional)
-- Settings > Right-Click Menu adds **Scan with Multron Malware Scan** to the File Explorer right-click menu for files, folders and drives.
-- To scan several items at once, select them and use **Send To > Multron Malware Scan**. They are scanned together with a single UAC prompt.
-- If the app is already running, also in the background, the items are handed to it and scanned there.
-- On Windows 11 these entries are under "Show more options". The optional **Use the classic right-click menu in Windows 11** setting shows them in the first menu, like in Windows 10. It changes the menu for every program and needs File Explorer to restart.
-- The scan respects the "Only executables & scripts" filter, as promised in the license agreement.
+### Malware scan: logs
+- **Every scan writes a log:** scan type, where it was started from, the scan settings, how many files were found, connection drops and reconnects, every threat and suspicious file (with threat name, SHA-256 and size), files that could not be checked or were skipped, and a summary with the counts and the duration. A stopped or failed scan is logged too.
+- Removals, quarantine actions, restores from quarantine and rescans are added to the log of the scan they belong to, step by step.
+- **Scan Logs (new window):** the new **Scan Logs** button in the Malware Scan window lists the logs with their date, type and result and shows the selected log next to the list. Logs can be opened in Notepad, copied, deleted one by one or all at once, and the logs folder can be opened.
+- Logs are kept in the `Logs\MalwareScan` folder of the app, and only the latest 100 are kept.
 
-### Notifications after a background scan
-- After an automatic or startup scan, notifications now also report insecure Windows settings (any risk level, not only high), broken firewall rules, duplicate files and malware scan results. Each has a button that opens the details.
-- Notifications about problems use a red warning sign instead of the blue check mark.
-- Settings > Startup & Notify Settings: each kind of notification can be turned on or off (all on by default), and you can choose the corner (bottom right by default) and whether notifications are lined up or stacked on top of each other.
-- Several notifications no longer cover each other.
-- "Notify me after a background scan / cleanup finishes" are now on by default.
+### Malware scan: quarantine in its own window
+- **Select all and quarantine all:** a checkbox in the header of the results list checks or unchecks every file in the list. The new **Quarantine All / Quarantine Selected** button next to Remove All Threats moves the checked files to quarantine, or every threat in the list when nothing is checked, with the same progress window as removal.
+- The quarantine list moved out of the Malware Scan window into its own **Quarantine** window, so the Malware Scan window stays tidy. It can restore or delete files one by one, delete all of them, and open the quarantine folder.
+- **Compressed and encrypted quarantine:** quarantined files are now compressed and then encrypted with AES-256 (each file with its own random key). An encrypted file cannot run and is not detected again by antivirus programs, and it takes much less space. The Quarantine window shows each file's original and stored size. Before a file is restored, it is decrypted and checked against the SHA-256 saved when it was quarantined, so a damaged file is never written back. Files that were already in quarantine are compressed and encrypted automatically the next time the app starts.
+- **Export:** quarantined files can be exported one by one or all at once to a ZIP protected with the password `infected` (the usual password for malware samples), together with a text file that lists each file's original path, threat, SHA-256 and date, for example to send them to an antivirus vendor. Scan logs can be exported one by one as a text file or all at once as a ZIP.
 
-### Theme
-- The app opens in dark mode when Windows uses dark mode, otherwise in light mode, and switches along with Windows while it runs.
-- Changing the theme by hand keeps your choice. Settings > Theme > **Match the Windows theme** turns automatic mode back on.
+### Main window status
+- **Tool progress on the main screen:** while a malware scan, Duplicate File Finder, Large File Finder, Firewall Rule Cleaner, Shortcut Fixer or Security Check runs from its own window, the status text under the big button on the main screen shows what it is doing (for example the number of files checked and threats found), and the ring shows the progress when the tool reports it. When the tool finishes, its result stays there. A scan or clean started on the main screen always has priority.
+- **Smoother spinner:** the spinning ring around the shield in the malware scan and removal windows now turns exactly around the shield instead of wobbling.
 
-### Look & feel
-- **Transparency effects (new, optional):** windows are slightly see-through with a colored tint. Settings > Theme lets you turn them off, pick the color (blue, green, orange, purple, red, pink, teal or gray) and the strength (light, medium or strong). On by default with blue at medium strength.
-- **Search on the main screen:** a small search box next to the buttons filters the cleaning list by app name or file path (also matches paths like %TEMP%). Clearing it shows everything again.
-- **New message windows:** all messages, warnings and questions now use the app's own dialog instead of the plain Windows message box. It matches the theme, dims the window it belongs to and shows an icon that fits the message (error, warning, question or information). Esc closes it and Ctrl+C copies its text.
-- **Scroll bars** look the same in every window: thin and rounded, like on the main screen.
-- **Windows always fit the screen:** a window never opens larger than the screen (without the taskbar) and is moved back if it would stick out, also on smaller or scaled screens and on the monitor it opens on.
-- **Same search box everywhere:** Duplicate File Finder and Startup Manager now use the rounded search box of the main screen, with a hint text, a ✕ button and Esc to clear it. Startup Manager also searches the program path.
-- **Colored message icons:** the icons in message windows (information, question, warning, error) are drawn in color and no longer look black in dark mode. The warning icons in Startup Manager and in the new startup item window were changed the same way.
-- **Section icons:** System & Global Tools on the main screen shows a globe instead of a laptop, and user sections show a person icon in the same thin style. Both follow the text color in light and dark mode.
-
-### Only one copy runs
-- **No second copy:** starting Multron Win Cleaner while it already runs, also hidden in the tray, no longer opens a second copy. The running app shows its main window and brings it to the front instead.
-- **Right-click scans go to the running app:** *Scan with Multron Malware Scan* hands the files to the running app, which opens the Malware Scan window in front and starts scanning right away.
-- **Never hidden without a way back:** a copy started with Windows closes itself and removes itself from Windows startup when both tray icons (main and Utilities) are turned off, because it could not be reached. Turning on "Start Multron Win Cleaner when I sign in to Windows" (or a startup scan or clean) now also turns on the tray icon when neither tray icon is on.
-
-### Settings
-- **New title bar buttons:** reset to defaults (asks first), minimize, maximize/restore and close. The Settings window can now also be resized.
-- **Settings are saved automatically** as soon as you change them. The Save Settings buttons in Settings and in the Malware Scan window were removed.
-- **Windows startup is now a checkbox:** "Start Multron Win Cleaner when I sign in to Windows" replaces the Add to Startup / Remove from Startup buttons and always shows whether the app is in startup. Turning on the startup scan or cleanup offers to turn it on for you.
-- **Automatic updates:** the app and the cleaning database can check for updates in the background. The database check interval, automatic loading of a downloaded database, the update status and the Update Database button on the main screen can each be set in Settings.
-- **App Updates (new, at the top of Settings):** shows the installed version. **Check for Updates** looks for a newer version, **Update to …** installs it after asking, and **Release Notes** opens its page.
-
-### Updates and installer
-- **No more Updater.exe:** the app updates itself. It downloads the update, checks its size, swaps its own files and starts again. If something goes wrong while files are swapped, the old files are put back. Your settings, exclusions and selections are never overwritten. The old Updater.exe is removed automatically.
-- **New installer (mwc_setup.exe):** installs for the current user in `%LOCALAPPDATA%\Programs\Multron Win Cleaner` without asking for administrator rights, and updates an existing installation in place. The setup uses your Windows language, with no language question. Uninstalling also removes leftover update files.
-- **Portable version (mwc.zip):** the same files without installing.
-- **Smaller app folder:** the extra language folders (de, fr, pl, …) and the `runtimes` folder are gone. The app's own 12 languages are not affected.
+### Tougher threat removal (Force Delete)
+- **Locked and protected threats are removed with SYSTEM privileges:** for any threat or stubborn file that cannot be deleted or quarantined the normal way, Multron Win Cleaner now escalates step by step — closing the programs that lock it, taking ownership, resetting permissions and, as a last resort, deleting or moving it as `NT AUTHORITY\SYSTEM` using Sysinternals PsExec. This applies to every detection, not to any one program.
+- **PsExec is now built into the app:** `PsExec64.exe` is embedded in Multron Win Cleaner and extracted automatically when it is needed, so the feature works on any machine without a separate download or setup. Each removal step is shown in the removal progress window.
+- **Remove at next restart:** when a threat still cannot be removed while Windows is running, it is now registered to be deleted (or moved to quarantine) at the next restart — tried several ways (standard Windows API, direct registry, and with SYSTEM privileges) and verified. The file is then removed very early during the next boot, before background programs start, which clears many files that are locked or in use.
+- **Clearer reasons when a threat cannot be removed:** the steps now show exactly why a SYSTEM removal failed (for example PsExec could not start, or access was denied). Some security programs actively protect their own files and block deletion, renaming and even scheduling at restart, even for SYSTEM; in that case the app says so and explains that the protecting program's self-protection must be turned off, or the file removed in Windows Safe Mode.
+- PsExec is a Microsoft Sysinternals tool; its license is included as [PSEXEC-EULA.md](PSEXEC-EULA.md) and linked from the README.
 
 ### Fixes
-- The app could freeze and close at startup (two separate causes, both fixed).
-- The start time of automatic cleaning was not saved.
-- An app update package could write files outside the update folder. Such a package is now refused before anything is unpacked.
-- Memory Cleaner no longer freezes for a few seconds while opening.
-- Scroll bars in the Settings window could not be dragged while the window was maximized.
-- Several buttons in Duplicate File Finder, Large File Finder and Memory Cleaner showed "?" instead of their icons.
-- Long option texts on the main screen and the language list in Settings no longer run off the window.
-- Fixed three XAML errors that Visual Studio's designer reported in the Settings and Malware Scan windows.
-- Duplicate File Finder could treat its own hint text as a search.
+- A new scan, a rescan or Clear List can no longer start while threats are being removed, which could mix up the results list.
+- Several Malware Scan and quarantine texts that were shown in English are now translated into all 12 languages.
+
+For everything else that is new in 1.26, see the [v1.26 release](https://github.com/winball501/MultronWcleaner/releases/tag/v1.26).
