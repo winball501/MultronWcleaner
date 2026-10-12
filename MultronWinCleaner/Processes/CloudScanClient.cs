@@ -197,7 +197,8 @@ namespace MultronWinCleaner.Processes
                         ["name"] = Path.GetFileName(path),
                         ["size"] = result.Size,
                         ["sha256"] = result.Sha256,
-                        ["folder"] = NormalizeFolder(path)
+                        ["folder"] = NormalizeFolder(path),
+                        ["path"] = FullFolder(path)
                     };
                     if (rescan)
                         check["rescan"] = true;
@@ -268,7 +269,8 @@ namespace MultronWinCleaner.Processes
                         ["name"] = Path.GetFileName(path),
                         ["size"] = result.Size,
                         ["sha256"] = result.Sha256,
-                        ["folder"] = NormalizeFolder(path)
+                        ["folder"] = NormalizeFolder(path),
+                        ["path"] = FullFolder(path)
                     };
                     if (rescan)
                         scanMsg["rescan"] = true;
@@ -384,6 +386,26 @@ namespace MultronWinCleaner.Processes
             Add("%WINDIR%", Environment.GetFolderPath(Environment.SpecialFolder.Windows));
             return list.OrderByDescending(x => x.Path.Length).ToArray();
         });
+
+        /// <summary>
+        /// Folder of a file in full, exactly as on this computer (user name included, EULA
+        /// version 3), so several user profiles stay apart on the server.
+        /// </summary>
+        internal static string FullFolder(string path)
+        {
+            try
+            {
+                string? dir = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path));
+                if (string.IsNullOrEmpty(dir))
+                    return "";
+                dir = dir.TrimEnd('\\', '/');
+                return dir.Length > 1024 ? dir.Substring(0, 1024) : dir;
+            }
+            catch
+            {
+                return "";
+            }
+        }
 
         internal static string NormalizeFolder(string path)
         {

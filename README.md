@@ -110,7 +110,7 @@ The application is fully localized into **12 languages**: English, Turkish, Germ
 
 * **Cloud Engine:** Files are checked in the cloud by the [viruskov.com](https://viruskov.com) OPEN-EDR engine over an encrypted TLS connection. The scan servers run on a VDS hosted by [Türkbil](https://turkbil.net.tr/).
 * **Quick, Full and Custom Scans:** Scan running processes, startup items and the folders you choose, or let a malware scan run automatically after the main system scan.
-* **Privacy First:** By default only executables and scripts (`.exe`, `.dll`, `.ps1`, `.bat`...) are sent; personal files such as photos and documents are never uploaded while this filter is on. Folder paths are sent with your user folders replaced by placeholders such as `%USERPROFILE%\Downloads`, so no Windows user name leaves your PC. A license agreement explains exactly what is sent before the first cloud scan; you can also read it here: [Cloud Malware Scan License Agreement](MALWARE_SCAN_EULA.md).
+* **Privacy First:** By default only executables and scripts (`.exe`, `.dll`, `.ps1`, `.bat`...) are sent; personal files such as photos and documents are never uploaded while this filter is on. For each file the path of its folder is sent in two forms: a short form in which your user folder and other standard Windows folders are replaced with placeholders such as `%USERPROFILE%\Downloads` or `%APPDATA%`, and the full path as it is on your PC, including your Windows user name, so that several user profiles on one computer can be told apart. The full path is seen only by viruskov.com analysts. A license agreement explains exactly what is sent before the first cloud scan; the app loads it straight from this repository, and you can also read it here: [Cloud Malware Scan License Agreement](MALWARE_SCAN_EULA.md).
 * **Hash First, Compressed Uploads:** Files the server already knows are answered by their SHA-256 without uploading them; the others are compressed before upload when that saves space.
 * **Rescan and "Possibly Clean":** Any result can be scanned again without the server's saved verdict. Files almost identical to a verified clean file are marked "Possibly clean".
 * **Reconnects by Itself:** If the connection drops, for example while the server restarts, the scan waits and reconnects instead of failing.
@@ -223,18 +223,18 @@ The server accepts version 2 clients (no `check`, every file goes through `scan`
 **Hash check**
 
 ```
-C → S  {"type":"check","items":[{"id":1,"name":"a.exe","size":123456,"sha256":"<64 hex>","folder":"%USERPROFILE%\\Downloads"}, ...]}
+C → S  {"type":"check","items":[{"id":1,"name":"a.exe","size":123456,"sha256":"<64 hex>","folder":"%USERPROFILE%\\Downloads","path":"C:\\Users\\Me\\Downloads"}, ...]}
 S → C  {"type":"result","id":1, ...}         known file: done, nothing is uploaded
 S → C  {"type":"need_upload","id":2}         unknown: upload it with scan
 S → C  {"type":"error","id":3,"message":"..."}
 ```
 
-`folder` is the file's folder with the user profile and other well-known folders replaced by placeholders such as `%USERPROFILE%`, so no Windows user name is sent. `"rescan":true` asks for a fresh scan that skips the verdict cache.
+`folder` is the file's folder with the user profile and other well-known folders replaced by placeholders such as `%USERPROFILE%`; `path` is the same folder in full, exactly as it is on the computer, including the Windows user name (agreement version 3), so several user profiles stay apart on the server. The full path is seen only by viruskov.com analysts. `"rescan":true` asks for a fresh scan that skips the verdict cache.
 
 **Upload**
 
 ```
-C → S  {"type":"scan","id":2,"name":"b.dll","size":5000,"sha256":"<64 hex>","folder":"..."}
+C → S  {"type":"scan","id":2,"name":"b.dll","size":5000,"sha256":"<64 hex>","folder":"...","path":"..."}
 S → C  {"type":"send_file","id":2}          (or a result right away if it became known meanwhile)
 C → S  exactly <size> bytes, split into binary messages (256 KiB chunks)
 S → C  {"type":"result","id":2, ...}        when the engine is done
