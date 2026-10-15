@@ -12,7 +12,7 @@ namespace MultronWinCleaner.Processes
         {
             public string ShortcutPath { get; set; } = "";
             public string TargetPath { get; set; } = "";
-            public string RepairTarget { get; set; }
+            public string? RepairTarget { get; set; }
             public string Location { get; set; } = "";
             public string Name => Path.GetFileNameWithoutExtension(ShortcutPath);
             public string Action => RepairTarget != null ? Loc.F("Will be repaired: {0}", RepairTarget) : Loc.T("Will be moved to the Recycle Bin");
@@ -88,7 +88,7 @@ namespace MultronWinCleaner.Processes
 
             try
             {
-                string root = Path.GetPathRoot(path);
+                string? root = Path.GetPathRoot(path);
                 if (string.IsNullOrEmpty(root) || !Directory.Exists(root) || Exists(path))
                     return false;
 
@@ -107,12 +107,12 @@ namespace MultronWinCleaner.Processes
 
         private static string VersionlessName(string name) => Regex.Replace(name, @"[\d\.\-_ ]+", "").ToLowerInvariant();
 
-        private static string FindReplacement(string target)
+        private static string? FindReplacement(string target)
         {
             try
             {
                 string path = Environment.ExpandEnvironmentVariables(target.Trim().Trim('"'));
-                string ancestor = Path.GetDirectoryName(path);
+                string? ancestor = Path.GetDirectoryName(path);
                 while (!string.IsNullOrEmpty(ancestor) && !Directory.Exists(ancestor))
                     ancestor = Path.GetDirectoryName(ancestor);
                 if (string.IsNullOrEmpty(ancestor))
@@ -151,8 +151,8 @@ namespace MultronWinCleaner.Processes
                     if (item.RepairTarget != null && File.Exists(item.RepairTarget))
                     {
                         var shortcut = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(item.ShortcutPath);
-                        string oldFolder = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(item.TargetPath));
-                        string newFolder = Path.GetDirectoryName(item.RepairTarget);
+                        string oldFolder = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(item.TargetPath)) ?? "";
+                        string newFolder = Path.GetDirectoryName(item.RepairTarget) ?? "";
                         shortcut.TargetPath = item.RepairTarget;
                         if (!string.IsNullOrEmpty(shortcut.WorkingDirectory) && Environment.ExpandEnvironmentVariables(shortcut.WorkingDirectory).StartsWith(oldFolder, StringComparison.OrdinalIgnoreCase))
                             shortcut.WorkingDirectory = newFolder + Environment.ExpandEnvironmentVariables(shortcut.WorkingDirectory).Substring(oldFolder.Length);

@@ -34,9 +34,6 @@ namespace MultronWinCleaner
             Loc.Init();
             WindowFit.Register();
 
-            // Download the cloud malware scan agreement in the background so the latest text is
-            // ready when the agreement window is shown. Runs in the background; failures are
-            // ignored and the agreement is downloaded again when its window opens.
             if (!MalwareScan.IsOfflineMode)
                 _ = MalwareScanEula.RefreshAsync();
 

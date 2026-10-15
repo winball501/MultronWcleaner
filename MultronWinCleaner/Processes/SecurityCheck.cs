@@ -95,6 +95,53 @@ namespace MultronWinCleaner.Processes
 
         public static bool HasBackup => File.Exists(BackupPath);
 
+        public const string IgnoredSettingKey = "securityignored";
+        private static readonly object ignoredLock = new object();
+        private static string SettingsPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+
+        public static HashSet<string> IgnoredIds()
+        {
+            var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                lock (ignoredLock)
+                {
+                    if (!File.Exists(SettingsPath)) return ids;
+                    string? line = File.ReadLines(SettingsPath).LastOrDefault(l => l.StartsWith(IgnoredSettingKey + ":", StringComparison.OrdinalIgnoreCase));
+                    if (line != null)
+                        foreach (string id in line.Substring(IgnoredSettingKey.Length + 1).Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            ids.Add(id);
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return ids;
+        }
+
+        public static int IgnoredCount => IgnoredIds().Count;
+
+        public static void Ignore(string id)
+        {
+            var ids = IgnoredIds();
+            if (ids.Add(id))
+                SaveIgnored(ids);
+        }
+
+        public static void ClearIgnored() => SaveIgnored(new HashSet<string>());
+
+        private static void SaveIgnored(HashSet<string> ids)
+        {
+            lock (ignoredLock)
+            {
+                var lines = File.Exists(SettingsPath) ? File.ReadAllLines(SettingsPath).ToList() : new List<string>();
+                lines.RemoveAll(l => l.StartsWith(IgnoredSettingKey + ":", StringComparison.OrdinalIgnoreCase));
+                if (ids.Count > 0)
+                    lines.Add(IgnoredSettingKey + ":" + string.Join("|", ids.OrderBy(i => i, StringComparer.OrdinalIgnoreCase)));
+                File.WriteAllLines(SettingsPath, lines);
+            }
+        }
+
         #region Registry
 
         private static RegistryKey Root(string hive) =>
@@ -149,6 +196,20 @@ namespace MultronWinCleaner.Processes
                 using var root = Root(hive);
                 using var k = root.OpenSubKey(key);
                 return k?.GetValueNames().ToList() ?? new List<string>();
+            }
+            catch (Exception)
+            {
+                return new List<string>();
+            }
+        }
+
+        private static List<string> SubKeyNames(string hive, string key)
+        {
+            try
+            {
+                using var root = Root(hive);
+                using var k = root.OpenSubKey(key);
+                return k?.GetSubKeyNames().ToList() ?? new List<string>();
             }
             catch (Exception)
             {
@@ -344,7 +405,64 @@ namespace MultronWinCleaner.Processes
             public int State;
             public bool Enabled => ((State >> 12) & 0xF) == 1;
             public bool UpToDate => ((State >> 4) & 0xF) == 0;
-            public bool IsMicrosoft => Name.IndexOf("Defender", StringComparison.OrdinalIgnoreCase) >= 0 || Name.IndexOf("Windows Firewall", StringComparison.OrdinalIgnoreCase) >= 0;
+            public bool IsMicrosoft => IsMicrosoftName(Name);
+
+            public static bool IsMicrosoftName(string name) => MicrosoftProducts.Any(p => name.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+
+            private static readonly string[] MicrosoftProducts =
+            {
+                "Windows Defender", "Microsoft Defender", "Windows Firewall", "Microsoft Windows Firewall"
+            };
+        }
+
+        private const string SecurityCenterAvProviders = @"SOFTWARE\Microsoft\Security Center\Provider\Av";
+
+        private static readonly string[] KnownAntivirusServices =
+        {
+            "ekrn", "klnagent", "AvastSvc", "avast! Antivirus", "AVGSvc", "avgsvc", "VSSERV", "bdredline", "bdservicehost",
+            "EPSecurityService", "NortonSecurity", "N360", "mfemms", "McAfeeFramework", "MBAMService", "WRSVC",
+            "Sophos MCS Agent", "SAVService", "CSFalconService", "SentinelAgent", "Amsp", "TMBMServer",
+            "AntiVirService", "Avira.ServiceHost", "PSANHost", "FSMA", "AVKWCtl", "GDScan", "K7RTScan", "cmdAgent",
+            "ZillyaAVCoreSvc", "DrWebAVService", "QHActiveDefense", "ZAPrivacyService"
+        };
+
+        private static bool IsKnownAntivirusService(string service) =>
+            KnownAntivirusServices.Contains(service, StringComparer.OrdinalIgnoreCase)
+            || (service.StartsWith("AVP", StringComparison.OrdinalIgnoreCase) && service.Length > 3 && char.IsDigit(service[3]));
+
+        private static List<string> FindThirdPartyAntivirus(List<Product>? registered)
+        {
+            var names = new List<string>();
+            if (registered != null)
+                names.AddRange(registered.Where(p => !p.IsMicrosoft).Select(p => p.Name));
+
+            foreach (string provider in SubKeyNames(HKLM, SecurityCenterAvProviders))
+            {
+                string? name = GetString(HKLM, SecurityCenterAvProviders + "\\" + provider, "DISPLAYNAME");
+                if (!string.IsNullOrWhiteSpace(name) && !Product.IsMicrosoftName(name))
+                    names.Add(name);
+            }
+
+            foreach (string service in SubKeyNames(HKLM, @"SYSTEM\CurrentControlSet\Services"))
+            {
+                if (IsKnownAntivirusService(service) && ServiceStart(service) != 4)
+                    names.Add(service);
+            }
+
+            return names.Where(n => n.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
+
+        private static bool IsServiceRunning(string name)
+        {
+            try
+            {
+                using var service = new ServiceController(name);
+                return service.Status == ServiceControllerStatus.Running;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private static List<Product>? SecurityProducts(string className)
@@ -432,6 +550,7 @@ namespace MultronWinCleaner.Processes
         {
             public List<Issue> Issues { get; } = new List<Issue>();
             public bool ThirdPartyAntivirus;
+            public List<string> ThirdPartyAntivirusNames = new List<string>();
             public bool ThirdPartyFirewall;
             public List<Product>? Antivirus;
 
@@ -458,7 +577,8 @@ namespace MultronWinCleaner.Processes
         {
             var context = new Context();
             context.Antivirus = SecurityProducts("AntiVirusProduct");
-            context.ThirdPartyAntivirus = context.Antivirus?.Any(p => p.Enabled && !p.IsMicrosoft) == true;
+            context.ThirdPartyAntivirusNames = FindThirdPartyAntivirus(context.Antivirus);
+            context.ThirdPartyAntivirus = context.ThirdPartyAntivirusNames.Count > 0;
             context.ThirdPartyFirewall = SecurityProducts("FirewallProduct")?.Any(p => p.Enabled && !p.IsMicrosoft) == true;
 
             Action<Context>[] checks =
@@ -483,7 +603,8 @@ namespace MultronWinCleaner.Processes
                 }
             }
 
-            return context.Issues.OrderBy(i => i.Severity).ThenBy(i => i.Category).ToList();
+            var ignored = IgnoredIds();
+            return context.Issues.Where(i => !ignored.Contains(i.Id)).OrderBy(i => i.Severity).ThenBy(i => i.Category).ToList();
         }
 
         private static void CheckUac(Context c)
@@ -704,11 +825,20 @@ namespace MultronWinCleaner.Processes
         private static void CheckAntivirus(Context c)
         {
             const string cat = "Virus and threat protection";
-            if (c.Antivirus == null)
+            if (c.Antivirus == null || c.Antivirus.Count == 0)
+            {
+                if (c.ThirdPartyAntivirus || IsServiceRunning("WinDefend"))
+                    return;
+                c.Add("no_av", cat, Level.High, "No antivirus is turned on",
+                    "Nothing checks downloaded files and programs for malware.",
+                    "Install an antivirus or open Windows Security > Virus & threat protection and turn real-time protection on", null,
+                    details: Loc.T("Windows Security Center could not list any antivirus program."));
                 return;
+            }
 
             var enabled = c.Antivirus.Where(p => p.Enabled).ToList();
-            if (enabled.Count == 0)
+            bool unlistedThirdParty = c.ThirdPartyAntivirus && !c.Antivirus.Any(p => !p.IsMicrosoft);
+            if (enabled.Count == 0 && !unlistedThirdParty)
             {
                 c.Add("no_av", cat, Level.High, "No antivirus is turned on",
                     "Nothing checks downloaded files and programs for malware.",
@@ -868,7 +998,9 @@ namespace MultronWinCleaner.Processes
                 ("CryptSvc", "Cryptographic Services", "auto"),
                 ("SecurityHealthService", "Windows Security Service", "demand")
             };
-            if (!c.ThirdPartyAntivirus)
+            if (c.ThirdPartyAntivirus)
+                services.RemoveAll(s => s.Name is "wscsvc" or "SecurityHealthService");
+            else
                 services.Add(("WinDefend", "Microsoft Defender Antivirus", "auto"));
             if (c.ThirdPartyFirewall)
                 services.RemoveAll(s => s.Name == "mpssvc");

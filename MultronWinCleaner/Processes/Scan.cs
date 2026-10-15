@@ -59,8 +59,8 @@ namespace MultronWinCleaner.Processes
         {
             public ObservableCollection<GroupViewModel> Groups { get; set; } = new ObservableCollection<GroupViewModel>();
 
-            private GroupViewModel selectedGroup;
-            public GroupViewModel SelectedGroup
+            private GroupViewModel? selectedGroup;
+            public GroupViewModel? SelectedGroup
             {
                 get => selectedGroup;
                 set
@@ -70,30 +70,30 @@ namespace MultronWinCleaner.Processes
                 }
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public class PathGroup : INotifyPropertyChanged
         {
-            public string Path { get; set; }
+            public string Path { get; set; } = "";
             public ObservableCollection<FileItem> Files { get; set; } = new ObservableCollection<FileItem>();
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string propName = null) =>
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? propName = null) =>
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
         public class FileItem : INotifyPropertyChanged
         {
 
-            public string FileName { get; set; }
-            public string Path { get; set; }
+            public string FileName { get; set; } = "";
+            public string Path { get; set; } = "";
             public long SizeBytes { get; set; }
             public int AgeDays { get; set; }
-            public string CreatedDate { get; set; }
-            public string ModifiedDate { get; set; }
+            public string CreatedDate { get; set; } = "";
+            public string ModifiedDate { get; set; } = "";
             public string File => Loc.F("File to delete={0}={1} | Created: {2} ({3} days ago) | Modified: {4}", FileName, formatsize(SizeBytes), CreatedDate, AgeDays, ModifiedDate);
 
 
@@ -109,8 +109,8 @@ namespace MultronWinCleaner.Processes
                 }
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string name = null) =>
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             private string formatsize(long size)
             {
@@ -188,8 +188,8 @@ namespace MultronWinCleaner.Processes
                 OnPropertyChanged(nameof(Files));
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
@@ -245,7 +245,7 @@ namespace MultronWinCleaner.Processes
     CancellationToken externalToken,
     ProgressBar progressBar,
     int timeoutMinutes = 20,
-    Action<int> onProgress = null)
+    Action<int>? onProgress = null)
         {
             var psi = new ProcessStartInfo
             {
@@ -339,7 +339,7 @@ namespace MultronWinCleaner.Processes
    CancellationToken externalToken,
    ProgressBar progressBar,
    int timeoutMinutes = 10,
-   Action<int> onProgress = null)
+   Action<int>? onProgress = null)
         {
             var psi = new ProcessStartInfo
             {
@@ -480,7 +480,7 @@ namespace MultronWinCleaner.Processes
             {
                
                 var converter = new System.Windows.Media.BrushConverter();
-                var brush = (System.Windows.Media.Brush)converter.ConvertFromString(Color);
+                var brush = (System.Windows.Media.Brush?)converter.ConvertFromString(Color);
 
                 TextBlock directorytextblock = new TextBlock
                 {
@@ -524,8 +524,9 @@ namespace MultronWinCleaner.Processes
                 {
                     if (main.cancelstatus.IsCancellationRequested) break;
 
-                    string name = main.stringtokenizer(directory, "=", 0);
-                    string path = main.stringtokenizer(directory, "=", 1);
+                    string? name = main.stringtokenizer(directory, "=", 0);
+                    string? path = main.stringtokenizer(directory, "=", 1);
+                    if (name == null || path == null) continue;
 
  
 
@@ -700,7 +701,6 @@ namespace MultronWinCleaner.Processes
 
                     int totalGroups = groupedByPath.Count;
                     int currentGroup = 0;
-                    long newtotalsize = 0;
                     cts.Cancel();
                     foreach (var group in groupedByPath)
                     {
@@ -968,14 +968,14 @@ namespace MultronWinCleaner.Processes
                                 main.label1_Copy.Text = Loc.F("Scanning C:\\ — {0} files checked, {1} found", current, main.formatsize(deeplogscantotal));
                                  
                                 var converter = new System.Windows.Media.BrushConverter();
-                                main.label1_Copy.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString("#1e88e5");
+                                main.label1_Copy.Foreground = (System.Windows.Media.Brush)converter.ConvertFromString("#1e88e5")!;
                             });
                         }
                     }
 
                 }
             }
-            catch (Exception Ex) {
+            catch (Exception) {
              
             }
 

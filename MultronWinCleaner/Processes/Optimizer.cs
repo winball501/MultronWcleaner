@@ -78,8 +78,8 @@ namespace MultronWinCleaner.Processes
         public sealed class Backup
         {
             public List<RegistryBackup> Registry { get; set; } = new List<RegistryBackup>();
-            public string PreviousPowerScheme { get; set; }
-            public string CreatedPowerScheme { get; set; }
+            public string? PreviousPowerScheme { get; set; }
+            public string? CreatedPowerScheme { get; set; }
         }
 
         private static ServiceItem Item(string id, string title, string description, bool selected) =>
@@ -108,7 +108,7 @@ namespace MultronWinCleaner.Processes
             using RegistryKey regKey = Root(hive).CreateSubKey(key, true);
             if (!backup.Registry.Any(b => b.Hive == hive && b.Key.Equals(key, StringComparison.OrdinalIgnoreCase) && b.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             {
-                object old = regKey.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+                object? old = regKey.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                 backup.Registry.Add(new RegistryBackup
                 {
                     Hive = hive,
@@ -121,7 +121,7 @@ namespace MultronWinCleaner.Processes
                         null => "",
                         byte[] bytes => Convert.ToBase64String(bytes),
                         string[] lines => string.Join("\n", lines),
-                        _ => Convert.ToString(old, System.Globalization.CultureInfo.InvariantCulture)
+                        _ => Convert.ToString(old, System.Globalization.CultureInfo.InvariantCulture) ?? ""
                     }
                 });
             }
@@ -130,7 +130,7 @@ namespace MultronWinCleaner.Processes
 
         private static void Restore(RegistryBackup item)
         {
-            using RegistryKey regKey = Root(item.Hive).OpenSubKey(item.Key, true);
+            using RegistryKey? regKey = Root(item.Hive).OpenSubKey(item.Key, true);
             if (regKey == null)
                 return;
             if (!item.Existed)
@@ -162,13 +162,13 @@ namespace MultronWinCleaner.Processes
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-            using Process process = Process.Start(info);
+            using Process process = Process.Start(info) ?? throw new InvalidOperationException(fileName + " could not be started.");
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit(30000);
             return output;
         }
 
-        private static string FindGuid(string text)
+        private static string? FindGuid(string text)
         {
             var match = Regex.Match(text ?? "", @"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
             return match.Success ? match.Value : null;
@@ -241,12 +241,12 @@ namespace MultronWinCleaner.Processes
 
         private static bool HasValue(string hive, string key, string name, object value)
         {
-            using RegistryKey regKey = Root(hive).OpenSubKey(key);
-            object current = regKey?.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+            using RegistryKey? regKey = Root(hive).OpenSubKey(key);
+            object? current = regKey?.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
             return current != null && Convert.ToString(current, System.Globalization.CultureInfo.InvariantCulture) == Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        private static string ActivePowerScheme() => FindGuid(RunTool("powercfg.exe", "/getactivescheme"));
+        private static string? ActivePowerScheme() => FindGuid(RunTool("powercfg.exe", "/getactivescheme"));
 
         public static List<string> ApplyNewSystemTweaks(IEnumerable<ServiceItem> tweaks)
         {
@@ -266,7 +266,7 @@ namespace MultronWinCleaner.Processes
                     {
                         if (backup.PreviousPowerScheme == null)
                             backup.PreviousPowerScheme = ActivePowerScheme();
-                        string scheme = backup.CreatedPowerScheme ?? FindGuid(RunTool("powercfg.exe", "-duplicatescheme " + UltimatePerformance));
+                        string? scheme = backup.CreatedPowerScheme ?? FindGuid(RunTool("powercfg.exe", "-duplicatescheme " + UltimatePerformance));
                         if (scheme != null)
                         {
                             backup.CreatedPowerScheme = scheme;

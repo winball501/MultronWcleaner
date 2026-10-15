@@ -16,7 +16,7 @@ namespace MultronWinCleaner.Processes
             public long Cache;
             public int ReclaimablePackages;
             public bool? CleanupRecommended;
-            public string LastCleanup;
+            public string LastCleanup = "";
             public bool RestartPending;
             public long Reclaimable => Math.Max(0, Backups) + Math.Max(0, Cache);
         }
@@ -29,7 +29,7 @@ namespace MultronWinCleaner.Processes
             RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
         private static readonly Regex ExitCodeRx = new Regex(@"#=#(-?\d+)\s*$", RegexOptions.Compiled);
 
-        public static int? ExitCode(string output)
+        public static int? ExitCode(string? output)
         {
             var match = ExitCodeRx.Match(output ?? "");
             return match.Success && int.TryParse(match.Groups[1].Value, out int code) ? code : null;
@@ -49,10 +49,10 @@ namespace MultronWinCleaner.Processes
             };
         }
 
-        private static string ValueOf(string output, string label)
+        private static string ValueOf(string? output, string label)
         {
             var match = Regex.Match(output ?? "", @"^\s*" + Regex.Escape(label) + @"\s*:\s*(?<value>.+?)\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-            return match.Success ? match.Groups["value"].Value : null;
+            return match.Success ? match.Groups["value"].Value : "";
         }
 
         public static ComponentStoreInfo ParseAnalyze(string output)
@@ -72,7 +72,7 @@ namespace MultronWinCleaner.Processes
             if (int.TryParse(ValueOf(output, "Number of Reclaimable Packages"), out int packages))
                 info.ReclaimablePackages = packages;
             string recommended = ValueOf(output, "Component Store Cleanup Recommended");
-            if (recommended != null)
+            if (recommended.Length > 0)
                 info.CleanupRecommended = recommended.StartsWith("Yes", StringComparison.OrdinalIgnoreCase);
             info.LastCleanup = ValueOf(output, "Date of Last Cleanup");
             info.RestartPending = ExitCode(output) == 3010;

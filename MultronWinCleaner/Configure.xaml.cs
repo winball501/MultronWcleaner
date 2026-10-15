@@ -38,8 +38,8 @@ namespace MultronWinCleaner
             {
                 if(line.StartsWith("selectedservice:"))
                 {
-                    string service = utilities.window.stringtokenizer(line, ":", 1);
-                    string isenabled = utilities.window.stringtokenizer(line, ":", 2);
+                    string? service = utilities.window.stringtokenizer(line, ":", 1);
+                    string? isenabled = utilities.window.stringtokenizer(line, ":", 2);
                     foreach(var svc in utilities.turboBoostServices)
                     {
                         if(svc.ServiceName == service)
@@ -96,9 +96,9 @@ namespace MultronWinCleaner
     public class ServiceItem : INotifyPropertyChanged
     {
         private bool _isSelected;
-        public string ServiceName { get; set; }
-        public string DisplayName { get; set; }
-        public string Description { get; set; }
+        public string ServiceName { get; set; } = "";
+        public string DisplayName { get; set; } = "";
+        public string Description { get; set; } = "";
         public string Title => string.IsNullOrEmpty(DisplayName) ? ServiceName : DisplayName;
         public Visibility DescriptionVisibility => string.IsNullOrEmpty(Description) ? Visibility.Collapsed : Visibility.Visible;
 
@@ -115,6 +115,6 @@ namespace MultronWinCleaner
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 }

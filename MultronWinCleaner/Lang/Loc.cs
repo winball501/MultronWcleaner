@@ -171,7 +171,6 @@ namespace MultronWinCleaner
         }
 
 #if DEBUG
-        // Set MWC_LOG_MISSING_TRANSLATIONS=1 to collect untranslated texts in missing_<code>.txt
         private static readonly bool logMissing = Environment.GetEnvironmentVariable("MWC_LOG_MISSING_TRANSLATIONS") == "1";
         private static readonly HashSet<string> missing = new HashSet<string>(StringComparer.Ordinal);
 

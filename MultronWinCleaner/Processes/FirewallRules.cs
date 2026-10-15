@@ -12,13 +12,13 @@ namespace MultronWinCleaner.Processes
             public string Name { get; set; } = "";
             public string ApplicationPath { get; set; } = "";
             public string Direction { get; set; } = "";
-            internal INetFwRule Rule { get; set; }
+            internal INetFwRule Rule { get; set; } = null!;
         }
 
         private static INetFwPolicy2 GetPolicy()
         {
-            Type type = Type.GetTypeFromProgID("HNetCfg.FwPolicy2");
-            return (INetFwPolicy2)Activator.CreateInstance(type);
+            Type type = Type.GetTypeFromProgID("HNetCfg.FwPolicy2") ?? throw new InvalidOperationException("Windows Firewall is not available.");
+            return (INetFwPolicy2)Activator.CreateInstance(type)!;
         }
 
         public static List<InvalidRule> FindInvalidRules()
@@ -62,7 +62,7 @@ namespace MultronWinCleaner.Processes
 
             try
             {
-                string root = Path.GetPathRoot(expanded);
+                string? root = Path.GetPathRoot(expanded);
                 if (string.IsNullOrEmpty(root) || !Directory.Exists(root))
                     return false;
                 return !File.Exists(expanded) && !Directory.Exists(expanded);

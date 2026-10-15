@@ -18,13 +18,12 @@ namespace MultronWinCleaner.Processes
     {
         MainWindow main;
         CancellationTokenSource cts = new CancellationTokenSource();
-        string currentid = null;
-        string getline = null;
+        string? getline = null;
 
         private const string GlobeGlyph = "";
         private const string PersonGlyph = "";
 
-        private static object SectionHeader(string title)
+        public static object SectionHeader(string title)
         {
             if (title.Length < 2 || title[0] < '' || title[0] > '' || title[1] != ' ')
                 return title;
@@ -82,40 +81,6 @@ namespace MultronWinCleaner.Processes
             }
         }
 
-        private void Profilelist_SelectionChanged(System.Windows.Controls.ComboBox comboBox, LoadGroup group, System.Windows.Controls.ListBox listBox, string groupId)
-        {
-            try
-            {
-                if (comboBox.SelectedItem is not string folder) return;
-
-                foreach (System.Windows.Controls.CheckBox oldBox in group.ProfileCheckBoxes)
-                {
-                    string content = oldBox.Content?.ToString() ?? "";
-                    main.database.Remove(main.stringtokenizer(content, "=", 0) + "=" + main.stringtokenizer(content, "=", 1));
-                    main.checkboxes2.Remove(oldBox);
-                    listBox.Items.Remove(oldBox);
-                }
-                group.ProfileCheckBoxes.Clear();
-
-                int insertAt = listBox.Items.IndexOf(comboBox);
-                if (insertAt < 0) insertAt = listBox.Items.Count;
-
-                foreach (ProfileLine line in group.ProfileLines)
-                {
-                    string path = group.ProfileRoot + folder + line.SubPath;
-                    if (!PathExists(path)) continue;
-
-                    System.Windows.Controls.CheckBox box = CreateEntryCheckBox(new LoadEntry { Name = line.Name, Path = path, Recommended = line.Recommended, IsProfile = true }, groupId);
-                    group.ProfileCheckBoxes.Add(box);
-                    listBox.Items.Insert(insertAt++, box);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Could not switch browser profile in " + group.Header + ": " + ex.Message);
-            }
-        }
-
         private static bool PathExists(string path)
         {
             string checkPath = path.Contains('*') ? path.Substring(0, path.IndexOf('*')) : path;
@@ -160,7 +125,7 @@ namespace MultronWinCleaner.Processes
             }
         }
 
-        public static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        public static T? FindParent<T>(DependencyObject child) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(child);
             while (parent != null)
@@ -171,82 +136,6 @@ namespace MultronWinCleaner.Processes
                 parent = VisualTreeHelper.GetParent(parent);
             }
             return null;
-        }
-
-        private Expander FindExpanderFromScrollViewer(ScrollViewer scrollViewer)
-        {
-            DependencyObject current = scrollViewer;
-            while (current != null)
-            {
-                if (current is Expander expander)
-                    return expander;
-
-                current = VisualTreeHelper.GetParent(current);
-            }
-            return null;
-        }
-
-        private async void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            var scrollViewer = sender as ScrollViewer;
-
-            double verticalOffset = scrollViewer.VerticalOffset;
-            double viewportHeight = scrollViewer.ViewportHeight;
-            double extentHeight = scrollViewer.ExtentHeight;
-
-            if (extentHeight <= 0 || viewportHeight <= 0) return;
-
-            const double threshold = 20.0;
-            bool isAtBottom = (extentHeight - (verticalOffset + viewportHeight)) <= threshold;
-
-            if (!isAtBottom) return;
-
-            var listbox = FindListBoxFromScrollViewer(scrollViewer);
-            var expander = FindExpanderFromScrollViewer(scrollViewer);
-
-            if (listbox != null && expander != null)
-            {
-                string groupid = expander.Name;
-                await LoadMoreItemsForListBox_ByGroup(listbox, groupid);
-            }
-        }
-
-        private System.Windows.Controls.ListBox FindListBoxFromScrollViewer(ScrollViewer sv)
-        {
-            foreach (var lb in main.listboxes)
-            {
-                if (VisualTreeHelper.GetChildrenCount(lb) > 0)
-                {
-                    var border = VisualTreeHelper.GetChild(lb, 0) as Border;
-                    if (border != null && VisualTreeHelper.GetChildrenCount(border) > 0)
-                    {
-                        var scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-                        if (scrollViewer == sv)
-                            return lb;
-                    }
-                }
-            }
-            return null;
-        }
-
-        private async System.Threading.Tasks.Task LoadMoreItemsForListBox_ByGroup(System.Windows.Controls.ListBox listbox, string groupid)
-        {
-            var allCheckboxes = main.checkboxes2
-                .Where(cb => cb?.Name != null && cb.Name.ToString() == groupid)
-                .ToList();
-
-            var existingBoxes = listbox.Items.OfType<System.Windows.Controls.CheckBox>().ToList();
-            int startIndex = existingBoxes.Any() ? allCheckboxes.IndexOf(existingBoxes.Last()) + 1 : 0;
-
-            var nextBatch = allCheckboxes.Skip(startIndex).Take(3).ToList();
-
-            await main.Dispatcher.InvokeAsync(() =>
-            {
-                nextBatch.ForEach(originalBox =>
-                {
-                    if (originalBox.Parent == null) listbox.Items.Add(originalBox);
-                });
-            });
         }
 
         public string CreateRandomId(int length = 8)
@@ -264,26 +153,26 @@ namespace MultronWinCleaner.Processes
 
         private sealed class LoadEntry
         {
-            public string Name;
-            public string Path;
+            public string Name = "";
+            public string Path = "";
             public bool Recommended;
-            public string Warning;
+            public string? Warning;
             public bool IsProfile;
         }
 
         private sealed class ProfileLine
         {
-            public string Name;
-            public string SubPath;
+            public string Name = "";
+            public string SubPath = "";
             public bool Recommended;
         }
 
         private sealed class LoadGroup
         {
-            public string Header;
+            public string Header = "";
             public List<LoadEntry> Entries = new List<LoadEntry>();
-            public string ProfileRoot;
-            public List<string> ProfileFolders;
+            public string ProfileRoot = "";
+            public List<string>? ProfileFolders;
             public int ProfileIndex;
             public List<ProfileLine> ProfileLines = new List<ProfileLine>();
             public List<System.Windows.Controls.CheckBox> ProfileCheckBoxes = new List<System.Windows.Controls.CheckBox>();
@@ -293,7 +182,7 @@ namespace MultronWinCleaner.Processes
 
         private sealed class LoadSection
         {
-            public string Title;
+            public string? Title;
             public List<LoadGroup> Groups = new List<LoadGroup>();
         }
 
@@ -351,19 +240,18 @@ namespace MultronWinCleaner.Processes
                     {
                         targetUsers.Clear();
 
-
                         try
                         {
                             if (main.settings != null && main.settings.rbCleanAllUsers != null && main.settings.rbCleanAllUsers.IsChecked == true && main.settings.rbCleanSelectedUsers.IsChecked == false)
                             {
                                 foreach (var item in main.settings.comboBoxUserSelection.Items)
                                 {
-                                    targetUsers.Add(item.ToString());
+                                    targetUsers.Add(item.ToString() ?? "");
                                 }
                             }
                             else if (main.settings != null && main.settings.comboBoxUserSelection != null && main.settings.comboBoxUserSelection.SelectedItem != null)
                             {
-                                targetUsers.Add(main.settings.comboBoxUserSelection.SelectedItem.ToString());
+                                targetUsers.Add(main.settings.comboBoxUserSelection.SelectedItem.ToString() ?? "");
                             }
                         }
                         catch (Exception)
@@ -389,70 +277,11 @@ namespace MultronWinCleaner.Processes
 
                     List<LoadSection> sections = await System.Threading.Tasks.Task.Run(() => ResolveSections(linesToProcess));
 
-                    int totalGroups = Math.Max(1, sections.Sum(s => s.Groups.Count));
-                    int doneGroups = 0;
-
-                    foreach (LoadSection section in sections)
-                    {
-                        WrapPanel sectionPanel = null;
-                        Expander sectionExpander = null;
-
-                        if (section.Title != null)
-                        {
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                sectionPanel = new WrapPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(5) };
-                                sectionExpander = new Expander
-                                {
-                                    Header = SectionHeader(section.Title),
-                                    Margin = new Thickness(5, 10, 5, 5),
-                                    BorderThickness = new Thickness(1),
-                                    Padding = new Thickness(5, 5, 5, 10),
-                                    IsExpanded = true,
-                                    FontSize = 15,
-                                    FontWeight = FontWeights.Bold,
-                                    Content = sectionPanel
-                                };
-                                sectionExpander.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
-                                sectionExpander.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "Text");
-                                main.wrapPanel1.Children.Add(sectionExpander);
-                            });
-                        }
-
-                        foreach (LoadGroup group in section.Groups)
-                        {
-                            doneGroups++;
-                            double progress = (double)doneGroups / totalGroups * 100;
-
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                try
-                                {
-                                    BuildGroup(group, sectionPanel);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine("Could not build group " + group.Header + ": " + ex.Message);
-                                }
-                                main.progressBar1.Value = progress;
-                            }, System.Windows.Threading.DispatcherPriority.Background);
-                        }
-
-                        if (sectionExpander != null)
-                        {
-                            await main.Dispatcher.InvokeAsync(() =>
-                            {
-                                if (sectionPanel.Children.Count == 0)
-                                {
-                                    main.wrapPanel1.Children.Remove(sectionExpander);
-                                }
-                            });
-                        }
-                    }
+                    await BuildSectionsAsync(sections, detailed: MainWindow.IsAdvancedInterface());
 
                     await main.Dispatcher.InvokeAsync(() =>
                     {
-                        string lastLine = null;
+                        string? lastLine = null;
                         if (!string.IsNullOrWhiteSpace(main.settings.logfilepath) && File.Exists(main.settings.logfilepath))
                             lastLine = File.ReadLines(main.settings.logfilepath).LastOrDefault();
 
@@ -622,9 +451,9 @@ namespace MultronWinCleaner.Processes
             var sections = new List<LoadSection>();
             var pending = new List<(LoadGroup Group, LoadEntry Entry, string CheckPath)>();
 
-            LoadSection section = null;
-            LoadGroup group = null;
-            List<string> profileTargets = null;
+            LoadSection? section = null;
+            LoadGroup? group = null;
+            List<string>? profileTargets = null;
 
             foreach (string line in lines)
             {
@@ -684,15 +513,15 @@ namespace MultronWinCleaner.Processes
                         continue;
                     }
 
-                    string name = main.stringtokenizer(line, "=", 0);
-                    string path;
-                    string state;
-                    string warning = null;
+                    string? name = main.stringtokenizer(line, "=", 0);
+                    string? path;
+                    string? state;
+                    string? warning = null;
 
                     if (line.Contains("#profileget#"))
                     {
                         if (profileTargets == null) continue;
-                        string subPath = main.stringtokenizer(line, "=", 2);
+                        string? subPath = main.stringtokenizer(line, "=", 2);
                         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(subPath) || !bool.TryParse(main.stringtokenizer(line, "=", 3), out bool profileRecommended))
                         {
                             Debug.WriteLine("Skipped invalid database line: " + line);
@@ -762,123 +591,411 @@ namespace MultronWinCleaner.Processes
                 FontSize = 12,
                 FontFamily = new System.Windows.Media.FontFamily("Segoe UI")
             };
-            newCheckBox.PreviewMouseRightButtonUp += EntryCheckBox_PreviewMouseRightButtonUp;
             newCheckBox.Checked += main.CheckBox_Checked;
             newCheckBox.Unchecked += main.CheckBox_Unchecked;
             main.checkboxes2.Add(newCheckBox);
             return newCheckBox;
         }
 
-        private void BuildGroup(LoadGroup group, WrapPanel sectionPanel)
+        #region Cleaning list
+
+        private const string WindowsGlyph = "";
+        private const string AppsGlyph = "";
+
+        private static readonly string[] WindowsGroupPrefixes =
         {
-            bool showProfileList = !allBrowserProfiles && group.ProfileFolders != null && group.ProfileFolders.Count > 1;
-            if (group.Entries.Count == 0 && !showProfileList) return;
+            "Windows", "Microsoft Store", "Internet Explorer", ".NET Framework", "IIS", "Xbox"
+        };
 
-            this.currentid = CreateRandomId(8);
-            string groupId = currentid;
-            var groupBoxContent = new System.Windows.Controls.ListBox
+        private static bool IsWindowsGroup(string header) =>
+            WindowsGroupPrefixes.Any(p => header.StartsWith(p, StringComparison.OrdinalIgnoreCase))
+            || header == Loc.T("General Tools") || header == Loc.T("User Specific Files");
+
+        public static string Prettify(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return name;
+            var sb = new StringBuilder(name.Length + 8);
+            for (int i = 0; i < name.Length; i++)
             {
-                ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(VirtualizingStackPanel))),
-                VerticalAlignment = VerticalAlignment.Stretch,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                Margin = new Thickness(5),
-                Background = System.Windows.Media.Brushes.Transparent,
-                BorderThickness = new Thickness(0),
-                Foreground = main.brush,
-                MaxHeight = SystemParameters.WorkArea.Height,
-                MaxWidth = SystemParameters.WorkArea.Width
-            };
+                char c = name[i];
+                if (i > 0 && char.IsUpper(c) && name[i - 1] != ' ')
+                {
+                    char prev = name[i - 1];
+                    bool nextLower = i + 1 < name.Length && char.IsLower(name[i + 1]);
+                    if (char.IsLower(prev) || char.IsDigit(prev) || (char.IsUpper(prev) && nextLower))
+                        sb.Append(' ');
+                }
+                sb.Append(c == '_' ? ' ' : c);
+            }
+            return sb.ToString();
+        }
 
-            groupBoxContent.Loaded += (s, e) => {
-                var listBox = s as System.Windows.Controls.ListBox;
-                if (listBox == null) return;
-                var sv = main.FindVisualChild<ScrollViewer>(listBox);
-                if (sv != null) sv.ScrollChanged += ScrollViewer_ScrollChanged;
-            };
+        private sealed class SimpleRow
+        {
+            public string Name = "";
+            public readonly List<System.Windows.Controls.CheckBox> Boxes = new List<System.Windows.Controls.CheckBox>();
+            public System.Windows.Controls.CheckBox View = null!;
+        }
 
-            var newExpander = new Expander
+        private sealed class SimpleGroup
+        {
+            public string Header = "";
+            public string GroupId = "";
+            public readonly List<LoadGroup> Parts = new List<LoadGroup>();
+            public readonly List<(System.Windows.Controls.CheckBox Box, LoadEntry Entry)> Items = new List<(System.Windows.Controls.CheckBox, LoadEntry)>();
+            public readonly List<SimpleRow> Rows = new List<SimpleRow>();
+            public StackPanel RowPanel = null!;
+            public System.Windows.Controls.CheckBox HeaderBox = null!;
+            public TextBlock CountText = null!;
+            public bool Syncing;
+            public bool Detailed;
+        }
+
+        private async System.Threading.Tasks.Task BuildSectionsAsync(List<LoadSection> sections, bool detailed)
+        {
+            var categories = new List<(string Title, List<SimpleGroup> Groups)>();
+            if (detailed)
             {
-                Name = currentid,
-                Header = group.Header,
-                Margin = new Thickness(5),
+                foreach (LoadSection section in sections)
+                {
+                    var groups = section.Groups.Select(g => new SimpleGroup { Header = g.Header, Detailed = true, Parts = { g } }).ToList();
+                    categories.Add((section.Title ?? GlobeGlyph + " " + Loc.T("General Tools"), groups));
+                }
+            }
+            else
+            {
+                var merged = new List<SimpleGroup>();
+                var byHeader = new Dictionary<string, SimpleGroup>(StringComparer.OrdinalIgnoreCase);
+                foreach (LoadGroup group in sections.SelectMany(s => s.Groups))
+                {
+                    if (!byHeader.TryGetValue(group.Header, out SimpleGroup? simple))
+                    {
+                        simple = new SimpleGroup { Header = group.Header };
+                        byHeader[group.Header] = simple;
+                        merged.Add(simple);
+                    }
+                    simple.Parts.Add(group);
+                }
+
+                categories.Add((WindowsGlyph + " " + Loc.T("Windows"), merged.Where(g => IsWindowsGroup(g.Header)).ToList()));
+                categories.Add((AppsGlyph + " " + Loc.T("Applications"), merged.Where(g => !IsWindowsGroup(g.Header))
+                    .OrderBy(g => Prettify(g.Header), StringComparer.CurrentCultureIgnoreCase).ToList()));
+            }
+
+            int total = Math.Max(1, categories.Sum(c => c.Groups.Count));
+            int done = 0;
+            foreach (var category in categories)
+            {
+                if (category.Groups.Count == 0) continue;
+
+                StackPanel sectionPanel = null!;
+                Expander sectionExpander = null!;
+                await main.Dispatcher.InvokeAsync(() =>
+                {
+                    sectionPanel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Vertical, Margin = new Thickness(5) };
+                    sectionExpander = new Expander
+                    {
+                        Header = SectionHeader(category.Title),
+                        Tag = category.Title.Length > 2 ? category.Title.Substring(2) : category.Title,
+                        Margin = new Thickness(5, 10, 5, 5),
+                        BorderThickness = new Thickness(1),
+                        Padding = new Thickness(5, 5, 5, 10),
+                        IsExpanded = true,
+                        FontSize = 15,
+                        FontWeight = FontWeights.Bold,
+                        Content = sectionPanel
+                    };
+                    sectionExpander.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
+                    sectionExpander.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "Text");
+                    main.wrapPanel1.Children.Add(sectionExpander);
+                });
+
+                foreach (SimpleGroup group in category.Groups)
+                {
+                    done++;
+                    double progress = (double)done / total * 100;
+                    await main.Dispatcher.InvokeAsync(() =>
+                    {
+                        try
+                        {
+                            BuildSimpleGroup(group, sectionPanel);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Could not build group " + group.Header + ": " + ex.Message);
+                        }
+                        main.progressBar1.Value = progress;
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                }
+
+                await main.Dispatcher.InvokeAsync(() =>
+                {
+                    if (sectionPanel.Children.Count == 0)
+                        main.wrapPanel1.Children.Remove(sectionExpander);
+                });
+            }
+
+        }
+
+        private void BuildSimpleGroup(SimpleGroup group, System.Windows.Controls.Panel sectionPanel)
+        {
+            var profileParts = group.Parts.Where(p => !allBrowserProfiles && p.ProfileFolders != null && p.ProfileFolders.Count > 1).ToList();
+            if (group.Parts.All(p => p.Entries.Count == 0) && profileParts.Count == 0) return;
+
+            group.GroupId = CreateRandomId(8);
+            foreach (LoadGroup part in group.Parts)
+            {
+                foreach (LoadEntry entry in part.Entries)
+                {
+                    var box = CreateEntryCheckBox(entry, group.GroupId);
+                    if (entry.IsProfile) part.ProfileCheckBoxes.Add(box);
+                    AddSimpleItem(group, box, entry);
+                }
+            }
+
+            group.HeaderBox = new System.Windows.Controls.CheckBox
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 8, 0),
+                ToolTip = Loc.T("Select or unselect the whole group")
+            };
+            group.HeaderBox.Click += (s, e) => SetGroupChecked(group, group.HeaderBox.IsChecked == true);
+
+            var title = new TextBlock { Text = group.Detailed ? group.Header : Prettify(group.Header), VerticalAlignment = VerticalAlignment.Center };
+            group.CountText = new TextBlock { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0), Opacity = 0.6, FontWeight = FontWeights.Normal, FontSize = 12 };
+            var header = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+            header.Children.Add(group.HeaderBox);
+            header.Children.Add(title);
+            header.Children.Add(group.CountText);
+
+            group.RowPanel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Vertical, Margin = new Thickness(28, 2, 5, 6) };
+
+            var expander = new Expander
+            {
+                Name = group.GroupId,
+                Header = header,
+                Tag = Prettify(group.Header) + " " + group.Header,
+                Margin = new Thickness(5, 2, 5, 2),
                 Background = new SolidColorBrush(Colors.Transparent),
                 Foreground = main.brush,
                 BorderBrush = new SolidColorBrush(Colors.Transparent),
-                BorderThickness = new Thickness(2),
+                BorderThickness = new Thickness(0),
                 FontSize = 13,
                 FontWeight = FontWeights.SemiBold,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Top,
-                Content = groupBoxContent
+                Content = group.RowPanel
             };
+            main.expanders.Add(expander);
 
-            main.listboxes.Add(groupBoxContent);
-            main.expanders.Add(newExpander);
+            foreach (LoadGroup part in profileParts)
+                group.RowPanel.Children.Add(CreateSimpleProfileList(group, part));
 
-            foreach (LoadEntry entry in group.Entries)
-            {
-                System.Windows.Controls.CheckBox newCheckBox = CreateEntryCheckBox(entry, groupId);
-                if (entry.IsProfile) group.ProfileCheckBoxes.Add(newCheckBox);
-
-                if (groupBoxContent.Items.Count < 100)
-                {
-                    groupBoxContent.Items.Add(newCheckBox);
-                }
-            }
-
-            if (sectionPanel != null)
-            {
-                sectionPanel.Children.Add(newExpander);
-            }
-            else if (main.wrapPanel1.Children.Count != 100)
-            {
-                main.wrapPanel1.Children.Add(newExpander);
-            }
-
-            if (showProfileList)
-            {
-                var profilelist = new System.Windows.Controls.ComboBox
-                {
-                    Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#1e88e5")),
-                    FontSize = 14,
-                    Margin = new Thickness(5),
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    ToolTip = Loc.T("Browser profile to clean")
-                };
-                foreach (string folder in group.ProfileFolders)
-                {
-                    profilelist.Items.Add(folder);
-                }
-                profilelist.SelectedIndex = group.ProfileIndex;
-                profilelist.SelectionChanged += (s, e) => Profilelist_SelectionChanged(profilelist, group, groupBoxContent, groupId);
-                main.comboboxlist.Add(profilelist);
-                groupBoxContent.Items.Add(profilelist);
-            }
+            RebuildSimpleRows(group);
+            sectionPanel.Children.Add(expander);
         }
 
-        private void EntryCheckBox_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void AddSimpleItem(SimpleGroup group, System.Windows.Controls.CheckBox box, LoadEntry entry)
         {
-            if (sender is not System.Windows.Controls.CheckBox box) return;
+            group.Items.Add((box, entry));
+            box.Checked += (s, e) => OnSimpleItemChanged(group);
+            box.Unchecked += (s, e) => OnSimpleItemChanged(group);
+        }
 
-            if (box.ContextMenu == null)
+        private void OnSimpleItemChanged(SimpleGroup group)
+        {
+            if (!group.Syncing)
+                RefreshSimpleGroup(group);
+        }
+
+        private void SetGroupChecked(SimpleGroup group, bool isChecked)
+        {
+            SetBoxes(group, group.Items.Select(i => i.Box), isChecked);
+        }
+
+        private void SetBoxes(SimpleGroup group, IEnumerable<System.Windows.Controls.CheckBox> boxes, bool isChecked)
+        {
+            group.Syncing = true;
+            try
             {
-                var menu = new ContextMenu();
-                var openDirectory = new MenuItem { Header = Loc.T("Open directory") };
-                var openLocation = new MenuItem { Header = Loc.T("Open location") };
-                var copyPath = new MenuItem { Header = Loc.T("Copy path") };
-                openDirectory.Click += main.OpenDirectory_MainMenu_Click;
-                openLocation.Click += main.OpenFileLocation_MainMenu_Click;
-                copyPath.Click += main.CopyPath_MainMenu_Click;
-                menu.Items.Add(openDirectory);
-                menu.Items.Add(openLocation);
-                menu.Items.Add(copyPath);
-                box.ContextMenu = menu;
+                foreach (var box in boxes.ToList())
+                    if (box.IsChecked != isChecked)
+                        box.IsChecked = isChecked;
+            }
+            finally
+            {
+                group.Syncing = false;
+            }
+            RefreshSimpleGroup(group);
+        }
+
+        private static bool? CombinedState(IEnumerable<System.Windows.Controls.CheckBox> boxes)
+        {
+            bool any = false, all = true, none = true;
+            foreach (var box in boxes)
+            {
+                any = true;
+                if (box.IsChecked == true) none = false; else all = false;
+            }
+            if (!any) return false;
+            return all ? true : none ? false : null;
+        }
+
+        private void RefreshSimpleGroup(SimpleGroup group)
+        {
+            foreach (SimpleRow row in group.Rows)
+                row.View.IsChecked = CombinedState(row.Boxes);
+            if (group.HeaderBox != null)
+                group.HeaderBox.IsChecked = CombinedState(group.Items.Select(i => i.Box));
+            if (group.CountText != null)
+            {
+                int selected = group.Rows.Count(r => r.View.IsChecked != false);
+                group.CountText.Text = Loc.F("{0} / {1} selected", selected, group.Rows.Count);
+            }
+        }
+
+        private void RebuildSimpleRows(SimpleGroup group)
+        {
+            foreach (SimpleRow old in group.Rows)
+                group.RowPanel.Children.Remove(old.View);
+            group.Rows.Clear();
+
+            var byName = new Dictionary<string, SimpleRow>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (box, entry) in group.Items)
+            {
+                string key = group.Detailed ? entry.Path : entry.Name;
+                if (!byName.TryGetValue(key, out SimpleRow? row))
+                {
+                    row = new SimpleRow { Name = entry.Name };
+                    byName[key] = row;
+                    group.Rows.Add(row);
+                }
+                row.Boxes.Add(box);
             }
 
-            box.ContextMenu.PlacementTarget = box;
-            box.ContextMenu.IsOpen = true;
-            e.Handled = true;
+            foreach (SimpleRow row in group.Rows)
+            {
+                List<string> paths = row.Boxes.Select(b => main.stringtokenizer(b.Content?.ToString() ?? "", "=", 1) ?? "").Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                string tip = string.Join("\n", paths.Take(12));
+                if (paths.Count > 12) tip += "\n" + Loc.F("...and {0} more", paths.Count - 12);
+                string? warning = group.Items.Where(i => row.Boxes.Contains(i.Box)).Select(i => i.Entry.Warning).FirstOrDefault(w => !string.IsNullOrEmpty(w));
+                if (warning != null) tip = Loc.F("Warning: {0}", warning) + "\n\n" + tip;
+
+                object content = Prettify(row.Name) + (warning != null ? " ⚠" : "");
+                if (group.Detailed)
+                {
+                    var lines = new StackPanel();
+                    lines.Children.Add(new TextBlock { Text = row.Name + (warning != null ? "  ⚠ " + warning : "") });
+                    var pathText = new TextBlock { Text = string.Join("\n", paths), FontSize = 11, Opacity = 0.65, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 1, 0, 0) };
+                    lines.Children.Add(pathText);
+                    content = lines;
+                }
+
+                var view = new System.Windows.Controls.CheckBox
+                {
+                    Content = content,
+                    Tag = Prettify(row.Name) + " " + row.Name + " " + string.Join(" ", paths),
+                    ToolTip = tip,
+                    Margin = new Thickness(0, 3, 0, 3),
+                    FontSize = 12.5,
+                    FontWeight = FontWeights.Normal,
+                    FontFamily = new FontFamily("Segoe UI")
+                };
+                view.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "Text");
+                SimpleRow current = row;
+                view.Click += (s, e) => SetBoxes(group, current.Boxes, view.IsChecked == true);
+                view.ContextMenu = CreateSimpleRowMenu(paths);
+                row.View = view;
+                group.RowPanel.Children.Add(view);
+            }
+
+            RefreshSimpleGroup(group);
         }
+
+        private System.Windows.Controls.ComboBox CreateSimpleProfileList(SimpleGroup group, LoadGroup part)
+        {
+            var list = new System.Windows.Controls.ComboBox
+            {
+                FontSize = 12.5,
+                Margin = new Thickness(0, 2, 0, 6),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                MinWidth = 220,
+                ToolTip = Loc.T("Browser profile to clean") + "\n" + part.ProfileRoot
+            };
+            foreach (string folder in part.ProfileFolders!)
+                list.Items.Add(folder);
+            list.SelectedIndex = part.ProfileIndex;
+            list.SelectionChanged += (s, e) =>
+            {
+                if (list.SelectedItem is not string folder) return;
+                try
+                {
+                    foreach (var oldBox in part.ProfileCheckBoxes)
+                    {
+                        string content = oldBox.Content?.ToString() ?? "";
+                        main.database.Remove(main.stringtokenizer(content, "=", 0) + "=" + main.stringtokenizer(content, "=", 1));
+                        main.checkboxes2.Remove(oldBox);
+                        group.Items.RemoveAll(i => i.Box == oldBox);
+                    }
+                    part.ProfileCheckBoxes.Clear();
+
+                    foreach (ProfileLine line in part.ProfileLines)
+                    {
+                        string path = part.ProfileRoot + folder + line.SubPath;
+                        if (!PathExists(path)) continue;
+                        var entry = new LoadEntry { Name = line.Name, Path = path, Recommended = line.Recommended, IsProfile = true };
+                        var box = CreateEntryCheckBox(entry, group.GroupId);
+                        part.ProfileCheckBoxes.Add(box);
+                        AddSimpleItem(group, box, entry);
+                    }
+                    RebuildSimpleRows(group);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Could not switch browser profile in " + group.Header + ": " + ex.Message);
+                }
+            };
+            main.comboboxlist.Add(list);
+            return list;
+        }
+
+        private static ContextMenu CreateSimpleRowMenu(List<string> paths)
+        {
+            var menu = new ContextMenu();
+            var open = new MenuItem { Header = Loc.T("Open location") };
+            open.Click += (s, e) =>
+            {
+                string? target = paths.Select(p => Environment.ExpandEnvironmentVariables(p.Contains('*') ? p.Substring(0, p.IndexOf('*')) : p))
+                    .FirstOrDefault(p => Directory.Exists(p) || File.Exists(p));
+                if (target == null)
+                {
+                    AppDialog.Show(Loc.F("Path not found:\n{0}", paths.FirstOrDefault() ?? ""), Loc.T("Open File Location"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                try
+                {
+                    if (File.Exists(target))
+                        Process.Start("explorer.exe", $"/select,\"{target}\"");
+                    else
+                        Process.Start("explorer.exe", $"\"{target}\"");
+                }
+                catch (Exception ex)
+                {
+                    AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+            var copy = new MenuItem { Header = Loc.T("Copy path") };
+            copy.Click += (s, e) =>
+            {
+                try { System.Windows.Clipboard.SetText(string.Join(Environment.NewLine, paths)); }
+                catch (Exception ex) { AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
+            };
+            menu.Items.Add(open);
+            menu.Items.Add(copy);
+            return menu;
+        }
+
+        #endregion
+
     }
 }

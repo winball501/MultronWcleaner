@@ -21,10 +21,10 @@ namespace MultronWinCleaner
 {
     public class DuplicateFileModel
     {
-        public string FileName { get; set; }
-        public string FilePath { get; set; }
+        public string FileName { get; set; } = "";
+        public string FilePath { get; set; } = "";
         public long FileSize { get; set; }
-        public string Hash { get; set; }
+        public string Hash { get; set; } = "";
     }
 
     public class FolderNodeModel : INotifyPropertyChanged
@@ -38,7 +38,7 @@ namespace MultronWinCleaner
 
         public int TotalDuplicateCount => Files.Count() + SubFolders.Sum(s => s.TotalDuplicateCount);
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged { add { } remove { } }
     }
 
     public class FileNodeModel : INotifyPropertyChanged
@@ -57,12 +57,12 @@ namespace MultronWinCleaner
         public bool IsSelectedForDeletion { get => _isSelectedForDeletion; set { if (_isSelectedForDeletion != value) { _isSelectedForDeletion = value; OnPropertyChanged(nameof(IsSelectedForDeletion)); } } }
         public bool IsHashVisible { get => _isHashVisible; set { if (_isHashVisible != value) { _isHashVisible = value; OnPropertyChanged(nameof(IsHashVisible)); } } }
 
-        public string Hash { get; set; }
+        public string? Hash { get; set; }
         public long FileSize { get; set; }
         public DateTime Created { get; set; }
         public string FolderPath => Path.GetDirectoryName(FilePath) ?? string.Empty;
         public bool IsExactDuplicate => Hash != null && !Hash.StartsWith(Duplicate_File_Finder.SimilarMediaPrefix);
-        public string DisplayHash => IsExactDuplicate || Hash == null ? Hash : Loc.T(Duplicate_File_Finder.SimilarMediaPrefix) + Hash.Substring(Duplicate_File_Finder.SimilarMediaPrefix.Length);
+        public string? DisplayHash => IsExactDuplicate || Hash == null ? Hash : Loc.T(Duplicate_File_Finder.SimilarMediaPrefix) + Hash.Substring(Duplicate_File_Finder.SimilarMediaPrefix.Length);
         public string CopyBadge => Loc.T(IsExactDuplicate ? "COPY" : "SIMILAR");
         public string CopyBadgeColor => IsExactDuplicate ? "#FFFF9800" : "#FF8E44AD";
         public string CreatedText => Created == default || Created == DateTime.MaxValue ? string.Empty : Loc.F("Created {0:g}", Created);
@@ -79,14 +79,14 @@ namespace MultronWinCleaner
             _ => Loc.F("{0} matches found — view", MatchCount)
         };
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 
     public class DuplicatePairModel
     {
-        public FileNodeModel Copy { get; set; }
-        public FileNodeModel Original { get; set; }
+        public FileNodeModel Copy { get; set; } = null!;
+        public FileNodeModel Original { get; set; } = null!;
         public string RelationText => Loc.T(Copy != null && Copy.IsExactDuplicate ? "copy of" : "similar to");
     }
 
@@ -123,7 +123,7 @@ namespace MultronWinCleaner
 
         private bool _isScanning = false;
         private bool _isScanned = false;
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
         public Duplicate_File_Finder()
         {
@@ -190,7 +190,7 @@ namespace MultronWinCleaner
 
             try
             {
-                List<DuplicateFileModel> loaded = await Task.Run(() =>
+                List<DuplicateFileModel>? loaded = await Task.Run(() =>
                 {
                     using (var stream = new FileStream(duplicatesFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
@@ -308,7 +308,7 @@ namespace MultronWinCleaner
 
         private bool _isDeleting;
 
-        private object _mainCancelContent;
+        private object? _mainCancelContent;
 
         private void UpdateScanAvailability()
         {
@@ -413,14 +413,14 @@ namespace MultronWinCleaner
 
             try
             {
-                await Scan(FolderListBox.Items.Cast<object>().Select(i => i.ToString()).ToList());
+                await Scan(FolderListBox.Items.Cast<object>().Select(i => i.ToString() ?? "").ToList());
 
                 await SaveDuplicatesDataAsync();
 
                 await Dispatcher.InvokeAsync(() =>
                 {
                     BuildFolderTree(allDuplicates);
-                    CalculateTotalDuplicateSizeAsync();
+                    _ = CalculateTotalDuplicateSizeAsync();
 
                     if (allDuplicates.Count > 0)
                     {
@@ -440,7 +440,7 @@ namespace MultronWinCleaner
             }
         }
 
-        private static string GetFileId(FileStream stream)
+        private static string? GetFileId(FileStream stream)
         {
             return GetFileInformationByHandle(stream.SafeFileHandle, out BY_HANDLE_FILE_INFORMATION info)
                 ? $"{info.VolumeSerialNumber:X8}-{info.FileIndexHigh:X8}{info.FileIndexLow:X8}"
@@ -473,7 +473,7 @@ namespace MultronWinCleaner
 
         private async Task Scan(List<string> rootFolders)
         {
-            var token = _cts.Token;
+            var token = (_cts ??= new CancellationTokenSource()).Token;
             var exactResults = new ConcurrentBag<DuplicateFileModel>();
             var similarResults = new List<DuplicateFileModel>();
 
@@ -643,7 +643,7 @@ namespace MultronWinCleaner
                                     if (stream.Length != exactSize)
                                         continue;
 
-                                    string fileId = GetFileId(stream);
+                                    string? fileId = GetFileId(stream);
                                     if (fileId != null && !seenFileIds.Add(fileId))
                                         continue;
 
@@ -835,7 +835,7 @@ namespace MultronWinCleaner
             }
             else if (content.Contains("Custom"))
             {
-                ExtensionCheckBox_CheckedChanged(null, null);
+                ExtensionCheckBox_CheckedChanged(this, new RoutedEventArgs());
             }
         }
         private void BuildFolderTree(List<DuplicateFileModel> duplicates)
@@ -868,7 +868,7 @@ namespace MultronWinCleaner
             foreach (var group in groupedByHash)
             {
                 var orderedFiles = group.OrderBy(f => GetCreated(f.FilePath, createdTimes)).ThenBy(f => f.FilePath.Length).ThenBy(f => f.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
-                siblingPathsByHash[group.Key] = orderedFiles.Select(f => f.FilePath).ToList();
+                siblingPathsByHash[group.Key ?? ""] = orderedFiles.Select(f => f.FilePath).ToList();
 
                 bool isFirst = true;
                 bool isSimilarGroup = group.Key != null && group.Key.StartsWith(SimilarMediaPrefix);
@@ -881,12 +881,12 @@ namespace MultronWinCleaner
 
             foreach (var file in duplicates)
             {
-                string directory = Path.GetDirectoryName(file.FilePath);
+                string? directory = Path.GetDirectoryName(file.FilePath);
                 if (string.IsNullOrEmpty(directory)) continue;
 
                 string[] pathParts = directory.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
 
-                FolderNodeModel currentNode = null;
+                FolderNodeModel? currentNode = null;
                 string currentPath = "";
 
                 for (int i = 0; i < pathParts.Length; i++)
@@ -894,7 +894,7 @@ namespace MultronWinCleaner
                     string part = pathParts[i];
                     currentPath = (i == 0) ? part + Path.DirectorySeparatorChar.ToString() : Path.Combine(currentPath, part);
 
-                    if (!folderLookup.TryGetValue(currentPath, out FolderNodeModel node))
+                    if (!folderLookup.TryGetValue(currentPath, out FolderNodeModel? node))
                     {
                         node = new FolderNodeModel { Name = part, FullPath = currentPath };
                         folderLookup[currentPath] = node;
@@ -1156,7 +1156,7 @@ namespace MultronWinCleaner
 
                 _isDeleting = false;
 
-                ClearListButton_Click(null, null);
+                ClearListButton_Click(this, new RoutedEventArgs());
 
                 StatusText.Text = Loc.F("Cleanup Complete! Successfully deleted {0} of {1} files. Total freed space: {2}", deletedCount, totalFiles, FormatSize(freedBytes));
                 MainStatus?.EndMirrorToolStatus(StatusText, failedFilesList.Count > 0);
@@ -1274,7 +1274,7 @@ namespace MultronWinCleaner
             if (SearchCountText != null) SearchCountText.Text = Loc.F("{0} matches found", matchCount);
         }
 
-        private FolderNodeModel FilterFolderTree(FolderNodeModel node, string query, ref int matchCount)
+        private FolderNodeModel? FilterFolderTree(FolderNodeModel? node, string query, ref int matchCount)
         {
             if (node == null) return null;
 
@@ -1436,7 +1436,7 @@ namespace MultronWinCleaner
                     try
                     {
                         File.Delete(duplicatesFilePath);
-                        ClearListButton_Click(null, null);
+                        ClearListButton_Click(this, new RoutedEventArgs());
                         AppDialog.Show(Loc.T("Data file successfully deleted."), Loc.T("Success"), MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex) { AppDialog.Show(Loc.F("Could not delete the file: {0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error); }
@@ -1479,7 +1479,7 @@ namespace MultronWinCleaner
         private void BtnAddDefault_Click(object sender, RoutedEventArgs e)
         {
             FolderListBox.Items.Clear();
-            string osDrive = Path.GetPathRoot(Environment.SystemDirectory);
+            string? osDrive = Path.GetPathRoot(Environment.SystemDirectory);
             if (!string.IsNullOrEmpty(osDrive)) FolderListBox.Items.Add(osDrive);
         }
 

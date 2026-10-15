@@ -11,7 +11,7 @@ namespace MFK
     using System;
     using System.Collections.Generic;
 
-    public static class whousef
+    public static class WhoUsesFile
     {
         [StructLayout(LayoutKind.Sequential)]
         struct RM_UNIQUE_PROCESS
@@ -58,9 +58,9 @@ namespace MFK
                                               UInt32 nFiles,
                                               string[] rgsFilenames,
                                               UInt32 nApplications,
-                                              [In] RM_UNIQUE_PROCESS[] rgApplications,
+                                              [In] RM_UNIQUE_PROCESS[]? rgApplications,
                                               UInt32 nServices,
-                                              string[] rgsServiceNames);
+                                              string[]? rgsServiceNames);
 
         [DllImport("rstrtmgr.dll", CharSet = CharSet.Auto)]
         static extern int RmStartSession(out uint pSessionHandle, int dwSessionFlags, string strSessionKey);
@@ -72,7 +72,7 @@ namespace MFK
         static extern int RmGetList(uint dwSessionHandle,
                                     out uint pnProcInfoNeeded,
                                     ref uint pnProcInfo,
-                                    [In, Out] RM_PROCESS_INFO[] rgAffectedApps,
+                                    [In, Out] RM_PROCESS_INFO[]? rgAffectedApps,
                                     ref uint lpdwRebootReasons);
 
         static public List<Process> WhoIsLocking(string path)
@@ -170,7 +170,7 @@ namespace MFK
             {
                 using (Process process = Process.GetProcessById(id))
                 {
-                    string file = process.MainModule?.FileName;
+                    string? file = process.MainModule?.FileName;
                     string windows = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
                     return string.IsNullOrEmpty(file) || file.StartsWith(windows + "\\", StringComparison.OrdinalIgnoreCase)
                         || file.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Windows Defender", StringComparison.OrdinalIgnoreCase)

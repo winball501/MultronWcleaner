@@ -35,7 +35,7 @@ namespace MultronWinCleaner
         {
             try
             {
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey( @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", writable: true);
+                using RegistryKey? key = Registry.LocalMachine.OpenSubKey( @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", writable: true);
 
                 if (key == null)
                 {
@@ -93,7 +93,7 @@ namespace MultronWinCleaner
                 if (rbRegistry.IsChecked == true)
                 {
                   
-                    using RegistryKey runKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
+                    using RegistryKey? runKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
 
                     if (runKey == null)
                     {

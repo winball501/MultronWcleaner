@@ -61,10 +61,10 @@ namespace MultronWinCleaner
 
         public class ProcessItem
         {
-            public ImageSource Icon { get; set; }
-            public string Name { get; set; }
-            public string Cpu { get; set; }
-            public string Ram { get; set; }
+            public ImageSource? Icon { get; set; }
+            public string Name { get; set; } = "";
+            public string Cpu { get; set; } = "";
+            public string Ram { get; set; } = "";
         }
 
         public class SystemStatusMonitor
@@ -290,7 +290,7 @@ namespace MultronWinCleaner
 
                 _processesVisible = true;
                 _updateTimer.Start();
-                UpdateTimer_Tick(null, null);
+                UpdateTimer_Tick(this, EventArgs.Empty);
             }
             else
             {
@@ -301,7 +301,7 @@ namespace MultronWinCleaner
             }
         }
 
-        private async void UpdateTimer_Tick(object sender, EventArgs e)
+        private async void UpdateTimer_Tick(object? sender, EventArgs e)
         {
             if (_isUpdatingProcesses || Dispatcher.HasShutdownStarted || Dispatcher.HasShutdownFinished) return;
             _isUpdatingProcesses = true;
@@ -341,7 +341,7 @@ namespace MultronWinCleaner
                         }
                         catch { }
 
-                        ImageSource icon = GetProcessIcon(p, processName);
+                        ImageSource? icon = GetProcessIcon(p, processName);
 
                         processList.Add(new ProcessItem
                         {
@@ -380,21 +380,21 @@ namespace MultronWinCleaner
             }
         }
 
-        private ImageSource GetProcessIcon(Process p, string processName)
+        private ImageSource? GetProcessIcon(Process p, string processName)
         {
             if (_iconCache.TryGetValue(processName, out var cachedIcon))
             {
                 return cachedIcon;
             }
 
-            string path = null;
+            string? path = null;
             try { path = p.MainModule?.FileName; } catch { }
 
-            ImageSource iconSource = null;
+            ImageSource? iconSource = null;
 
             try
             {
-                System.Drawing.Icon ico = null;
+                System.Drawing.Icon? ico = null;
 
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
@@ -433,7 +433,7 @@ namespace MultronWinCleaner
         }
 
         
-        private void MemoryMon_Closed(object sender, EventArgs e)
+        private void MemoryMon_Closed(object? sender, EventArgs e)
         {
             _cts?.Cancel();
 

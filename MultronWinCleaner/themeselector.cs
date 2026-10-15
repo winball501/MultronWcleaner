@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace MultronWinCleaner
 {
-    class themeselector
+    class ThemeSelector
     {
         public static void selector(Uri uri)
         {

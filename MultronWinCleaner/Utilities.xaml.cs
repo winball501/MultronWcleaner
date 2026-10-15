@@ -24,11 +24,11 @@ namespace MultronWinCleaner
     public partial class Utilities : System.Windows.Window
     {
         List<MultronWinCleaner.Processes.FirewallRules.InvalidRule> invalidrules = new List<MultronWinCleaner.Processes.FirewallRules.InvalidRule>();
-        public LargeFileFinder largefilefinder;
+        public LargeFileFinder? largefilefinder;
         public MainWindow window;
-        public MemCleaner memcleaner;
-        public StartupManager startupmanager;
-        public Duplicate_File_Finder Duplicate_File_Finder;
+        public MemCleaner? memcleaner;
+        public StartupManager? startupmanager;
+        public Duplicate_File_Finder? Duplicate_File_Finder;
         public Configure configure;
         public MalwareScan? malwarescan;
 
@@ -69,10 +69,10 @@ namespace MultronWinCleaner
         private bool firewallRunning;
         private bool shortcutRunning;
         private bool securityRunning;
-        private object securitySavedContent;
+        private object? securitySavedContent;
 
-        private object firewallSavedContent;
-        private object shortcutSavedContent;
+        private object? firewallSavedContent;
+        private object? shortcutSavedContent;
 
         private void UpdateToolAvailability()
         {
@@ -85,7 +85,7 @@ namespace MultronWinCleaner
                 SetMainCancelMode(SecurityScan, ref securitySavedContent, busy);
         }
 
-        private static void SetMainCancelMode(System.Windows.Controls.Button button, ref object saved, bool busy)
+        private static void SetMainCancelMode(System.Windows.Controls.Button button, ref object? saved, bool busy)
         {
             if (busy)
             {
@@ -116,13 +116,13 @@ namespace MultronWinCleaner
             if (chkTrayIconUtil.IsChecked == true)
                 SetupTrayIcon();
 
-            if (memcleaner.chkStartWithWinCleaner.IsChecked == true)
+            if (memcleaner?.chkStartWithWinCleaner.IsChecked == true)
             {
                 memcleaner.Show();
                 memcleaner.Hide();
             }
-            startupmanager.Show();
-            startupmanager.Hide();
+            startupmanager?.Show();
+            startupmanager?.Hide();
         }
 
  
@@ -184,7 +184,7 @@ namespace MultronWinCleaner
             });
         }
 
-        private bool IsToolRunning(System.Windows.Window toolWindow)
+        private bool IsToolRunning(System.Windows.Window? toolWindow)
         {
             if (toolWindow == null)
                 return false;
@@ -193,23 +193,23 @@ namespace MultronWinCleaner
 
         private void CloseLargeFile_Click(object sender, RoutedEventArgs e)
         {
-            largefilefinder.Close();
+            largefilefinder?.Close();
             largefilefinder = null;
 
         }
 
         private void CloseDuplicate_Click(object sender, RoutedEventArgs e)
         {
-            Duplicate_File_Finder.Close();
+            Duplicate_File_Finder?.Close();
             Duplicate_File_Finder = null;
 
         }
 
         private void CloseMemCleaner_Click(object sender, RoutedEventArgs e)
         {
-            if(memcleaner.memorymon != null) 
+            if (memcleaner?.memorymon != null)
                memcleaner.memorymon.Close();
-            memcleaner.Close();
+            memcleaner?.Close();
             memcleaner = null;
 
 
@@ -217,7 +217,7 @@ namespace MultronWinCleaner
 
         private void CloseStartup_Click(object sender, RoutedEventArgs e)
         {
-            startupmanager.Close();
+            startupmanager?.Close();
             startupmanager = null;
 
         }
@@ -259,7 +259,7 @@ namespace MultronWinCleaner
             await malwarescan.StartScanAsync(mode, fromMainScan: true);
         }
 
-        private System.Windows.Forms.NotifyIcon trayIcon;
+        private System.Windows.Forms.NotifyIcon? trayIcon;
 
         internal void DisposeTrayIcon()
         {
@@ -376,7 +376,6 @@ namespace MultronWinCleaner
             savesettings($"utilitiestrayicon:{(chkTrayIconUtil.IsChecked == true ? "1" : "0")}");
         }
 
-        // The Main Window button is only useful when Utilities runs on its own from its tray icon.
         private void UpdateMainWindowButton()
         {
             if (MainWindowButton != null)
@@ -535,9 +534,54 @@ namespace MultronWinCleaner
             SecurityUndo.Visibility = MultronWinCleaner.Processes.SecurityCheck.HasBackup ? Visibility.Visible : Visibility.Collapsed;
             SecurityReset.Visibility = Visibility.Visible;
             SecurityScan.Content = Loc.T("ReScan");
+            UpdateShowIgnoredButton();
         }
 
         private List<MultronWinCleaner.Processes.SecurityCheck.Issue> securityIssues = new List<MultronWinCleaner.Processes.SecurityCheck.Issue>();
+
+        private void IgnoreSecurityIssue_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.Tag is MultronWinCleaner.Processes.SecurityCheck.Issue issue)
+                window?.IgnoreSecurityIssue(issue);
+        }
+
+        public void RemoveSecurityIssue(string id, string note)
+        {
+            if (securityRunning || !securityIssues.Any(i => i.Id == id))
+            {
+                UpdateShowIgnoredButton();
+                return;
+            }
+            ShowSecurityIssues(securityIssues.Where(i => i.Id != id).ToList(), note);
+        }
+
+        private void UpdateShowIgnoredButton()
+        {
+            int ignored = MultronWinCleaner.Processes.SecurityCheck.IgnoredCount;
+            SecurityShowIgnored.Content = Loc.F("Show Ignored Warnings ({0})", ignored);
+            SecurityShowIgnored.Visibility = ignored > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async void SecurityShowIgnored_Click(object sender, RoutedEventArgs e)
+        {
+            if (securityRunning)
+                return;
+            var answer = AppDialog.Show(Loc.T("Show all ignored security warnings again?"),
+                Loc.T("Security Check"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return;
+            try
+            {
+                MultronWinCleaner.Processes.SecurityCheck.ClearIgnored();
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not save the setting: {0}", ex.Message), Loc.T("Security Check"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            await RunSecurityScanAsync("");
+            window?.ApplySecurityIssues(securityIssues, "");
+        }
 
         private void ShowCard(FrameworkElement element)
         {
@@ -670,6 +714,7 @@ namespace MultronWinCleaner
                 SecurityResultLabel.Foreground = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
                 SecurityFix.Visibility = securityIssues.Any(i => i.CanFix) ? Visibility.Visible : Visibility.Collapsed;
                 SecurityScan.Content = Loc.T("ReScan");
+                UpdateShowIgnoredButton();
             }
             catch (Exception ex)
             {
@@ -880,7 +925,7 @@ namespace MultronWinCleaner
             window.Topmost = true;
             window.Topmost = false;
         }
-        public Duplicate_File_Finder GetDuplicateFinder()
+        public Duplicate_File_Finder? GetDuplicateFinder()
         {
             if (Duplicate_File_Finder == null)
                 Duplicate_File_Finder = new Duplicate_File_Finder();
@@ -889,7 +934,7 @@ namespace MultronWinCleaner
 
         public void ShowDuplicateFinder()
         {
-            DuplicateFilesScan_Click(this, null);
+            DuplicateFilesScan_Click(this, new RoutedEventArgs());
             Duplicate_File_Finder?.ShowSideBySide();
         }
 
@@ -1110,7 +1155,7 @@ namespace MultronWinCleaner
 
         private async void ActivateTurboBoost_Click(object sender, RoutedEventArgs e)
         {
-            var btn = sender as System.Windows.Controls.Button;
+            if (sender is not System.Windows.Controls.Button btn) return;
             bool newProfile = IsNewProfile;
             bool active = newProfile ? newBoostActive : turboBoostActive;
             btn.IsEnabled = false;
@@ -1129,18 +1174,18 @@ namespace MultronWinCleaner
                     bool memorySelected = tweaks.Any(t => t.ServiceName == "memory" && t.IsSelected);
                     if (!active && memorySelected)
                     {
-                        bool wasOn = memcleaner.chkEnableAutoClean.IsChecked == true;
+                        bool wasOn = memcleaner?.chkEnableAutoClean.IsChecked == true;
                         newBoostAutoMemPrevious = wasOn ? 1 : 0;
                         savesettings($"newboostautomem:{newBoostAutoMemPrevious}");
-                        memcleaner.chkEnableAutoClean.IsChecked = true;
-                        await memcleaner.cleanmemory();
+                        if (memcleaner != null) memcleaner.chkEnableAutoClean.IsChecked = true;
+                        if (memcleaner != null) await memcleaner.cleanmemory();
                         messages.Add(Loc.T("Applied: Automatic memory cleaning (Memory Cleaner)"));
                     }
                     else if (active)
                     {
                         if (newBoostAutoMemPrevious == 0)
                         {
-                            memcleaner.chkEnableAutoClean.IsChecked = false;
+                            if (memcleaner != null) memcleaner.chkEnableAutoClean.IsChecked = false;
                             messages.Add(Loc.T("Automatic memory cleaning was turned off again."));
                         }
                         newBoostAutoMemPrevious = -1;
@@ -1160,7 +1205,7 @@ namespace MultronWinCleaner
                     else
                     {
                         var stopped = await Task.Run(() => MultronWinCleaner.Processes.Optimizer.StopOldSystemServices(services));
-                        await memcleaner.cleanmemory();
+                        if (memcleaner != null) await memcleaner.cleanmemory();
                         messages = new List<string> { stopped.Count == 0 ? Loc.T("No selected service was running, so nothing had to be paused. Memory was cleaned.") : Loc.F("Paused: {0}. Memory was cleaned.", string.Join(", ", stopped)) };
                     }
                     turboBoostActive = !active;

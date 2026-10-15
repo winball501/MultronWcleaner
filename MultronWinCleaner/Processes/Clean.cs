@@ -39,10 +39,10 @@ namespace MultronWinCleaner.Processes
         private int shortcut;
         private long totalsize;
         int winsxs = 0;
-        private volatile string dotsText;
+        private volatile string dotsText = "";
         private HashSet<string> checkedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> lockedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private string currentItem;
+        private string currentItem = "";
         private int itemFiles;
         private long itemBytes;
         private int itemLocked;
@@ -156,7 +156,7 @@ namespace MultronWinCleaner.Processes
  
                 await Task.Run(() =>
                 {
-                    using (Process process = Process.Start(startInfo))
+                    using (Process? process = Process.Start(startInfo))
                     {
                         if (process != null)
                         {
@@ -484,7 +484,7 @@ namespace MultronWinCleaner.Processes
         {
             try
             {
-                using Process process = Process.Start(new ProcessStartInfo
+                using Process? process = Process.Start(new ProcessStartInfo
                 {
                     FileName = fileName,
                     Arguments = arguments,
@@ -611,28 +611,28 @@ namespace MultronWinCleaner.Processes
         }
         public class LockedFileGroupViewModel : INotifyPropertyChanged
         {
-            public string GroupName { get; set; }
+            public string GroupName { get; set; } = "";
 
-            public string DisplayName { get; set; }
+            public string DisplayName { get; set; } = "";
 
-            public string FilePath { get; set; }
+            public string FilePath { get; set; } = "";
 
 
 
-            public ObservableCollection<LockedProcessViewModel> Processes { get; set; }
+            public ObservableCollection<LockedProcessViewModel> Processes { get; set; } = new ObservableCollection<LockedProcessViewModel>();
 
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string name = null)
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? name = null)
                 => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public class LockedProcessViewModel : INotifyPropertyChanged
         {
-            public string DisplayName { get; set; }
-            public string GroupName { get; set; }
-            public string FilePath { get; set; }
-            public string FilePathWithoutSize { get; set; }
-            public string Id { get; set; }
+            public string DisplayName { get; set; } = "";
+            public string GroupName { get; set; } = "";
+            public string FilePath { get; set; } = "";
+            public string FilePathWithoutSize { get; set; } = "";
+            public string Id { get; set; } = "";
             private bool _isChecked;
             public bool IsChecked
             {
@@ -647,16 +647,16 @@ namespace MultronWinCleaner.Processes
                     }
                 }
             }
-            public Action<LockedProcessViewModel, bool> OnCheckedChanged { get; set; }
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged([CallerMemberName] string name = null)
+            public Action<LockedProcessViewModel, bool>? OnCheckedChanged { get; set; }
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? name = null)
                 => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         }
 
         public class LockedFileGroup
         {
-            public string FilePath { get; set; }
+            public string FilePath { get; set; } = "";
 
         }
 
@@ -673,7 +673,7 @@ namespace MultronWinCleaner.Processes
                     await CleanDirectory(subDir, name);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
             }
@@ -685,7 +685,7 @@ namespace MultronWinCleaner.Processes
                     TryDeleteFile(file, name);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -726,8 +726,8 @@ namespace MultronWinCleaner.Processes
 
         public class LockedFileViewModel
         {
-            public string FilePath { get; set; }
-            public string LockedByProcess { get; set; }
+            public string FilePath { get; set; } = "";
+            public string LockedByProcess { get; set; } = "";
         }
         private async Task FinalizeCleaning()
         {
@@ -793,7 +793,7 @@ namespace MultronWinCleaner.Processes
 
         private async Task<TextBlock> AddStatusTextBlock(string text)
         {
-            TextBlock tb = null;
+            TextBlock tb = null!;
             await main.Dispatcher.InvokeAsync(() =>
             {
              

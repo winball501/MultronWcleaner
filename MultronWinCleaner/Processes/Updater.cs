@@ -152,7 +152,7 @@ namespace MultronWinCleaner.Processes
                 if (!match.Success)
                     return null;
                 Version latestVersion = new Version(match.Value);
-                if (!Version.TryParse(getversion, out Version currentVersion))
+                if (!Version.TryParse(getversion, out Version? currentVersion))
                 {
                     currentVersion = new Version(1, 0);
                 }
@@ -218,7 +218,7 @@ namespace MultronWinCleaner.Processes
 
         public async Task downloadlatestdatabase()
         {
-            dotsAsync(Loc.T("Checking for latest database"), cts.Token);
+            _ = dotsAsync(Loc.T("Checking for latest database"), cts.Token);
             try
             {
                 bool started = false;
@@ -255,7 +255,7 @@ namespace MultronWinCleaner.Processes
 
         public const string AppUpdateSettingKey = "appautoupdate";
         private const string AppLastCheckSettingKey = "applastcheck";
-        public static readonly Version CurrentAppVersion = new Version("1.26.2");
+        public static readonly Version CurrentAppVersion = new Version("1.26.3");
 
         public static bool IsAppAutoUpdateEnabled() => ReadSetting(AppUpdateSettingKey) != "0";
 
@@ -538,7 +538,7 @@ namespace MultronWinCleaner.Processes
         {
             if (!IsAppAutoUpdateEnabled())
                 return;
-            dotsAsync(Loc.T("Checking For Application Updates"), cts.Token);
+            _ = dotsAsync(Loc.T("Checking For Application Updates"), cts.Token);
             try
             {
                 var update = await FindAppUpdateAsync();

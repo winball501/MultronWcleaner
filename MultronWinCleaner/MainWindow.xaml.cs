@@ -46,18 +46,17 @@ using static System.Net.WebRequestMethods;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 
-
 namespace Multron_Win_Cleaner
 {
 
     public partial class MainWindow : Window
     {
         private string diskModel = string.Empty;
-        public Settings settings;
+        public Settings settings = null!;
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModel = new MultronWinCleaner.Processes.Scan.MainViewModel();
         public MultronWinCleaner.Processes.Scan.MainViewModel viewModelbac = new MultronWinCleaner.Processes.Scan.MainViewModel();
         public List<string> logfiles = new List<string>();
-        public SolidColorBrush brush;
+        public SolidColorBrush brush = System.Windows.Media.Brushes.Black;
         public List<CheckBox> checkboxes2 = new List<CheckBox>();
         public List<StackPanel> stackpanels = new List<StackPanel>();
         public List<Expander> expanders = new List<Expander>();
@@ -66,7 +65,7 @@ namespace Multron_Win_Cleaner
         public Dictionary<string, bool> databaseDefaults = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         public List<string> paths = new List<string>();
         public CancellationTokenSource dismcancel = new CancellationTokenSource();
-        public Utilities utilities;
+        public Utilities utilities = null!;
         public byte autoclean = 0;
         public byte startupclean = 0;
         public byte startupscan = 0;
@@ -136,8 +135,9 @@ namespace Multron_Win_Cleaner
                     CreateNoWindow = true
                 };
 
-                using (Process process = Process.Start(psi))
+                using (Process? process = Process.Start(psi))
                 {
+                    if (process == null) return Loc.T("Disk");
                     string output = process.StandardOutput.ReadToEnd().Trim();
                     process.WaitForExit();
 
@@ -149,7 +149,7 @@ namespace Multron_Win_Cleaner
                 return Loc.T("Disk");
             }
         }
-        private void DiskSpaceTimer_Tick(object sender, EventArgs e)
+        private void DiskSpaceTimer_Tick(object? sender, EventArgs e)
         {
             UpdateDiskSpace();
         }
@@ -157,7 +157,7 @@ namespace Multron_Win_Cleaner
         {
             try
             {
-                string driveLetter = System.IO.Path.GetPathRoot(Environment.SystemDirectory);
+                string driveLetter = System.IO.Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
                 DriveInfo drive = new DriveInfo(driveLetter);
 
                 if (drive.IsReady)
@@ -258,7 +258,7 @@ namespace Multron_Win_Cleaner
         }
         private readonly Dictionary<string, bool?> pendingSelections = new Dictionary<string, bool?>(StringComparer.OrdinalIgnoreCase);
         private readonly object selectionsFileLock = new object();
-        private DispatcherTimer selectionsAutoSaveTimer;
+        private DispatcherTimer? selectionsAutoSaveTimer;
 
         public const string AllBrowserProfilesSettingKey = "allbrowserprofiles";
 
@@ -287,7 +287,7 @@ namespace Multron_Win_Cleaner
                 ReloadDatabase_Click(ReloadDb, new RoutedEventArgs());
         }
 
-        private void QueueSelectionAutoSave(CheckBox checkBox, string path)
+        private void QueueSelectionAutoSave(CheckBox checkBox, string? path)
         {
             if (!autoSaveSelections || path == null || !databaseDefaults.TryGetValue(path, out bool databaseDefault)) return;
 
@@ -365,6 +365,7 @@ namespace Multron_Win_Cleaner
                 try { FlushPendingSelections(); } catch { }
             };
             SetAutoSaveSelections(autoSaveSelections);
+            ApplyInterfaceToolbar();
             utilities = new Utilities(this);
             settings = new Settings(utilities.memcleaner, utilities, this, utilities.startupmanager);
             utilities.Show();
@@ -411,8 +412,6 @@ namespace Multron_Win_Cleaner
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             Environment.CurrentDirectory = baseDirectory;
-
-
 
             LoadingOverlay.Visibility = Visibility.Visible;
 
@@ -489,7 +488,6 @@ namespace Multron_Win_Cleaner
 
          
 
-
         }
         public class OpenTrayIcon
         {
@@ -520,17 +518,17 @@ namespace Multron_Win_Cleaner
             }
         }
 
-
         private CheckBox? malwareScanCheckBox;
         private ComboBox? malwareScanModeBox;
         private Expander? malwareScanExpander;
+        private StackPanel? malwareCloudPanel;
         private bool malwareScanWasCheckedBeforeOffline;
 
         public void ApplyOfflineModeToMalwareScan()
         {
-            if (malwareScanCheckBox == null || malwareScanExpander == null) return;
+            if (malwareScanCheckBox == null || malwareCloudPanel == null) return;
             bool offline = IsOfflineModeEnabled();
-            bool wasOffline = !malwareScanExpander.IsEnabled;
+            bool wasOffline = !malwareCloudPanel.IsEnabled;
             if (offline == wasOffline) return;
 
             if (offline)
@@ -541,15 +539,14 @@ namespace Multron_Win_Cleaner
                 malwareScanCheckBox.IsChecked = false;
                 malwareScanCheckBox.Checked += MalwareCheckBoxSave;
                 malwareScanCheckBox.Unchecked += MalwareCheckBoxSave;
-                malwareScanExpander.IsEnabled = false;
-                malwareScanExpander.IsExpanded = false;
-                ToolTipService.SetShowOnDisabled(malwareScanExpander, true);
-                malwareScanExpander.ToolTip = Loc.T("Malware scan is disabled in offline mode.");
+                malwareCloudPanel.IsEnabled = false;
+                ToolTipService.SetShowOnDisabled(malwareCloudPanel, true);
+                malwareCloudPanel.ToolTip = Loc.T("Malware scan is disabled in offline mode.");
             }
             else
             {
-                malwareScanExpander.IsEnabled = true;
-                malwareScanExpander.ToolTip = null;
+                malwareCloudPanel.IsEnabled = true;
+                malwareCloudPanel.ToolTip = null;
                 malwareScanCheckBox.Checked -= MalwareCheckBoxSave;
                 malwareScanCheckBox.Unchecked -= MalwareCheckBoxSave;
                 malwareScanCheckBox.IsChecked = malwareScanWasCheckedBeforeOffline;
@@ -563,11 +560,327 @@ namespace Multron_Win_Cleaner
             utilities?.savesettings($"{MultronWinCleaner.MalwareScan.WithMainScanSettingKey}:{(malwareScanCheckBox?.IsChecked == true ? "1" : "0")}");
         }
 
+        #region Microsoft MRT scan
+
+        public const string MrtScanSettingKey = "mrtscanwithmain";
+        public const string MrtModeSettingKey = "mrtscanmode";
+        public const string MrtRemoveSettingKey = "mrtremovethreats";
+        private const string MrtOptionKey = "mrtscan";
+        private CheckBox? mrtScanCheckBox;
+        private ComboBox? mrtModeBox;
+        private CheckBox? mrtRemoveCheckBox;
+        private bool mrtScanQueued;
+        private bool mrtStoppedByUser;
+        private CancellationTokenSource? mrtCts;
+
+        public bool IsMrtScanning => mrtCts != null;
+
+        private void AddMrtScanOption(Panel parent)
+        {
+            mrtScanCheckBox = null;
+            mrtModeBox = null;
+            mrtRemoveCheckBox = null;
+
+            if (!MultronWinCleaner.Processes.MrtScanner.IsAvailable)
+            {
+                parent.Children.Add(new TextBlock
+                {
+                    Text = Loc.T("Microsoft MRT scan is not available: MRT.exe was not found on this PC. Windows Update installs it."),
+                    Margin = new Thickness(12, 10, 10, 6),
+                    FontSize = 12,
+                    FontWeight = FontWeights.Regular,
+                    TextWrapping = TextWrapping.Wrap,
+                    MaxWidth = 420,
+                    Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(WarningColor))
+                });
+                return;
+            }
+
+            CheckBox mrt = new CheckBox
+            {
+                Content = Loc.T("Microsoft MRT Scan") + "=" + Loc.T("Scans with the Malicious Software Removal Tool built into Windows. It runs hidden, before the cloud scan.") + "=" + MrtOptionKey,
+                Margin = new Thickness(10),
+                IsChecked = IsSettingOnByDefault(MrtScanSettingKey),
+                BorderThickness = new Thickness(0),
+                BorderBrush = new SolidColorBrush(Colors.Transparent),
+                Background = new SolidColorBrush(System.Windows.Media.Colors.White),
+                Foreground = brush,
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+            };
+            ApplyOptionTemplate(mrt);
+            checkboxes2.Add(mrt);
+
+            ComboBox mode = new ComboBox
+            {
+                Margin = new Thickness(10, 0, 10, 6),
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                Foreground = new SolidColorBrush(Colors.Black),
+                Background = new SolidColorBrush(Colors.White),
+                BorderBrush = new SolidColorBrush(Colors.Gray),
+                BorderThickness = new Thickness(1),
+                ItemsSource = new List<string> { Loc.T("Quick Scan"), Loc.T("Full Scan") },
+                SelectedIndex = string.Equals(ReadSettingValue(MrtModeSettingKey), "full", StringComparison.OrdinalIgnoreCase) ? 1 : 0,
+                IsEnabled = mrt.IsChecked == true,
+                ToolTip = Loc.T("Quick: the places malicious software usually uses, a few minutes.\nFull: every fixed drive, this can take hours.")
+            };
+
+            CheckBox remove = new CheckBox
+            {
+                Content = Loc.T("Remove found malicious software right away"),
+                Margin = new Thickness(10, 0, 10, 10),
+                IsChecked = SettingIsOn(MrtRemoveSettingKey),
+                IsEnabled = mrt.IsChecked == true,
+                FontSize = 12,
+                FontFamily = new System.Windows.Media.FontFamily("Segoe UI"),
+                FontWeight = FontWeights.Regular,
+                ToolTip = Loc.T("When this is off, MRT only reports what it finds. You can then remove it with the Remove with MRT button in the results.")
+            };
+            remove.ContentTemplate = WrappingCheckBoxTemplate;
+            remove.SetResourceReference(Control.ForegroundProperty, "Text");
+
+            mrt.Checked += (s, e) => { mode.IsEnabled = true; remove.IsEnabled = true; utilities?.savesettings(MrtScanSettingKey + ":1"); };
+            mrt.Unchecked += (s, e) => { mode.IsEnabled = false; remove.IsEnabled = false; utilities?.savesettings(MrtScanSettingKey + ":0"); };
+            mode.SelectionChanged += (s, e) => utilities?.savesettings(MrtModeSettingKey + ":" + (mode.SelectedIndex == 1 ? "full" : "quick"));
+            remove.Checked += (s, e) => utilities?.savesettings(MrtRemoveSettingKey + ":1");
+            remove.Unchecked += (s, e) => utilities?.savesettings(MrtRemoveSettingKey + ":0");
+
+            mrtScanCheckBox = mrt;
+            mrtModeBox = mode;
+            mrtRemoveCheckBox = remove;
+            parent.Children.Add(mrt);
+            parent.Children.Add(mode);
+            parent.Children.Add(remove);
+        }
+
+        private static string FormatElapsed(TimeSpan t) => t.TotalHours >= 1 ? t.ToString(@"h\:mm\:ss") : t.ToString(@"mm\:ss");
+
+        private MultronWinCleaner.Processes.MrtScanner.Result? lastMrtResult;
+
+        private Task RunMrtScanAsync() =>
+            RunMrtScanAsync(mrtModeBox?.SelectedIndex == 1, mrtRemoveCheckBox?.IsChecked == true);
+
+        private async Task RunMrtScanAsync(bool full, bool remove)
+        {
+            bool automatic = autoclean == 1 || startupscan == 1;
+            string scanName = remove ? Loc.T(full ? "Full scan with removal" : "Quick scan with removal") : Loc.T(full ? "Full Scan" : "Quick Scan");
+
+            mrtStoppedByUser = false;
+            mrtCts = new CancellationTokenSource();
+            mrtRows.Clear();
+            lastMrtResult = null;
+            mrtThreatCount = 0;
+            mrtPanelStatus = Loc.F("{0} running...", scanName);
+            mrtPanelColor = InfoColor;
+            RefreshMalwarePanel(scanning: true);
+            EnterMalwareCancelMode(Equals(buttonStartScan.Content, Loc.T("Clean")) ? "Clean" : "Scan");
+            progressBar1.Value = 0;
+            SetStatusText(Loc.F("Microsoft MRT: {0} started", scanName), InfoColor);
+
+            var progress = new Progress<(double Percent, TimeSpan Elapsed)>(p =>
+            {
+                if (mrtCts == null) return;
+                string text = Loc.F("{0}: {1}% · {2}", scanName, (int)p.Percent, FormatElapsed(p.Elapsed));
+                mrtPanelStatus = text;
+                MalwareResultsStatus.Text = ComposeMalwareStatus();
+                if (malwareCancelRestore != null)
+                {
+                    progressBar1.Value = p.Percent;
+                    SetStatusText(Loc.F("Microsoft MRT: {0}", text), InfoColor);
+                }
+            });
+
+            MultronWinCleaner.Processes.MrtScanner.Result result;
+            try
+            {
+                result = await MultronWinCleaner.Processes.MrtScanner.RunAsync(full, remove, progress, mrtCts.Token);
+            }
+            catch (Exception ex)
+            {
+                result = new MultronWinCleaner.Processes.MrtScanner.Result
+                {
+                    Outcome = MultronWinCleaner.Processes.MrtScanner.Outcome.Failed,
+                    Message = Loc.F("Microsoft MRT could not run: {0}", ex.Message)
+                };
+            }
+            finally
+            {
+                mrtCts.Dispose();
+                mrtCts = null;
+            }
+
+            var outcome = result.Outcome;
+            mrtStoppedByUser = outcome == MultronWinCleaner.Processes.MrtScanner.Outcome.Stopped;
+            mrtPanelColor = outcome switch
+            {
+                MultronWinCleaner.Processes.MrtScanner.Outcome.Clean => OkColor,
+                MultronWinCleaner.Processes.MrtScanner.Outcome.Threats => ProblemColor,
+                _ => WarningColor
+            };
+            mrtPanelStatus = result.Message + (result.Elapsed > TimeSpan.Zero ? " (" + FormatElapsed(result.Elapsed) + ")" : "");
+            mrtThreatCount = result.ThreatCount;
+            lastMrtResult = outcome == MultronWinCleaner.Processes.MrtScanner.Outcome.Stopped ? null : result;
+
+            if (outcome == MultronWinCleaner.Processes.MrtScanner.Outcome.Threats)
+            {
+                var lines = result.Summary.Where(l => !l.Contains("No infection found", StringComparison.OrdinalIgnoreCase)).ToList();
+                if (lines.Count == 0)
+                    lines.Add(Loc.T("Details are in mrt.log."));
+                string verdict = Loc.T(result.CanRemove ? "Detected" : "Removed");
+                foreach (string line in lines)
+                    mrtRows.Add(new MalwareListRow(Loc.T("Microsoft MRT"), verdict, line, "", ""));
+            }
+
+            if (!mrtStoppedByUser)
+                progressBar1.Value = 100;
+            SetStatusText(Loc.F("Microsoft MRT: {0}", result.Message), mrtPanelColor);
+            RefreshMalwarePanel(scanning: false);
+            LeaveMalwareCancelMode();
+
+            if (automatic && IsSettingOnByDefault(NotifyMalwareSettingKey)
+                && outcome is MultronWinCleaner.Processes.MrtScanner.Outcome.Clean or MultronWinCleaner.Processes.MrtScanner.Outcome.Threats)
+            {
+                bool threats = outcome == MultronWinCleaner.Processes.MrtScanner.Outcome.Threats;
+                var notify = new Notify(Loc.T(threats ? "Microsoft MRT found malicious software!" : "Microsoft MRT scan finished."), result.Message, null, BringToFront);
+                (threats ? notify.AsWarning() : notify).Show();
+            }
+        }
+
+        private void StopMrtScan()
+        {
+            try { mrtCts?.Cancel(); } catch (ObjectDisposedException) { }
+        }
+
+        private void MrtResultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (lastMrtResult == null)
+            {
+                OpenMrtLog();
+                return;
+            }
+            new MrtResultsWindow(this, lastMrtResult, mrtPanelColor,
+                lastMrtResult.CanRemove ? () => _ = RemoveWithMrtAsync() : null, OpenMrtLog).Show();
+        }
+
+        private void MrtRemoveButton_Click(object sender, RoutedEventArgs e) => _ = RemoveWithMrtAsync();
+
+        private async Task RemoveWithMrtAsync()
+        {
+            var previous = lastMrtResult;
+            if (previous == null || !previous.CanRemove)
+                return;
+            if (IsMrtScanning || utilities?.malwarescan?.IsScanning == true || IsScanOrCleanBusy || malwareCancelRestore != null)
+            {
+                AppDialog.Show(Loc.T("Please wait until the current scan or clean has finished."), Loc.T("Microsoft MRT"), MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var answer = AppDialog.Show(
+                Loc.F("Microsoft MRT scans again ({0}) and removes the malicious software it finds. Save your work first, a restart may be needed afterwards.\n\nContinue?",
+                    Loc.T(previous.FullScan ? "Full Scan" : "Quick Scan")),
+                Loc.T("Remove with MRT"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            await RunMrtScanAsync(previous.FullScan, remove: true);
+        }
+
+        private void OpenMrtLog()
+        {
+            string log = MultronWinCleaner.Processes.MrtScanner.LogPath;
+            if (!System.IO.File.Exists(log))
+            {
+                AppDialog.Show(Loc.F("Path not found:\n{0}", log), Loc.T("Microsoft MRT"), MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            try
+            {
+                Process.Start(new ProcessStartInfo("notepad.exe", "\"" + log + "\"") { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        #endregion
+
+        #region Malware results panel (MRT and cloud scan in one list)
+
+        public sealed class MalwareListRow
+        {
+            public MalwareListRow(string source, string verdictText, string fileName, string threatName, string filePath)
+            {
+                Source = source;
+                VerdictText = verdictText;
+                FileName = fileName;
+                ThreatName = threatName;
+                FilePath = filePath;
+            }
+
+            public string Source { get; }
+            public string VerdictText { get; }
+            public string FileName { get; }
+            public string ThreatName { get; }
+            public string FilePath { get; }
+        }
+
+        private readonly List<MalwareListRow> mrtRows = new List<MalwareListRow>();
+        private List<MalwareListRow> cloudRows = new List<MalwareListRow>();
+        private string? mrtPanelStatus;
+        private string mrtPanelColor = InfoColor;
+        private int mrtThreatCount;
+        private string? cloudPanelStatus;
+        private string cloudPanelColor = InfoColor;
+
+        private string ComposeMalwareStatus()
+        {
+            if (mrtPanelStatus == null)
+                return cloudPanelStatus ?? "";
+            string text = Loc.F("Microsoft MRT: {0}", mrtPanelStatus);
+            if (cloudPanelStatus != null)
+                text += "\n" + Loc.F("Multron Cloud: {0}", cloudPanelStatus);
+            return text;
+        }
+
+        private static int ColorRank(string color) => color switch
+        {
+            ProblemColor => 3,
+            WarningColor => 2,
+            InfoColor => 1,
+            _ => 0
+        };
+
+        private void RefreshMalwarePanel(bool scanning)
+        {
+            string color = mrtPanelStatus == null ? cloudPanelColor
+                : cloudPanelStatus == null ? mrtPanelColor
+                : ColorRank(mrtPanelColor) >= ColorRank(cloudPanelColor) ? mrtPanelColor : cloudPanelColor;
+            SetResultPanelColor(MalwareResultsPanel, MalwareResultsIcon, color);
+            MalwareResultsTitle.Text = Loc.T(mrtPanelStatus != null ? "Malware Scan" : "Multron Malware Scan Cloud");
+            MalwareResultsStatus.Text = ComposeMalwareStatus();
+            MalwareResultsPanel.Visibility = Visibility.Visible;
+            MalwareCancelButton.Visibility = scanning ? Visibility.Visible : Visibility.Collapsed;
+            if (!scanning)
+                MalwareCancelButton.IsEnabled = true;
+            MalwarePanelModeBox.IsEnabled = !scanning;
+            MalwareMrtResultsButton.Visibility = mrtPanelStatus != null && !scanning ? Visibility.Visible : Visibility.Collapsed;
+            MalwareMrtRemoveButton.Visibility = !scanning && lastMrtResult?.CanRemove == true ? Visibility.Visible : Visibility.Collapsed;
+            MalwareResultsButton.Visibility = cloudPanelStatus != null || mrtPanelStatus == null ? Visibility.Visible : Visibility.Collapsed;
+
+            var rows = mrtRows.Concat(cloudRows).ToList();
+            MalwareThreatsList.ItemsSource = rows;
+            MalwareThreatsList.Visibility = rows.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
         public async Task loadothers2()
         {
             CheckBox malscan = new CheckBox
             {
-                Content = Loc.T("Malware Scan") + " (" + Loc.T("Testing") + ")=" + Loc.T("Scans your system for malicious software in the cloud with the viruskov.com OPEN-EDR engine") + "=malscan",
+                Content = Loc.T("Multron Malware Scan Cloud") + " (" + Loc.T("Testing") + ")=" + Loc.T("Scans your system for malicious software in the cloud with the viruskov.com OPEN-EDR engine") + "=malscan",
                 Margin = new Thickness(10),
                 IsChecked = MultronWinCleaner.MalwareScan.IsAutoScanWithMainEnabled(),
                 BorderThickness = new Thickness(0),
@@ -579,9 +892,8 @@ namespace Multron_Win_Cleaner
                 FontWeight = FontWeights.Regular,
                 FontStyle = FontStyles.Normal,
             };
-            malscan.ContentTemplate = WrappingCheckBoxTemplate;
+            ApplyOptionTemplate(malscan);
             checkboxes2.Add(malscan);
-
 
             ComboBox scanOptionsComboBox = new ComboBox
             {
@@ -620,7 +932,6 @@ namespace Multron_Win_Cleaner
             scanOptionsComboBox.SelectionChanged += (s, e) =>
                 utilities?.savesettings($"{MultronWinCleaner.MalwareScan.ModeSettingKey}:{(MultronWinCleaner.MalwareScan.ScanMode)scanOptionsComboBox.SelectedIndex}");
 
-
             StackPanel groupBoxContent2 = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -629,15 +940,18 @@ namespace Multron_Win_Cleaner
             };
             stackpanels.Add(groupBoxContent2);
 
+            StackPanel cloudPanel = new StackPanel { Orientation = Orientation.Vertical };
+            cloudPanel.Children.Add(malscan);
+            cloudPanel.Children.Add(scanOptionsComboBox);
+            cloudPanel.Children.Add(malwareSettingsLink);
+            malwareCloudPanel = cloudPanel;
 
-            groupBoxContent2.Children.Add(malscan);
-            groupBoxContent2.Children.Add(scanOptionsComboBox);
-            groupBoxContent2.Children.Add(malwareSettingsLink);
-
+            AddMrtScanOption(groupBoxContent2);
+            groupBoxContent2.Children.Add(cloudPanel);
 
             Expander newExpander1 = new Expander
             {
-                Header = Loc.T("Malware Scan") + " (" + Loc.T("Testing") + ")",
+                Header = IsSimpleInterface() ? Loc.T("Malware Scan") : Loc.T("Malware Scan") + " (" + Loc.T("Testing") + ")",
                 Margin = new Thickness(5),
                 Background = new SolidColorBrush(Colors.Transparent),
                 Foreground = brush,
@@ -654,7 +968,7 @@ namespace Multron_Win_Cleaner
             malwareScanExpander = newExpander1;
             try
             {
-                wrapPanel1.Children.Add(newExpander1);
+                AddOptionExpander(newExpander1);
             }
             catch (Exception)
             {
@@ -668,10 +982,10 @@ namespace Multron_Win_Cleaner
           
         }
 
-        public AutoClean autoCleaner;
+        public AutoClean autoCleaner = null!;
         public string AutoCleanStatus = "";
 
-        public void SetAutoCleanStatus(string text)
+        public void SetAutoCleanStatus(string? text)
         {
             AutoCleanStatus = text ?? "";
             labelAutoClean.Text = AutoCleanStatus;
@@ -692,7 +1006,7 @@ namespace Multron_Win_Cleaner
             {
                 if (reset != 1)
                     return false;
-                ButtonReset_Click(this, null);
+                ButtonReset_Click(this, new RoutedEventArgs());
             }
 
             await UpdateDatabaseIfDueAsync(true);
@@ -756,7 +1070,7 @@ namespace Multron_Win_Cleaner
                 Content = content
             };
             expanders.Add(expander);
-            wrapPanel1.Children.Add(expander);
+            AddOptionExpander(expander);
         }
 
         public const string OkColor = "#28A745";
@@ -932,7 +1246,7 @@ namespace Multron_Win_Cleaner
                 Content = content
             };
             expanders.Add(expander);
-            wrapPanel1.Children.Add(expander);
+            AddOptionExpander(expander);
         }
 
         public const string ShortcutScanSettingKey = "shortcutscanwithmain";
@@ -985,7 +1299,7 @@ namespace Multron_Win_Cleaner
                 Content = content
             };
             expanders.Add(expander);
-            wrapPanel1.Children.Add(expander);
+            AddOptionExpander(expander);
         }
 
         public const string SecurityScanSettingKey = "securityscanwithmain";
@@ -1038,7 +1352,7 @@ namespace Multron_Win_Cleaner
                 Content = content
             };
             expanders.Add(expander);
-            wrapPanel1.Children.Add(expander);
+            AddOptionExpander(expander);
         }
 
         public static string DescribeSecurityIssues(List<MultronWinCleaner.Processes.SecurityCheck.Issue> issues, out string color)
@@ -1047,13 +1361,45 @@ namespace Multron_Win_Cleaner
             int medium = issues.Count(i => i.Severity == MultronWinCleaner.Processes.SecurityCheck.Level.Medium);
             int low = issues.Count - high - medium;
             color = high > 0 ? ProblemColor : medium > 0 ? WarningColor : issues.Count > 0 ? InfoColor : OkColor;
+            int ignored = MultronWinCleaner.Processes.SecurityCheck.IgnoredCount;
+            string ignoredNote = ignored > 0 ? " " + Loc.F(ignored == 1 ? "{0} warning is ignored." : "{0} warnings are ignored.", ignored) : "";
             if (issues.Count == 0)
-                return Loc.T("No insecure Windows settings were found.");
+                return Loc.T("No insecure Windows settings were found.") + ignoredNote;
             var parts = new List<string>();
             if (high > 0) parts.Add(Loc.F("{0} high", high));
             if (medium > 0) parts.Add(Loc.F("{0} medium", medium));
             if (low > 0) parts.Add(Loc.F("{0} low", low));
-            return Loc.F(issues.Count == 1 ? "{0} setting makes Windows less secure ({1} risk)." : "{0} settings make Windows less secure ({1} risk).", issues.Count, string.Join(", ", parts));
+            return Loc.F(issues.Count == 1 ? "{0} setting makes Windows less secure ({1} risk)." : "{0} settings make Windows less secure ({1} risk).", issues.Count, string.Join(", ", parts)) + ignoredNote;
+        }
+
+        private void IgnoreSecurityIssue_Click(object sender, RoutedEventArgs e)
+        {
+            if ((sender as FrameworkElement)?.Tag is MultronWinCleaner.Processes.SecurityCheck.Issue issue)
+                IgnoreSecurityIssue(issue);
+        }
+
+        public void IgnoreSecurityIssue(MultronWinCleaner.Processes.SecurityCheck.Issue issue)
+        {
+            var answer = AppDialog.Show(
+                Loc.F("Ignore this warning from now on?\n\n{0}\n\nIt is no longer shown or reported. You can show ignored warnings again in Utilities > Security Check.", issue.Title),
+                Loc.T("Security Check"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (answer != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                MultronWinCleaner.Processes.SecurityCheck.Ignore(issue.Id);
+            }
+            catch (Exception ex)
+            {
+                AppDialog.Show(Loc.F("Could not save the setting: {0}", ex.Message), Loc.T("Security Check"), MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string note = Loc.F("\"{0}\" is ignored.", issue.Title);
+            if (foundSecurityIssues.Any(i => i.Id == issue.Id) && !securityReportRunning)
+                ShowSecurityIssues(foundSecurityIssues.Where(i => i.Id != issue.Id).ToList(), note);
+            utilities?.RemoveSecurityIssue(issue.Id, note);
         }
 
         private void ShowSecurityIssues(List<MultronWinCleaner.Processes.SecurityCheck.Issue> issues, string suffix)
@@ -1483,7 +1829,7 @@ namespace Multron_Win_Cleaner
                 return;
             bool automatic = autoclean == 1 || startupscan == 1;
 
-            Duplicate_File_Finder finder = utilities?.GetDuplicateFinder();
+            Duplicate_File_Finder? finder = utilities?.GetDuplicateFinder();
             if (finder == null || finder.IsBusy)
                 return;
 
@@ -1645,17 +1991,169 @@ namespace Multron_Win_Cleaner
         }
         public async Task loadothers()
         {
-            await createshortcut("cleanmgr.exe=/d C:=" + Loc.T("(Opens Disk Cleanup for a specific drive)") + "=shortcut_0", Loc.T("cleanmgr.exe Commands"));
-            await createshortcut("cleanmgr.exe=/sagerun:1=" + Loc.T("(Configures advanced cleanup settings for auto-run)") + "=shortcut1", Loc.T("cleanmgr.exe Commands"));
-            await createshortcut("cleanmgr.exe=/lowdisk=" + Loc.T("(Prompts to clean default unnecessary files)") + "=shortcut2", Loc.T("cleanmgr.exe Commands"));
-            await createshortcut("cleanmgr.exe=/verylowdisk=" + Loc.T("(Silently clears default unnecessary files)") + "=shortcut3", Loc.T("cleanmgr.exe Commands"));
-             
-            await createshortcut("Dism.exe=/Online /Cleanup-Image /StartComponentCleanup=warning=" + Loc.T("(No Warning)") + "=winsxs", Loc.T("Dism.exe Commands"));
-            await createshortcut("Dism.exe=/Online /Cleanup-Image /RestoreHealth=warning=" + Loc.T("(No Warning)") + "=health", Loc.T("Dism.exe Commands"));
-            await createshortcut("sfc.exe=sfc /scannow=warning=" + Loc.T("(No Warning)") + "=sfc", Loc.T("SFC Commands"));
-            await createshortcut("Deep Log Files Scan=C:\\=warning=" + Loc.T("Its can take long time.") + "=logscan", Loc.T("Deep Log Files Scan"));
+            string cleanmgr = OptionGroupTitle(Loc.T("cleanmgr.exe Commands"), Loc.T("Windows Disk Cleanup"));
+            string dism = OptionGroupTitle(Loc.T("Dism.exe Commands"), Loc.T("Windows Repair (DISM)"));
+            string sfc = OptionGroupTitle(Loc.T("SFC Commands"), Loc.T("System File Check (SFC)"));
+            string logscan = OptionGroupTitle(Loc.T("Deep Log Files Scan"), Loc.T("Deep Log Files Scan"));
+
+            await createshortcut("cleanmgr.exe=/d C:=" + Loc.T("(Opens Disk Cleanup for a specific drive)") + "=shortcut_0", cleanmgr);
+            await createshortcut("cleanmgr.exe=/sagerun:1=" + Loc.T("(Configures advanced cleanup settings for auto-run)") + "=shortcut1", cleanmgr);
+            await createshortcut("cleanmgr.exe=/lowdisk=" + Loc.T("(Prompts to clean default unnecessary files)") + "=shortcut2", cleanmgr);
+            await createshortcut("cleanmgr.exe=/verylowdisk=" + Loc.T("(Silently clears default unnecessary files)") + "=shortcut3", cleanmgr);
+
+            await createshortcut("Dism.exe=/Online /Cleanup-Image /StartComponentCleanup=warning=" + Loc.T("(No Warning)") + "=winsxs", dism);
+            await createshortcut("Dism.exe=/Online /Cleanup-Image /RestoreHealth=warning=" + Loc.T("(No Warning)") + "=health", dism);
+            await createshortcut("sfc.exe=sfc /scannow=warning=" + Loc.T("(No Warning)") + "=sfc", sfc);
+            await createshortcut("Deep Log Files Scan=C:\\=warning=" + Loc.T("Its can take long time.") + "=logscan", logscan);
 
         }
+
+        #region Interface mode
+
+        public const string AdvancedInterfaceSettingKey = "advancedinterface";
+
+        public static bool IsAdvancedInterface()
+        {
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                return System.IO.File.Exists(path) && System.IO.File.ReadLines(path)
+                    .Any(line => line.Trim().Equals(AdvancedInterfaceSettingKey + ":1", StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsSimpleInterface() => !IsAdvancedInterface();
+
+        private static string? ReadSettingValue(string key)
+        {
+            try
+            {
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.txt");
+                if (!System.IO.File.Exists(path)) return null;
+                return System.IO.File.ReadLines(path)
+                    .Where(line => line.StartsWith(key + ":", StringComparison.OrdinalIgnoreCase))
+                    .Select(line => line.Substring(key.Length + 1).Trim())
+                    .LastOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string OptionGroupTitle(string advanced, string simple) => IsSimpleInterface() ? simple : advanced;
+
+        public void ApplyInterfaceToolbar()
+        {
+            ApplySelections.Visibility = IsSimpleInterface() ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public void ApplyInterfaceMode()
+        {
+            ApplyInterfaceToolbar();
+            if (IsIdleForDatabaseReload())
+                ReloadDatabaseIfIdle();
+            else
+                ShowDatabaseStatus(Loc.T("The new interface mode is used after the current scan or clean has finished and the list is reloaded."), InfoColor, always: true);
+        }
+
+        private static (string Title, string Description) FriendlyOption(string content)
+        {
+            string[] parts = content.Split('=');
+            string key = parts.Length > 0 ? parts[^1] : "";
+            return key switch
+            {
+                "shortcut_0" => (Loc.T("Disk Cleanup for drive C:"), Loc.T("Opens Windows Disk Cleanup (cleanmgr /d C:) so you can choose what to remove from drive C:.")),
+                "shortcut1" => (Loc.T("Disk Cleanup with saved settings"), Loc.T("Runs Windows Disk Cleanup with the cleanup settings saved as set 1 (cleanmgr /sagerun:1).")),
+                "shortcut2" => (Loc.T("Disk Cleanup, ask before cleaning"), Loc.T("Opens Windows Disk Cleanup with the usual unneeded files already selected (cleanmgr /lowdisk).")),
+                "shortcut3" => (Loc.T("Disk Cleanup, clean silently"), Loc.T("Removes the usual unneeded files with Windows Disk Cleanup without asking (cleanmgr /verylowdisk).")),
+                "winsxs" => (Loc.T("Clean up old Windows update files"), Loc.T("Removes replaced Windows component versions from the WinSxS folder (DISM /StartComponentCleanup).")),
+                "health" => (Loc.T("Repair the Windows component store"), Loc.T("Checks and repairs the Windows component store, may download files from Windows Update (DISM /RestoreHealth).")),
+                "sfc" => (Loc.T("Check and repair Windows system files"), Loc.T("Finds and repairs damaged Windows system files (sfc /scannow).")),
+                "logscan" => (Loc.T("Find log files on the whole C: drive"), Loc.T("Searches all of drive C: for log files. This can take a long time.")),
+                "malscan" => (Loc.T("Multron Malware Scan Cloud (Testing)"), Loc.T("Scans your system for malicious software in the cloud with the viruskov.com OPEN-EDR engine")),
+                MrtOptionKey => (Loc.T("Microsoft MRT Scan"), Loc.T("Scans with the Malicious Software Removal Tool built into Windows. It runs hidden, before the cloud scan.")),
+                _ => (parts.Length > 0 ? parts[0] : content, content)
+            };
+        }
+
+        private sealed class FriendlyOptionConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => FriendlyOption(value?.ToString() ?? "").Title;
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+        }
+
+        private static DataTemplate? friendlyCheckBoxTemplate;
+        private static DataTemplate FriendlyCheckBoxTemplate
+        {
+            get
+            {
+                if (friendlyCheckBoxTemplate == null)
+                {
+                    var text = new FrameworkElementFactory(typeof(TextBlock));
+                    text.SetBinding(TextBlock.TextProperty, new Binding { Converter = new FriendlyOptionConverter() });
+                    text.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+                    friendlyCheckBoxTemplate = new DataTemplate { VisualTree = text };
+                    friendlyCheckBoxTemplate.Seal();
+                }
+                return friendlyCheckBoxTemplate;
+            }
+        }
+
+        private static void ApplyOptionTemplate(CheckBox box)
+        {
+            string content = box.Content?.ToString() ?? "";
+            if (IsSimpleInterface())
+            {
+                var friendly = FriendlyOption(content);
+                box.ContentTemplate = FriendlyCheckBoxTemplate;
+                box.ToolTip ??= friendly.Description;
+                box.Tag = friendly.Title + " " + content;
+            }
+            else
+            {
+                box.ContentTemplate = WrappingCheckBoxTemplate;
+            }
+        }
+
+        private Expander? optionsSection;
+        private WrapPanel? optionsSectionPanel;
+
+        private void AddOptionExpander(Expander expander)
+        {
+            if (!IsSimpleInterface())
+            {
+                wrapPanel1.Children.Add(expander);
+                return;
+            }
+
+            if (optionsSection == null || optionsSection.Parent != wrapPanel1)
+            {
+                optionsSectionPanel = new WrapPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(5) };
+                optionsSection = new Expander
+                {
+                    Header = MultronWinCleaner.Processes.Load.SectionHeader("\uE90F " + Loc.T("Extra Scans & Tools")),
+                    Tag = Loc.T("Extra Scans & Tools"),
+                    Margin = new Thickness(5, 10, 5, 5),
+                    BorderThickness = new Thickness(1),
+                    Padding = new Thickness(5, 5, 5, 10),
+                    IsExpanded = true,
+                    FontSize = 15,
+                    FontWeight = FontWeights.Bold,
+                    Content = optionsSectionPanel
+                };
+                optionsSection.SetResourceReference(Control.ForegroundProperty, "Text");
+                optionsSection.SetResourceReference(Control.BorderBrushProperty, "Text");
+                wrapPanel1.Children.Add(optionsSection);
+            }
+            optionsSectionPanel!.Children.Add(expander);
+        }
+
+        #endregion
 
         private static DataTemplate? wrappingCheckBoxTemplate;
         private static DataTemplate WrappingCheckBoxTemplate
@@ -1696,10 +2194,10 @@ namespace Multron_Win_Cleaner
             checkbox.IsChecked = MultronWinCleaner.Processes.Load.ReadSelections().TryGetValue(commandKey, out bool savedCommand) && savedCommand;
             checkbox.Checked += (s, e) => SaveCommandSelection(commandKey, true);
             checkbox.Unchecked += (s, e) => SaveCommandSelection(commandKey, false);
-            checkbox.ContentTemplate = WrappingCheckBoxTemplate;
+            ApplyOptionTemplate(checkbox);
             checkboxes2.Add(checkbox);
 
-            Expander existingExpander = expanders.FirstOrDefault(e => e.Header != null && e.Header.ToString() == expander);
+            Expander? existingExpander = expanders.FirstOrDefault(e => e.Header != null && e.Header.ToString() == expander);
 
             if (existingExpander != null)
             {
@@ -1742,7 +2240,7 @@ namespace Multron_Win_Cleaner
 
                 try
                 {
-                    wrapPanel1.Children.Add(newExpander1);
+                    AddOptionExpander(newExpander1);
                 }
                 catch (Exception)
                 {
@@ -1752,10 +2250,10 @@ namespace Multron_Win_Cleaner
 
         private void CheckBox2_Checked(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = sender as CheckBox;
+            if (sender is not CheckBox checkBox) return;
             if (checkBox == null || checkBox.Content == null) return;
 
-            string content = checkBox.Content.ToString();
+            string content = checkBox.Content?.ToString() ?? "";
              
             if (content.Contains("Dism.exe") || content.Contains("cleanmgr.exe") || content.Contains("Deep Log Files Scan") || content.Contains("sfc.exe"))
             {
@@ -1766,10 +2264,9 @@ namespace Multron_Win_Cleaner
 
         {
 
+            if (sender is not CheckBox checkBox) return;
 
-            CheckBox checkBox = sender as CheckBox;
-
-            string content = checkBox.Content.ToString();
+            string content = checkBox.Content?.ToString() ?? "";
 
             if (content.Contains("Dism.exe") || content.StartsWith("cleanmgr.exe") || content.Contains("Deep Log Files Scan") || content.Contains("sfc.exe"))
 
@@ -1784,8 +2281,7 @@ namespace Multron_Win_Cleaner
             UpdateArc(progressBar1.Value);
         }
 
-
-        private System.Windows.Shapes.Path _arcPath;
+        private System.Windows.Shapes.Path? _arcPath;
         public void UpdateArc(double percent)
         {
 
@@ -1835,7 +2331,6 @@ namespace Multron_Win_Cleaner
 
             _arcPath.Data = g;
         }
-
 
         private void TrayIcon_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
@@ -1915,6 +2410,7 @@ namespace Multron_Win_Cleaner
             watchdog.Start();
 
             try { FlushPendingSelections(); } catch { }
+            try { MultronWinCleaner.Processes.MrtScanner.KillRunning(); } catch { }
             try { utilities?.malwarescan?.RemoveTrayIcon(); } catch { }
             try { utilities?.DisposeTrayIcon(); } catch { }
             try { TrayIcon?.Dispose(); } catch { }
@@ -1951,9 +2447,7 @@ namespace Multron_Win_Cleaner
             return answer == MessageBoxResult.Yes;
         }
 
-
-
-        public string stringtokenizer(string input, string token, int index)
+        public string? stringtokenizer(string input, string token, int index)
         {
 
             string[] tokens = input.Split(token);
@@ -1990,7 +2484,7 @@ namespace Multron_Win_Cleaner
         }
         private void FilesListBox_Loaded(object sender, RoutedEventArgs e)
         {
-            var listBox = sender as ListBox;
+            if (sender is not ListBox listBox) return;
             var scrollViewer = FindVisualChild<ScrollViewer>(listBox);
             if (scrollViewer != null)
             {
@@ -2015,12 +2509,12 @@ namespace Multron_Win_Cleaner
             }
         }
 
-        public T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        public T? FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-                if (child != null && child is T t)
+                if (child is T t)
                     return t;
 
                 var childOfChild = FindVisualChild<T>(child);
@@ -2029,7 +2523,7 @@ namespace Multron_Win_Cleaner
             }
             return null;
         }
-        public static T FindVisualParent<T>(DependencyObject obj) where T : DependencyObject
+        public static T? FindVisualParent<T>(DependencyObject obj) where T : DependencyObject
         {
             DependencyObject parent = VisualTreeHelper.GetParent(obj);
             while (parent != null)
@@ -2041,9 +2535,6 @@ namespace Multron_Win_Cleaner
             }
             return null;
         }
-
-
-
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -2075,40 +2566,34 @@ namespace Multron_Win_Cleaner
        
      
 
-
         public void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = sender as CheckBox;
+            if (sender is not CheckBox checkBox) return;
             if (checkBox != null)
             {
 
-                string content = checkBox.Content.ToString();
+                string content = checkBox.Content?.ToString() ?? "";
 
             
-               string name = stringtokenizer(content, "=", 0);
-               string path = stringtokenizer(content, "=", 1);
+               string? name = stringtokenizer(content, "=", 0);
+               string? path = stringtokenizer(content, "=", 1);
 
                database.Add(name + "=" + path);
                QueueSelectionAutoSave(checkBox, path);
-
 
             }
         }
         public void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = sender as CheckBox;
+            if (sender is not CheckBox checkBox) return;
             if (checkBox != null)
             {
-                string content = checkBox.Content.ToString();
-                string name = stringtokenizer(content, "=", 0);
-                string path = stringtokenizer(content, "=", 1);
+                string content = checkBox.Content?.ToString() ?? "";
+                string? name = stringtokenizer(content, "=", 0);
+                string? path = stringtokenizer(content, "=", 1);
                 database.Remove(name + "=" + path);
                 QueueSelectionAutoSave(checkBox, path);
            }
-
-
-
-
 
           
         }
@@ -2121,14 +2606,10 @@ namespace Multron_Win_Cleaner
             double viewportHeight = scrollViewer.ViewportHeight;
             double extentHeight = scrollViewer.ExtentHeight;
 
-
-
-
             const double threshold = 20.0;
             bool isAtBottom = (extentHeight - (verticalOffset + viewportHeight)) <= threshold;
 
             if (!isAtBottom) return;
-
 
             foreach (Expander expander in expanders)
             {
@@ -2164,7 +2645,6 @@ namespace Multron_Win_Cleaner
                 previousLeft = this.Left;
                 previousTop = this.Top;
 
-
                 this.WindowState = WindowState.Normal;
                 this.Left = SystemParameters.WorkArea.Left;
                 this.Top = SystemParameters.WorkArea.Top;
@@ -2182,7 +2662,6 @@ namespace Multron_Win_Cleaner
             return randombs;
         }
 
-
         public int cancelclean = 0;
         public int reset = 0;
 
@@ -2198,12 +2677,10 @@ namespace Multron_Win_Cleaner
             const uint EWX_FORCE = 0x00000004;
             const uint EWX_FORCEIFHUNG = 0x00000010;
 
-
             public static bool LogOff()
             {
                 return ExitWindowsEx(EWX_LOGOFF | EWX_FORCE, 0);
             }
-
 
             public static void Restart()
             {
@@ -2298,7 +2775,7 @@ namespace Multron_Win_Cleaner
                 int killed = 0;
                 int deleted = 0;
                 List<string> lockedPaths = await main.Dispatcher.InvokeAsync(() =>
-                    main.paths.Select(p => main.stringtokenizer(p, "=", 0)).Where(p => p.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList());
+                    main.paths.Select(p => main.stringtokenizer(p, "=", 0) ?? "").Where(p => p.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList());
 
                 for (int i = 0; i < lockedPaths.Count; i++)
                 {
@@ -2309,13 +2786,13 @@ namespace Multron_Win_Cleaner
                     if (System.IO.File.Exists(path))
                     {
                         long fileSize = 0;
-                        string error = TryDeleteLocked(path, ref fileSize, out bool inUse);
+                        string? error = TryDeleteLocked(path, ref fileSize, out bool inUse);
 
                         if (error != null && inUse)
                         {
-                            foreach (var locker in whousef.GetLockers(path))
+                            foreach (var locker in WhoUsesFile.GetLockers(path))
                             {
-                                if (whousef.IsProtectedProcess(locker.Id, locker.Name))
+                                if (WhoUsesFile.IsProtectedProcess(locker.Id, locker.Name))
                                 {
                                     await AddKillMessage(Loc.F("Skipped system process: {0} (PID {1}) for {2}", locker.Name, locker.Id, path), System.Windows.Media.Brushes.Goldenrod);
                                     continue;
@@ -2409,7 +2886,7 @@ namespace Multron_Win_Cleaner
                 return brush;
             }
 
-            private static string TryDeleteLocked(string path, ref long fileSize, out bool inUse)
+            private static string? TryDeleteLocked(string path, ref long fileSize, out bool inUse)
             {
                 inUse = false;
                 try
@@ -2461,7 +2938,6 @@ namespace Multron_Win_Cleaner
         public int _itemsLoaded = 0;
         public int _pageSize = 50;
 
-
         public async Task startscan()
         {
             if (buttonStartScan.Content.Equals(Loc.T("Clean")))
@@ -2471,8 +2947,6 @@ namespace Multron_Win_Cleaner
                 scanstatus = 0;
                 cancelclean = 0;
              
-
-
 
                 buttonStartScan.Content = Loc.T("Cancel"); 
 
@@ -2492,12 +2966,12 @@ namespace Multron_Win_Cleaner
                 cancelstatus = new CancellationTokenSource();
                 dismcancel = new CancellationTokenSource();
 
-
-
                 scanstatus = 0;
                 cancelclean = 0;
 
                 malwareScanQueued = malwareScanCheckBox?.IsChecked == true;
+                mrtScanQueued = mrtScanCheckBox?.IsChecked == true && MultronWinCleaner.Processes.MrtScanner.IsAvailable;
+                mrtStoppedByUser = false;
                 ResetMalwareResultsPanel();
 
                 MultronWinCleaner.Processes.Scan scan = new MultronWinCleaner.Processes.Scan(this);
@@ -2576,10 +3050,15 @@ namespace Multron_Win_Cleaner
 
         public async Task RunQueuedMalwareScanAsync()
         {
+            bool runMrt = mrtScanQueued;
+            mrtScanQueued = false;
+            if (runMrt && !cancelstatus.IsCancellationRequested)
+                await RunMrtScanAsync();
+
             if (!malwareScanQueued) return;
             malwareScanQueued = false;
 
-            if (cancelstatus.IsCancellationRequested || utilities == null) return;
+            if (cancelstatus.IsCancellationRequested || mrtStoppedByUser || utilities == null) return;
 
             var mode = malwareScanModeBox != null && malwareScanModeBox.SelectedIndex >= 0
                 ? (MultronWinCleaner.MalwareScan.ScanMode)malwareScanModeBox.SelectedIndex
@@ -2618,12 +3097,19 @@ namespace Multron_Win_Cleaner
             MalwareResultsStatus.Text = "";
             MalwareThreatsList.ItemsSource = null;
             MalwareThreatsList.Visibility = Visibility.Collapsed;
+            mrtRows.Clear();
+            cloudRows = new List<MalwareListRow>();
+            mrtPanelStatus = null;
+            cloudPanelStatus = null;
+            mrtThreatCount = 0;
+            lastMrtResult = null;
         }
 
         public void UpdateMalwareResultsPanel(MalwareScanProgress.ScanState state, string status,
             IEnumerable<MultronWinCleaner.Processes.CloudScanResult>? threats = null, int threatCount = 0)
         {
-            int threatsFound = Math.Max(threatCount, threats?.Count() ?? 0);
+            var threatList = threats?.ToList();
+            int threatsFound = Math.Max(threatCount, threatList?.Count ?? 0);
             lastMalwareState = state;
             lastMalwareStatus = status;
             lastMalwareThreats = threatsFound;
@@ -2635,15 +3121,15 @@ namespace Multron_Win_Cleaner
                 MalwareScanProgress.ScanState.Stopped or MalwareScanProgress.ScanState.Failed => WarningColor,
                 _ => InfoColor
             };
-            SetResultPanelColor(MalwareResultsPanel, MalwareResultsIcon, color);
-            MalwareResultsStatus.Text = status;
-            MalwareResultsPanel.Visibility = Visibility.Visible;
             bool scanning = state == MalwareScanProgress.ScanState.Scanning;
+            cloudPanelStatus = status;
+            cloudPanelColor = color;
+            if (threatList != null || !scanning)
+                cloudRows = (threatList ?? new List<MultronWinCleaner.Processes.CloudScanResult>())
+                    .Select(t => new MalwareListRow(Loc.T("Multron Cloud"), t.VerdictText, t.FileName, t.ThreatName, t.FilePath))
+                    .ToList();
             MalwareResultsButton.Content = Loc.T(state == MalwareScanProgress.ScanState.Threats || threatsFound > 0 ? "Show Threats" : "Open Results");
-            MalwareCancelButton.Visibility = scanning ? Visibility.Visible : Visibility.Collapsed;
-            MalwarePanelModeBox.IsEnabled = !scanning;
-            if (!scanning)
-                MalwareCancelButton.IsEnabled = true;
+            RefreshMalwarePanel(scanning);
             if (scanning)
             {
                 bool starting = malwareCancelRestore == null;
@@ -2661,14 +3147,11 @@ namespace Multron_Win_Cleaner
 
             if (state != MalwareScanProgress.ScanState.Scanning && Equals(buttonStartScan.Content, Loc.T("Clean")))
             {
+                bool anyThreats = state == MalwareScanProgress.ScanState.Threats || threatsFound > 0 || mrtThreatCount > 0;
                 progressBar1.Value = 100;
-                label1_Copy.Text = Loc.T(state == MalwareScanProgress.ScanState.Threats ? "Malware scan finished: threats found!" : "Malware scan finished.");
-                label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
+                label1_Copy.Text = Loc.T(anyThreats ? "Malware scan finished: threats found!" : "Malware scan finished.");
+                label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(anyThreats ? ProblemColor : color));
             }
-
-            var threatList = threats?.ToList();
-            MalwareThreatsList.ItemsSource = threatList;
-            MalwareThreatsList.Visibility = threatList != null && threatList.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void MalwareThreatsList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -2707,7 +3190,10 @@ namespace Multron_Win_Cleaner
         {
             MalwareCancelButton.IsEnabled = false;
             MalwareResultsStatus.Text = Loc.T("Stopping the malware scan...");
-            utilities?.malwarescan?.StopScan();
+            if (IsMrtScanning)
+                StopMrtScan();
+            else
+                utilities?.malwarescan?.StopScan();
         }
 
         public void SetMalwareScanProgress(int done, int total)
@@ -2884,7 +3370,10 @@ namespace Multron_Win_Cleaner
                     MalwareCancelButton.IsEnabled = false;
                 label1_Copy.Text = Loc.T("Stopping the malware scan...");
                 label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(WarningColor));
-                utilities?.malwarescan?.StopScan();
+                if (IsMrtScanning)
+                    StopMrtScan();
+                else
+                    utilities?.malwarescan?.StopScan();
                 return;
             }
 
@@ -2913,115 +3402,7 @@ namespace Multron_Win_Cleaner
 
             await startscan();
         }
-        public void OpenDirectory_MainMenu_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuItem;
-            var contextMenu = menuItem?.Parent as ContextMenu;
-            var target = contextMenu?.PlacementTarget as CheckBox;
 
-            if (target != null && checkboxes2.Contains(target))
-            {
-                int index = checkboxes2.IndexOf(target);
-                string wrap = checkboxes2[index].Content.ToString();
-                string wrapdir = stringtokenizer(wrap, "=", 1);
-                try
-                {
-                    if (System.IO.File.Exists(wrapdir))
-                    {
-                        string dir = System.IO.Path.GetDirectoryName(wrapdir);
-                        if (dir != null && Directory.Exists(dir))
-                        {
-                            Process.Start("explorer.exe", dir);
-                        }
-
-                        else
-                        {
-                            AppDialog.Show(Loc.F("Path not found:\n{0}", wrapdir), Loc.T("Open File Location"), MessageBoxButton.OK, MessageBoxImage.Warning);
-                        }
-                    }
-
-
-                    else
-                    {
-                        if (wrapdir != null && Directory.Exists(wrapdir))
-                            Process.Start("explorer.exe", wrapdir);
-                        else
-                            AppDialog.Show(Loc.F("Path not found:\n{0}", wrapdir), Loc.T("Open File Location"), MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-
-
-        }
-        public void OpenFileLocation_MainMenu_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuItem;
-            var contextMenu = menuItem?.Parent as ContextMenu;
-            var target = contextMenu?.PlacementTarget as CheckBox;
-
-            if (target != null && checkboxes2.Contains(target))
-            {
-                int index = checkboxes2.IndexOf(target);
-                string wrap = checkboxes2[index].Content.ToString();
-                string wrapdir = stringtokenizer(wrap, "=", 1);
-                try
-                {
-                    if (System.IO.File.Exists(wrapdir))
-                        Process.Start("explorer.exe", $"/select,\"{wrapdir}\"");
-                    else
-                    {
-                        string? dir = System.IO.Path.GetDirectoryName(wrapdir);
-                        if (dir != null && Directory.Exists(dir))
-                            Process.Start("explorer.exe", dir);
-                        else
-                            AppDialog.Show(Loc.F("Path not found:\n{0}", wrapdir), Loc.T("Open File Location"),
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"),
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-
-
-        }
-
-        public void CopyPath_MainMenu_Click(object sender, RoutedEventArgs e)
-        {
-            var menuItem = sender as MenuItem;
-            var contextMenu = menuItem?.Parent as ContextMenu;
-            var target = contextMenu?.PlacementTarget as CheckBox;
-
-            if (target != null && checkboxes2.Contains(target))
-            {
-                int index = checkboxes2.IndexOf(target);
-                string wrap = checkboxes2[index].Content.ToString();
-                string wrapdir = stringtokenizer(wrap, "=", 1);
-
-                try
-                {
-                    if (wrapdir != null)
-                    {
-                        Clipboard.SetText(wrapdir);
-                    }
-                    else
-                    {
-                        AppDialog.Show(Loc.T("Directory returned null."), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    AppDialog.Show(Loc.F("Error:\n{0}", ex.Message), Loc.T("Error"), MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
         private void OpenFileLocation_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not MenuItem menuItem) return;
@@ -3085,13 +3466,11 @@ namespace Multron_Win_Cleaner
             settings.WindowState = WindowState.Normal;
         }
 
-        int doit = 0;
         private void UtilitiesButton_Click(object sender, RoutedEventArgs e)
         {
 
             utilities.Show();
             settings.WindowState = WindowState.Normal;
-
 
         }
 
@@ -3103,10 +3482,6 @@ namespace Multron_Win_Cleaner
             }
         }
 
-
-
-
-
         public class LoadLockedFiles
         {
             MainWindow main;
@@ -3117,10 +3492,10 @@ namespace Multron_Win_Cleaner
 
             private sealed class LockedFileInfo
             {
-                public string Path;
-                public string GroupName;
-                public string SizeText;
-                public List<(string Id, string Name)> Processes;
+                public string Path = "";
+                public string GroupName = "";
+                public string SizeText = "";
+                public List<(string Id, string Name)> Processes = new List<(string Id, string Name)>();
             }
 
             private async Task<List<LockedFileInfo>> CheckWhoUsesMultipleAsync(List<string> entries)
@@ -3133,9 +3508,9 @@ namespace Multron_Win_Cleaner
                 var files = new Dictionary<string, (string Id, string Name, string Group)>(StringComparer.OrdinalIgnoreCase);
                 foreach (string entry in entries)
                 {
-                    string path = main.stringtokenizer(entry, "=", 0);
+                    string path = main.stringtokenizer(entry, "=", 0) ?? "";
                     if (path.Length > 0 && !files.ContainsKey(path))
-                        files[path] = (main.stringtokenizer(entry, "=", 1), main.stringtokenizer(entry, "=", 2), main.stringtokenizer(entry, "=", 3));
+                        files[path] = (main.stringtokenizer(entry, "=", 1) ?? "", main.stringtokenizer(entry, "=", 2) ?? "", main.stringtokenizer(entry, "=", 3) ?? "");
                 }
 
                 var results = new ConcurrentBag<LockedFileInfo>();
@@ -3151,7 +3526,7 @@ namespace Multron_Win_Cleaner
                         if (!info.Exists)
                             return;
 
-                        var processes = whousef.GetLockers(file.Key).Select(p => (p.Id.ToString(), p.Name)).ToList();
+                        var processes = WhoUsesFile.GetLockers(file.Key).Select(p => (p.Id.ToString(), p.Name)).ToList();
                         if (processes.Count == 0)
                             processes.Add((file.Value.Id, file.Value.Name));
 
@@ -3211,7 +3586,7 @@ namespace Multron_Win_Cleaner
                                 else
                                 {
                                     main.paths.RemoveAll(p =>
-                                        main.stringtokenizer(p, "=", 0).Equals(model.FilePathWithoutSize, StringComparison.OrdinalIgnoreCase));
+                                        string.Equals(main.stringtokenizer(p, "=", 0), model.FilePathWithoutSize, StringComparison.OrdinalIgnoreCase));
                                 }
                             }
                         });
@@ -3247,7 +3622,7 @@ namespace Multron_Win_Cleaner
                     main.listBoxProcesses.ItemsSource = view;
 
                     var stillLockedPaths = lockedFiles.Select(f => f.Path).ToHashSet(StringComparer.OrdinalIgnoreCase);
-                    main.paths.RemoveAll(p => !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0)));
+                    main.paths.RemoveAll(p => !stillLockedPaths.Contains(main.stringtokenizer(p, "=", 0) ?? ""));
 
                     main.label1_Copy.Text = Loc.F("Locked Files: {0} files, {1} processes", lockedFiles.Count, allItems.Count);
                 });
@@ -3307,7 +3682,6 @@ namespace Multron_Win_Cleaner
             buttonStartScan.Content = Loc.T("Scan");
             buttonStartScan.IsEnabled = true;
 
-
             progressBar1.Value = 0;
             startupscan = 0;
             startupclean = 0;
@@ -3320,7 +3694,7 @@ namespace Multron_Win_Cleaner
 
         private async void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var textBox = sender as TextBox;
+            if (sender is not TextBox textBox) return;
             string searchText = textBox.Text.Trim().ToLower();
 
             if (backuped == 0)
@@ -3342,7 +3716,6 @@ namespace Multron_Win_Cleaner
                 return;
             }
 
-
             var filteredList = await Task.Run(() =>
                 viewModelbac.Groups
                     .Where(g => !string.IsNullOrEmpty(g.Path) && g.Path.ToLower().Contains(searchText))
@@ -3352,7 +3725,6 @@ namespace Multron_Win_Cleaner
             foreach (var group in filteredList)
                 viewModel.Groups.Add(group);
         }
-
 
         public const string ThemeFollowsWindowsSettingKey = "themefollowwindows";
         public static bool ThemeFollowsWindows => IsSettingOnByDefault(ThemeFollowsWindowsSettingKey);
@@ -3411,7 +3783,7 @@ namespace Multron_Win_Cleaner
             };
             brush = (SolidColorBrush)resourceDictionary["Text"];
 
-            themeselector.selector(new Uri(themePath, UriKind.Relative));
+            ThemeSelector.selector(new Uri(themePath, UriKind.Relative));
 
             foreach (CheckBox box in checkboxes2)
                 box.Foreground = brush;
@@ -3608,11 +3980,12 @@ namespace Multron_Win_Cleaner
                 return true;
             }
 
-            bool headerMatch = SearchMatches(group.Header?.ToString(), query);
+            string? headerText = group.Header as string ?? group.Tag as string;
+            bool headerMatch = SearchMatches(headerText, query);
             bool anyItem = false;
             foreach (var box in items)
             {
-                string text = box.Content?.ToString() ?? "";
+                string text = box.Tag as string ?? box.Content?.ToString() ?? "";
                 bool match = SearchMatches(text, query) || SearchMatches(Environment.ExpandEnvironmentVariables(text), query);
                 box.Visibility = headerMatch || match ? Visibility.Visible : Visibility.Collapsed;
                 anyItem |= match;
@@ -3672,7 +4045,6 @@ namespace Multron_Win_Cleaner
             }
 
         }
-
 
         private void UnselectAll_wpanel_Click(object sender, RoutedEventArgs e)
         {
@@ -3736,7 +4108,7 @@ namespace Multron_Win_Cleaner
             No
         }
 
-        private TaskCompletionSource<CustomDialogResult> _dialogTcs;
+        private TaskCompletionSource<CustomDialogResult>? _dialogTcs;
 
         public Task<CustomDialogResult> ShowCustomDialogAsync(
             string title,
@@ -3941,7 +4313,7 @@ namespace Multron_Win_Cleaner
             if (offline || !MultronWinCleaner.Processes.Updater.IsAutoUpdateEnabled())
             {
                 TimeSpan? age = MultronWinCleaner.Processes.Updater.GetDatabaseAge();
-                if (age != null && age.Value >= TimeSpan.FromHours(MultronWinCleaner.Processes.Updater.GetUpdateHours()))
+                if (age != null && age.Value >= StaleDatabaseAge(offline))
                     warnings.Add(Loc.F(offline
                         ? "The database has not been updated for {0} (offline mode is on)."
                         : "The database has not been updated for {0} (automatic database updates are off).", FormatAge(age.Value)));
@@ -4046,7 +4418,7 @@ namespace Multron_Win_Cleaner
 
         public bool IsIdleForDatabaseReload() =>
             ReloadDb.IsEnabled && buttonStartScan.IsEnabled && Equals(buttonStartScan.Content, Loc.T("Scan")) && autoclean == 0
-            && LockedFilesWindowOverlay.Visibility != Visibility.Visible && utilities?.malwarescan?.IsScanning != true;
+            && LockedFilesWindowOverlay.Visibility != Visibility.Visible && utilities?.malwarescan?.IsScanning != true && !IsMrtScanning;
 
         private void ShowDatabaseStatus(string text, string color, bool always = false)
         {
@@ -4054,6 +4426,9 @@ namespace Multron_Win_Cleaner
             label1_Copy.Text = text;
             label1_Copy.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
         }
+
+        private static TimeSpan StaleDatabaseAge(bool offline) =>
+            offline ? TimeSpan.FromDays(1) : TimeSpan.FromHours(MultronWinCleaner.Processes.Updater.GetUpdateHours());
 
         private static string FormatAge(TimeSpan age) =>
             age.TotalDays >= 1 ? Loc.F("{0} days", (int)age.TotalDays) : Loc.F("{0} hours", Math.Max(1, (int)age.TotalHours));
@@ -4063,7 +4438,7 @@ namespace Multron_Win_Cleaner
             bool offline = IsOfflineModeEnabled();
             if (!offline && MultronWinCleaner.Processes.Updater.IsAutoUpdateEnabled()) return;
             TimeSpan? age = MultronWinCleaner.Processes.Updater.GetDatabaseAge();
-            if (age == null || age.Value < TimeSpan.FromHours(MultronWinCleaner.Processes.Updater.GetUpdateHours())) return;
+            if (age == null || age.Value < StaleDatabaseAge(offline)) return;
             if (!IsIdleForDatabaseReload()) return;
             ShowDatabaseStatus(Loc.F(offline
                 ? "The database has not been updated for {0} (offline mode is on)."
@@ -4215,19 +4590,17 @@ namespace Multron_Win_Cleaner
         }
         public async Task savetodatabase(bool showMessage = true)
         {
-            Dictionary<string, bool> checkBoxStates = null;
-
+            var checkBoxStates = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
             await Dispatcher.InvokeAsync(() =>
             {
-                checkBoxStates = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                checkBoxStates.Clear();
                 foreach (CheckBox box in checkboxes2)
                 {
-                    string path = stringtokenizer(box.Content?.ToString() ?? "", "=", 1);
+                    string? path = stringtokenizer(box.Content?.ToString() ?? "", "=", 1);
                     if (path != null) checkBoxStates[path] = box.IsChecked == true;
                 }
             });
-
 
             await Task.Run(() =>
             {
@@ -4285,8 +4658,8 @@ namespace Multron_Win_Cleaner
                     string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database.txt");
                     string[] lines = System.IO.File.ReadAllLines(filePath);
                     var appliedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    string profileRoot = null;
-                    List<string> profileFolders = null;
+                    string? profileRoot = null;
+                    List<string>? profileFolders = null;
 
                     for (int i = 0; i < lines.Length; i++)
                     {
@@ -4301,21 +4674,21 @@ namespace Multron_Win_Cleaner
                         {
                             profileRoot = (stringtokenizer(line, "=", 1) ?? "").Replace("{##}", Environment.UserName);
                             profileFolders = Directory.Exists(profileRoot)
-                                ? Directory.GetDirectories(profileRoot).Select(System.IO.Path.GetFileName).ToList()
+                                ? Directory.GetDirectories(profileRoot).Select(d => System.IO.Path.GetFileName(d)).ToList()
                                 : new List<string>();
                             continue;
                         }
 
-                        string path = null;
+                        string? path = null;
                         if (line.Contains("#profileget#"))
                         {
                             if (profileRoot == null) continue;
-                            string subPath = stringtokenizer(line, "=", 2);
-                            path = profileFolders.Select(folder => profileRoot + folder + subPath).FirstOrDefault(selections.ContainsKey);
+                            string? subPath = stringtokenizer(line, "=", 2);
+                            path = (profileFolders ?? new List<string>()).Select(folder => profileRoot + folder + subPath).FirstOrDefault(selections.ContainsKey);
                         }
                         else
                         {
-                            string linePath = stringtokenizer(line.Replace("{##}", Environment.UserName), "=", 1);
+                            string? linePath = stringtokenizer(line.Replace("{##}", Environment.UserName), "=", 1);
                             if (linePath != null && selections.ContainsKey(linePath)) path = linePath;
                         }
                         if (path == null) continue;

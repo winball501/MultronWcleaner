@@ -387,10 +387,6 @@ namespace MultronWinCleaner.Processes
             return list.OrderByDescending(x => x.Path.Length).ToArray();
         });
 
-        /// <summary>
-        /// Folder of a file in full, exactly as on this computer (user name included, EULA
-        /// version 3), so several user profiles stay apart on the server.
-        /// </summary>
         internal static string FullFolder(string path)
         {
             try

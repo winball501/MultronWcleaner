@@ -17,9 +17,9 @@ namespace MultronWinCleaner
     public partial class Notify : Window
     {
         
-        private readonly Action onClick;
+        private readonly Action? onClick;
 
-        public Notify(string status, string proc, string cleaned, Action onClick) : this(status, proc, cleaned)
+        public Notify(string status, string proc, string? cleaned, Action? onClick) : this(status, proc, cleaned)
         {
             this.onClick = onClick;
             Cursor = Cursors.Hand;
@@ -45,7 +45,7 @@ namespace MultronWinCleaner
             onClick();
         }
 
-        public Notify(string status, string proc, string cleaned)
+        public Notify(string status, string proc, string? cleaned)
         {
             InitializeComponent();
             

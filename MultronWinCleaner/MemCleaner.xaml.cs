@@ -82,13 +82,12 @@ namespace MultronWinCleaner
         }
         #endregion
 
-        public MemoryMon memorymon;
+        public MemoryMon memorymon = null!;
         MainWindow window;
-        AutoCleanMem autocleanmem;
+        AutoCleanMem autocleanmem = null!;
 
-        int sendnotify = 0;
      
-        private PerformanceCounter cpuCounter;
+        private PerformanceCounter? cpuCounter;
 
         public MemCleaner(MainWindow window)
         {
@@ -156,7 +155,7 @@ namespace MultronWinCleaner
         {
             try
             {
-                using RegistryKey key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+                using RegistryKey? key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
                 CpuNameText.Text = key?.GetValue("ProcessorNameString")?.ToString() ?? "Unknown CPU";
             }
             catch (Exception)
@@ -437,8 +436,8 @@ namespace MultronWinCleaner
         private void chkSmartRAM_Unchecked(object sender, RoutedEventArgs e) { memorymon?.Close(); window.utilities.savesettings("mon:0"); }
         private void chkEnableAutoClean_Checked(object sender, RoutedEventArgs e) { window.utilities.savesettings("automemclean:1"); autocleanmem?.StartAutoClean(); }
         private void chkEnableAutoClean_UnChecked(object sender, RoutedEventArgs e) { window.utilities.savesettings("automemclean:0"); autocleanmem?.StopAutoClean(); }
-        private void chkShowNotification_Checked(object sender, RoutedEventArgs e) { window.utilities.savesettings("sendnotify:1"); sendnotify = 1; }
-        private void chkShowNotification_UnChecked(object sender, RoutedEventArgs e) { window.utilities.savesettings("sendnotify:0"); sendnotify = 0; }
+        private void chkShowNotification_Checked(object sender, RoutedEventArgs e) { window.utilities.savesettings("sendnotify:1"); }
+        private void chkShowNotification_UnChecked(object sender, RoutedEventArgs e) { window.utilities.savesettings("sendnotify:0"); }
         private void chkSkipOnLowBattery_Checked(object sender, RoutedEventArgs e) { window.utilities.savesettings("skipiflow:1"); }
         private void chkSkipOnLowBattery_UnChecked(object sender, RoutedEventArgs e) { window.utilities.savesettings("skipiflow:0"); }
         private void chkClearTemp_Checked(object sender, RoutedEventArgs e) { if (window != null) window.utilities.savesettings("cleartemp:1"); }
@@ -459,7 +458,7 @@ namespace MultronWinCleaner
         public class AutoCleanMem
         {
             private readonly MemCleaner memcleaner;
-            private CancellationTokenSource _autoCleanCts;
+            private CancellationTokenSource? _autoCleanCts;
 
             public AutoCleanMem(MemCleaner memcleaner)
             {

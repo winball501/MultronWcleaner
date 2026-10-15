@@ -295,6 +295,9 @@
                                                 <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,2,10,0"
                                                           IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanFix}"
                                                           ToolTip="{loc:Tr 'Fix this setting'}"/>
+                                                <Button DockPanel.Dock="Right" Content="{loc:Tr 'Ignore'}" Tag="{Binding}" Click="IgnoreSecurityIssue_Click"
+                                                        Style="{StaticResource RoundedButtonStyle}" Padding="10,3" FontSize="11" Height="26" Margin="10,0,0,0" VerticalAlignment="Top"
+                                                        ToolTip="{loc:Tr 'Do not show or report this warning again'}"/>
                                                 <StackPanel>
                                                     <DockPanel>
                                                         <Border Background="{Binding SeverityColor}" CornerRadius="4" Padding="6,1" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0">
@@ -328,6 +331,10 @@
                                         Visibility="Collapsed" Background="Blue"
                                         Style="{StaticResource RoundedButtonStyle}"/>
                             </UniformGrid>
+                            <Button x:Name="SecurityShowIgnored" Margin="0,8,0,0" Height="32" Cursor="Hand" Click="SecurityShowIgnored_Click"
+                                    Visibility="Collapsed" HorizontalAlignment="Left" Padding="14,0"
+                                    ToolTip="{loc:Tr 'Shows the ignored warnings again and checks the settings once more.'}"
+                                    Style="{StaticResource RoundedButtonStyle}"/>
                         </StackPanel>
                     </Border>
 

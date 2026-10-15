@@ -32,7 +32,7 @@ namespace MultronWinCleaner
                     OperationType.Move => Loc.F("Move: {0} -> {1}", SourcePath, DestinationPath),
                     OperationType.Rename => Loc.F("Rename: {0} -> {1}", SourcePath, DestinationPath),
                     OperationType.ManualCommand => Loc.F("ManualCommand: {0}", ManualCommand),
-                    _ => base.ToString(),
+                    _ => base.ToString() ?? "",
                 };
             }
         }

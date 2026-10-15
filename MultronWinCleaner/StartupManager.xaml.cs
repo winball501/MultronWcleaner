@@ -64,7 +64,7 @@ namespace MultronWinCleaner
         private DateTime _lastTaskSchedulerScan = DateTime.MinValue;
         private List<StartupApp> _cachedTaskApps = new();
 
-        private CancellationTokenSource _monitoringCts;
+        private CancellationTokenSource? _monitoringCts;
         protected override void OnClosed(EventArgs e)
         {
             _monitoringCts?.Cancel();

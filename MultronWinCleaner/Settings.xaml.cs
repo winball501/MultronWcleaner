@@ -36,12 +36,12 @@ namespace MultronWinCleaner
         public string logfilepath = "";
         string excludedfilesdir = Environment.CurrentDirectory + "\\excluded.txt";
 
-        MemCleaner memcleaner;
+        MemCleaner? memcleaner;
         Utilities Utilities;
         MainWindow mainWindow;
-        StartupManager manager;
+        StartupManager? manager;
 
-        public Settings(MemCleaner memcleaner, Utilities utilities, MainWindow mainWindow, StartupManager manager)
+        public Settings(MemCleaner? memcleaner, Utilities utilities, MainWindow mainWindow, StartupManager? manager)
         {
             InitializeComponent();
             this.memcleaner = memcleaner;
@@ -62,6 +62,8 @@ namespace MultronWinCleaner
         {
             "customday", "starttime", "customaccess", "endtime", "minutes", "loglocation", "logpath", "autoclean", "trayicon",
             MainWindow.OfflineModeSettingKey, MainWindow.AutoSaveSelectionsSettingKey, MainWindow.AllBrowserProfilesSettingKey,
+            MainWindow.AdvancedInterfaceSettingKey, MainWindow.MrtScanSettingKey, MainWindow.MrtModeSettingKey, MainWindow.MrtRemoveSettingKey,
+            MultronWinCleaner.Processes.SecurityCheck.IgnoredSettingKey,
             "oldscan", "access_scan", "onlylowcpu", "runifactive", "pluggedin", "batterylow", "enablelog", "showlastlog",
             "cleanallusers", "cleanselectedusers", "startupscan", "startupclean", "startupnotifyscan", "startupnotifyclean",
             MainWindow.NotifySecuritySettingKey, MainWindow.NotifyFirewallSettingKey, MainWindow.NotifyDuplicatesSettingKey,
@@ -321,7 +323,7 @@ namespace MultronWinCleaner
                     .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim(), StringComparer.OrdinalIgnoreCase);
             }
 
-            string GetString(string key, string fallback = "") => settings.TryGetValue(key, out string val) ? val : fallback;
+            string GetString(string key, string fallback = "") => settings.TryGetValue(key, out string? val) ? val ?? fallback : fallback;
             bool GetBool(string key) => GetString(key) == "1";
 
             void SetComboBoxSelection(ComboBox comboBox, string value)
@@ -350,6 +352,12 @@ namespace MultronWinCleaner
             allBrowserProfilesLoading = true;
             chkCleanAllBrowserProfiles.IsChecked = GetString(MainWindow.AllBrowserProfilesSettingKey, "1") != "0";
             allBrowserProfilesLoading = false;
+            interfaceModeLoading = true;
+            if (GetBool(MainWindow.AdvancedInterfaceSettingKey))
+                rbAdvancedInterface.IsChecked = true;
+            else
+                rbSimpleInterface.IsChecked = true;
+            interfaceModeLoading = false;
             OnlyLowCPU.IsChecked = GetBool("onlylowcpu");
             RunIfInactive.IsChecked = GetBool("runifactive");
             SkipBattery.IsChecked = GetBool("batterylow");
@@ -371,7 +379,7 @@ namespace MultronWinCleaner
             SetThemeFollowsWindowsBox(MainWindow.ThemeFollowsWindows);
             LoadTransparencySettings();
             _ = LoadRunAtStartupAsync();
-            if(GetBool("cleanallusers") == true && GetBool("cleanallusers") != null)
+            if (GetBool("cleanallusers"))
             {
                  rbCleanAllUsers.IsChecked = GetBool("cleanallusers");
             } 
@@ -443,7 +451,7 @@ namespace MultronWinCleaner
             {
                 comboBoxUserSelection.IsEnabled = true;
             }
-            SetComboBoxSelection(memcleaner.cbCleanInterval, GetString("mcminutes"));
+            if (memcleaner != null) SetComboBoxSelection(memcleaner.cbCleanInterval, GetString("mcminutes"));
             SetComboBoxSelection(cmbAccessPreset, GetString("accessscanindex"));
             SetComboBoxSelection(cmbAgePreset, GetString("oldscanindex"));
             SetComboBoxSelection(cmbScheduleType, GetString("scheduletype"));
@@ -492,6 +500,17 @@ namespace MultronWinCleaner
             if (allBrowserProfilesLoading) return;
             SaveSettingNow(MainWindow.AllBrowserProfilesSettingKey, chkCleanAllBrowserProfiles.IsChecked == true, "browser profiles");
             mainWindow?.ReloadDatabaseIfIdle();
+        }
+
+        private bool interfaceModeLoading;
+
+        private void InterfaceMode_Changed(object sender, RoutedEventArgs e)
+        {
+            if (interfaceModeLoading || rbAdvancedInterface == null) return;
+            bool advanced = rbAdvancedInterface.IsChecked == true;
+            if (advanced == MainWindow.IsAdvancedInterface()) return;
+            SaveSettingNow(MainWindow.AdvancedInterfaceSettingKey, advanced, "interface mode");
+            mainWindow?.ApplyInterfaceMode();
         }
 
         private bool databaseUpdateLoading = true;
@@ -706,6 +725,7 @@ namespace MultronWinCleaner
                 Upsert(MainWindow.OfflineModeSettingKey, chkOfflineMode.IsChecked == true ? "1" : "0");
                 Upsert(MainWindow.AutoSaveSelectionsSettingKey, chkAutoSaveSelections.IsChecked == true ? "1" : "0");
                 Upsert(MainWindow.AllBrowserProfilesSettingKey, chkCleanAllBrowserProfiles.IsChecked == true ? "1" : "0");
+                Upsert(MainWindow.AdvancedInterfaceSettingKey, rbAdvancedInterface.IsChecked == true ? "1" : "0");
                 Upsert("oldscan", OldScan.IsChecked == true ? "1" : "0");
                 Upsert("access_scan", AccessScan.IsChecked == true ? "1" : "0");
                 Upsert("onlylowcpu", OnlyLowCPU.IsChecked == true ? "1" : "0");
@@ -890,7 +910,7 @@ namespace MultronWinCleaner
         private void RemoveException_Click(object sender, RoutedEventArgs e)
         {
             if (lstExceptions.SelectedItem != null)
-                removeexception(lstExceptions.SelectedItem.ToString());
+                removeexception(lstExceptions.SelectedItem.ToString() ?? "");
         }
 
         private void RemoveExceptionAll_Click(object sender, RoutedEventArgs e)
@@ -965,7 +985,7 @@ namespace MultronWinCleaner
         {
             try
             {
-                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? Environment.ProcessPath ?? "";
 
                 var startInfo = new ProcessStartInfo
                 {
@@ -1285,7 +1305,7 @@ namespace MultronWinCleaner
 
             if (!string.IsNullOrEmpty(logfilepath) && System.IO.File.Exists(logfilepath))
             {
-                folderPath = System.IO.Path.GetDirectoryName(logfilepath);
+                folderPath = System.IO.Path.GetDirectoryName(logfilepath) ?? Environment.CurrentDirectory;
             }
             else
             {

@@ -58,12 +58,6 @@
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>4</VersionMinor>
-      <VersionMajor>2</VersionMajor>
-      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
-    </COMReference>
     <COMReference Include="IWshRuntimeLibrary">
       <WrapperTool>tlbimp</WrapperTool>
       <VersionMinor>0</VersionMinor>
@@ -76,7 +70,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hardcodet.Wpf.TaskbarNotification" Version="1.0.5" />
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.5" NoWarn="NU1701" />
+    <PackageReference Include="Hardcodet.Wpf.TaskbarNotification" Version="1.0.5" NoWarn="NU1701" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Octokit" Version="14.0.0" />
     <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />

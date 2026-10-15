@@ -563,6 +563,28 @@
                             </StackPanel>
                         </GroupBox>
 
+                        <GroupBox Header="{loc:Tr 'Interface Mode'}" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
+                            <StackPanel>
+                                <RadioButton x:Name="rbSimpleInterface" Content="{loc:Tr 'Simplified (recommended)'}"
+                                             GroupName="InterfaceMode" IsChecked="True" FontSize="14"
+                                             Foreground="{DynamicResource TextPrimary}" Style="{DynamicResource CustomRadioButtonStyle}"
+                                             Cursor="Hand" Checked="InterfaceMode_Changed"/>
+                                <TextBlock Text="{loc:Tr 'One cleaning list for all users, split into Windows and Applications. Items show plain names, the paths are in their tooltips. Commands and extra scans are listed with easy names.'}"
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="26,2,0,12"/>
+                                <RadioButton x:Name="rbAdvancedInterface" Content="{loc:Tr 'Advanced'}"
+                                             GroupName="InterfaceMode" FontSize="14"
+                                             Foreground="{DynamicResource TextPrimary}" Style="{DynamicResource CustomRadioButtonStyle}"
+                                             Cursor="Hand" Checked="InterfaceMode_Changed"/>
+                                <TextBlock Text="{loc:Tr 'The same look in full detail: a separate group for every user, every item on its own row with its full path, the raw commands and all database buttons.'}"
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="26,2,0,0"/>
+                                <TextBlock Text="{loc:Tr 'The cleaning list reloads when you change this.'}"
+                                           FontSize="12" Opacity="0.55" TextWrapping="Wrap"
+                                           Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
                         <GroupBox Header="{loc:Tr 'Theme'}" Style="{DynamicResource CustomGroupBoxStyle}" Margin="0,0,0,20">
                             <StackPanel>
                                 <CheckBox x:Name="chkThemeFollowsWindows" Content="{loc:Tr 'Match the Windows theme'}"

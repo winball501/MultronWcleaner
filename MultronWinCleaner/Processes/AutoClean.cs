@@ -79,7 +79,7 @@ namespace MultronWinCleaner.Processes
         private async Task TickAsync()
         {
             int cpu = GetCpuUsage();
-            Settings settings = window.settings;
+            Settings? settings = window.settings;
             bool enabled = settings != null && settings.chkAutoClean.IsChecked == true;
             if (enabled && wasEnabled != true)
                 turnedOnAt = wasEnabled == false || lastRun == DateTime.MinValue ? DateTime.Now : null;
@@ -99,7 +99,7 @@ namespace MultronWinCleaner.Processes
             }
 
             DateTime now = DateTime.Now;
-            int schedule = settings.cmbScheduleType.SelectedIndex;
+            int schedule = settings!.cmbScheduleType.SelectedIndex;
             int interval = int.TryParse(settings.txtCleaningInterval.Text.Trim(), out int minutes) && minutes > 0 ? minutes : 60;
             TimeSpan start = ParseTime(settings.txtStartTime.Text, new TimeSpan(8, 0, 0));
             TimeSpan end = ParseTime(settings.txtEndTime.Text, new TimeSpan(22, 0, 0));
@@ -153,7 +153,7 @@ namespace MultronWinCleaner.Processes
                 return;
             }
 
-            string blocked = CheckConditions(settings, cpu);
+            string? blocked = CheckConditions(settings, cpu);
             if (blocked != null)
             {
                 window.SetAutoCleanStatus(Loc.F("Auto Clean is on · waiting: {0}", blocked));
@@ -171,7 +171,7 @@ namespace MultronWinCleaner.Processes
             window.SetAutoCleanStatus(Loc.T("Auto Clean is running..."));
         }
 
-        private string CheckConditions(Settings settings, int cpu)
+        private string? CheckConditions(Settings settings, int cpu)
         {
             SYSTEM_POWER_STATUS power = default;
             bool hasPower = GetSystemPowerStatus(out power);

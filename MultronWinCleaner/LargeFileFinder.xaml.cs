@@ -106,9 +106,9 @@ namespace MultronWinCleaner
 
         public class LargeFileInfo
         {
-            public string Name { get; set; }
-            public string Path { get; set; }
-            public string FormattedSize { get; set; }
+            public string Name { get; set; } = "";
+            public string Path { get; set; } = "";
+            public string FormattedSize { get; set; } = "";
             public long FileSizeBytes { get; set; }
             public DateTime LastModified { get; set; }
             public DateTime LastAccessed { get; set; }
@@ -346,7 +346,7 @@ namespace MultronWinCleaner
                             TimeSpan estimatedTotal = TimeSpan.FromMilliseconds(elapsed.TotalMilliseconds * totalFiles / processed);
                             TimeSpan remaining = estimatedTotal - elapsed;
 
-                            Application.Current.Dispatcher.Invoke(() =>
+                            Dispatcher.Invoke(() =>
                             {
                                 ScanProgressBar.Value = progress;
                                 ScanResultLabel.Text = Loc.F("Scanning... {0:F1}% - ETA: {1:mm\\:ss}", progress, remaining);
@@ -355,7 +355,7 @@ namespace MultronWinCleaner
                     }
                 });
 
-                Application.Current.Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(() =>
                 {
                     var sortedList = foundFiles.OrderByDescending(f => f.FileSizeBytes).ToList();
                     LargeFilesDataGrid.ItemsSource = sortedList;
@@ -478,7 +478,7 @@ namespace MultronWinCleaner
         {
             if (FindName("ExcludedListBox") is ListBox excludedListBox && excludedListBox.SelectedItem != null)
             {
-                string pathToRemove = excludedListBox.SelectedItem.ToString();
+                string pathToRemove = excludedListBox.SelectedItem.ToString() ?? "";
                 excludedPaths.RemoveAll(p => p.Equals(pathToRemove, StringComparison.OrdinalIgnoreCase));
                 excludedListBox.Items.Remove(excludedListBox.SelectedItem);
             }
@@ -497,7 +497,7 @@ namespace MultronWinCleaner
         {
             if (LargeFilesDataGrid.SelectedItem is LargeFileInfo selectedFile && !string.IsNullOrEmpty(selectedFile.Path))
             {
-                string directory = Path.GetDirectoryName(selectedFile.Path);
+                string? directory = Path.GetDirectoryName(selectedFile.Path);
                 if (!string.IsNullOrEmpty(directory))
                 {
                     AddExclusionPath(directory);
@@ -658,7 +658,7 @@ namespace MultronWinCleaner
             var listBox = (FindName("ExcludedListBox") ?? FindName("ExcludedFolderListBox")) as ListBox;
             if (listBox?.SelectedItem != null)
             {
-                string pathToRemove = listBox.SelectedItem.ToString();
+                string pathToRemove = listBox.SelectedItem.ToString() ?? "";
                 excludedPaths.RemoveAll(p => p.Equals(pathToRemove, StringComparison.OrdinalIgnoreCase));
                 listBox.Items.Remove(listBox.SelectedItem);
             }

@@ -34,7 +34,7 @@ namespace MultronWinCleaner.Processes
         private const int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool MoveFileEx(string lpExistingFileName, string lpNewFileName, int dwFlags);
+        private static extern bool MoveFileEx(string lpExistingFileName, string? lpNewFileName, int dwFlags);
 
         public static Result Delete(string path, Action<string>? progress = null)
         {
@@ -229,7 +229,7 @@ namespace MultronWinCleaner.Processes
                     }
                     if (!string.Equals(ImagePath(id), path, StringComparison.OrdinalIgnoreCase))
                         continue;
-                    if (whousef.IsProtectedProcess(id, name))
+                    if (WhoUsesFile.IsProtectedProcess(id, name))
                     {
                         Step(result, Loc.F("Skipped Windows process {0} (PID {1})", name, id));
                         continue;
@@ -252,7 +252,7 @@ namespace MultronWinCleaner.Processes
         private static bool CloseLockingProcesses(string path, Result result)
         {
             var targets = new Dictionary<int, string>();
-            foreach (var locker in whousef.GetLockers(path))
+            foreach (var locker in WhoUsesFile.GetLockers(path))
                 targets[locker.Id] = locker.Name;
 
             string processName = Path.GetFileNameWithoutExtension(path);
@@ -275,7 +275,7 @@ namespace MultronWinCleaner.Processes
             bool closedAny = false;
             foreach (var target in targets)
             {
-                if (whousef.IsProtectedProcess(target.Key, target.Value))
+                if (WhoUsesFile.IsProtectedProcess(target.Key, target.Value))
                 {
                     Step(result, Loc.F("Skipped Windows process {0} (PID {1})", target.Value, target.Key));
                     continue;
@@ -361,7 +361,7 @@ namespace MultronWinCleaner.Processes
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
                 };
-                using (Process process = Process.Start(startInfo))
+                using (Process? process = Process.Start(startInfo))
                 {
                     if (process == null)
                         return false;

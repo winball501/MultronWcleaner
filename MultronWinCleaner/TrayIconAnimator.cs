@@ -60,15 +60,33 @@ namespace Multron_Win_Cleaner
                 ShowIdleIcon();
         }
 
+        private System.Drawing.Icon? _idleDrawingIcon;
+
         private void ShowIdleIcon()
         {
             if (_warningIcon != null)
+            {
                 _trayIcon.Icon = _warningIcon;
-            else
+                return;
+            }
+
+            try
+            {
+                if (_idleDrawingIcon == null)
+                {
+                    using var stream = System.Windows.Application.GetResourceStream(_idleIcon.UriSource).Stream;
+                    _idleDrawingIcon = new System.Drawing.Icon(stream);
+                }
+                _trayIcon.Icon = _idleDrawingIcon;
+            }
+            catch
+            {
+                _trayIcon.IconSource = null;
                 _trayIcon.IconSource = _idleIcon;
+            }
         }
 
-        private void OnTick(object sender, EventArgs e)
+        private void OnTick(object? sender, EventArgs e)
         {
             _trayIcon.IconSource = _frames[_frameIndex];
             _frameIndex = (_frameIndex + 1) % _frames.Length;

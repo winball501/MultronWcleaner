@@ -124,6 +124,14 @@ The application is fully localized into **12 languages**: English, Turkish, Germ
 * **Scan Logs:** Every scan writes a log with its settings, every threat and suspicious file, files that could not be checked, connection drops and a summary; removals, quarantine actions and rescans are added to it. The Scan Logs window lists the logs and shows them next to the list. Logs can be exported as text files or as one ZIP.
 * **Offline Mode:** Turns off every online feature, including the cloud scan, when you do not want the app to connect to the internet.
 
+### 🪟 Microsoft MRT Scan
+* **Windows' Own Scanner, Built In:** The Malware Scan group on the main screen has a **Microsoft MRT Scan** option that scans with the Malicious Software Removal Tool (`MRT.exe`) that Windows Update installs on every PC. It is on by default with a **Quick Scan**; a **Full Scan** checks every fixed drive.
+* **Runs Hidden, Progress on the Main Screen:** MRT runs without its own window (`MRT.exe /Q`). Its progress is shown on the main progress ring and in the malware result panel, and the Clean button turns into **Cancel** while it runs.
+* **Both Scanners, One After Another:** When **Multron Malware Scan Cloud (Testing)** is also selected, MRT runs first and the cloud scan follows. The findings of both are listed together in the same malware result panel, and every row says which scanner found it: **Microsoft MRT** or **Multron Cloud**.
+* **Review First, Then Remove:** By default MRT only reports what it finds (`/N`). **MRT Results** shows the findings and the full report of that scan from `mrt.log`, and **Remove with MRT** scans again and lets MRT remove the malicious software. Tick *Remove found malicious software right away* to let MRT clean during the scan instead.
+* **Works Offline:** MRT does not need the internet, so it keeps working in offline mode.
+* **Only When Available:** If `MRT.exe` is missing on the PC, the option is hidden and the group explains that Windows Update installs it.
+
 ### 🔒 Locked File & Process Management
 * **Real-Time Lock Detection:** Surfaces file locks dynamically, displaying the active locking Process Name, Process ID (PID), and absolute file path.
 * **Force Unlock & Delete:** Kills only the processes that hold the file (system processes are protected) and retries the deletion.
@@ -143,6 +151,7 @@ The application is fully localized into **12 languages**: English, Turkish, Germ
 * **Your Choice:** Each kind of notification can be turned on or off, and notifications can appear in any corner of the screen, lined up or stacked on top of each other.
 
 ### 🎨 Comfort
+* **Simplified or Advanced Interface:** The simplified interface (default) shows one cleaning list for all users, split into **Windows** and **Applications**, with plain item names, a checkbox on every group and the paths in the tooltips. Commands and extra scans get easy names and are gathered under **Extra Scans & Tools** at the top of the list. The advanced interface in Settings > Interface Mode looks the same but shows everything in detail: a group per user, every item on its own row with its full path, the raw commands and every database button.
 * **Windows Theme:** Opens in dark mode when Windows uses dark mode and in light mode otherwise, and switches along with Windows. Choosing a theme by hand keeps your choice.
 * **Transparency Effects:** Optional see-through windows with a tint color (blue, green, orange, purple, red, pink, teal or gray) and strength of your choice.
 * **Quick Search:** The main screen, Duplicate File Finder and Startup Manager share the same search box: type to filter, press Esc or ✕ to clear.

@@ -590,7 +590,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock Text="MULTRON WIN CLEANER" FontSize="15" FontFamily="Bahnschrift, Century Gothic, Segoe UI" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" />
                                 <Border Background="#201E88E5" CornerRadius="4" Padding="6,2" Margin="12,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="v1.26.2 beta" FontSize="11" FontWeight="Bold" Foreground="#FF1E88E5" />
+                                    <TextBlock Text="v1.26.3 beta" FontSize="11" FontWeight="Bold" Foreground="#FF1E88E5" />
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -948,6 +948,10 @@
                                                                 <CheckBox DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,2,10,0"
                                                                           IsChecked="{Binding IsSelected, Mode=TwoWay}" IsEnabled="{Binding CanFix}"
                                                                           ToolTip="{loc:Tr 'Fix this setting'}"/>
+                                                                <Button DockPanel.Dock="Right" Content="{loc:Tr 'Ignore'}" Tag="{Binding}" Click="IgnoreSecurityIssue_Click"
+                                                                        Style="{StaticResource ModernButtonStyle}" Background="Transparent" BorderThickness="1" BorderBrush="Gray"
+                                                                        Foreground="{DynamicResource TextPrimary}" Padding="10,3" FontSize="11" Margin="10,0,0,0" VerticalAlignment="Top"
+                                                                        ToolTip="{loc:Tr 'Do not show or report this warning again'}"/>
                                                                 <StackPanel>
                                                                     <DockPanel>
                                                                         <Border Background="{Binding SeverityColor}" CornerRadius="4" Padding="6,1" DockPanel.Dock="Left" VerticalAlignment="Top" Margin="0,1,8,0">
@@ -1000,6 +1004,12 @@
                                                                 Visibility="Collapsed" Click="MalwareCancelButton_Click"/>
                                                         <Button x:Name="MalwareResultsButton" DockPanel.Dock="Right" Content="{loc:Tr 'Open Results'}" Style="{StaticResource ResetButtonStyle}"
                                                                 Padding="14,6" FontSize="12" VerticalAlignment="Center" Click="MalwareResultsButton_Click"/>
+                                                        <Button x:Name="MalwareMrtResultsButton" DockPanel.Dock="Right" Content="{loc:Tr 'MRT Results'}" Style="{StaticResource ResetButtonStyle}"
+                                                                Padding="14,6" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed"
+                                                                ToolTip="{loc:Tr 'Shows what Microsoft MRT found, with its full report from mrt.log.'}" Click="MrtResultsButton_Click"/>
+                                                        <Button x:Name="MalwareMrtRemoveButton" DockPanel.Dock="Right" Content="{loc:Tr 'Remove with MRT'}" Style="{StaticResource ResetButtonStyle}"
+                                                                Background="#FFDC3545" Padding="14,6" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed"
+                                                                ToolTip="{loc:Tr 'Runs Microsoft MRT again and lets it remove the malicious software it finds.'}" Click="MrtRemoveButton_Click"/>
                                                         <ComboBox x:Name="MalwarePanelModeBox" Visibility="Collapsed" DockPanel.Dock="Right" Width="130" Height="32" Margin="0,0,8,0" VerticalAlignment="Center"
                                                                   Style="{StaticResource PanelComboBoxStyle}" ToolTip="{loc:Tr 'Scan type used for the next malware scan'}" SelectionChanged="MalwarePanelModeBox_SelectionChanged">
                                                             <ComboBoxItem Content="{loc:Tr 'Quick Scan'}"/>
@@ -1007,7 +1017,7 @@
                                                             <ComboBoxItem Content="{loc:Tr 'Custom Scan'}"/>
                                                         </ComboBox>
                                                         <StackPanel VerticalAlignment="Center">
-                                                            <TextBlock Text="{loc:Tr 'Cloud Malware Scan'}" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+                                                            <TextBlock x:Name="MalwareResultsTitle" Text="{loc:Tr 'Multron Malware Scan Cloud'}" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
                                                             <TextBlock x:Name="MalwareResultsStatus" Text="" FontSize="12" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap" Margin="0,2,0,0"/>
                                                         </StackPanel>
                                                     </DockPanel>
@@ -1038,6 +1048,9 @@
                                                                 <Border Background="{DynamicResource SecondaryPanelBackground}" CornerRadius="6" Padding="10,6" Margin="0,3">
                                                                     <StackPanel>
                                                                         <StackPanel Orientation="Horizontal">
+                                                                            <Border Background="#261E88E5" CornerRadius="4" Padding="6,1" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                                                <TextBlock Text="{Binding Source}" FontSize="10.5" FontWeight="Bold" Foreground="#FF1E88E5"/>
+                                                                            </Border>
                                                                             <TextBlock Text="{Binding VerdictText}" FontWeight="Bold" FontSize="12" Foreground="#FFDC3545" Margin="0,0,8,0"/>
                                                                             <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimary}" Margin="0,0,8,0"/>
                                                                             <TextBlock Text="{Binding ThreatName}" FontSize="12" Foreground="{DynamicResource TextSecondary}"/>
