@@ -37,13 +37,13 @@
 ## Previews
 
 <div align="center">
-  <img width="788" alt="Multron Win Cleaner main window in dark mode" src="docs/screenshots/main-dark.png" />
+  <img width="788" alt="Multron Win Cleaner main window in dark mode with the simplified interface" src="docs/screenshots/main-dark.png" />
 </div>
 
 <table>
   <tr>
     <td align="center"><img width="390" alt="Main window in light mode" src="docs/screenshots/main-light.png" /><br/><b>Light mode</b></td>
-    <td align="center"><img width="390" alt="Cloud malware scan" src="docs/screenshots/malware-scan.png" /><br/><b>Malware Scan</b></td>
+    <td align="center"><img width="390" alt="Multron Malware Scan" src="docs/screenshots/malware-scan.png" /><br/><b>Multron Malware Scan</b></td>
   </tr>
   <tr>
     <td align="center"><img width="390" alt="Utilities" src="docs/screenshots/utilities.png" /><br/><b>Utilities</b></td>
